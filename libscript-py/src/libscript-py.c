@@ -67,7 +67,7 @@ static PyMethodDef script_py_methods[] = {
 
 script_plugin_state script_plugin_init_py(script_env* env, char* namespace) {
    PyObject* module;
-   char import_namespace[200];
+   char import_namespace[201];
 
    Py_Initialize();
    
@@ -81,7 +81,7 @@ script_plugin_state script_plugin_init_py(script_env* env, char* namespace) {
    if (PyType_Ready(&script_py_object_type) < 0)
       return NULL;
 
-   sprintf(import_namespace, "import %s\n", namespace);
+   snprintf(import_namespace, 200, "import %s\n", namespace);
    PyRun_SimpleString(import_namespace);
 
    return SCRIPT_GLOBAL_STATE;
