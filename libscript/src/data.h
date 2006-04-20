@@ -4,11 +4,6 @@
 
 #include "libscript.h"
 
-typedef enum {
-   SCRIPT_STRING = 1,
-   SCRIPT_DOUBLE
-} script_type;
-
 struct script_data_ {
    script_type type;
    union {

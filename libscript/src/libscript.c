@@ -6,7 +6,6 @@
 #include <string.h>
 #include <ltdl.h>
 #include <stdio.h>
-#include <stdarg.h>
 
 #include "libscript.h"
 #include "internals.h"
@@ -87,7 +86,6 @@ script_fn script_get_function(script_env* env, const char* name) {
 
 script_err script_run(script_env* env, const char* language, const char* code) {
    script_plugin* plugin = script_plugin_load(env, language);
-   /* TODO: identify errors to client code */
    script_check_err(!plugin);
    return script_plugin_run(env, plugin, code);
 }
@@ -112,6 +110,23 @@ script_err script_run_file(script_env* env, const char* filename) {
    return err;
 }
 
+script_err script_call(script_env* env, const char* fn) {
+   ht_iterator iter;
+   script_plugin* plugin;
+   
+   ht_start(env->plugins, &iter);
+   while ( (plugin = ht_iterate(&iter) ) ) {
+      script_err err;
+      script_reset_outs(env);
+      err = script_plugin_call(env, plugin, fn);
+      env->param_ins = 0; /* TODO */
+      if (err == SCRIPT_ERRFNUNDEF)
+         continue;
+      return err;
+   }
+   return SCRIPT_ERRFNUNDEF;
+}
+
 script_err script_done(script_env* env) {
    script_err err;
    int dlerr;
@@ -127,7 +142,6 @@ script_err script_done(script_env* env) {
    free(env->namespace);
    ht_delete(env->plugins);
    ht_delete(env->functions);
-   script_flush_params(env);
    free(env);
    dlerr = lt_dlexit();
    if (dlerr)
@@ -147,13 +161,37 @@ script_err script_error(script_env* env) {
    return err;
 }
 
+const char* script_get_namespace(script_env* env) {
+   return env->namespace;
+}
+
 /**
  * Obtain the last error message of the given environment.
  * Unlike script_error, the error code or message are NOT cleared. 
  * @return The error message, in a buffer owned by script_env.
  */
 const char* script_error_message(script_env* env) {
-   return env->error_message;
+   switch (env->error) {
+   case SCRIPT_OK: return "No error";
+   case SCRIPT_ERRAPI: return "API call error";
+   case SCRIPT_ERRFILE: return "File error";
+   case SCRIPT_ERRFILENOTFOUND: return "File not found";
+   case SCRIPT_ERRDL: return "Plugin error";
+   case SCRIPT_ERRDLOPEN: return "Could not open plugin"; 
+   case SCRIPT_ERRDLINVALID: return "Invalid plugin";
+   case SCRIPT_ERRDLCLOSE: return "Could not close plugin";
+   case SCRIPT_ERRLANG: return "Language error";
+   case SCRIPT_ERRLANGCOMP: return (env->error_message[0] ? env->error_message : "Compile error");
+   case SCRIPT_ERRLANGRUN: return (env->error_message[0] ? env->error_message : "Runtime error");
+   case SCRIPT_ERRFN: return "Function error";
+   case SCRIPT_ERRFNREDEF: return "Function redefinition error";
+   case SCRIPT_ERRFNUNDEF: return "Undef'd function";
+   case SCRIPT_ERRPAR: return "Parameter error";
+   case SCRIPT_ERRPARMISSING: return "Expected parameter missing";
+   case SCRIPT_ERRPAREXCESS: return "Too many parameters";
+   case SCRIPT_ERRPARTYPE: return "Parameter type error";
+   default: return env->error_message;
+   }
 }
 
 void script_set_error_message(script_env* env, const char* message) {

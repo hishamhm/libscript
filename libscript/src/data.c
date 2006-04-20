@@ -9,6 +9,19 @@
 
 #include <stdio.h>
 
+int script_param_count(script_env* env) {
+   return env->param_size;
+}
+
+script_type script_in_type(script_env* env) {
+   script_data* data;
+   int size = env->param_size;
+   int ins = env->param_ins;
+   if (ins == size) return SCRIPT_NONE;
+   data = &(env->params[ins]);
+   return data->type;
+}
+
 INLINE static script_data* script_in_data(script_env* env, script_type type) {
    script_data* data;
    int size = env->param_size;
@@ -70,20 +83,7 @@ void script_out_int(script_env* env, int value) {
    data->u.double_value = value;
 }
 
-void script_flush_params(script_env* env) {
-   /*
-   script_data* data;
-   int i;
-   for (i = 0; i < env->param_size; i++) {
-      data = &(env->params[i]);
-      switch (data->type) {
-      case SCRIPT_STRING:
-         free(data->u.string_value);
-      case SCRIPT_DOUBLE:
-         break;
-      }
-   }
-   */
+void script_start_params(script_env* env) {
    env->param_size = 0;
    env->param_ins = 0;
    env->param_outs = 0;
@@ -92,4 +92,3 @@ void script_flush_params(script_env* env) {
 void script_reset_outs(script_env* env) {
    env->param_outs = 0;
 }
-

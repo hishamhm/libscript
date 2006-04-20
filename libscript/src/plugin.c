@@ -79,15 +79,28 @@ script_plugin* script_plugin_load(script_env* env, const char* extension) {
    if (!plugin->state) return fail_plugin(env, plugin, SCRIPT_ERRLANG);
    plugin->run = (script_plugin_run_fn) get_symbol(plugin, "run");
    if (!plugin->run) return fail_plugin(env, plugin, SCRIPT_ERRDLINVALID);
+   plugin->call = (script_plugin_call_fn) get_symbol(plugin, "call");
+   if (!plugin->call) return fail_plugin(env, plugin, SCRIPT_ERRDLINVALID);
+
    ht_put(env->plugins, key, plugin);
 
    return plugin;
 }
 
 script_err script_plugin_run(script_env* env, script_plugin* plugin, const char* code) {
-   if (!env || !code || !plugin)
+   script_err err;
+   
+   if (!env || !plugin || !code)
       return SCRIPT_ERRAPI;
-   return plugin->run(plugin->state, code);
+   err = plugin->run(plugin->state, code);
+   env->error = err;
+   return err;
+}
+
+script_err script_plugin_call(script_env* env, script_plugin* plugin, const char* fn) {
+   if (!env || !plugin || !fn)
+      return SCRIPT_ERRAPI;
+   return plugin->call(plugin->state, fn);
 }
 
 script_err script_plugin_unload(script_env* env, script_plugin* plugin) {
