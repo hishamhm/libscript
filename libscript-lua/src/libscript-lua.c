@@ -21,7 +21,7 @@ static int script_lua_call(lua_State *L) {
    script_fn fn;
    int nargs;
    int i;
-   script_flush_params(env);
+   script_start_params(env);
    nargs = lua_gettop(L);
    for (i = 1; i <= nargs; i++) {
       switch(lua_type(L, i)) {
@@ -61,9 +61,11 @@ static int script_lua_find_function(lua_State *L) {
    return 1;
 }
 
-script_plugin_state script_plugin_init_lua(script_env* env, char* namespace) {
+script_plugin_state script_plugin_init_lua(script_env* env) {
    lua_State* L;
+   const char* namespace;
    
+   namespace = script_get_namespace(env);
    L = luaL_newstate();
    if (!L)
       return NULL;
@@ -79,7 +81,7 @@ script_plugin_state script_plugin_init_lua(script_env* env, char* namespace) {
    lua_pushstring(L, "__index");
    lua_pushcfunction(L, script_lua_find_function);
    lua_settable(L, -3);
-   lua_setmetatable(L, -2);   
+   lua_setmetatable(L, -2);
    lua_setglobal(L, namespace);
   
    return (script_plugin_state) L;
@@ -95,6 +97,42 @@ int script_plugin_run_lua(script_plugin_state state, char* programtext) {
    err = lua_pcall(L, 0, 0, 0);
    if (err) {
       script_env* env = script_lua_get_env(L);
+      script_set_error_message(env, lua_tostring(L, -1));
+      return SCRIPT_ERRLANGRUN;
+   }
+   return SCRIPT_OK;
+}
+
+script_err script_plugin_call_lua(script_plugin_state state, char* fn) {
+   lua_State* L = (lua_State*) state;
+   script_env* env;
+   const char* namespace;
+   script_type type;
+   int args;
+   int err;
+
+   lua_pushlightuserdata(L, L);
+   lua_gettable(L, LUA_REGISTRYINDEX);
+   env = (script_env*) lua_touserdata(L, -1);
+   namespace = script_get_namespace(env);
+
+   lua_getfield(L, LUA_GLOBALSINDEX, namespace);
+   lua_pushstring(L, fn);
+   lua_gettable(L, -2);
+   if (!lua_isfunction(L, -1))
+      return SCRIPT_ERRFNUNDEF;
+   args = 0;
+   while ( (type = script_in_type(env)) != SCRIPT_NONE ) {
+      args++;
+      switch (type) {
+      case SCRIPT_DOUBLE: lua_pushnumber(L, script_in_double(env)); break;
+      case SCRIPT_STRING: lua_pushstring(L, script_in_string(env)); break;
+      case SCRIPT_NONE: /* pacify gcc warning */ break;
+      }
+   }
+   /* TODO: returns */
+   err = lua_pcall(L, args, 0, 0);
+   if (err) {
       script_set_error_message(env, lua_tostring(L, -1));
       return SCRIPT_ERRLANGRUN;
    }
