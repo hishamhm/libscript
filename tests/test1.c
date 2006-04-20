@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
    script_new_function(env, hello_wrap, "hello");
    err = script_run_file(env, argv[1]);
    if (err) {
-      printf("Could not run script (error %d: VM returned {%s}).\n", err, script_error_message(env));
+      printf("Could not run script (error %d: %s).\n", err, script_error_message(env));
       exit(1);
    }
    script_done(env);
