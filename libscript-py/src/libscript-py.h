@@ -9,8 +9,9 @@ typedef struct {
    script_fn fn;
 } script_py_object;
 
-script_plugin_state script_plugin_init_py(script_env* env, char* namespace);
+script_plugin_state script_plugin_init_py(script_env* env);
 int script_plugin_run_py(script_plugin_state state, char* programtext);
+int script_plugin_call_py(script_plugin_state state, char* fn);
 void script_plugin_done_py(script_plugin_state state);
 
 #endif

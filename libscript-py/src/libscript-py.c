@@ -12,7 +12,7 @@ static PyObject* script_py_dict;
 static PyObject* script_py_object_call(script_py_object *obj, PyObject *args, PyObject *kwds) {
    int i;
    int nargs = PyTuple_GET_SIZE(args);
-   script_flush_params(script_py_env);
+   script_start_params(script_py_env);
    for (i = 0; i < nargs; i++) {
       PyObject* arg = PyTuple_GET_ITEM(args, i);
       if (PyString_Check(arg)) {
@@ -65,16 +65,20 @@ static PyMethodDef script_py_methods[] = {
    {NULL}
 };
 
-script_plugin_state script_plugin_init_py(script_env* env, char* namespace) {
+script_plugin_state script_plugin_init_py(script_env* env) {
+   /* TODO: trap interpreter error messages */
    PyObject* module;
+   char* namespace;
    char import_namespace[201];
 
    Py_Initialize();
    
    script_py_env = env;
+   namespace = (char*) script_get_namespace(env);
 
    module = Py_InitModule3(namespace, script_py_methods, namespace);
    script_py_dict = PyModule_GetDict(module);
+   Py_INCREF(script_py_dict);
    module->ob_type->tp_getattro = script_py_get;
 
    script_py_object_type.tp_new = PyType_GenericNew;
@@ -88,10 +92,53 @@ script_plugin_state script_plugin_init_py(script_env* env, char* namespace) {
 }
 
 int script_plugin_run_py(script_plugin_state state, char* programtext) {
-   PyRun_SimpleString(programtext);
+   if (!PyRun_SimpleString(programtext))
+      return SCRIPT_OK;
+   else
+      return SCRIPT_ERRLANGRUN;
+}
+
+int script_plugin_call_py(script_plugin_state state, char* fn) {
+   PyObject *obj, *args, *ret;
+   script_env* env;
+   const char* namespace;
+   int nargs;
+   int i;
+
+   env = script_py_env;
+   namespace = script_get_namespace(env);
+
+   obj = PyDict_GetItemString(script_py_dict, fn);
+   if (!(obj && PyFunction_Check(obj)))
+      return SCRIPT_ERRFNUNDEF;
+   nargs = script_param_count(env);
+   args = PyTuple_New(nargs);
+   for(i = 0; i < nargs; i++) {
+      PyObject* arg = NULL;
+      switch (script_in_type(env)) {
+      case SCRIPT_DOUBLE:
+         arg = PyFloat_FromDouble(script_in_double(env)); 
+         break;
+      case SCRIPT_STRING:
+         arg = PyString_FromString(script_in_string(env)); 
+         break;
+      default:
+         /* pacify gcc warnings */
+         assert(0);
+      }
+      assert(arg);
+      PyTuple_SetItem(args, i, arg);
+   }
+   /* TODO: process returns */
+   ret = PyEval_CallObject(obj, args);
+   if (!ret) {
+      /* TODO: error message */
+      return SCRIPT_ERRLANGRUN;
+   }
    return SCRIPT_OK;
 }
 
 void script_plugin_done_py(script_plugin_state state) {
+   Py_DECREF(script_py_dict);
    Py_Finalize();
 }
