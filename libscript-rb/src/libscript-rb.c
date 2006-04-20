@@ -23,7 +23,7 @@ static VALUE script_rb_call(VALUE self, VALUE fn_value, VALUE args) {
    script_fn fn;
    VALUE arg;
 
-   script_flush_params(script_rb_env);
+   script_start_params(script_rb_env);
    
    fn = (script_fn) NUM2LONG(fn_value);
    while ( (arg = rb_ary_shift(args)) != Qnil ) {
@@ -64,9 +64,11 @@ static VALUE script_rb_get(VALUE klass, VALUE name_value) {
    return Qnil;
 }
 
-script_plugin_state script_plugin_init_rb(script_env* env, char* namespace) {
+script_plugin_state script_plugin_init_rb(script_env* env) {
+   const char* namespace;
    int namespace_size;
 
+   namespace = script_get_namespace(env);
    ruby_init();
    ruby_script(namespace);
    namespace_size = strlen(namespace) + 1;
@@ -83,6 +85,11 @@ script_plugin_state script_plugin_init_rb(script_env* env, char* namespace) {
 
 int script_plugin_run_rb(script_plugin_state state, char* programtext) {
    rb_eval_string(programtext);
+   return SCRIPT_OK;
+}
+
+int script_plugin_call_rb(script_plugin_state state, char* fn) {
+   /* TODO */
    return SCRIPT_OK;
 }
 
