@@ -139,3 +139,25 @@ void* ht_take_first(ht* this) {
    }
    return NULL;
 }
+
+void ht_start(ht* this, ht_iterator* iter) {
+   iter->table = this;
+   iter->bucket = 0;
+   iter->item = this->buckets[0];
+}
+
+void* ht_iterate(ht_iterator* iter) {
+   void* result;
+   for(;;) {
+      if (iter->bucket == iter->table->size)
+         return NULL;
+      if (!iter->item) {
+         iter->item = iter->table->buckets[++iter->bucket];
+         continue;
+      }
+      result = iter->item->value;
+      iter->item = iter->item->next;
+      return result;
+   }
+}
+
