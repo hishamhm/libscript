@@ -45,10 +45,14 @@ libscript-rb: build/lib/libscript-rb.so
 test1: $(TESTSDIR)/test1.c
 	gcc -o $(TESTSDIR)/test1 $(TESTSDIR)/test1.c -lscript $(LDFLAGS) $(CPPFLAGS)
 
-tests: test1
+testcall: $(TESTSDIR)/testcall.c
+	gcc -o $(TESTSDIR)/testcall $(TESTSDIR)/testcall.c -lscript $(LDFLAGS) $(CPPFLAGS)
+
+tests: test1 testcall
 	$(TESTSDIR)/test1 $(TESTSDIR)/test1.lua
 	$(TESTSDIR)/test1 $(TESTSDIR)/test1.py
 	$(TESTSDIR)/test1 $(TESTSDIR)/test1.rb
+	$(TESTSDIR)/testcall
 
 clean:
 	rm -rf build
