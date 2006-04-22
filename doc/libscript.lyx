@@ -312,6 +312,21 @@ script_in_string
 
 
 \family typewriter 
+script_type script_in_type(script_env* env)
+\newline 
+
+\family default 
+Obtém o tipo do próximo parâmetro a ser obtido com a função 
+\family typewriter 
+script_in_*
+\family default 
+.
+ Permite escrever funções em C que aceitam parâmetros de diferentes tipos
+ e realizar a verificação destes em tempo de execução.
+\layout Itemize
+
+
+\family typewriter 
 void script_out_double(script_env* env, double value)
 \newline 
 void script_out_int(script_env* env, int value)
@@ -386,6 +401,49 @@ script_run
 
 
 \family typewriter 
+script_err script_call(script_env* env, const char* fn)
+\family default 
+
+\newline 
+Requisita a execução de uma função em algum dos plugins cadastrados.
+ Os parâmetros de entrada devem ser passados anteriormente com chamadas
+ às funções 
+\family typewriter 
+script_out_*
+\family default 
+; valores de retorno podem ser obtidos com 
+\family typewriter 
+script_in_*
+\family default 
+.
+ 
+\emph on 
+[Na implementação atual,]
+\emph default 
+ Inicialmente, a tabela de funções C é consultada.
+ Não havendo uma função definida em C, os plugins são consultados na seqüência
+ em que foram inicializados implicitamente via 
+\family typewriter 
+script_run
+\family default 
+ ou 
+\family typewriter 
+script_run_file
+\family default 
+: funções registradas no namespace definido para a LibScript na máquina
+ virtual da linguagem (isto é, no nome criado com 
+\family typewriter 
+script_init
+\family default 
+) são acessíveis via 
+\family typewriter 
+script_call
+\family default 
+.
+\layout Itemize
+
+
+\family typewriter 
 script_err script_error(script_env* env)
 \newline 
 const char* script_error_message(script_env* env)
@@ -435,7 +493,7 @@ Define um novo valor para a mensagem de erro do ambiente.
 
 
 \family typewriter 
-void script_flush_params(script_env* env)
+void script_start_params(script_env* env)
 \newline 
 void script_reset_outs(script_env* env)
 \family default 
@@ -445,6 +503,19 @@ Não estou atualmente muito satisfeito com essas duas funções, mas elas são
  atualmente necessárias na implementação dos plugins para garantir a consistênci
 a da lista de parâmetros quando o código da função wrapper não consome todos
  os parâmetros de entrada.
+\layout Itemize
+
+
+\family typewriter 
+const char* script_get_namespace(script_env* env)
+\family default 
+
+\newline 
+Retorna o nome do namespace registrado com 
+\family typewriter 
+script_init
+\family default 
+.
 \layout Standard
 
 Para linguagens que precisem carregar todas as funções na máquina virtual
