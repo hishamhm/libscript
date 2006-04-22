@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 int script_param_count(script_env* env) {
-   return env->param_size;
+   return env->param_size - env->param_ins;
 }
 
 script_type script_in_type(script_env* env) {
