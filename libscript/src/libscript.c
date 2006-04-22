@@ -113,6 +113,13 @@ script_err script_run_file(script_env* env, const char* filename) {
 script_err script_call(script_env* env, const char* fn) {
    ht_iterator iter;
    script_plugin* plugin;
+   script_fn function;
+   ht_key key;
+
+   key.str = fn;
+   function = ht_get(env->functions, key);
+   if (function)
+      return function(env);
    
    ht_start(env->plugins, &iter);
    while ( (plugin = ht_iterate(&iter) ) ) {
