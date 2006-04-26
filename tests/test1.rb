@@ -1,8 +1,7 @@
 
 print("Hello from Ruby!\n")
 
-Hisham.get("hello")
+x = Hisham.hello("John", 1940, ".")
+y = Hisham.hello("Paul", 1942, ".")
 
-Hisham.hello("Hisham", 1980, ".")
-Hisham.hello("Jorge", 1971, ".")
-
+print("Results were "+x.to_s+" and "+y.to_s+"\n")

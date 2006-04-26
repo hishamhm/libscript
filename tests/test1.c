@@ -17,7 +17,7 @@ script_err hello_wrap(script_env* env) {
 }
 
 int hello(char* name, int year, char* excl) {
-   int age = 2005 - year;
+   int age = 2006 - year;
    printf("Hello, %s! You are %d years old%s\n", name, age, excl);
    return age;
 }

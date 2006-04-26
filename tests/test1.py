@@ -1,3 +1,7 @@
+
 print("Hello from Python!")
-hisham.hello("Hisham", 1980, ".")
-hisham.hello("Jorge", 1971, ".")
+
+x = hisham.hello("John", 1940, ".")
+y = hisham.hello("Paul", 1942, ".")
+
+print("Results were "+str(x)+" and "+str(y))
