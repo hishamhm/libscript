@@ -4,6 +4,12 @@
 
 #include <Python.h>
 
+#ifdef __GNUC__
+#define INLINE __inline
+#else
+#define INLINE
+#endif
+
 typedef struct {
    PyObject_HEAD
    script_fn fn;

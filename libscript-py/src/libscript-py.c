@@ -9,10 +9,10 @@ static script_env* script_py_env;
 
 static PyObject* script_py_dict;
 
-static PyObject* script_py_object_call(script_py_object *obj, PyObject *args, PyObject *kwds) {
+INLINE static void script_py_get_params(script_env* env, PyObject* args) {
    int i;
    int nargs = PyTuple_GET_SIZE(args);
-   script_start_params(script_py_env);
+   script_start_params(env);
    for (i = 0; i < nargs; i++) {
       PyObject* arg = PyTuple_GET_ITEM(args, i);
       if (PyString_Check(arg)) {
@@ -27,10 +27,47 @@ static PyObject* script_py_object_call(script_py_object *obj, PyObject *args, Py
          /* TODO: other types */
       }
    }
-   script_reset_outs(script_py_env);
+}
+
+INLINE static PyObject* script_py_put_params(script_env* env) {
+   PyObject* args;
+   int nargs;
+   int i;
+
+   nargs = script_param_count(env);
+   args = PyTuple_New(nargs);
+   for(i = 0; i < nargs; i++) {
+      PyObject* arg = NULL;
+      switch (script_in_type(env)) {
+      case SCRIPT_DOUBLE:
+         arg = PyFloat_FromDouble(script_in_double(env)); 
+         break;
+      case SCRIPT_STRING:
+         arg = PyString_FromString(script_in_string(env)); 
+         break;
+      default:
+         /* pacify gcc warnings */
+         assert(0);
+      }
+      assert(arg);
+      PyTuple_SetItem(args, i, arg);
+   }
+   return args;
+}
+
+static PyObject* script_py_call(script_py_object *obj, PyObject *args, PyObject *kwds) {
+   script_py_get_params(script_py_env, args);
    obj->fn(script_py_env);
-   /* TODO: return values */
-   Py_RETURN_NONE;
+   if (script_param_count(script_py_env) == 0) {
+      Py_RETURN_NONE;
+   } else {
+      PyObject* ret = script_py_put_params(script_py_env);
+      if (PyTuple_GET_SIZE(ret) > 1) {
+         return ret;
+      } else {
+         return PyTuple_GET_ITEM(ret, 0);
+      }
+   }
 }
 
 static PyTypeObject script_py_object_type = {
@@ -38,7 +75,7 @@ static PyTypeObject script_py_object_type = {
    .ob_size = 0,
    .tp_name = "libscript.Object",
    .tp_basicsize = sizeof(script_py_object),
-   .tp_call = (ternaryfunc)script_py_object_call,
+   .tp_call = (ternaryfunc)script_py_call,
    .tp_flags = Py_TPFLAGS_DEFAULT,
    .tp_doc = "LibScript object"
 };
@@ -102,8 +139,6 @@ int script_plugin_call_py(script_plugin_state state, char* fn) {
    PyObject *obj, *args, *ret;
    script_env* env;
    const char* namespace;
-   int nargs;
-   int i;
 
    env = script_py_env;
    namespace = script_get_namespace(env);
@@ -111,28 +146,11 @@ int script_plugin_call_py(script_plugin_state state, char* fn) {
    obj = PyDict_GetItemString(script_py_dict, fn);
    if (!(obj && PyFunction_Check(obj)))
       return SCRIPT_ERRFNUNDEF;
-   nargs = script_param_count(env);
-   args = PyTuple_New(nargs);
-   for(i = 0; i < nargs; i++) {
-      PyObject* arg = NULL;
-      switch (script_in_type(env)) {
-      case SCRIPT_DOUBLE:
-         arg = PyFloat_FromDouble(script_in_double(env)); 
-         break;
-      case SCRIPT_STRING:
-         arg = PyString_FromString(script_in_string(env)); 
-         break;
-      default:
-         /* pacify gcc warnings */
-         assert(0);
-      }
-      assert(arg);
-      PyTuple_SetItem(args, i, arg);
-   }
+   args = script_py_put_params(env);
    /* TODO: process returns */
    ret = PyEval_CallObject(obj, args);
    if (!ret) {
-      /* TODO: error message */
+      /* TODO: trap error message */
       return SCRIPT_ERRLANGRUN;
    }
    return SCRIPT_OK;
