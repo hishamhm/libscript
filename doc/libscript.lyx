@@ -91,8 +91,8 @@ A API independente de linguagem
 A API oferecida pela biblioteca deve ser independente de linguagem e isolar
  a aplicação das diferentes APIs oferecidas pelas linguagens de scripting.
  Não se trata apenas de adicionar uma camada de indireção entre as chamadas.
- Este seria o casa para os recursos que são comuns a todas elas, como inicializa
-ção e chamadas de função.
+ Isto seria apropriado apenas para os recursos que são comuns a todas elas,
+ como inicialização e chamadas de função.
  A questão principal aí são os vários recursos particulares a cada linguagem.
  Uma abordagem pouco prática seria definir a API como a união dos conjuntos
  de recursos de todas as linguagens a ser suportadas (oferecer recursos
@@ -314,15 +314,25 @@ script_in_string
 \family typewriter 
 script_type script_in_type(script_env* env)
 \newline 
+int script_param_count(script_env* env)
+\newline 
 
 \family default 
-Obtém o tipo do próximo parâmetro a ser obtido com a função 
+Estas funções permitem escrever funções em C que realizam verificação de
+ tipo e número de parâmetros em tempo de execução.
+ A função 
+\family typewriter 
+script_in_type
+\family default 
+ obtém o tipo do próximo parâmetro a ser obtido com a função 
 \family typewriter 
 script_in_*
 \family default 
-.
- Permite escrever funções em C que aceitam parâmetros de diferentes tipos
- e realizar a verificação destes em tempo de execução.
+ e 
+\family typewriter 
+script_param_count
+\family default 
+ retorna o número de parâmetros disponíveis para consumo.
 \layout Itemize
 
 
@@ -460,7 +470,7 @@ SCRIPT_OK
  A mensagem de erro, por sua vez, não é zerada.
 \layout Subsection*
 
-Implementação de plugins
+Funções para implementação de plugins
 \layout Itemize
 
 
@@ -494,15 +504,12 @@ Define um novo valor para a mensagem de erro do ambiente.
 
 \family typewriter 
 void script_start_params(script_env* env)
-\newline 
-void script_reset_outs(script_env* env)
 \family default 
 
 \newline 
-Não estou atualmente muito satisfeito com essas duas funções, mas elas são
- atualmente necessárias na implementação dos plugins para garantir a consistênci
-a da lista de parâmetros quando o código da função wrapper não consome todos
- os parâmetros de entrada.
+Usada para zerar a lista interna de parâmetros de entrada e saída.
+ Deve ser usada na implementação da chamada de funções para garantir que
+ parâmetros que não tenham sido consumidos sejam removidos.
 \layout Itemize
 
 
@@ -521,6 +528,132 @@ script_init
 Para linguagens que precisem carregar todas as funções na máquina virtual
  durante a inicialização do plugin, será necessário adicionar alguma funcionalid
 ade que permita iterar sobre a lista de funções registradas.
+\layout Section*
+
+API exportada por plugins
+\layout Standard
+
+As chamadas aos plugins que implementam interfaces com as várias máquinas
+ virtuais são realizadas internamente pela biblioteca principal, que espera
+ encontrar as seguintes funções:
+\layout Itemize
+
+
+\family typewriter 
+script_plugin_state script_plugin_init_
+\emph on 
+lang
+\emph default 
+(script_env* env)
+\family default 
+
+\newline 
+Responsável por inicializar o plugin.
+ Durante a inicialização, o espaço de nomes do ambiente deve ser exposto
+ à máquina virtual de alguma forma apropriada para a linguagem (como uma
+ tabela em Lua, ou um módulo em Python, ou ainda uma classe em Ruby).
+ A rotina de inicialização pode retornar um handle que será passado de volta
+ a ele nas chamadas subseqüentes.
+ Tipicamente, o estado da máquina virtual e o ponteiro para o ambiente LibScript
+ devem ser armazenados de modo a ser posteriormente acessíveis a partir
+ deste handle.
+\layout Itemize
+
+
+\family typewriter 
+script_err script_plugin_run_
+\emph on 
+lang
+\emph default 
+(script_plugin_state state, char* programtext)
+\family default 
+
+\newline 
+Envia código para execução na máquina virtual.
+ Esta função é utilizada internamente por 
+\family typewriter 
+script_run
+\family default 
+ e 
+\family typewriter 
+script_run_file
+\family default 
+.
+ Deve retornar 
+\family typewriter 
+SCRIPT_OK
+\family default 
+ em caso de sucesso, 
+\family typewriter 
+SCRIPT_ERRLANGCOMP
+\family default 
+ para erros de compilação ou 
+\family typewriter 
+SCRIPT_ERRLANGRUN
+\family default 
+ para erros de execução, preferencialmente definindo uma mensagem de erro
+ com 
+\family typewriter 
+script_set_error_message
+\family default 
+.
+\layout Itemize
+
+
+\family typewriter 
+script_err script_plugin_call_
+\emph on 
+lang
+\emph default 
+(script_plugin_state state, char* fn)
+\family default 
+
+\newline 
+Realiza a chamada de uma função que tenha sido definida nativamente no espaço
+ de nomes do ambiente na máquina virtual do plugin.
+ Ao chamar uma função no espaço de nomes, seja em C através de 
+\family typewriter 
+script_call
+\family default 
+ ou executando código em algum dos plugins, LibScript irá utilizar esta
+ função para tentar executar a função no contexto do plugin.
+ Se a função não foi definida no plugin, o valor 
+\family typewriter 
+SCRIPT_ERRFNUNDEF
+\family default 
+ deve ser retornado.
+ Caso contrário, ela deve ser executada, com parâmetros de entrada obtidos
+ através de 
+\family typewriter 
+script_in_*
+\family default 
+ e valores de retorno enviados com 
+\family typewriter 
+script_out_*
+\family default 
+, e os valores 
+\family typewriter 
+SCRIPT_OK
+\family default 
+ ou 
+\family typewriter 
+SCRIPT_ERRLANGRUN
+\family default 
+ devem ser retornados, conforme apropriado.
+ 
+\layout Itemize
+
+
+\family typewriter 
+void script_plugin_done_
+\emph on 
+lang
+\emph default 
+(script_plugin_state state)
+\family default 
+
+\newline 
+Responsável pelo encerramento do ambiente.
 \layout Section*
 
 Múltiplos estados independentes
@@ -581,7 +714,7 @@ This is a hard-to-fix bug that will be addressed in a future release
 
 
 \emph on 
-Há ainda a questão da 
+[ Há ainda a questão da 
 \emph default 
 thread-safety
 \emph on 
@@ -591,7 +724,7 @@ thread-safety
 \emph on 
  dos plugins e, por extensão, das máquinas virtuais.
  É uma questão prática importante, mas pode estar saindo de escopo.
- Abordar isto?
+ Abordar isto? ]
 \layout Section*
 
 Múltiplos valores de retorno
@@ -804,6 +937,18 @@ script_py_object_call
 Ruby
 \layout Standard
 
+
+\begin_inset Note
+collapsed false
+
+\layout Standard
+
+TODO: update this
+\end_inset 
+
+
+\layout Standard
+
 A implementação atual em Ruby ainda não está realizando a resolução de funções
  de forma transparente, mas ela já o faz de forma dinâmica.
  A inicialização do plugin em Ruby define uma classe com o nome do namespace,
@@ -918,6 +1063,43 @@ script_py_object_call
 \end_inset 
 
 .
+\layout Section*
+
+Manipulação do estado de nomes
+\layout Standard
+
+Para que o ambiente descreva um espaço de nomes consistente entre todos
+ os plugins, é necessário contemplar o caso onde os plugins adicionam funções
+ a ele, possivelmente sobrescrevendo funções previamente definidas.
+\layout Standard
+
+
+\emph on 
+Atualmente, os plugins armazenam funções registradas em uma cache (Lua e
+ Python no primeiro acesso, Ruby com a função explícita 
+\family typewriter 
+get
+\family default 
+).
+ Como manter a consistência entre os espaços de nomes das máquinas virtuais?
+ Deixar de usar a cache e cada chamada então deve consultar a lista de funções
+ em libscript? Ou o registro de uma nova função deve notificar os plugins?
+ Pode ser necessário utilizar soluções diferentes em cada plugin.
+ Lua, por exemplo, não chama o metamétodo 
+\family typewriter 
+__newindex
+\family default 
+ uma vez que o primeiro valor já foi armazenado.
+ Em Ruby, ao chamar um método inexistente, é chamado o callback method_missing,
+ mas chamada a Classe.method(
+\begin_inset Quotes eld
+\end_inset 
+
+inexistente
+\begin_inset Quotes erd
+\end_inset 
+
+) não ativa o callback.
 \layout Bibliography
 \bibitem {ltn004}
 
