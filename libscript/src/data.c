@@ -29,6 +29,7 @@ INLINE static script_data* script_in_data(script_env* env, script_type type) {
    script_check_ret(ins == size, SCRIPT_ERRPARMISSING, NULL);
    data = &(env->params[ins]);
    env->param_ins++;
+   env->param_outs = 0;
    script_check_ret(data->type != type, SCRIPT_ERRPARTYPE, NULL);
    return data;
 }
@@ -41,6 +42,7 @@ static script_data* script_out_data(script_env* env, script_type type) {
    data = &(env->params[outs]);
    data->type = type;
    outs++;
+   env->param_ins = 0;
    env->param_outs = outs;
    env->param_size = outs;
    return data;
@@ -86,9 +88,5 @@ void script_out_int(script_env* env, int value) {
 void script_start_params(script_env* env) {
    env->param_size = 0;
    env->param_ins = 0;
-   env->param_outs = 0;
-}
-
-void script_reset_outs(script_env* env) {
    env->param_outs = 0;
 }

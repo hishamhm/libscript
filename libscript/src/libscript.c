@@ -81,6 +81,7 @@ script_fn script_get_function(script_env* env, const char* name) {
    key.str = name;
    fn = ht_get(env->functions, key);
    script_check_ret(!fn, SCRIPT_ERRFNUNDEF, NULL);
+   env->error = SCRIPT_OK;
    return fn;
 }
 
@@ -118,18 +119,18 @@ script_err script_call(script_env* env, const char* fn) {
 
    key.str = fn;
    function = ht_get(env->functions, key);
-   if (function)
-      return function(env);
+   if (function) {
+      env->error = function(env);
+      return env->error;
+   }
    
    ht_start(env->plugins, &iter);
    while ( (plugin = ht_iterate(&iter) ) ) {
-      script_err err;
-      script_reset_outs(env);
-      err = script_plugin_call(env, plugin, fn);
+      env->error = script_plugin_call(env, plugin, fn);
       env->param_ins = 0; /* TODO */
-      if (err == SCRIPT_ERRFNUNDEF)
+      if (env->error == SCRIPT_ERRFNUNDEF)
          continue;
-      return err;
+      return env->error;
    }
    return SCRIPT_ERRFNUNDEF;
 }
