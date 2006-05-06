@@ -55,9 +55,20 @@ INLINE static PyObject* script_py_put_params(script_env* env) {
    return args;
 }
 
+static void script_py_destructor(PyObject* o) {
+   script_py_object* spo = (script_py_object*) o;
+   free(spo->fn_name);
+   /* FIXME: looks like this is not being called */
+}
+
 static PyObject* script_py_call(script_py_object *obj, PyObject *args, PyObject *kwds) {
+   script_err err;
    script_py_get_params(script_py_env, args);
-   obj->fn(script_py_env);
+   err = script_call(script_py_env, obj->fn_name);
+   if (err != SCRIPT_OK) {
+      PyErr_SetString(PyExc_RuntimeError, "No such function");
+      Py_RETURN_NONE;
+   }
    if (script_param_count(script_py_env) == 0) {
       Py_RETURN_NONE;
    } else {
@@ -75,27 +86,24 @@ static PyTypeObject script_py_object_type = {
    .ob_size = 0,
    .tp_name = "libscript.Object",
    .tp_basicsize = sizeof(script_py_object),
+   .tp_dealloc = script_py_destructor,
    .tp_call = (ternaryfunc)script_py_call,
    .tp_flags = Py_TPFLAGS_DEFAULT,
    .tp_doc = "LibScript object"
 };
 
-static PyObject* script_py_get(PyObject* self, PyObject *attr_name) {
+static PyObject* script_py_getattro(PyObject* self, PyObject *attr_name) {
    char* name;
-   script_fn fn;
    script_py_object* obj;
+
+   if ((obj = (script_py_object*)PyDict_GetItem(script_py_dict, attr_name)))
+      return (PyObject*)obj;
    
-   if ((obj = (script_py_object*)PyObject_GetItem(script_py_dict, attr_name)))
-      return (PyObject*)obj;
    name = PyString_AS_STRING(attr_name);
-   fn = script_get_function(script_py_env, name);
-   if (fn) {
-      obj = PyObject_New(script_py_object, &script_py_object_type);
-      obj->fn = fn;
-      PyObject_SetItem(script_py_dict, attr_name, (PyObject*)obj);
-      return (PyObject*)obj;
-   }
-   Py_RETURN_NONE;
+   obj = PyObject_New(script_py_object, &script_py_object_type);
+   obj->fn_name = strdup(name);
+   PyDict_SetItem(script_py_dict, attr_name, (PyObject*)obj);
+   return (PyObject*)obj;
 }
 
 static PyMethodDef script_py_methods[] = {
@@ -116,7 +124,7 @@ script_plugin_state script_plugin_init_py(script_env* env) {
    module = Py_InitModule3(namespace, script_py_methods, namespace);
    script_py_dict = PyModule_GetDict(module);
    Py_INCREF(script_py_dict);
-   module->ob_type->tp_getattro = script_py_get;
+   module->ob_type->tp_getattro = script_py_getattro;
 
    script_py_object_type.tp_new = PyType_GenericNew;
    if (PyType_Ready(&script_py_object_type) < 0)
@@ -147,12 +155,17 @@ int script_plugin_call_py(script_plugin_state state, char* fn) {
    if (!(obj && PyFunction_Check(obj)))
       return SCRIPT_ERRFNUNDEF;
    args = script_py_put_params(env);
-   /* TODO: process returns */
    ret = PyEval_CallObject(obj, args);
    if (!ret) {
       /* TODO: trap error message */
       return SCRIPT_ERRLANGRUN;
    }
+   if (!PyTuple_Check(ret)) {
+      PyObject* tuple = PyTuple_New(1);
+      PyTuple_SetItem(tuple, 0, ret);
+      ret = tuple;
+   }
+   script_py_get_params(env, ret);
    return SCRIPT_OK;
 }
 

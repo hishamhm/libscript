@@ -12,7 +12,7 @@
 
 typedef struct {
    PyObject_HEAD
-   script_fn fn;
+   char* fn_name;
 } script_py_object;
 
 script_plugin_state script_plugin_init_py(script_env* env);
