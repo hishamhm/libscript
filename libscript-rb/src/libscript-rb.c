@@ -72,18 +72,14 @@ INLINE static VALUE* script_rb_put_params(script_env* env, int params) {
    return args;
 }
 
-static VALUE script_rb_call(VALUE self, VALUE fn_value, VALUE args) {
-   script_fn fn;
+INLINE static VALUE script_rb_params_to_value(script_env* env) {
    VALUE* rets;
-   int nargs;
    VALUE ret;
+   int nargs;
 
-   fn = (script_fn) NUM2LONG(fn_value);
-   script_rb_get_params(script_rb_env, args);
-   fn(script_rb_env);
-   nargs = script_param_count(script_rb_env);
+   nargs = script_param_count(env);
    if (nargs > 0) {
-      rets = script_rb_put_params(script_rb_env, nargs);
+      rets = script_rb_put_params(env, nargs);
       if (nargs == 1)
          ret = rets[0];
       else
@@ -92,6 +88,15 @@ static VALUE script_rb_call(VALUE self, VALUE fn_value, VALUE args) {
    } else
       ret = Qnil;
    return ret;
+}
+
+static VALUE script_rb_call(VALUE self, VALUE fn_value, VALUE args) {
+   script_fn fn;
+
+   fn = (script_fn) NUM2LONG(fn_value);
+   script_rb_get_params(script_rb_env, args);
+   fn(script_rb_env);
+   return script_rb_params_to_value(script_rb_env);
 }
 
 static VALUE script_rb_method_missing(int argc, VALUE* argv, VALUE obj) {
@@ -110,8 +115,17 @@ static VALUE script_rb_method_missing(int argc, VALUE* argv, VALUE obj) {
       args = rb_ary_new4(argc - 1, argv+1);
       return script_rb_call(obj, rb_int_new((long int) fn), args);
    } else {
-      /* FIXME: I'm getting a Ruby segfault when a function is not found. */
-      rb_raise(rb_eRuntimeError, "No such function: '%s'.", name);
+      script_err err;
+      int i;
+      for (i = 0; i < argc; i++)
+         script_rb_get_param(script_rb_env, argv[i]);
+      err = script_call(script_rb_env, name);
+      if (err != SCRIPT_OK) {
+         /* FIXME: I'm getting a Ruby segfault when Ruby raises exceptions. */
+         rb_raise(rb_eRuntimeError, "No such function: '%s'.", name);
+         return Qnil;
+      }
+      return script_rb_params_to_value(script_rb_env);
    }
    return Qnil;
 }
