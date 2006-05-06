@@ -107,7 +107,5 @@ script_err script_plugin_unload(script_env* env, script_plugin* plugin) {
    ht_key key;
    
    key.str = plugin->extension;
-   plugin = ht_remove(env->plugins, key);
-   script_check(!plugin, SCRIPT_ERRFILENOTFOUND);
    return free_plugin(env, plugin);
 }
