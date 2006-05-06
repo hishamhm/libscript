@@ -1100,6 +1100,125 @@ inexistente
 \end_inset 
 
 ) não ativa o callback.
+\layout Section*
+
+Random jots
+\layout Subsection*
+
+Random jot #1
+\layout Standard
+
+Bug 
+\begin_inset Quotes eld
+\end_inset 
+
+interessante
+\begin_inset Quotes erd
+\end_inset 
+
+ durante a implementação Python: PyObject_GetItem/PyObject_SetItem funcionava
+ 
+\begin_inset Quotes eld
+\end_inset 
+
+às vezes
+\begin_inset Quotes erd
+\end_inset 
+
+ para o dicionário do método.
+ Trocar para PyDict_GetItem/PyDict_SetItem resolveu o problema.
+ Contagem de referências de PyDict_ e PyObject_ funcionam de formas diferentes.
+\layout Subsection*
+
+Random jot #2
+\layout Standard
+
+Uma FLI age como uma ponte de dois sentidos: ela deve expor os tipos de
+ dados e permitir chamada de código de C à linguagem, e expor os tipos de
+ dados e permitir chamada de código da linguagem a C.
+ [Serão esses os 
+\begin_inset Quotes eld
+\end_inset 
+
+quatro objetivos
+\begin_inset Quotes erd
+\end_inset 
+
+ principais de uma FLI? Mapear APIs das linguagens estudadas dentro desses
+ 2 grandes grupos (cada um com 2 sub-grupos)?]
+\layout Standard
+
+O objetivo geral de LibScript é tornar aplicações 
+\begin_inset Quotes eld
+\end_inset 
+
+scriptable
+\begin_inset Quotes erd
+\end_inset 
+
+ de modo independente de linguagem.
+ Os objetivos específicos são: (a) expor os dados e permitir chamada de
+ código de C de uma aplicação aos scripts; (b) construir um espaço de nomes
+ que possa ser acessado de forma comum entre as diferentes máquinas virtuais,
+ para que scripts escritos em diferentes linguagens possam interagir.
+\layout Standard
+
+Para que o segundo objetivo seja atingido, é necessário que mudanças no
+ espaço de nomes ocorridas externamente a uma VM, seja pelo código C ou
+ por outra máquina virtual, sejam refletidas transparentemente na representação
+ local do espaço de nomes desta VM.
+ Para que isto ocorra, deve ser possível realizar um certo grau de metaprogramaç
+ão através da FLI.
+ Em particular, deve ser possível capturar chamadas a funções não definidas
+ e resolver estas chamadas através de código C.
+ 
+\layout Standard
+
+O primeiro objetivo implementa um dos sentidos da comunicação realizada
+ por uma FLI.
+ O segundo objetivo é similar ao sentido inverso no que permite a chamada
+ de código da linguagem, mas não contempla a exposição dos tipos de dados:
+ estruturas de dados não oferecidas por C podem ser manipulados apenas como
+ tipos opacos, já que os conjuntos de funcionalidades a ser exposta ao mapear
+ os tipos de dados específicos de cada linguagem variam muito entre si.
+ 
+\layout Standard
+
+[Um aspecto ainda um tanto nebuloso nessa classificação é a 
+\begin_inset Quotes eld
+\end_inset 
+
+definição de novos tipos para a linguagem a partir de C
+\begin_inset Quotes erd
+\end_inset 
+
+.
+ Python e Ruby permitem criar em C classes que por sua vez produzem instâncias
+ na VM.
+ Lua permite criar tabelas, mas estas 
+\emph on 
+são
+\emph default 
+ instâncias na VM.
+ Mesmo uma FLI simplista do tipo 'tudo via string' permite criar tipos complexos
+ (
+\begin_inset Quotes eld
+\end_inset 
+
+x = { foo=4, bar=2 }
+\begin_inset Quotes erd
+\end_inset 
+
+), mas possivelmente não obtê-los, a não ser que ganhem uma representação
+ como 
+\emph on 
+handle
+\emph default 
+ (registro de Lua como exemplo de manipulação de objetos da VM via 
+\emph on 
+handles
+\emph default 
+).]
 \layout Bibliography
 \bibitem {ltn004}
 
