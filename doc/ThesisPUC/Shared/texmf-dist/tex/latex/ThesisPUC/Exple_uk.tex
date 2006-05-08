@@ -1,0 +1,123 @@
+\documentclass[msc,twoside,british]{ThesisPUC_uk}
+
+\renewcommand{\subfigtopskip}{0in}
+\renewcommand{\subfigcapskip}{0in}
+\renewcommand{\subfigbottomskip}{0in}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\Rset}{\mathbb{R}}
+\newcommand{\Zset}{\mathbb{Z}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\author{Thomas Lewiner}
+\authorR{Lewiner, Thomas}
+\adviser{Hélio Côrtes Vieira Lopes}
+\adviserR{Lopes, Hélio Côrtes Vieira}
+\coadviser{Geovan Tavares dos Santos}
+\coadviserR{Santos, Geovan Tavares dos}
+\title{Constructing Discrete Morse Functions}
+\day{10} \month{July} \year{2002}
+
+\city{Rio de Janeiro}
+\CDD{510}
+\department{Matematicc}
+\program{Applied Matematics}
+\school{Science and Engineering Center}
+\university{Pontif\'{i}cia Universidade Cat\'{o}lica do Rio de Janeiro}
+\uni{PUC--Rio}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\jury{%
+  \jurymember{Luis Velho}{Visgraf Laboratory --- IMPA}%
+  \jurymember{Jorge Stolfi}{Institute of Computing -- UNICAMP}%
+  \schoolhead{José Eugenio Leal}%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\resume{%
+Thomas Lewiner graduated from the Ecole Polytechnique (Paris, France) in Algebra and Computer Science, and in Theoretical Physics. He then specialized at the Ecole Supérieure des Télécommunications (Paris, France) in Signal and Image Processing, and in Project Management, while working for Inventel in wireless telecommunication systems based on BlueTooth technology. He then obtained a Master degree at the PUC--Rio in computational topology, and actively participated on the department's work for Petrobras.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\acknowledgment{%
+To my advisors Professors H\'{e}lio Lopes and Geovan Tavares for the support, the everyday kindness and the incentive for the realisation of this work.
+
+To the CNPq and the PUC--Rio, for the financial support, without which this work would not have been realized.
+
+To my grand--mothers, who suffered the most of my expatriation. To my mother and father, sisters and all my family.
+
+To my colleagues of the PUC--Rio, who have me loved this place.
+
+To the professors Marcos da Silvera, Jean--Marie Nicolas and Anne Germa who offered me the opportunity of this cooperation.
+
+To the people of the Mathematic departament for the constant help, particularly to Ana Cristina, Creuza and Sinesio.
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\keywords{
+  \key{Morse Theory}%
+  \key{Forman Theory}%
+  \key{Computational Topology}%
+  \key{Computational Geometry}%
+  \key{Solid Modeling}%
+  \key{Discrete Mathematics}%
+}
+
+\abstract{%
+Morse theory has been considered a powerful tool in its applications to computational topology, computer graphics and geometric modeling. It was originally formulated for smooth manifolds. Recently, Robin Forman formulated a version of this theory for discrete structures such as cell complexes. It opens up several categories of interesting objects (particularly meshes) to applications of Morse theory.
+
+Once a Morse function has been defined on a manifold, then information about its topology can be deduced from its critical elements. The purpose of this work is to design an algorithm to define optimal discrete Morse functions on general cell complex, where optimality entails having the least number of critical elements. This problem is proven here to be MAX--SNP hard. However, we provide a linear algorithm that, for the case of 2--manifolds, always reaches optimality.
+
+Moreover, we proved various results on the structure of a discrete Morse function. In particular, we provide an equivalent representation by hyperforests. From this point of view, we designed a construction of discrete Morse functions for general cell complexes of arbitrary finite dimension. The resulting algorithm is quadratic in time and, although not guaranteed to be optimal, gives optimal answers in most of the practical cases.
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tablesmode{fig} % none, fig, tab ou figtab
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\epigraph{%
+Un ab\^{i}me effrayant, une profusion de questions de toutes sortes o\`{u} ma responsabilit\'{e} \'{e}tait en jeu se pr\'{e}sentaient \`{a} moi. Et la plus importante: qu'est--ce qui doit remplacer l'objet manquant? Le danger d'un art ornemental m'apparaissait clairement, la morte existence illusoire des formes stylis\'{e}es ne pouvait que me rebuter.
+
+C'est seulement apr\`{e}s de nombreuses ann\'{e}es d'un travail patient, d'une r\'{e}flexion intense, d'essais nombreux et prudents o\`{u} je d\'{e}veloppais toujours plus la capacit\'{e} de vivre purement, abstraitement les formes picturales et de m'absorber toujours plus pro\-fon\-d\'{e}\-ment dans ces profondeurs insondables, que j'arrivais \`{a} ces formes picturales avec lesquelles je travaille aujourd'hui et qui, comme je l'esp\`{e}re et le veux, se d\'{e}velopperont bien plus encore.
+
+Il a fallu beaucoup de temps avant que cette question: `qu'est ce qui doit remplacer l'objet ?' trouve en moi une v\'{e}ritable r\'{e}ponse. Souvent je me retourne vers mon pass\'{e} et je suis desesp\'{e}r\'{e} de voir combien de temps il m'a fallu pour arriver \`{a} cette solution.
+}
+\epigraphauthor{Wassily Kandinsky}
+\epigraphbook{Regards sur le pass\'{e}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\chapter{Future works}
+
+This work was focused on Forman's discrete Morse theory. We analyzed the building blocs of this theory, and proved the layered structure of discrete Morse functions. We represented this layer structure by a collection of hyperforests and gave a complete characterization of the critical cells in terms of regular components of hyperforests. We used this analysis to introduce a scheme for constructing discrete Morse function on finite cell complexes of arbitrary dimension. This construction is quadratic in time in the worst cases, and is proven to be linear and optimal in the case of 2-manifolds. The experimental results showed our algorithm gave an optimal result in most of the cases. This opens the question of which conditions on the cell complex would ensure the optimality of the resulting function.
+
+An important application of this work to computer graphics would be in the field of geometric compression. The algorithm Grow\&Fold of A. Szymczak and J. Rossignac \cite{Szy00} could be justified and enhanced by our algorithm to minimize the number of so-called ``glue faces'' in order to achieve a better encoding. This work has been done in an optimal way for the case of surfaces with handles in \cite{Lop02}.
+
+We plan to continue this work in three directions. First, as mentioned above, apply Forman's theory and the analysis of our algorithm for solid mesh compression. Second, we will try to apply discrete Morse theory to resolve singularities that arise from shape reconstruction. Finally, we look forward to produce a topologically consistent morphing based on mapping directly the discrete gradient field between two objects of the same homotopy type.
+
+\begin{figure}
+  \includegraphics*[width=\linewidth]{ctor4_none.eps}
+  \caption{Uma figura}
+\end{figure}
+
+\bibliography{Exple}
+\end{document}

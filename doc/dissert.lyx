@@ -1,14 +1,26 @@
 #LyX 1.3 created this file. For more info see http://www.lyx.org/
 \lyxformat 221
-\textclass book
+\textclass ThesisPUC
+\begin_preamble
+\titulo{Estudo sobre APIs para Máquinas Virtuais}
+\autor{Hisham H. Muhammad}
+\autorR{Muhammad, Hisham H.}
+\orientador{Roberto Ierusalimschy}
+\orientadorR{Ierusalimschy, Roberto}
+\dia{11} \mes{Junho} \ano{2006}
+\cidade{Rio de Janeiro}
+\departamento{Informática}
+\programa{Informática}
+\centro{Centro Técnico Científico}
+\end_preamble
 \language brazil
 \inputencoding auto
 \fontscheme default
 \graphics default
-\paperfontsize 12
+\paperfontsize default
 \spacing single 
-\papersize a4paper
-\paperpackage a4wide
+\papersize Default
+\paperpackage a4
 \use_geometry 0
 \use_amsmath 0
 \use_natbib 0
@@ -101,35 +113,19 @@ ponte
  na interação entre FLIs.
 \layout Section
 
-Objetivo (TODO: título decente)
+Objetivo
 \layout Standard
 
-
-\color red
-TODO: ESCREVER ESTA SEÇÃO, com base no texto a seguir -> BLOCO I - Este
- trabalho procura traçar um panorama dos recursos e técnicas de interoperabilida
-de entre linguagens de programação.
+Este trabalho realiza, a partir da pesquisa de implementações de FLIs, um
+ estudo e comparação de interfaces entre diferentes linguagens de programação.
  Partindo de uma análise das abordagens gerais para interação entre linguagens,
- concentraremos o foco em um estudo comparativo entre FLIs e, em especial,
- APIs para C.
- Com isto, objetivamos, dentro das questões que envolvem o desenvolvimento
- de uma FLI, identificar vantagens e desvantagens das diferentes alternativas
- e compreender melhor a relação entre estas questões, ou seja, o impacto
- causado por uma decisão de projeto sobre as demais.
-\layout Standard
-
-
-\color red
-BLOCO II - Este trabalho pretende, a partir da pesquisa de implementações
- de FLIs, propor uma base para o estudo e comparação de interfaces entre
- diferentes linguagens de programação.
- Especificamente, voltaremos o nosso foco a interfaces com C providas por
- linguagens imperativas baseadas em máquina virtual com coleta de lixo e
- tipagem dinâmica.
+ o estudo é baseado na análise de uma série de interfaces com C providas
+ por linguagens imperativas baseadas em máquina virtual.
  Além de se tratar da classe de linguagens mais popular atualmente para
- desenvolvimento multi-linguagem, essas duas últimas características, por
- não estarem presentes em C, ilustram bem os problemas envolvendo a comunicação
- de dados entre diferentes ambientes de programação.
+ desenvolvimento multi-linguagem, características típicas de máquinas virtuais
+ como coleta de lixo e tipagem dinâmica, por não estarem presentes em C,
+ ilustram bem os problemas envolvendo a comunicação de dados entre diferentes
+ ambientes de programação.
  Linguagens com tipagem estática podem apresentar necessidades de conversão
  de tipos semelhantes, mas o problema tende a ser simplificado pela definição
  de tipos equivalentes na API e inferência em tempo de compilação (vide
@@ -139,15 +135,21 @@ BLOCO II - Este trabalho pretende, a partir da pesquisa de implementações
  causada tratamento de entrada e saída que todas elas enfrentam.
 \layout Standard
 
-
-\color red
-Pretendemos embasar o estudo na análise em profundidade de um conjunto de
- FLIs; atualmente, considera-se utilizar as interfaces de Python, Perl,
- Ruby, Lua e Java.
+O estudo consiste da análise em profundidade de um conjunto de FLIs -- especific
+amente, Python, Perl, Ruby, Lua e Java -- e um estudo de caso onde estas
+ FLIs são exercitadas em tarefas semelhantes.
  Diferentemente das demais, Java possui tipagem estática, mas com a sua
  biblioteca de reflexão, que oferece recursos de intercessão como carga
  de classes em tempo de execução e invocação dinâmica de métodos, é possível
  encará-la, para os fins de interação com código C, como uma linguagem dinâmica.
+\layout Standard
+
+
+\color red
+Falta um parágrafo de fecho
+\layout Section
+
+Estrutura do Texto
 \layout Chapter
 
 Interação entre linguagens de programação
@@ -1966,8 +1968,6 @@ Responsável pelo encerramento do ambiente.
 \layout Bibliography
 \bibitem {finne-fli}
 
-
-\size footnotesize 
 FINNE, S.; LEIJEN, D.; MEIJER, E.; PEYTON JONES, S.
  
 \series bold 
@@ -1981,8 +1981,6 @@ H/Direct: a Binary Foreign Language Interface for Haskell
 \layout Bibliography
 \bibitem {ada95}
 
-
-\size footnotesize 
 ANSI/ISO/IEC-8652:1995; 
 \series bold 
 Ada 95 Reference Manual
@@ -1997,8 +1995,6 @@ Lecture Notes in Computer Science
 \layout Bibliography
 \bibitem {tarditi92no}
 
-
-\size footnotesize 
 TARDITI, D.; LEE, P.; ACHARYA, A.
  
 \series bold 
@@ -2012,8 +2008,6 @@ No Assembly Required: Compiling Standard ML to C
 \layout Bibliography
 \bibitem {tolmach-from}
 
-
-\size footnotesize 
 TOLMACH, A.; OLIVA, D.
  
 \series bold 
@@ -2025,8 +2019,6 @@ From ML to Ada: Strongly-typed Language Interoperability via Source Translation
 \layout Bibliography
 \bibitem {jones93glasgow}
 
-
-\size footnotesize 
 PEYTON JONES, S.; HALL, C.; HAMMOND, K.; PARTAIN, W.; WADLER, P.
  
 \series bold 
@@ -2038,8 +2030,6 @@ The Glasgow Haskell compiler: a technical overview
 \layout Bibliography
 \bibitem {gosling-java}
 
-
-\size footnotesize 
 GOSLING, J.; JOY, B.; STEELE, G.
  
 \series bold 
@@ -2052,8 +2042,6 @@ The Java Language Specification
 \layout Bibliography
 \bibitem {hugunin-jython}
 
-
-\size footnotesize 
 HUGUNIN, J.
  
 \series bold 
@@ -2065,8 +2053,6 @@ Java and Python: the Best of Both Worlds
 \layout Bibliography
 \bibitem {lutz-python}
 
-
-\size footnotesize 
 LUTZ, M.
  
 \series bold 
@@ -2080,8 +2066,6 @@ Programming Python
 \layout Bibliography
 \bibitem {luajava}
 
-
-\size footnotesize 
 Kepler Project.
 
 \series bold 
@@ -2097,8 +2081,6 @@ Kepler Project.
 \layout Bibliography
 \bibitem {lua}
 
-
-\size footnotesize 
 IERUSALIMSCHY, R.; FIGUEIREDO, L.H.; CELES, W.; 
 \series bold 
 Lua -- an Extensible Extension Language
@@ -2109,8 +2091,6 @@ Lua -- an Extensible Extension Language
 \layout Bibliography
 \bibitem {benton99interlanguage}
 
-
-\size footnotesize 
 BENTON, N.; KENNEDY, A.
  
 \series bold 
@@ -2123,8 +2103,6 @@ Interlanguage Working Without Tears: Blending SML with Java
 \layout Bibliography
 \bibitem {box-net}
 
-
-\size footnotesize 
 BOX, D.; SELLS, C.
  
 \series bold 
@@ -2137,8 +2115,6 @@ Essential .NET, Volume I: The Common Language Runtime
 \layout Bibliography
 \bibitem {hejlsberg-csharp}
 
-
-\size footnotesize 
 HEJLSBERG, A.; WILTAMUTH, S.
  
 \series bold 
@@ -2149,8 +2125,6 @@ C# Language Specification
 \layout Bibliography
 \bibitem {managedcpp}
 
-
-\size footnotesize 
 Microsoft Corporation.
  
 \series bold 
@@ -2166,8 +2140,6 @@ Managed Extensions for C++ Specification
 \layout Bibliography
 \bibitem {syme-fsharp}
 
-
-\size footnotesize 
 SYME, D.; MARGETSON, J.; MARLOW, S.
 
 \series bold 
@@ -2184,8 +2156,6 @@ SYME, D.; MARGETSON, J.; MARLOW, S.
 \layout Bibliography
 \bibitem {randal-perl6}
 
-
-\size footnotesize 
 RANDAL, A.; SUGALSKI, D.; TOETSCH, L.
  
 \series bold 
@@ -2199,8 +2169,6 @@ Perl 6 and Parrot Essentials
 \layout Bibliography
 \bibitem {conway-uncol}
 
-
-\size footnotesize 
 CONWAY, M.
  
 \series bold 
@@ -2214,8 +2182,6 @@ Proposal for an UNCOL
 \layout Bibliography
 \bibitem {metzner-xl}
 
-
-\size footnotesize 
 METZNER, J.
  
 \series bold 
@@ -2230,8 +2196,6 @@ A Graded Bibliography on Macro Systems and Extensible Languages
 \layout Bibliography
 \bibitem {peterson-fpy}
 
-
-\size footnotesize 
 PETERSON, P.; MARTINS, J.R.R.A; ALONSO, J.J.; 
 \series bold 
 Fortran to Python Interface Generator with an Application to Aerospace Engineeri
@@ -2243,8 +2207,6 @@ ng
 \layout Bibliography
 \bibitem {lunatic-python}
 
-
-\size footnotesize 
 NIEMEYER, G.
  
 \series bold 
@@ -2260,8 +2222,6 @@ Lunatic Python
 \layout Bibliography
 \bibitem {jones99portable}
 
-
-\size footnotesize 
 PEYTON JONES, S.; RAMSEY, N.; REIG, F.
  
 \series bold 
@@ -2273,8 +2233,6 @@ C--: a Portable Assembly Language that Supports Garbage Collection
 \layout Bibliography
 \bibitem {dvorak05gcc}
 
-
-\size footnotesize 
 DVORAK, Z.
  
 \series bold 
@@ -2289,8 +2247,6 @@ Em: GCC DEVELOPERS' SUMMIT, PROCEEDINGS.
 \layout Bibliography
 \bibitem {omg-corba}
 
-
-\size footnotesize 
 Object Management Group, Inc.
  
 \series bold 
@@ -2300,8 +2256,6 @@ The Common Object Request Broker: Architecture and Specification
 \layout Bibliography
 \bibitem {gelernter-linda}
 
-
-\size footnotesize 
 GELERNTER, D.
  
 \series bold 
@@ -2317,8 +2271,6 @@ Generative communication in Linda
 \layout Bibliography
 \bibitem {chapman-opus}
 
-
-\size footnotesize 
 CHAPMAN, B.; HAINES, M.; MEHROTRA, P.; ZIMA, H.; VAN ROSENDALE, J.
  
 \series bold 
@@ -2331,8 +2283,6 @@ Opus: A Coordination Language for Multidisciplinary Applications
 \layout Bibliography
 \bibitem {collin-eiffel}
 
-
-\size footnotesize 
 COLLIN, S.; COLNET, D.; ZENDRA, O.
  
 \series bold 
@@ -2351,8 +2301,6 @@ Lecture Notes in Computer Science
 \layout Bibliography
 \bibitem {thomas-ruby}
 
-
-\size footnotesize 
 THOMAS, D.; FOWLER, C.; HUNT, A.
  
 \series bold 
@@ -2365,8 +2313,6 @@ Programming Ruby: The Pragmatic Programmer's Guide
 \layout Bibliography
 \bibitem {vanrossum-extpy}
 
-
-\size footnotesize 
 VAN ROSSUM, G.
  
 \series bold 
@@ -2378,8 +2324,6 @@ Extending and Embedding the Python Interpreter
 \layout Bibliography
 \bibitem {wilson-gc}
 
-
-\size footnotesize 
 WILSON, P.
  
 \series bold 
@@ -2393,8 +2337,6 @@ Uniprocessor Garbage Collection Techniques
 \layout Bibliography
 \bibitem {liang-jni}
 
-
-\size footnotesize 
 LIANG, S.
  
 \series bold 
@@ -2406,8 +2348,6 @@ Java Native Interface: Programmer's Guide and Specification
 \layout Bibliography
 \bibitem {moura-colua}
 
-
-\size footnotesize 
 MOURA, A.L.; RODRIGUEZ, N.; IERUSALIMSCHY, R.
  
 \series bold 
@@ -2420,8 +2360,6 @@ Coroutines in Lua
 \layout Bibliography
 \bibitem {beazley-swig}
 
-
-\size footnotesize 
 BEAZLEY, D.; 
 \series bold 
 SWIG and Automated C/C++ Scripting Extensions
@@ -2432,8 +2370,6 @@ SWIG and Automated C/C++ Scripting Extensions
 \layout Bibliography
 \bibitem {ewing-pyrex}
 
-
-\size footnotesize 
 EWING, G.; 
 \series bold 
 Pyrex - a Language for Writing Python Extension Modules
@@ -2445,4 +2381,40 @@ Pyrex - a Language for Writing Python Extension Modules
 \end_inset 
 
 
+\layout Bibliography
+\bibitem {ltn004}
+
+
+\color red
+TODO - Pegar as referências de verdade;
+\color default
+ http://www.lua.org/notes/ltn004.html
+\layout Bibliography
+\bibitem {pyvhll_ext}
+
+http://www.python.org/doc/ext/high-level-embedding.html
+\layout Bibliography
+\bibitem {pyvhll_ref}
+
+http://www.python.org/doc/api/veryhigh.html
+\layout Bibliography
+\bibitem {ext_ruby}
+
+http://www.rubycentral.com/book/ext_ruby.html
+\layout Bibliography
+\bibitem {perlembed}
+
+http://www.perl.com/doc/manual/html/pod/perlembed.html
+\layout Bibliography
+\bibitem {tcl}
+
+http://wiki.tcl.tk/2074
+\layout Bibliography
+\bibitem {janino}
+
+http://www.janino.net
+\layout Bibliography
+\bibitem {py-hardtofix}
+
+http://www.python.org/doc/api/initialization.html
 \the_end

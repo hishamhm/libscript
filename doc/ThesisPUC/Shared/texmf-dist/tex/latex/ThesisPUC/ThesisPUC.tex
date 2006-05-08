@@ -1,0 +1,313 @@
+\documentclass[a4paper]{article}
+\usepackage[brazil]{babel}
+\usepackage{multicol}
+\usepackage{makeidx}
+\usepackage{float}
+\usepackage{array}
+%\usepackage{a4wide}
+\usepackage{boxedminipage}
+\usepackage[dvipdfm]{hyperref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\makeindex
+\title{Normas para apresenta\c{c}\~{a}o de teses e disserta\c{c}\~{o}es em \LaTeX}
+\author{\textbf{Thomas Lewiner} (Departamento de Matem\'{a}tica)\\
+        \textbf{Marcelo Roberto Jimenez} (CETUC)\\
+        PUC--Rio}
+\def\latex/{\protect\LaTeX{}}
+\newcommand{\bs}{\symbol{'134}}
+\newcommand{\Cmd}[1]{\hspace{1em}\texttt{\def\{{\char`\{}\def\}{\char`\}}\bs#1}\ }
+\newcommand{\CmdIndex}[1]{\index{#1@\texttt{\bs#1}}\Cmd{#1}\ }
+\newcommand{\TTIndex}[1]{\index{#1@\texttt{#1}}\ }
+\restylefloat{figure}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.9}
+\renewcommand{\textfraction}{0.05}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1ex}
+\setlength{\emergencystretch}{4em}
+\addtolength{\textheight}{-0.5in} % make it print better on US letter paper
+\makeatletter
+\renewcommand\l@section      {\@dottedtocline{1}{1.5em}{2.3em}}
+\makeatother
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Este documento apresenta os modos de usar o \LaTeX\ com o pacote \textsf{thesisPUC} para formatar teses e disserta\c{c}\~{o}es seguindo as normas de 2001.
+\end{abstract}
+\tableofcontents
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduc\c{c}\~{a}o}
+
+\TTIndex{\LaTeX} \LaTeX\ \'{e} um sistema de editora\c{c}\~{a}o eletr\^{o}nica muito usado para produzir documentos cient\'{i}ficos de alta qualidade tipogr\'{a}fica. O sistema tamb\'{e}m \'{e} \'{u}til para produzir todos os tipos de outros documentos, desde simples cartas at\'{e} livros completos.
+
+Se voc\^{e} precisar de algum material de apoio referente ao \LaTeX, d\^{e} uma olhada em um dos sites do \TTIndex{CTAN} Comprehensive TEX Archive Network (CTAN). O site est\'{a} em \href{http://www.ctan.org/}{www.ctan.org}. Todos os pacotes podem ser obtidos do \textsf{FTP} \href{ftp://www.ctan.org/}{ftp://www.ctan.org} e existem v\'{a}rios servidores em todo o mundo. Eles podem ser encontrados, por exemplo, em \href{ftp://ctan.tug.org/}{ftp://ctan.tug.org} (EUA), \href{ftp://ftp.dante.de/}{ftp://ftp.dante.de} (Alemanha), \href{ftp://ftp.tex.ac.uk/}{ftp://ftp.tex.ac.uk} (Reino Unido). Se voc\^{e} n\~{a}o est\'{a} em nenhum destes pa\'{i}ses, escolha o servidor mais perto de voc\^{e}.
+
+Voc\^{e} ir\'{a} encontrar \TTIndex{refer\^{e}ncias} refer\^{e}ncias ao CTAN por todo o livro. Em particular, existe uma introdu\c{c}\~{a}o bastante completa em portugu\^{e}s: \href{http://www.ctan.org/tex-archive/info/lshort/portuguese-BR/lshortBR.pdf}{CTAN:/tex-archive/info/lshort/portuguese-BR/}.
+
+Se voc\^{e} quer usar o \LaTeX\ em seu computador, verifique em quais sistemas ele est\'{a} dispon\'{i}vel em \href{http://www.ctan.org/tex-archive/systems/}{CTAN:/tex-archive/systems}. Em particular para \textsf{MS Windows}, o sistema de gra\c{c}a \TTIndex{MiKTeX} \href{http://www.miktex.org/}{MikTeX}, dispon\'{i}vel no CTAN e no site \href{http://www.miktex.org/}{www.miktex.org} \'{e} completo, atualizado da todas as op\c{c}\~{o}es  que voc\^{e} poderia precisar para editar a sua tese. Para os demais sistemas, o \TTIndex{dvipdfm} pode ser encontrado no site \href{http://gaspra.kettering.edu/dvipdfm/}{http://gaspra.kettering.edu/dvipdfm/}.
+
+O estilo \textsf{thesisPUC} se integra completamente ao \LaTeXe. Em particular, \'{e} poss\'{i}vel escrever o texto direitamente com os acentos. A vera\~{a}o final da tese pode ser editada em um arquivo \CmdIndex{PDF}, com o {\tt Acrobat} ou, melhor, \CmdIndex{dvipdfm} para o qual o formato esta otimizado. Nesse caso, o arquivo PDF pode ser gerado em v\'{a}rios peda\c{c}os usando a op\c{c}\~{a}o \verb|-s| de \verb|dvipdfm|. E poss\'{i}vel usar o corretor ortogr\'{a}fico do \CmdIndex{MS Word} gerando um arquivo \CmdIndex{html} a traves do |cmdIndex{tth} por exemplo, e abrir aquele arquivo {\tt html} com o {\tt MS Word}. Uma tese ou disserta\c{c}\~{a}o escrita no estilo padr\~{a}o do \LaTeX\ para teses (estilo \CmdIndex{report}) pode ser formatada em 15 minutos para cumprir com as normas da PUC--Rio.
+
+O estilo \textsf{thesisPUC} foi desenhado para minimizar a quantidade de texto e de comandos necess\'{a}rios para escrever a sua disserta\c{c}\~{a}o. S\'{o} \'{e} preciso inserir alguns comandos no come\c{c}o do seu arquivo \LaTeX, precisando os \TTIndex{dados bibliogr\'{a}ficos} dados bibliogr\'{a}ficos da sua tese (por exemplo o seu nome, o titulo da tese...). Em seguida, cada p\'{a}gina dos elementos pr\'{e}--textuais esta formatada usando comandos espec\'{i}ficos. O corpo do texto \'{e} editado normalmente. Finalmente, as refer\^{e}ncias bibliogr\'{a}ficas podem ser entradas a m\~{a}o (via o comando \Cmd{bibitem} do \LaTeX\ padr\~{a}o) ou usando o sistema BiBTeX. Neste caso, o arquivo \verb|thesisPUC.bst| permite a formata\c{c}\~{a}o das refer\^{e}ncias bibliogr\'{a}ficas seguindo as normas da PUC--Rio.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Uso simples do pacote \textsf{thesisPUC}}
+
+\subsection{Op\c{c}\~{o}es do pacote}\TTIndex{Op\c{c}\~{o}es do pacote}
+
+Para usar este pacote num documento \LaTeXe, coloque os arquivos \verb|atbeginend.sty|,\ \verb|chngpage.sty|,\ \verb|fancyhdr.sty|,\ \verb|hyperref.sty|,\ \verb|indentfirst.sty|,\ \verb|inputenc.sty|,\ \verb|keyval.sty|,\ \verb|nameref.sty|,\ \verb|setspace.sty|,\ \verb|subfigure.sty|,\ \verb|titlesec.sty|,\ \verb|titletoc.sty|,\ \verb|tocloft.sty|,\ \verb|hypertex.def|,\ \verb|noaccent.def|,\ \verb|pd1enc.def|,\ \verb|ttlkeys.def|,\ \verb|ttlps.def| numa pasta onde \TeX pode ach\'{a}--lo (normalmente na mesma pasta que seu arquivo \verb|.tex|), e defina--o como o estilo do seu documento:
+
+\begin{verbatim}
+\documentclass[dissertacao,brazil]{ThesisPUC}
+...
+\begin{document}
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Dados Bibliogr\'{a}ficos}\TTIndex{dados bibliogr\'{a}ficos}
+Depois disso, tem que definir os dados bibliogr\'{a}ficos da sua tese. Por exemplo:
+
+\begin{verbatim}
+\autor{Thomas Maurice Lewiner}
+\autorR{Lewiner, Thomas}
+\orientador{H\'{e}lio C\^{o}rtes Vieira Lopes}
+\orientadorR{Lopes, H\'{e}lio C\^{o}rtes Vieira}
+\coorientador{Geovan Tavares dos Santos}
+\coorientadorR{Santos, Geovan Tavares dos}
+\titulo{Constru\c{c}\~{a}o de fun\c{c}\~{o}es de Morse discretas}
+\subtitulo{Das hiperflorestas at\'{e} complexos celulares}
+\dia{10} \mes{Julho} \ano{2002}
+
+\cidade{Rio de Janeiro}
+\CDD{510}
+\departamento{Matem\'atica}
+\programa{Matem\'atica Aplicada}
+\centro{Centro T\'{e}cnico Cient\'{i}fico}
+\universidade{Pontif\'{i}cia Universidade Cat\'{o}lica do Rio de Janeiro}
+\uni{PUC--Rio}
+\end{verbatim}
+
+Pode especificar outros coorientadores com os comandos \verb|\coorientadorII| e \verb|\coorientadorIIR|, \verb|\coorientadorIII| e \verb|\coorientadorIIR|. Tamb\'{e}m \'{e} poss\'{i}vel definir uma institui\c{c}\~{a}o diferente para um dos orientadores com os comandos \verb|\orientadorInst|, \verb|\coorientadorInst|, \verb|\coorientadorIIInst| e \verb|\coorientadorIIIInst|.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Elementos Pr\'{e}--Textuais}\TTIndex{Elementos Pr\'{e}--Textuais}
+Os elementos pr\'{e}--textuais s\~{a}o definidos um por um, com as seguintes fun\c{c}\~{o}es:
+
+\begin{verbatim}
+\banca{
+  \membrodabanca{Luis Carlos Pacheco R. Velho}{IMPA}
+  \membrodabanca{Jorge Stolfi}{UNICAMP}
+  \coordenador{Ney Augusto Dumont}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\curriculo{%
+Graduou--se em Engenharia na Ecole Polytechnique (Paris, Fran\c{c}a), ...}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\agradecimentos{
+  Aos meus orientadores...
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chaves{%
+  \chave{Teoria de Morse}%
+  \chave{Teoria de Forman}%
+  \chave{Topologia Computacional}%
+  \chave{Geometria Computacional}%
+  \chave{Modelagem Geom\'{e}trica}%
+  \chave{Matem\'{a}tica Discreta}%
+}
+
+\resumo{
+  A teoria de Morse \'{e} considerada uma ferramenta matem\'{a}tica importante em
+  aplica\c{c}\~{o}es nas \'{a}reas de topologia computacional, computa\c{c}\~{a}o
+  gr\'{a}fica e modelagem geom\'{e}trica....
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chavesuk{
+  \chave{Morse Theory}%
+  \chave{Forman Theory}%
+  \chave{Computational Topology}%
+  \chave{Computational Geometry}%
+  \chave{Solid Modeling}%
+  \chave{Discrete Mathematics}%
+}
+
+\titulouk{Constructing discrete Morse functions}
+
+\resumouk{%
+  Morse theory has been considered a powerful tool in its applications
+  to computational topology, computer graphics and geometric modeling....
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\modotabelas{figtab} % nada, fig, tab ou figtab
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\epigrafe{%
+  C'est seulement apr\`{e}s de nombreuses ann\'{e}es d'un travail patient, d'une
+  r\'{e}flexion intense, d'essais nombreux et prudents o\`{u} je d\'{e}veloppais 
+  toujours plus la capacit\'{e} de vivre purement, abstraitement les formes
+  picturales et de m'absorber toujours plus pro\-fon\-d\'{e}\-ment dans ces
+  profondeurs insondables, que j'arrivais \`{a} ces formes picturales avec
+  lesquelles je travaille aujourd'hui et qui, comme je l'esp\`{e}re et le veux,
+  se d\'{e}velopperont bien plus encore.
+}
+\epigrafeautor{Wassily Kandinsky}
+\epigrafelivro{Regards sur le pass\'{e}}
+
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Op\c{c}\~{o}es do pacote}\TTIndex{Op\c{c}\~{o}es do pacote}
+
+O pacote tem as seguintes op\c{c}\~{o}es:
+
+\CmdIndex{doutorado} ou \CmdIndex{tese} ou \CmdIndex{phd} : tese de doutorado \\
+\CmdIndex{mestrado} ou \CmdIndex{dissertacao} ou \CmdIndex{msc} : disserta\c{c}\~{a}o de mestrado \\
+Obviamente, essas duas op\c{c}\~{o}es n\~{a}o podem ser usadas no mesmo arquivo. Se nenhuma op\c{c}\~{a}o for declarada, o documento \'{e} considerado como uma disserta\c{c}\~{a}o de mestrado.
+
+\CmdIndex{modelo1} ou \CmdIndex{wide} : modelo 1 das normas da PUC--Rio 2001 \\
+\CmdIndex{modelo2} ou \CmdIndex{tight} : modelo 1 das normas da PUC--Rio 2001 \\
+Obviamente, essas duas op\c{c}\~{o}es n\~{a}o podem ser usadas no mesmo arquivo. Se nenhuma op\c{c}\~{a}o for declarada, a formata\c{c}\~{a}o seguir\'{a} o modelo 1.
+
+\CmdIndex{frenteverso} ou \CmdIndex{twoside} : Essa opp\c{c}\~{a}o permite ajeitar o documento para sempre come\c{c}ar um cap\'{i}tulo na p\'{a}gina da direita, e ajeitar os encabelha\c{c}os para serem simetricos.
+
+\CmdIndex{american}, \CmdIndex{english}, \CmdIndex{french}, \CmdIndex{german}, \CmdIndex{brasil}, \CmdIndex{portuguese}: op\c{c}\~{o}es do pacote Babel. \\
+Essas op\c{c}\~{o}es permitem usar a hifeniza\c{c}\~{a}o e as palavras chaves do idioma escolhido com o pacote Babel\footnote{Para usar Babel em portugu\^{e}s com o MiKTeX, \'{e} preciso ir nas op\c{c}\~{o}es do MiKTeX (menu \textsf{Iniciar} de \textsf{MS Windows}), escolher o pacote para o portugu\^{e}s, e fazer o \textsf{Update} dos arquivos de formata\c{c}\~{a}o}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Dados Bibliogr\'{a}ficos}\TTIndex{dados bibliogr\'{a}ficos}
+
+\'{E} preciso definir os seguintes dados no come\c{c}o do seu documento:
+
+\CmdIndex{author}  ou \CmdIndex{autor}  : O nome completo do autor da tese, come\c{c}ando pelo apelido \\
+\CmdIndex{authorR} ou \CmdIndex{autorR} : O nome completo do autor da tese, come\c{c}ando pelo nome
+
+\CmdIndex{orientador}     ou \CmdIndex{advisor}  : O nome completo do orientador da tese, come\c{c}ando pelo apelido \\
+\CmdIndex{orientadorR}    ou \CmdIndex{advisorR} : O nome completo do orientador da tese, come\c{c}ando pelo nome \\
+\CmdIndex{orientadorInst} ou \CmdIndex{advisorInst} : A institui\c{c}\~{a}o do orientador \\
+
+Se tiver um ou mais co--orientador, defina tamb\'{e}m os seguintes dados. Se n\~{a}o tiver um co--orientador, n\~{a}o use esses comandos. \\
+\CmdIndex{coorientador}     ou \CmdIndex{coadvisor}  : O nome completo do co--orientador da tese, come\c{c}ando pelo apelido \\
+\CmdIndex{coorientadorR}    ou \CmdIndex{coadvisorR} : O nome completo do co--orientador da tese, come\c{c}ando pelo nome
+\CmdIndex{coorientadorInst} ou \CmdIndex{coadvisorInst} : A institui\c{c}\~{a}o do orientador \\
+
+\CmdIndex{coorientadorII}     ou \CmdIndex{coadvisorII}  : O nome completo do co--orientador da tese, come\c{c}ando pelo apelido \\
+\CmdIndex{coorientadorIIR}    ou \CmdIndex{coadvisorIIR} : O nome completo do co--orientador da tese, come\c{c}ando pelo nome
+\CmdIndex{coorientadorIIInst} ou \CmdIndex{coadvisorIIInst} : A institui\c{c}\~{a}o do orientador \\
+
+\CmdIndex{coorientadorIII}     ou \CmdIndex{coadvisorIII}  : O nome completo do co--orientador da tese, come\c{c}ando pelo apelido \\
+\CmdIndex{coorientadorIIIR}    ou \CmdIndex{coadvisorIIIR} : O nome completo do co--orientador da tese, come\c{c}ando pelo nome
+\CmdIndex{coorientadorIIIInst} ou \CmdIndex{coadvisorIIIInst} : A institui\c{c}\~{a}o do orientador \\
+
+\CmdIndex{titulo} ou \CmdIndex{title} : O t\'{i}tulo da tese ou da disserta\c{c}\~{a}o
+
+Se tiver um subt\'{i}tulo, use este comando para defini--lo: \\
+\CmdIndex{subtitulo} ou \CmdIndex{subtitle} : O subt\'{i}tulo da tese ou da disserta\c{c}\~{a}o
+
+A data da defesa deve ser preenchida como segue: \\
+\CmdIndex{dia} ou \CmdIndex{day} : O dia do m\^{e}s \\
+\CmdIndex{mes} ou \CmdIndex{month} : O nome do m\^{e}s em letras, com mai\'{u}scula na primeira letra \\
+\CmdIndex{ano} ou \CmdIndex{year} : O ano com 4 letras
+
+\CmdIndex{CDD} : O CDD das publica\c{c}\~{o}es do departamento (a perguntar a uma das bibliotecas).
+
+\CmdIndex{departamento} ou \CmdIndex{department} : O nome do departamento, com mai\'{u}scula na primeira letra \\
+\CmdIndex{programa} ou \CmdIndex{program} : O nome do programa, com mai\'{u}scula na primeira letra \\
+\CmdIndex{centro} ou \CmdIndex{school} : O nome do centro. A ecolha padra\~{a}o \'{e} \textsf{Centro T\'{e}cnico Cient\'{i}fico}
+
+Se a universidade for diferente da PUC--Rio, precise tamb\'{e}m: \\
+\CmdIndex{universidade} ou \CmdIndex{university} : O nome completo da universidade. A ecolha padra\~{a}o \'{e} \textsf{Pontif\'{i}cia Universidade Cat\'{o}lica do Rio de Janeiro} \\
+\CmdIndex{uni} ou \CmdIndex{uni} : O nome reduzido da universidade. A ecolha padra\~{a}o \'{e} \textsf{PUC} \\
+\CmdIndex{cidade} ou \CmdIndex{city} : A cidade de edi\c{c}\~{a}o. A ecolha padra\~{a}o \'{e} \textsf{Rio de Janeiro}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Elementos pr\'{e}--textuais}\TTIndex{Elementos Pr\'{e}--Textuais}
+
+\subsection{banca}
+
+\CmdIndex{banca} ou \CmdIndex{jury} : comando para definir os termos de aprova\c{c}\~{a}o da Banca Examinadora da tese ou disserta\c{c}\~{a}o.
+
+\CmdIndex{membrodabanca} ou \CmdIndex{jurymember} : Entrada para o nome do primeiro examinador, embora o(s) orientador(es) e o coordenador setorial. \\
+\CmdIndex{coordenador} ou \CmdIndex{schoolhead} : Entrada para o nome do coordenador setorial.
+
+\subsection{curriculo}
+
+\CmdIndex{curriculo} ou \CmdIndex{resume}: Comando para gerar os Direitos autorais, perfil do aluno e Ficha Catalogr\'{a}fica da Biblioteca Central da PUC-Rio. Esse comando usa as palavras chaves definidas por \CmdIndex{chave} ou \CmdIndex{key}.
+
+\subsection{dedicat\'{o}ria}
+
+\CmdIndex{dedicatoria} ou \CmdIndex{dedication}:  comando para escrever a dedicat\'{o}ria. \'{E} poss\'{i}vel trocar o espa\c{c}amento dentro desse comando do mesmo jeito que no \LaTeX\ padr\~{a}o.
+
+\subsection{agradecimentos}
+
+\CmdIndex{agradecimentos} ou \CmdIndex{acknowledgment}: comando para escrever os agradecimentos. \'{E} poss\'{i}vel trocar o espa\c{c}amento dentro desse comando do mesmo jeito que no \LaTeX\ padr\~{a}o.
+
+\subsection{resumo}
+
+\CmdIndex{chaves} ou \CmdIndex{keys}: A lista das palavras chaves, cada uma entrada com a fun\c{c}\~{a}o \CmdIndex{chave} ou \CmdIndex{key}.
+
+\CmdIndex{resumo} ou \CmdIndex{abstract}: comando para escrever o resumo em portugu\^{e}s.
+
+\subsection{abstract (resumo em ingl\^{e}s)}
+
+\CmdIndex{chavesuk} ou \CmdIndex{keysuk}: A lista das palavras chaves em ingl\^{e}s, cada uma entrada com a fun\c{c}\~{a}o \CmdIndex{chave} ou \CmdIndex{key}.
+
+\CmdIndex{titulouk} ou \CmdIndex{titulouk}: comando para definir o t\'{i}tulo em ingl\^{e}s, que aparece antes do resumo em ingl\^{e}s.
+
+\CmdIndex{resumouk} ou \CmdIndex{abstractuk}: comando para escrever o resumo em ingl\^{e}s.
+
+\subsection{tabelas}
+
+\CmdIndex{modotabelas} ou \CmdIndex{tablesmode}: Comando com 1 argumento opcional para gerar as tabelas. O argumento pode ser: \\
+\hspace{2em} fig : gera o sum\'{a}rio e uma lista de figuras \\
+\hspace{2em} tab : gera o sum\'{a}rio e uma lista de tabelas \\
+\hspace{2em} figtab : gera o sum\'{a}rio uma lista de tabelas, e uma lista de figuras \\
+\hspace{2em} (qualquer outra coisa)  : gera somente o sum\'{a}rio
+
+\subsection{epigrafe}
+
+\CmdIndex{epigrafe} ou \CmdIndex{epigraph}: Comando que permite editar um epigrafe, ou seja o texto da cita\c{c}\~{a}o.
+
+\CmdIndex{epigrafeautor} ou \CmdIndex{epigraphauthor}: Comando que permite definir o nome do autor da cita\c{c}\~{a}o.
+
+\CmdIndex{epigrafelivro} ou \CmdIndex{epigraphbook}: Comando que permite definir o t\'{i}tulo da refer\^{e}ncia a qual a cita\c{c}\~{a}o pertence.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\printindex
+
+\end{document}
