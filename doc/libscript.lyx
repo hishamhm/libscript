@@ -1,7 +1,7 @@
 #LyX 1.3 created this file. For more info see http://www.lyx.org/
 \lyxformat 221
 \textclass article
-\language english
+\language brazil
 \inputencoding auto
 \fontscheme default
 \graphics default
@@ -42,6 +42,8 @@ project description
  para o cadastro do projeto no SourceForge...)
 \layout Standard
 
+
+\color red
 LibScript é uma biblioteca projetada para permitir a adição de extensibilidade
  a aplicações através de 
 \emph on 
@@ -85,9 +87,13 @@ libscript-lua
  linguagens para scripting sem adicionar todas elas como suas dependências.
 \layout Section*
 
+
+\color red
 A API independente de linguagem
 \layout Standard
 
+
+\color red
 A API oferecida pela biblioteca deve ser independente de linguagem e isolar
  a aplicação das diferentes APIs oferecidas pelas linguagens de scripting.
  Não se trata apenas de adicionar uma camada de indireção entre as chamadas.
@@ -116,6 +122,8 @@ s apenas para uma linguagem, indo contra a proposta de independência de
  linguagem de LibScript.
 \layout Standard
 
+
+\color red
 Uma abordagem mais interessante é, ao invés de expor a API da linguagem
  à aplicação, expor apenas uma API de funções da aplicação para a linguagem
  e manter as estruturas de dados e recursos desta restrito ao domínio que
@@ -144,6 +152,8 @@ very high level layer
 .
 \layout Standard
 
+
+\color red
 Oferecer uma primitiva para a execução de uma string de código é algo básico
  em linguagens voltadas a script -- 
 \family typewriter 
@@ -206,16 +216,21 @@ embedded
 .
 \layout Section*
 
+
+\color red
 API atual de LibScript, 
 \emph on 
 work-in-progress
 \layout Subsection*
 
+
+\color red
 Inicialização e término
 \layout Itemize
 
 
 \family typewriter 
+\color red
 script_env* script_init(const char* namespace)
 \family default 
 
@@ -243,6 +258,7 @@ namespace
 
 
 \family typewriter 
+\color red
 void script_done(script_env* env)
 \family default 
 
@@ -250,11 +266,14 @@ void script_done(script_env* env)
 Encerra o ambiente.
 \layout Subsection*
 
+
+\color red
 Registro de funções
 \layout Itemize
 
 
 \family typewriter 
+\color red
 typedef script_err (*script_fn)(script_env*)
 \family default 
 
@@ -270,6 +289,7 @@ wrapper
 
 
 \family typewriter 
+\color red
 script_err script_new_function(script_env* env, script_fn fn, const char*
  name)
 \family default 
@@ -280,6 +300,7 @@ Registra uma função no ambiente.
 
 
 \family typewriter 
+\color red
 double script_in_double(script_env* env)
 \newline 
 int script_in_int(script_env* env)
@@ -312,6 +333,7 @@ script_in_string
 
 
 \family typewriter 
+\color red
 script_type script_in_type(script_env* env)
 \newline 
 int script_param_count(script_env* env)
@@ -337,6 +359,7 @@ script_param_count
 
 
 \family typewriter 
+\color red
 void script_out_double(script_env* env, double value)
 \newline 
 void script_out_int(script_env* env, int value)
@@ -359,6 +382,8 @@ SCRIPT_OK
  como retorno da função C.
 \layout Standard
 
+
+\color red
 As funções 
 \family typewriter 
 script_{in,out}_*
@@ -381,11 +406,14 @@ in
 .
 \layout Subsection*
 
+
+\color red
 Executando código
 \layout Itemize
 
 
 \family typewriter 
+\color red
 script_err script_run(script_env* env, const char* language, const char*
  code)
 \family default 
@@ -397,6 +425,7 @@ Executa uma string de código em uma dada linguagem.
 
 
 \family typewriter 
+\color red
 script_err script_run_file(script_env* env, const char* filename)
 \family default 
 
@@ -411,6 +440,7 @@ script_run
 
 
 \family typewriter 
+\color red
 script_err script_call(script_env* env, const char* fn)
 \family default 
 
@@ -454,6 +484,7 @@ script_call
 
 
 \family typewriter 
+\color red
 script_err script_error(script_env* env)
 \newline 
 const char* script_error_message(script_env* env)
@@ -470,11 +501,14 @@ SCRIPT_OK
  A mensagem de erro, por sua vez, não é zerada.
 \layout Subsection*
 
+
+\color red
 Funções para implementação de plugins
 \layout Itemize
 
 
 \family typewriter 
+\color red
 script_fn script_get_function(script_env* env, const char* name)
 \family default 
 
@@ -492,6 +526,7 @@ namespace
 
 
 \family typewriter 
+\color red
 void script_set_error_message(script_env* env, const char* message)
 \family default 
 
@@ -503,6 +538,7 @@ Define um novo valor para a mensagem de erro do ambiente.
 
 
 \family typewriter 
+\color red
 void script_start_params(script_env* env)
 \family default 
 
@@ -514,6 +550,7 @@ Usada para zerar a lista interna de parâmetros de entrada e saída.
 
 
 \family typewriter 
+\color red
 const char* script_get_namespace(script_env* env)
 \family default 
 
@@ -525,14 +562,20 @@ script_init
 .
 \layout Standard
 
+
+\color red
 Para linguagens que precisem carregar todas as funções na máquina virtual
  durante a inicialização do plugin, será necessário adicionar alguma funcionalid
 ade que permita iterar sobre a lista de funções registradas.
 \layout Section*
 
+
+\color red
 API exportada por plugins
 \layout Standard
 
+
+\color red
 As chamadas aos plugins que implementam interfaces com as várias máquinas
  virtuais são realizadas internamente pela biblioteca principal, que espera
  encontrar as seguintes funções:
@@ -540,6 +583,7 @@ As chamadas aos plugins que implementam interfaces com as várias máquinas
 
 
 \family typewriter 
+\color red
 script_plugin_state script_plugin_init_
 \emph on 
 lang
@@ -561,6 +605,7 @@ Responsável por inicializar o plugin.
 
 
 \family typewriter 
+\color red
 script_err script_plugin_run_
 \emph on 
 lang
@@ -601,6 +646,7 @@ script_set_error_message
 
 
 \family typewriter 
+\color red
 script_err script_plugin_call_
 \emph on 
 lang
@@ -645,6 +691,7 @@ SCRIPT_ERRLANGRUN
 
 
 \family typewriter 
+\color red
 void script_plugin_done_
 \emph on 
 lang
@@ -1130,9 +1177,13 @@ interessante
  Contagem de referências de PyDict_ e PyObject_ funcionam de formas diferentes.
 \layout Subsection*
 
+
+\color red
 Random jot #2
 \layout Standard
 
+
+\color red
 Uma FLI age como uma ponte de dois sentidos: ela deve expor os tipos de
  dados e permitir chamada de código de C à linguagem, e expor os tipos de
  dados e permitir chamada de código da linguagem a C.
@@ -1148,6 +1199,8 @@ quatro objetivos
  2 grandes grupos (cada um com 2 sub-grupos)?]
 \layout Standard
 
+
+\color red
 O objetivo geral de LibScript é tornar aplicações 
 \begin_inset Quotes eld
 \end_inset 
@@ -1163,6 +1216,8 @@ scriptable
  para que scripts escritos em diferentes linguagens possam interagir.
 \layout Standard
 
+
+\color red
 Para que o segundo objetivo seja atingido, é necessário que mudanças no
  espaço de nomes ocorridas externamente a uma VM, seja pelo código C ou
  por outra máquina virtual, sejam refletidas transparentemente na representação
@@ -1174,6 +1229,8 @@ Para que o segundo objetivo seja atingido, é necessário que mudanças no
  
 \layout Standard
 
+
+\color red
 O primeiro objetivo implementa um dos sentidos da comunicação realizada
  por uma FLI.
  O segundo objetivo é similar ao sentido inverso no que permite a chamada
@@ -1184,6 +1241,8 @@ O primeiro objetivo implementa um dos sentidos da comunicação realizada
  
 \layout Standard
 
+
+\color red
 [Um aspecto ainda um tanto nebuloso nessa classificação é a 
 \begin_inset Quotes eld
 \end_inset 
@@ -1219,6 +1278,12 @@ handle
 handles
 \emph default 
 ).]
+\layout Subsection*
+
+Random jot #3
+\layout Standard
+
+Onde citar LuaJava?
 \layout Bibliography
 \bibitem {ltn004}
 
