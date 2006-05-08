@@ -1300,6 +1300,8 @@ TODO: juntar o parágrafo acima ao texto abaixo para obter uma introdução
 Uma FLI age como uma ponte de dois sentidos: ela deve expor os tipos de
  dados e permitir chamada de código de C à linguagem, e expor os tipos de
  dados e permitir chamada de código da linguagem a C.
+
+\color red
  [Serão esses os 
 \begin_inset Quotes eld
 \end_inset 
@@ -1738,9 +1740,9 @@ script_in_*
 \family default 
 .
  
-\emph on 
+\color red
 [Na implementação atual,]
-\emph default 
+\color default
  Inicialmente, a tabela de funções C é consultada.
  Não havendo uma função definida em C, os plugins são consultados na seqüência
  em que foram inicializados implicitamente via 
