@@ -1,0 +1,2448 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass book
+\language brazil
+\inputencoding auto
+\fontscheme default
+\graphics default
+\paperfontsize 12
+\spacing single 
+\papersize a4paper
+\paperpackage a4wide
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Title
+
+Estudo sobre APIs para máquinas virtuais
+\layout Author
+
+Hisham H.
+ Muhammad
+\layout Chapter
+
+Introdução
+\layout Standard
+
+Existem muitas situações onde é necessário ou interessante que haja interação
+ entre programas escritos em diferentes linguagens.
+ Um caso típico é o emprego de bibliotecas externas, como 
+\emph on 
+toolkits
+\emph default 
+ gráficos, APIs de acesso a banco de dados, ou até mesmo chamadas ao sistema
+ operacional.
+ Outro cenário ainda envolve aplicações desenvolvidas usando mais de uma
+ linguagem de programação a fim de otimizar partes onde o desempenho é crítico
+ ou permitir extensibilidade através de 
+\emph on 
+scripts
+\emph default 
+ escritos pelo usuário.
+\layout Standard
+
+Independentemente da finalidade, a comunicação entre programas escritos
+ em linguagens diferentes traz consigo uma série de questões de projeto,
+ não apenas no desenvolvimento das aplicações, mas das linguagens em si.
+ Há várias formas de se obter esse tipo de interoperabilidade, desde tradução
+ de código de uma linguagem para outra até o uso de uma máquina virtual
+ comum.
+ Idealmente, entretanto, uma linguagem deve prover uma interface de acesso
+ externo (
+\emph on 
+foreign language interface
+\emph default 
+, FLI) que permita ao programador receber e enviar tanto chamadas como dados
+ para outra linguagem 
+\begin_inset LatexCommand \cite{finne-fli}
+
+\end_inset 
+
+.
+ Entre os fatores que devem ser levados em consideração no desenvolvimento
+ de tal interface estão as diferenças entre os sistemas de tipos, problemas
+ de gerência de memória (como coleta de lixo e acesso direto a ponteiros)
+ e modelos de concorrência.
+ Além de lidar com diferenças semânticas, o projeto de uma interface envolve
+ questões pragmáticas como o equilíbrio entre o isolamento seguro dos ambientes
+ de execução, o desempenho e a simplicidade da API resultante.
+\layout Standard
+
+Pode-se observar nas implementações existentes de FLIs um número de abordagens
+ para estes problemas.
+ De fato, FLIs de diferentes linguagens (ou mesmo de diferentes revisões
+ de uma mesma linguagem) tendem a ser bastante distintas entre si.
+ Ainda assim é possível traçar paralelos entre as técnicas utilizadas, uma
+ vez que os problemas fundamentais que elas atacam são os mesmos.
+ Além disso, em função da popularidade da linguagem C e do suporte oferecido
+ a ela pelos sistemas operacionais mais utilizados, grande parte das implementaç
+ões de interfaces de acesso externo são, na prática, APIs para C, o que
+ também facilita a sua comparação.
+ Adicionalmente, C se tornou também uma popular 
+\begin_inset Quotes eld
+\end_inset 
+
+ponte
+\begin_inset Quotes erd
+\end_inset 
+
+ na interação entre FLIs.
+\layout Section
+
+Objetivo (TODO: título decente)
+\layout Standard
+
+
+\color red
+TODO: ESCREVER ESTA SEÇÃO, com base no texto a seguir -> BLOCO I - Este
+ trabalho procura traçar um panorama dos recursos e técnicas de interoperabilida
+de entre linguagens de programação.
+ Partindo de uma análise das abordagens gerais para interação entre linguagens,
+ concentraremos o foco em um estudo comparativo entre FLIs e, em especial,
+ APIs para C.
+ Com isto, objetivamos, dentro das questões que envolvem o desenvolvimento
+ de uma FLI, identificar vantagens e desvantagens das diferentes alternativas
+ e compreender melhor a relação entre estas questões, ou seja, o impacto
+ causado por uma decisão de projeto sobre as demais.
+\layout Standard
+
+
+\color red
+BLOCO II - Este trabalho pretende, a partir da pesquisa de implementações
+ de FLIs, propor uma base para o estudo e comparação de interfaces entre
+ diferentes linguagens de programação.
+ Especificamente, voltaremos o nosso foco a interfaces com C providas por
+ linguagens imperativas baseadas em máquina virtual com coleta de lixo e
+ tipagem dinâmica.
+ Além de se tratar da classe de linguagens mais popular atualmente para
+ desenvolvimento multi-linguagem, essas duas últimas características, por
+ não estarem presentes em C, ilustram bem os problemas envolvendo a comunicação
+ de dados entre diferentes ambientes de programação.
+ Linguagens com tipagem estática podem apresentar necessidades de conversão
+ de tipos semelhantes, mas o problema tende a ser simplificado pela definição
+ de tipos equivalentes na API e inferência em tempo de compilação (vide
+ exemplos nas API com C de Ada e Fortran).
+ Linguagens funcionais possuem preocupações adicionais com efeitos colaterais
+ no código C, mas isto é equivalente ao problema de quebra do paradigma
+ causada tratamento de entrada e saída que todas elas enfrentam.
+\layout Standard
+
+
+\color red
+Pretendemos embasar o estudo na análise em profundidade de um conjunto de
+ FLIs; atualmente, considera-se utilizar as interfaces de Python, Perl,
+ Ruby, Lua e Java.
+ Diferentemente das demais, Java possui tipagem estática, mas com a sua
+ biblioteca de reflexão, que oferece recursos de intercessão como carga
+ de classes em tempo de execução e invocação dinâmica de métodos, é possível
+ encará-la, para os fins de interação com código C, como uma linguagem dinâmica.
+\layout Chapter
+
+Interação entre linguagens de programação
+\layout Standard
+
+As abordagens aplicadas na interação entre diferentes linguagens de programação
+ variam bastante entre si, mas é possível identificar algumas técnicas tipicamen
+te utilizadas: tradução de linguagens, seja de uma para outra ou de ambas
+ para uma terceira; comunicação através de protocolo ou linguagem intermediária;
+ compartilhamento de um ambiente de execução comum, seja de máquina virtual
+ ou através de convenção de chamadas.
+\layout Section
+
+Tradução de código
+\layout Standard
+
+Permitir o uso de duas linguagens diferentes em um programa traduzindo o
+ código de uma delas para a outra minimiza o problema de comunicação entre
+ as partes do programa escritas em linguagens diferentes, uma vez que o
+ programa final utilizará um espaço único de dados.
+ Em contrapartida, ao ter de se descrever uma linguagem em termos de outra,
+ a diferença de semântica das construções pode se tornar um problema.
+ Se a linguagem de destino não possui construções oferecidas pela linguagem
+ de origem, simulá-las pode ser custoso.
+\layout Standard
+
+Um exemplo típico é a complexidade adicionada pela simulação de funções
+ de alta ordem e recursão final ao traduzir-se o código de linguagens funcionais
+ para outra que não possui estes recursos.
+ Em 
+\begin_inset LatexCommand \cite{tarditi92no}
+
+\end_inset 
+
+ é descrito o desenvolvimento de um tradutor de Standard ML para ANSI C;
+ medições evidenciaram o custo de adaptação destes recursos de ML para C,
+ resultando em código em média 2 vezes mais lento que o gerado pelo compilador
+ ML nativo.
+ Em 
+\begin_inset LatexCommand \cite{tolmach-from}
+
+\end_inset 
+
+, são discutidos desafios similares na tradução de ML para Ada: na solução
+ adotada, o processo possui um passo intermediário onde as construções de
+ alta ordem são 
+\begin_inset Quotes eld
+\end_inset 
+
+aplainadas
+\begin_inset Quotes erd
+\end_inset 
+
+ para construções de primeira ordem envolvendo registros, para que pudessem
+ assim ser representados em Ada.
+\layout Standard
+
+Além de problemas como este, diferenças na representação dos dados ainda
+ é algo a ser tratado no processo de tradução de uma linguagem para outra.
+ No caso particular de C, as facilidades de baixo nível para manipulação
+ de memória permitem a descrição de estruturas de dados de linguagens de
+ mais alto nível sem maiores problemas.
+ Isto faz de C uma candidata freqüente para uso como representação de baixo
+ nível portável.
+ O compilador de Haskell GHC oferece, como alternativa à geração de código
+ nativo, geração de código C para uso com o GCC 
+\begin_inset LatexCommand \cite{jones93glasgow}
+
+\end_inset 
+
+.
+ Uma das vantagens deste recurso é permitir o 
+\emph on 
+bootstrapping
+\emph default 
+ do compilador em novas arquiteturas, dado que o próprio GHC é escrito em
+ Haskell.
+ De fato, a ubiqüitude dos compiladores C faz com que a linguagem seja utilizada
+ também como 
+\emph on 
+lingua franca
+\emph default 
+ entre diferentes linguagens, como será visto na Seção 
+\begin_inset LatexCommand \ref{sub:Linguagens-intermediárias}
+
+\end_inset 
+
+.
+\layout Section
+
+Compartilhamento de máquinas virtuais
+\layout Standard
+
+Outra abordagem envolve o uso de um ambiente de execução comum, como uma
+ máquina virtual.
+ O código das diferentes linguagens é compilado de modo a produzir representaçõe
+s compatíveis entre si, de acordo com os tipos de dados oferecidos pelo
+ ambiente de execução.
+ Diversas implementações utilizam a Java Virtual Machine 
+\begin_inset LatexCommand \cite{gosling-java}
+
+\end_inset 
+
+ com essa finalidade.
+ Jython 
+\begin_inset LatexCommand \cite{hugunin-jython}
+
+\end_inset 
+
+ é uma implementação da linguagem Python 
+\begin_inset LatexCommand \cite{lutz-python}
+
+\end_inset 
+
+ que produz bytecodes Java.
+ SMLj 
+\begin_inset LatexCommand \cite{benton99interlanguage}
+
+\end_inset 
+
+ é um compilador Standard ML que gera bytecodes Java e permite acesso de
+ classes e métodos Java a estruturas e funções ML e vice-versa.
+ O fato da Java Virtual Machine não ter sido projetada para comportar diferentes
+ linguagens de programação, entretanto, transparece nas limitações apresentadas
+ por estes projetos.
+ SMLj define extensões à linguagem ML para permitir acesso a construções
+ específicas de Java; Jython possui limitações ao realizar a interface de
+ Python com a API de reflexão e carga dinâmica de classes de Java.
+ Além disso, o conjunto de instruções da máquina virtual privilegia operações
+ que condizem com a semântica de Java, tornando, por exemplo, implementações
+ de 
+\emph on 
+arrays
+\emph default 
+ com semântica diferente menos eficientes.
+\layout Standard
+
+O .NET Framework 
+\begin_inset LatexCommand \cite{box-net}
+
+\end_inset 
+
+ é um ambiente de execução baseado em máquina virtual que vem sendo indicado
+ pela Microsoft como plataforma de programação preferencial em sistemas
+ Windows.
+ Apesar de com ele ter sido introduzida a linguagem C# 
+\begin_inset LatexCommand \cite{hejlsberg-csharp}
+
+\end_inset 
+
+, o ambiente tem como um de seus objetivos oferecer suporte a múltiplas
+ linguagens---evidenciado pelo próprio nome Common Language Runtime (CLR)---em
+ contraste com as limitações que o ambiente de Java impõe àqueles que tentam
+ utilizá-lo com outras linguagens.
+ Todavia, adaptações às linguagens continuam necessárias com o ambiente
+ .NET: A versão .NET de Visual Basic inclui alterações na linguagem de modo
+ a tornar a sua semântica mais similar à de C#; um novo dialeto de C++,
+ Managed C++, foi introduzido adaptando o modelo de gerenciamento de memória
+ ao do CLR 
+\begin_inset LatexCommand \cite{managedcpp}
+
+\end_inset 
+
+; de forma similar, foi desenvolvido um novo dialeto de ML chamado F#, para,
+ entre outros motivos, proporcionar melhor integração com componentes .NET
+ desenvolvidos em outras linguagens 
+\begin_inset LatexCommand \cite{syme-fsharp}
+
+\end_inset 
+
+.
+\layout Standard
+
+Outra implementação de uma máquina virtual para múltiplas linguagens vem
+ sendo feita pelo projeto Parrot 
+\begin_inset LatexCommand \cite{randal-perl6}
+
+\end_inset 
+
+.
+ O escopo deste projeto é mais restrito, visando ser um 
+\emph on 
+back-end
+\emph default 
+ comum para linguagens dinâmicas como Perl e Python.
+ O foco do projeto, entretanto, está atualmente na implementação de Perl
+ 6.
+\layout Standard
+
+Um tipo de comunicação que pode ser considerada ainda uma forma de ambiente
+ de execução comum é a comunicação entre executáveis e bibliotecas nativos
+ através de convenções de chamada: regras para a passagem de parâmetros
+ na pilha de execução, uso de registradores e 
+\emph on 
+mangling
+\emph default 
+ de nomes.
+ Este pode ser considerado o método de interação entre código em diferentes
+ linguagens de mais baixo nível.
+ Convenções de chamada, entretanto, são um recurso limitado de comunicação,
+ já que assumem tipos de dados com representação em memória idêntica nas
+ as duas linguagens.
+ Tal compatibilidade dificilmente ocorre a não ser que uma das linguagens
+ explicitamente considere este tipo de interação na sua definição: o padrão
+ de Ada, por exemplo, requer que as suas implementações sejam compatíveis
+ com as convenções de C, COBOL e Fortran 
+\begin_inset LatexCommand \cite{ada95}
+
+\end_inset 
+
+.
+ De forma similar, C++ permite especificar funções com linkagem compatível
+ com C (
+\family typewriter 
+extern 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+"
+\end_inset 
+
+C
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+"
+\end_inset 
+
+
+\family default 
+).
+\layout Section
+
+
+\begin_inset LatexCommand \label{sub:Modelos-de-objetos}
+
+\end_inset 
+
+Modelos de objetos independentes de linguagem
+\layout Standard
+
+Adotar um modelo de tipos independente de linguagem é uma outra forma de
+ tratar as questões de interoperabilidade de dados entre linguagens.
+ Assim, na definição dos dados de uma aplicação, as suas interfaces são
+ definidas de forma neutra, tipicamente utilizando alguma linguagem projetada
+ especificamente para este fim (uma IDL, 
+\emph on 
+interface description language
+\emph default 
+) enquanto as implementações são feitas nas linguagens específicas.
+ A arquitetura CORBA (
+\emph on 
+Common Object Request Broker Architecture
+\emph default 
+) 
+\begin_inset LatexCommand \cite{omg-corba}
+
+\end_inset 
+
+ é uma das principais representantes deste modelo.
+ A motivação principal para o desenvolvimento de CORBA foi permitir o desenvolvi
+mento de aplicações distribuídas em ambientes heterogêneos; a heterogeneidade
+ de linguagens foi um dos aspectos levados em consideração.
+\layout Standard
+
+Os desafios existentes ao projetar um modelo de dados ou objetos 
+\begin_inset Quotes eld
+\end_inset 
+
+independente de linguagens
+\begin_inset Quotes erd
+\end_inset 
+
+, entretanto, são similares aos de uma interface entre duas linguagens quaisquer
+, já que esse modelo, por sua vez, descreve também um sistema de tipos.
+ Ao implementar 
+\emph on 
+bindings
+\emph default 
+ para algum destes modelos de objetos é necessário definir uma correspondência
+ entre os tipos definidos pelo modelo e os oferecidos pela linguagem destino
+ e prover a esta uma API para interação com o ambiente de execução---no
+ caso de CORBA, com o ORB (
+\emph on 
+Object Request Broker
+\emph default 
+).
+ 
+\layout Standard
+
+Se por um lado a tarefa pode ser facilitada pelo fato de o modelo ter sido
+ projetado visando interação com outras linguagens (diferentemente, por
+ exemplo, do sistema de tipos de C), por outro espera-se usualmente um grau
+ de transparência maior na representação dos dados.
+ Por exemplo, enquanto em uma aplicação integrando C++ e Python a distinção
+ entre objetos C++ e objetos Python é clara e a API Python define o limite
+ entre os dois universos, em uma aplicação desenvolvida utilizando CORBA
+ espera-se que, tanto em uma linguagem como em outra, a manipulação dos
+ objetos seja igual, sejam eles implementados em C++ ou Python.
+ Para isso, a solução adotada é o uso de 
+\emph on 
+stubs
+\emph default 
+, objetos que dão uma aparência nativa uniforme aos dados, indepentemente
+ da linguagem em que foram implementados e no caso de modelos distribuídos
+ como CORBA, da localização dos mesmos na rede.
+ A correspondência entre os ciclos de vida dos 
+\emph on 
+stubs
+\emph default 
+ e dos objetos que eles representam é outro fator que deve ser levado em
+ consideração.
+ Nos 
+\emph on 
+bindings
+\emph default 
+ Java, por exemplo, isto é realizado com o auxílio do coletor de lixo da
+ própria linguagem.
+ Já em linguagens como C++ o controle das referências é explícito.
+\layout Standard
+
+Outras abordagens de mais alto nível têm sido propostas para a integração
+ de aplicações desenvolvidas em múltiplas linguagens.
+ Linguagens de coordenação como Linda 
+\begin_inset LatexCommand \cite{gelernter-linda}
+
+\end_inset 
+
+ e Opus 
+\begin_inset LatexCommand \cite{chapman-opus}
+
+\end_inset 
+
+ definem mecanismos para troca de mensagens e um conjunto restrito de construçõe
+s para indicar o fluxo destas entre agentes implementados em outras linguagens.
+\layout Section
+
+
+\begin_inset LatexCommand \label{sub:Linguagens-intermediárias}
+
+\end_inset 
+
+C como linguagem intermediária
+\layout Standard
+
+O desejo de uma linguagem intermediária universal é antigo no mundo da computaçã
+o.
+ Diversas propostas surgiram ao longo dos anos, desde o projeto UNCOL 
+\begin_inset LatexCommand \cite{conway-uncol}
+
+\end_inset 
+
+ às linguagens de sintaxe extensível da década de 70 
+\begin_inset LatexCommand \cite{metzner-xl}
+
+\end_inset 
+
+ até os mais recentes ambientes de máquina virtual como .NET.
+ Na prática, as necessidades que estes projetos visavam atender vêm sendo
+ supridas ao longo dos anos de forma mais pragmática, ainda que menos ideal:
+ usando C.
+ Dois motivos fazem de C uma escolha comum como linguagem intermediária.
+ Primeiro, a sua característica de linguagem de 
+\begin_inset Quotes eld
+\end_inset 
+
+médio nível
+\begin_inset Quotes erd
+\end_inset 
+
+, ao permitir ao mesmo tempo independência de hardware e manipulação direta
+ de memória.
+ Segundo, a grande disponibilidade de compiladores C, alavancada pela proliferaç
+ão dos sistemas Unix nas mais diferentes arquiteturas.
+ Assim, com o passar do tempo, oferecer uma interface para interoperabilidade
+ com outras linguagens passou a significar oferecer uma interface para comunicaç
+ão com código C.
+ Isto é especialmente verdadeiro para linguagens dinâmicas que oferecem
+ recursos para extensibilidade de aplicações.
+ Não por acaso, estas são tipicamente implementadas em C.
+\layout Standard
+
+A disponibilidade de APIs para C oferecidas pelas diferentes linguagens
+ faz com que C seja bastante usada também como 
+\begin_inset Quotes eld
+\end_inset 
+
+ponte
+\begin_inset Quotes erd
+\end_inset 
+
+.
+ A integração entre Python e Fortran se dá através de um módulo Python escrito
+ em C que acessa uma biblioteca Fortran, que por sua vez expõe funções com
+ convenção de chamada compatível com C 
+\begin_inset LatexCommand \cite{peterson-fpy}
+
+\end_inset 
+
+.
+ LunaticPython 
+\begin_inset LatexCommand \cite{lunatic-python}
+
+\end_inset 
+
+ oferece pontes de Lua para Python e de Python para Lua, implementadas através
+ de um par de módulos de extensão para cada linguagem de origem escritos
+ em C.
+\layout Standard
+
+Todavia, linguagens intermediárias genéricas continuam a ser propostas como
+ alternativas a C.
+ C-- 
+\begin_inset LatexCommand \cite{jones99portable}
+
+\end_inset 
+
+ é um projeto que tenta superar as limitações de C enquanto linguagem intermediá
+ria tornando mais explícita a representação em memória dos tipos de dados
+ e adicionando suporte a construções não facilmente representáveis em C,
+ como recursão final.
+ Versões recentes da suíte de compiladores GCC padronizaram uma linguagem
+ intermediária para comunicação entre os seus diversos 
+\emph on 
+back-ends
+\emph default 
+ e 
+\emph on 
+front-ends
+\emph default 
+ 
+\begin_inset LatexCommand \cite{dvorak05gcc}
+
+\end_inset 
+
+.
+\layout Chapter
+
+Interfaces com C
+\layout Standard
+
+
+\color red
+TODO: OBJETIVO DESTE CAPÍTULO -> Inicialmente, pretendemos identificar o
+ conjunto de problemas tratados por uma FLI implementada como uma API para
+ C.
+ Além de apontar classes gerais de problemas como coleta de lixo e passagem
+ de parâmetros, queremos aqui chegar a uma lista de problemas específicos,
+ como por exemplo a validade de referências mantidas em estruturas de dados
+ C entre invocações de funções, a exposição ao código C de funcionalidades
+ implementadas em operadores sobrecarregados e o suporte a hierarquias de
+ subtipos envolvendo tipos declarados em ambas as linguagens.
+\layout Standard
+
+A linguagem C tem, na atualidade, um papel especial no mundo das linguagens
+ de programação.
+ Além de ser bastante utilizada na implementação de compiladores, interpretadore
+s e máquinas virtuais (as principais implementações de Perl, Python, Ruby,
+ Tcl/Tk e Lua são apenas alguns exemplos), é tambem usada em compiladores
+ como formato de saída na geração de código portável (dois exemplos notáveis
+ são os compiladores GHC 
+\begin_inset LatexCommand \cite{jones93glasgow}
+
+\end_inset 
+
+ e o SmartEiffel 
+\begin_inset LatexCommand \cite{collin-eiffel}
+
+\end_inset 
+
+, que geram C a partir de Haskell e Eiffel, respectivamente).
+ Isto faz com que a API para C seja um formato conveniente para uma FLI.
+\layout Standard
+
+Para permitir invocar funções C, a FLI deve fornecer uma forma de registrar
+ estas funções no ambiente de execução, idealmente permitindo ao programa
+ chamá-las de forma igual a funções nativas.
+ A linguagem Java, por exemplo, possui uma palavra reservada,
+\family typewriter 
+ native
+\family default 
+, para indicar funções não implementadas em Java.
+ Assim, ao contrário do que o nome pode dar a entender, 
+\family typewriter 
+native
+\family default 
+ não se refere a uma implementação nativa em Java, mas ao código do método
+ ter sido compilado com código nativo do ambiente de execução, em oposição
+ a 
+\emph on 
+bytecodes
+\emph default 
+ da máquina virtual.
+ Em linguagens dinâmicas, declarações de funções podem ser realizadas em
+ tempo de execução, usando funções como 
+\family typewriter 
+lua_register
+\family default 
+ em Lua ou 
+\family typewriter 
+rb_define_method
+\family default 
+ em Ruby 
+\begin_inset LatexCommand \cite{thomas-ruby}
+
+\end_inset 
+
+.
+\layout Standard
+
+Na grande maioria dos casos, a representação interna de código produzida
+ por compiladores de outras linguagens não é compatível com C, seja por
+ diferenças em convenções de chamadas ou de nomes, ou por produzirem código
+ para execução em máquinas virtuais.
+ Desta forma, para permitir a um programa em C acessar este código, cabe
+ à linguagem expor uma biblioteca de funções C que realizem a tradução necessári
+a.
+ Em ambientes de máquina virtual, esta biblioteca de funções normalmente
+ é genérica, oferecendo facilidades para comunicação com a própria máquina
+ virtual.
+ Para linguagens estáticas, normalmente é necessário criar uma biblioteca
+ específica que realize a conversão das chamadas, como ocorre em interfaces
+ C para APIs C++.
+\layout Standard
+
+Para linguagens não imperativas, há ainda o problema de código C potencialmente
+ gerar efeitos colaterais.
+ Algum recurso para isolamento das chamadas deve ser oferecido.
+ No GHC, a construção para chamadas em C, 
+\family typewriter 
+_ccall_
+\family default 
+, é definida na mônada de IO; no adendo do padrão Haskell 98, a diretiva
+ 
+\family typewriter 
+ccall
+\family default 
+ foi integrada, mas o uso da mônada é opcional, cabendo ao programador garantir
+ que funções que não a utilizem sejam puras
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Uma série de convenções de chamada são definidas (
+\family typewriter 
+stdcall
+\family default 
+, 
+\family typewriter 
+cplusplus
+\family default 
+, 
+\family typewriter 
+jvm
+\family default 
+, 
+\family typewriter 
+dotnet
+\family default 
+) mas 
+\family typewriter 
+ccall
+\family default 
+ é a única declarada como obrigatória pelo documento.
+\end_inset 
+
+.
+\layout Section
+
+
+\begin_inset LatexCommand \label{sub:Sistemas-de-tipos}
+
+\end_inset 
+
+Sistemas de tipos
+\layout Standard
+
+O principal complicador na interação entre linguagens de programação não
+ é a diferença de sintaxe ou semântica das construções de fluxo de controle,
+ mas a representação dos dados.
+ Na comunicação entre código escrito em duas linguagens diferentes, dados
+ trafegam de várias formas: como parâmetros, atributos de objetos, elementos
+ de estruturas de dados, etc.
+\layout Standard
+
+Freqüentemente, o formato como estes dados são representados difere.
+ Em casos como este, há três possibilidades.
+ A mais simples é expor o dado à linguagem de destino como uma entidade
+ opaca.
+ A linguagem de destino recebe apenas algum tipo de 
+\emph on 
+handle
+\emph default 
+ que permite identificar unicamente o dado em operações requisitadas posteriorme
+nte.
+ Esta abordagem é útil, por exemplo, se uma linguagem está apenas armazenando
+ os dados para a outra, a fim de aproveitar estruturas de dados de mais
+ alto nível que esta ofereça.
+ 
+\layout Standard
+
+Outra abordagem envolve realizar algum tipo de conversão dos dados do sistema
+ de tipos de uma linguagem para o da outra.
+ A duplicação que ocorre na conversão limita a aplicabilidade deste método,
+ restringindo o seu uso tipicamente para tipos com volume pequeno de dados,
+ como tipos numéricos e, em menor grau, strings.
+ Finalmente, a linguagem de origem pode explicitamente oferecer facilidades
+ na linguagem de destino para a manipulação destes dados, ou seja, uma linguagem
+ oferecer uma API para a outra.
+\layout Standard
+
+C, por ser orientada à manipulação de ponteiros e estruturas, possui um
+ conjunto pequeno de tipos básicos.
+ Além disso, C é bastante liberal em relação à representação interna dos
+ tipos estruturados, cabendo às diferentes plataformas definirem interfaces
+ binárias (
+\emph on 
+application binary interfaces
+\emph default 
+, ABIs).
+ Assim, mesmo em casos onde é possível li\SpecialChar \-
+gar a código C diretamente utilizando
+ tipos básicos compatíveis e convenções de chamada apropriadas (como em
+ Free Pascal ou em diversos compiladores Fortran), uma biblioteca de 
+\emph on 
+bindings
+\emph default 
+ é usualmente necessária para tornar mais conveniente a manipulação de tipos
+ mais complexos.
+\layout Standard
+
+Até nos tipos numéricos fundamentais, há vários cuidados que devem ser tomados.
+ Algumas linguagens, como Smalltalk e Ruby, realizam conversão automática
+ de inteiros para 
+\begin_inset Quotes eld
+\end_inset 
+
+inteiros grandes
+\begin_inset Quotes erd
+\end_inset 
+
+ (
+\emph on 
+bignums
+\emph default 
+).
+ Em Ruby, particularmente, os inteiros primitivos têm 1 bit a menos de precisão
+ do que o tamanho de palavra da máquina.
+ Máquinas virtuais com representação de 
+\emph on 
+bytecodes
+\emph default 
+ independentes de arquitetura, como Java, precisam ainda lidar com conversão
+ de 
+\emph on 
+endianness
+\emph default 
+ e formato de números de ponto flutuante.
+\layout Standard
+
+Tipos que envolvem uma quantidade maior de dados, como strings, trazem ainda
+ preocupações com desempenho.
+ Em diversos casos a representação interna usada para strings é a mesma
+ que a usada em C, então uma opção é simplesmente passar ao código C um
+ ponteiro para o endereço onde a string está armazenada, o que evita a cópia
+ de dados, sob risco de permitir ao programa C modificar o conteúdo da string.
+ Isto é uma possível fonte de erros, especialmente em linguagens como Lua,
+ onde strings de conteúdo igual compartilham o mesmo espaço de memória.
+ Expor ao código C ponteiros para endereços de memória dentro do ambiente
+ de execução da outra linguagem pode trazer ainda problemas de concorrência,
+ caso o ambiente em questão utilize múltiplas 
+\emph on 
+threads
+\emph default 
+.
+\layout Standard
+
+Ao expor ao código C dados de tipos estruturados, a conversão para um tipo
+ de dado nativo de C, em muitos casos, não é uma opção.
+ Além da questão da quantidade de dados, tipos estruturados em C são definidos
+ estaticamente, não servindo assim para representar convenientemente dados
+ de estrutura dinâmica, como objetos que podem ganhar ou perder atributos
+ e até mesmo mudar de classe em tempo de execução.
+ Mesmo em linguagens com tipos estáticos, como Java, a cópia de objetos
+ não costuma ser uma opção interessante em função do volume de dados.
+ A cópia de objetos estruturados costuma se restringir a operações específicas
+ como manipulação de arrays de elementos primitivos.
+\layout Standard
+
+A alternativa para permitir que código C opere sobre dados estruturados,
+ então, é fornecer uma a ele uma API que exponha, em forma de funções, as
+ operações definidas sobre os tipos em questão.
+ Isto evita também a necessidade de controlar a consistência entre duas
+ cópias de uma mesma estrutura.
+ Problemas de consistência, entretanto, podem ocorrer caso a API permita
+ ao código C armazenar ponteiros para objetos da linguagem---isto torna
+ necessário ao programador gerenciar explicitamente a sincronia entre os
+ ponteiros e o ciclo de vida dos objetos, que podem estar sujeitos a coleta
+ de lixo.
+ A Seção 
+\begin_inset LatexCommand \ref{sub:Coletores-de-lixo}
+
+\end_inset 
+
+ discute esta questão em mais detalhe.
+\layout Standard
+
+As abordagens empregadas em diferentes FLIs para expor estruturas C às suas
+ linguagens de origem possuem diversas variações.
+ Python permite a definição de novos tipos de objetos a partir de uma 
+\emph on 
+struct
+\emph default 
+ C com um cabeçalho definido pela macro 
+\family typewriter 
+PyObject_HEAD
+\family default 
+ seguido de atributos definidos pelo usuário 
+\begin_inset LatexCommand \cite{vanrossum-extpy}
+
+\end_inset 
+
+.
+ Ao registrar o tipo, uma estrutura do tipo 
+\family typewriter 
+PyTypeObject
+\family default 
+ declara funções C a serem usadas pelo ambiente de execução e um array de
+ estruturas 
+\family typewriter 
+PyMethodDef
+\family default 
+ declara os métodos associados ao objeto.
+ A declaração de classes Ruby a partir de C se dá através de uma série de
+ chamadas da API.
+ Uma classe é criada com 
+\family typewriter 
+rb_define_class
+\family default 
+ e funções C podem ser registradas como métodos com 
+\family typewriter 
+rb_define_method
+\family default 
+.
+ A estrutura C definida pelo usuário é convertida em uma classe Ruby através
+ de uma chamada à macro 
+\family typewriter 
+Data_Wrap_Struct
+\family default 
+, que recebe o tipo da estrutura como parâmetro.
+\layout Standard
+
+Lua define tipos primitivos 
+\emph on 
+function
+\emph default 
+, 
+\emph on 
+userdata
+\emph default 
+ e 
+\emph on 
+lightuserdata
+\emph default 
+ que permitem armazenar ponteiros para funções e estruturas C.
+ Um objeto 
+\emph on 
+lightuserdata
+\emph default 
+ corresponde a um ponteiro C simples; um objeto 
+\emph on 
+userdata
+\emph default 
+ pode ter associado a si uma 
+\emph on 
+metatable
+\emph default 
+: uma tabela contendo uma série de funções a serem usadas pelo ambiente
+ de execução, de forma similar à estrutura 
+\family typewriter 
+PyTypeObject
+\family default 
+
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Estas funções são usadas, por exemplo, para permitir ao programador liberar
+ recursos quando o objeto é coletado (função 
+\family typewriter 
+__gc
+\family default 
+ na 
+\emph on 
+metatable
+\emph default 
+ Lua, 
+\family typewriter 
+dealloc
+\family default 
+ na estrutura 
+\family typewriter 
+PyTypeObject
+\family default 
+).
+ 
+\end_inset 
+
+.
+ Um objeto é então construindo armazenando instâncias destes tipos em uma
+ tabela Lua através de chamadas de API, de forma similar a Ruby.
+\layout Section
+
+
+\begin_inset LatexCommand \label{sub:Coletores-de-lixo}
+
+\end_inset 
+
+Coletores de lixo
+\layout Standard
+
+A partir do momento em que código C ganha acesso a referências a dados armazenad
+os no espaço de armazenamento de outra linguagem, sejam ponteiros ou identificad
+ores, o programador deve levar em consideração as diferenças entre os modelos
+ de gerência de memória envolvidos, já que código executado na outra linguagem
+ pode liberar o dado (destruir o objeto, remover um elemento de uma estrutura).
+ Em princípio, isto não é diferente da gerência de memória realizada normalmente
+ pelo programador em C.
+ Entretanto, a interação com algumas linguagens adiciona um complicador:
+ mecanismos de coleta de lixo realizam liberação de dados da memória de
+ forma implícita.
+ O princípio fundamental da coleta de lixo dita que um objeto não é coletado
+ caso haja algum elemento (variável, estrutura de dados) apontando para
+ ele.
+ Todavia, o mesmo não vale para o ambiente C: a presença de um ponteiro
+ apontando para um objeto não garante que ele não será coletado, uma vez
+ que o coletor de lixo não gerencia os ponteiros do código C.
+\layout Standard
+
+É preciso, então, indicar a partir do código C que os dados que continuam
+ acessíveis por ele não devem ser coletados.
+ De forma complementar, ao transferir o controle de objetos C para o domínio
+ da outra linguagem---por exemplo, para armazená-los em uma estrutura de
+ dados desta---é necessário indicar à linguagem como desalocar a memória
+ da estrutura quando o coletor de lixo detectar que ela não está mais em
+ uso.
+ A forma como a FLI irá fornecer estas funcionalidades depende não só do
+ projeto da API para C, mas também do modelo de coleta de lixo empregado
+ pela implementação da linguagem.
+\layout Standard
+
+A API de Python retorna ao código C ponteiros para os objetos alocados pela
+ máquina virtual.
+ Como esta utiliza um coletor de lixo baseado em contagem de referências,
+ o programador é obrigado então a controlar o número de referências dos
+ ponteiros do tipo 
+\family typewriter 
+PyObject*
+\family default 
+ com macros 
+\family typewriter 
+Py_INCREF
+\family default 
+ e 
+\family typewriter 
+Py_DECREF
+\family default 
+.
+ Além disso, tipos definidos pelo usuário através da API C devem implementar
+ funções adicionais na sua estrutura 
+\family typewriter 
+PyTypeObject
+\family default 
+, para evitar ciclos na contagem de referência.
+ Ruby, que utiliza um coletor 
+\emph on 
+mark-and-sweep
+\emph default 
+ 
+\begin_inset LatexCommand \cite{wilson-gc}
+
+\end_inset 
+
+, requer que classes definidas em C que armazenem outros objetos Ruby declarem
+ uma função 
+\family typewriter 
+mark
+\family default 
+, que propague chamadas a 
+\family typewriter 
+rb_gc_mark
+\family default 
+ aos objetos internos da instância.
+\layout Standard
+
+Para reduzir a necessidade de controle explícito de referências, Java faz
+ uma distinção entre referências globais e locais.
+ Referências globais são explicitamente criadas com 
+\family typewriter 
+NewGlobalRef
+\family default 
+ e que permanecem válidas até serem explicitamente liberadas com 
+\family typewriter 
+DeleteGlobalRef
+\family default 
+.
+ Referências locais, passadas ao código C pelas demais funções da API, não
+ precisam ser explicitamente liberadas, mas assume-se que perdem a validade
+ ao final da função C invocada via JNI.
+ É relevante notar que a simplificação trazida por esta abordagem deve-se
+ ao fato da máquina virtual Java estar controlando as invocações de código
+ C.
+ No caso oposto, quando a máquina Java é embutida em uma aplicação C, referência
+s locais permanecem válidas até o encerramento da thread, fazendo com que
+ na prática seja recomendável o programador liberar as referências explicitament
+e com 
+\family typewriter 
+DeleteLocalRef
+\family default 
+.
+\layout Standard
+
+A abordagem adotada por Lua evita o problema de gerência de referências
+ ao não expor ponteiros para os seus objetos ao código C e adotar uma API
+ de pilha.
+ O armazenamento de objetos Lua em estruturas de dados em C ainda é possível,
+ utilizando índices de uma tabela global como referências e funções explícitas
+ 
+\family typewriter 
+luaL_ref
+\family default 
+ e 
+\family typewriter 
+luaL_unref
+\family default 
+, de forma análoga às referências globais em Java.
+\layout Section
+
+Modelos de concorrência
+\layout Standard
+
+Outra possível fonte de incompatibilidade entre linguagens que deve ser
+ tratada quando estas interagem é a diferença entre modelos de concorrência.
+ C, em particular, não define construções de concorrência, sendo estas implement
+adas através de bibliotecas.
+ Ao mesmo tempo que isto traz grande flexibilidade à linguagem, implica
+ também em problemas de portabilidade para linguagens que dependam da disponibil
+idade de mecanismos de concorrência em C compatíveis com os modelos que
+ elas utilizam.
+\layout Standard
+
+Por exemplo, APIs entre C e Java devem levar em conta o modelo de 
+\emph on 
+multithreading
+\emph default 
+ preemptivo adotado por Java.
+ A JNI (
+\emph on 
+Java Native Interface
+\emph default 
+) 
+\begin_inset LatexCommand \cite{liang-jni}
+
+\end_inset 
+
+ define uma série de funções para controlar exclusão mútua entre dados compartil
+hados entre C e Java.
+ O programador deve tomar o cuidado de buscar o equilíbrio entre o tempo
+ gasto bloqueando a máquina virtual acessando dados compartilhados e o tempo
+ gasto realizando cópia de dados entre os ambientes para reduzir o compartilhame
+nto.
+\layout Standard
+
+Outra situação em que o modelo de concorrência da linguagem demanda cuidados
+ por parte do programador na integração com C ocorre no uso de co-rotinas
+ em Lua.
+ A combinação de dois recursos de Lua, multitarefa cooperativa com múltiplas
+ pilhas de execução e a capacidade de alternar entre chamadas a funções
+ Lua e C em uma pilha, traz consigo uma limitação: uma co-rotina não pode
+ executar a operação de 
+\emph on 
+yield
+\emph default 
+ caso haja uma função C na sua pilha, uma vez que não há uma forma portável
+ de alternar entre múltiplas pilhas em C 
+\begin_inset LatexCommand \cite{moura-colua}
+
+\end_inset 
+
+.
+ 
+\layout Section
+
+Módulos externos
+\layout Standard
+
+Uma das motivações mais freqüentes para integração com código C é o uso
+ de bibliotecas externas.
+ Expor uma biblioteca C através da FLI para acesso em uma linguagem pode
+ incorrer no registro de centenas de funções.
+ É comum definir também tipos de dados que dêem às estruturas definidas
+ pela biblioteca uma aparência mais nativa, como por exemplo converter funções
+ C que registram 
+\emph on 
+callbacks
+\emph default 
+ em métodos Ruby que aceitam blocos de código como parâmetro.
+ Essas inicializações e adaptações são usualmente definidas em uma biblioteca
+ de 
+\emph on 
+bindings
+\emph default 
+, que serve de ponte entre a linguagem e a biblioteca C encapsulando a interação
+ com a FLI.
+\layout Standard
+
+Os padrões que ocorrem na produção de bindings são tão comuns que deram
+ origem a programas visam automatizar o processo.
+ Estes geradores de 
+\emph on 
+bindings
+\emph default 
+ costumam trabalhar a partir de alguma representação preparada para o seu
+ uso, já que analisar os cabeçalhos C pode-se mostrar insuficiente: por
+ exemplo, o programa muitas vezes não seria capaz de interpretar a intenção
+ de uma construção como 
+\family typewriter 
+int**
+\family default 
+.
+ SWIG 
+\begin_inset LatexCommand \cite{beazley-swig}
+
+\end_inset 
+
+ é uma popular ferramenta multi-linguagem para geração de 
+\emph on 
+bindings
+\emph default 
+ de bibliotecas C e C++ que utiliza um formato próprio para descrição de
+ interfaces.
+ FLIs podem ainda utilizar geradores de 
+\emph on 
+stubs
+\emph default 
+ para poupar o programador de escrever código C repetitivo ou não portável.
+ Java possui um gerador de cabeçalhos C contendo os protótipos dos métodos
+ nativos a serem implementados.
+ Pyrex 
+\begin_inset LatexCommand \cite{ewing-pyrex}
+
+\end_inset 
+
+ é um gerador de módulos C para Python a partir de uma sintaxe baseada na
+ própria linguagem Python.
+\layout Chapter
+
+APIs de Máquinas Virtuais
+\layout Standard
+
+
+\color red
+TODO: OBJETIVO DESTE CAPÍTULO -> A partir dos requisitos levantados no capítulo
+ anterior, pretende-se então classificar as facilidades oferecidas pelas
+ APIs---suas funções, macros, estruturas---em função destes problemas.
+ Ao cruzar estes dados, será possivel ter uma melhor compreensão de como
+ estão distribuídos o tamanho e complexidade das APIs.
+ Deseja-se saber o quão completas elas são em relação às funcionalidades
+ que as linguagens oferecem, ou seja, o que é possível fazer via código
+ nativo que não é possível ou não é prático via API.
+\layout Standard
+
+
+\color red
+Com base nesta classificação, o passo seguinte será identificar, para cada
+ problema, as abordagens gerais empregadas por cada API e assim expor com
+ mais clareza as semelhanças e diferenças das APIs de diferentes linguagens.
+ O objetivo é catalogar as técnicas empregadas de forma independente das
+ implementações específicas, bem como o impacto que a escolha de uma determinada
+ técnica na solução de um problema tem no espaço de alternativas para a
+ solução dos demais.
+ Espera-se que o fruto deste trabalho seja, através da documentação das
+ práticas em uso corrente, proporcionar um base comum que facilite a avaliação
+ e o desenvolvimento de interfaces entre linguagens de programação.
+\layout Chapter
+
+Estudo de caso: LibScript
+\layout Standard
+
+
+\color red
+TODO: Explicar a intenção do estudo de caso
+\layout Standard
+
+LibScript é uma biblioteca projetada para permitir a adição de extensibilidade
+ a aplicações através de 
+\emph on 
+scripting
+\emph default 
+ de uma forma independente de linguagem.
+ Ela é baseada em uma arquitetura de 
+\emph on 
+plugins
+\emph default 
+, de modo que desacopla a aplicação em si das máquinas virtuais providas
+ pelas diversas linguagens.
+ A biblioteca principal, 
+\family typewriter 
+libscript
+\family default 
+, é uma fina camada que provê uma API para 
+\emph on 
+scripting
+\emph default 
+ independente de linguagem, permitindo à aplicação registrar as suas funções
+ e invocar código a ser executado.
+ Esta biblioteca, então invoca o 
+\emph on 
+plugin
+\emph default 
+ apropriado (
+\family typewriter 
+libscript-python
+\family default 
+, 
+\family typewriter 
+libscript-ruby
+\family default 
+, 
+\family typewriter 
+libscript-lua
+\family default 
+, etc.) para rodar o código.
+ Desta forma, a aplicação permite ao usuário utilizar qualquer uma destas
+ linguagens para scripting sem adicionar todas elas como suas dependências.
+\layout Standard
+
+
+\color red
+TODO: juntar o parágrafo acima ao texto abaixo para obter uma introdução
+ para o capítulo de LibScript.
+\layout Standard
+
+Uma FLI age como uma ponte de dois sentidos: ela deve expor os tipos de
+ dados e permitir chamada de código de C à linguagem, e expor os tipos de
+ dados e permitir chamada de código da linguagem a C.
+ [Serão esses os 
+\begin_inset Quotes eld
+\end_inset 
+
+quatro objetivos
+\begin_inset Quotes erd
+\end_inset 
+
+ principais de uma FLI? Mapear APIs das linguagens estudadas dentro desses
+ 2 grandes grupos (cada um com 2 sub-grupos)?]
+\layout Standard
+
+O objetivo geral de LibScript é tornar aplicações 
+\begin_inset Quotes eld
+\end_inset 
+
+scriptable
+\begin_inset Quotes erd
+\end_inset 
+
+ de modo independente de linguagem.
+ Os objetivos específicos são: (a) expor os dados e permitir chamada de
+ código de C de uma aplicação aos scripts; (b) construir um espaço de nomes
+ que possa ser acessado de forma comum entre as diferentes máquinas virtuais,
+ para que scripts escritos em diferentes linguagens possam interagir.
+\layout Standard
+
+Para que o segundo objetivo seja atingido, é necessário que mudanças no
+ espaço de nomes ocorridas externamente a uma VM, seja pelo código C ou
+ por outra máquina virtual, sejam refletidas transparentemente na representação
+ local do espaço de nomes desta VM.
+ Para que isto ocorra, deve ser possível realizar um certo grau de metaprogramaç
+ão através da FLI.
+ Em particular, deve ser possível capturar chamadas a funções não definidas
+ e resolver estas chamadas através de código C.
+ 
+\layout Standard
+
+O primeiro objetivo implementa um dos sentidos da comunicação realizada
+ por uma FLI.
+ O segundo objetivo é similar ao sentido inverso no que permite a chamada
+ de código da linguagem, mas não contempla a exposição dos tipos de dados:
+ estruturas de dados não oferecidas por C podem ser manipulados apenas como
+ tipos opacos, já que os conjuntos de funcionalidades a ser exposta ao mapear
+ os tipos de dados específicos de cada linguagem variam muito entre si.
+ 
+\layout Standard
+
+
+\color red
+[Um aspecto ainda um tanto nebuloso nessa classificação é a 
+\begin_inset Quotes eld
+\end_inset 
+
+definição de novos tipos para a linguagem a partir de C
+\begin_inset Quotes erd
+\end_inset 
+
+.
+ Python e Ruby permitem criar em C classes que por sua vez produzem instâncias
+ na VM.
+ Lua permite criar tabelas, mas estas 
+\emph on 
+são
+\emph default 
+ instâncias na VM.
+ Mesmo uma FLI simplista do tipo 'tudo via string' permite criar tipos complexos
+ (
+\begin_inset Quotes eld
+\end_inset 
+
+x = { foo=4, bar=2 }
+\begin_inset Quotes erd
+\end_inset 
+
+), mas possivelmente não obtê-los, a não ser que ganhem uma representação
+ como 
+\emph on 
+handle
+\emph default 
+ (registro de Lua como exemplo de manipulação de objetos da VM via 
+\emph on 
+handles
+\emph default 
+).]
+\layout Section
+
+A camada independente de linguagem
+\layout Standard
+
+
+\color red
+TODO: reler esta seção
+\layout Standard
+
+A API oferecida pela biblioteca deve ser independente de linguagem e isolar
+ a aplicação das diferentes APIs oferecidas pelas linguagens de scripting.
+ Não se trata apenas de adicionar uma camada de indireção entre as chamadas.
+ Isto seria apropriado apenas para os recursos que são comuns a todas elas,
+ como inicialização e chamadas de função.
+ A questão principal aí são os vários recursos particulares a cada linguagem.
+ Uma abordagem pouco prática seria definir a API como a união dos conjuntos
+ de recursos de todas as linguagens a ser suportadas (oferecer recursos
+ de manipulação de seqüências para mapear este recurso de Python, recursos
+ de manipulação de tabelas para Lua, e assim por diante).
+ Este caminho traria vários problemas: a API seria complexa e provavelmente
+ precisaria ser estendida a cada nova linguagem introduzida; mesmo para
+ mapeamentos que aparentemente poderiam ser reaproveitados (por exemplo,
+ mapear 
+\emph on 
+hashes
+\emph default 
+ de Python e tabelas de Lua para uma mesma API de 
+\emph on 
+arrays
+\emph default 
+ associativos) há o problema de sutis variações de semântica entre as implementa
+ções dos recursos nas diferentes linguagens.
+ Além disso, bindings de aplicações poderiam oferecer funcionalidades disponívei
+s apenas para uma linguagem, indo contra a proposta de independência de
+ linguagem de LibScript.
+\layout Standard
+
+Uma abordagem mais interessante é, ao invés de expor a API da linguagem
+ à aplicação, expor apenas uma API de funções da aplicação para a linguagem
+ e manter as estruturas de dados e recursos desta restrito ao domínio que
+ será invocado.
+ A aplicação interage com a máquina virtual enviando strings de código a
+ ser executado e obtém resultados de volta quando o script passa parâmetros
+ ao chamar funções da aplicação.
+ Esta abordagem é proposta em 
+\begin_inset LatexCommand \cite{ltn004}
+
+\end_inset 
+
+ e utiliza o que, por exemplo, Python chama de 
+\begin_inset Quotes eld
+\end_inset 
+
+very high level layer
+\begin_inset Quotes erd
+\end_inset 
+
+ 
+\begin_inset LatexCommand \cite{pyvhll_ext,pyvhll_ref}
+
+\end_inset 
+
+.
+\layout Standard
+
+Oferecer uma primitiva para a execução de uma string de código é algo básico
+ em linguagens voltadas a script -- 
+\family typewriter 
+luaL_loadstring
+\family default 
+ em Lua, 
+\family typewriter 
+PyRun_SimpleString
+\family default 
+ em Python 
+\begin_inset LatexCommand \cite{pyvhll_ref}
+
+\end_inset 
+
+, 
+\family typewriter 
+rb_eval_string
+\family default 
+ em Ruby 
+\begin_inset LatexCommand \cite{ext_ruby}
+
+\end_inset 
+
+, 
+\family typewriter 
+perl_eval_sv
+\family default 
+ em Perl 
+\begin_inset LatexCommand \cite{perlembed}
+
+\end_inset 
+
+ , 
+\family typewriter 
+TclEval
+\family default 
+ em Tcl 
+\begin_inset LatexCommand \cite{tcl}
+
+\end_inset 
+
+.
+ No caso de Java, uma vez que o compilador e a máquina virtual não são combinado
+s, não há uma primitiva deste tipo, embora seja possível carregar dinamicamente
+ arquivos pré-compilados para execução através da classe 
+\family typewriter 
+ClassLoader
+\family default 
+.
+ Alternativamente, scripting em Java pode ser oferecido adicionando-se um
+ compilador Java 
+\emph on 
+embedded
+\emph default 
+ como o Janino 
+\begin_inset LatexCommand \cite{janino}
+
+\end_inset 
+
+.
+\layout Section
+
+API de LibScript
+\layout Standard
+
+
+\color red
+TODO: reorganizar o texto dessa seção pra ser menos bullet-centric, incluindo
+ parágrafos sobre o design geral de cada parte.
+\layout Subsection
+
+Inicialização e término
+\layout Itemize
+
+
+\family typewriter 
+script_env* script_init(const char* namespace)
+\family default 
+
+\newline 
+Inicializa LibScript e retorna um ambiente.
+ Um ambiente define um espaço de funções a serem expostas à biblioteca e
+ de 
+\begin_inset Quotes eld
+\end_inset 
+
+estados
+\begin_inset Quotes erd
+\end_inset 
+
+ de plugins carregados.
+ Assim, várias máquinas virtuais podem estar carregadas em um ambiente.
+ O parâmetro 
+\family typewriter 
+namespace
+\family default 
+ refere-se ao identificador a ser inicializado no espaço de nomes da máquina
+ virtual para armazenar as funções expostas.
+ 
+\layout Itemize
+
+
+\family typewriter 
+void script_done(script_env* env)
+\family default 
+
+\newline 
+Encerra o ambiente.
+\layout Subsection
+
+Registro de funções
+\layout Itemize
+
+
+\family typewriter 
+typedef script_err (*script_fn)(script_env*)
+\family default 
+
+\newline 
+Tipo de funções a serem registradas no ambiente.
+ Tipicamente será uma função 
+\emph on 
+wrapper
+\emph default 
+ que carrega os parâmetros de entrada do ambiente, chama uma função do programa
+ e envia os parâmetros de saída de volta ao ambiente.
+\layout Itemize
+
+
+\family typewriter 
+script_err script_new_function(script_env* env, script_fn fn, const char*
+ name)
+\family default 
+
+\newline 
+Registra uma função no ambiente.
+\layout Itemize
+
+
+\family typewriter 
+double script_in_double(script_env* env)
+\newline 
+int script_in_int(script_env* env)
+\newline 
+const char* script_in_string(script_env* env)
+\family default 
+
+\newline 
+Obtêm parâmetros do ambiente.
+ Estas funções devem ser chamadas ao início das funções 
+\emph on 
+wrapper
+\emph default 
+.
+ Para cada parâmetro de entrada, uma chamada deve ser realizada, em ordem.
+ Ao fim, pode-se invocar a macro 
+\family typewriter 
+SCRIPT_CHECK_INPUTS(env)
+\family default 
+, que encerra a função retornando um código de erro caso alguma leitura
+ com alguma destas funções não tenha encontrado um dado do tipo esperado
+ (A API não realiza conversões automáticas entre strings e números).
+ Em 
+\family typewriter 
+script_in_string
+\family default 
+, é retornada uma referência que pertence ao ambiente.
+ O código deve realizar uma cópia caso queira modificar a string.
+\layout Itemize
+
+
+\family typewriter 
+script_type script_in_type(script_env* env)
+\newline 
+int script_param_count(script_env* env)
+\newline 
+
+\family default 
+Estas funções permitem escrever funções em C que realizam verificação de
+ tipo e número de parâmetros em tempo de execução.
+ A função 
+\family typewriter 
+script_in_type
+\family default 
+ obtém o tipo do próximo parâmetro a ser obtido com a função 
+\family typewriter 
+script_in_*
+\family default 
+ e 
+\family typewriter 
+script_param_count
+\family default 
+ retorna o número de parâmetros disponíveis para consumo.
+\layout Itemize
+
+
+\family typewriter 
+void script_out_double(script_env* env, double value)
+\newline 
+void script_out_int(script_env* env, int value)
+\newline 
+void script_out_string(script_env* env, const char* value)
+\newline 
+
+\family default 
+Inserem parâmetros no ambiente.
+ Estas funções permitem retornar os valores de saída.
+ Ao final de uma função 
+\emph on 
+wrapper
+\emph default 
+, os valores de retorno da função devem ser passados com chamadas a estas
+ funções e um código de erro 
+\family typewriter 
+SCRIPT_OK
+\family default 
+ como retorno da função C.
+\layout Standard
+
+As funções 
+\family typewriter 
+script_{in,out}_*
+\family default 
+ também devem são utilizadas na implementação dos plugins, de maneira inversa:
+ antes de chamar o 
+\emph on 
+wrapper
+\emph default 
+, o plugin registra no ambiente os valores de entrada (devidamente convertidos
+ para C) usando as funções 
+\family typewriter 
+out
+\family default 
+, e após a chamada, repassa o retorno para a máquina virtual obtendo os
+ valores usando as funções 
+\family typewriter 
+in
+\family default 
+.
+\layout Subsection
+
+Executando código
+\layout Itemize
+
+
+\family typewriter 
+script_err script_run(script_env* env, const char* language, const char*
+ code)
+\family default 
+
+\newline 
+Executa uma string de código em uma dada linguagem.
+ Se necessário, o plugin apropriado é carregado e inicializado.
+\layout Itemize
+
+
+\family typewriter 
+script_err script_run_file(script_env* env, const char* filename)
+\family default 
+
+\newline 
+Função de conveniência; carrega o texto de um arquivo e o executa com 
+\family typewriter 
+script_run
+\family default 
+.
+ A linguagem é detectada a partir da extensão do arquivo.
+\layout Itemize
+
+
+\family typewriter 
+script_err script_call(script_env* env, const char* fn)
+\family default 
+
+\newline 
+Requisita a execução de uma função em algum dos plugins cadastrados.
+ Os parâmetros de entrada devem ser passados anteriormente com chamadas
+ às funções 
+\family typewriter 
+script_out_*
+\family default 
+; valores de retorno podem ser obtidos com 
+\family typewriter 
+script_in_*
+\family default 
+.
+ 
+\emph on 
+[Na implementação atual,]
+\emph default 
+ Inicialmente, a tabela de funções C é consultada.
+ Não havendo uma função definida em C, os plugins são consultados na seqüência
+ em que foram inicializados implicitamente via 
+\family typewriter 
+script_run
+\family default 
+ ou 
+\family typewriter 
+script_run_file
+\family default 
+: funções registradas no namespace definido para a LibScript na máquina
+ virtual da linguagem (isto é, no nome criado com 
+\family typewriter 
+script_init
+\family default 
+) são acessíveis via 
+\family typewriter 
+script_call
+\family default 
+.
+\layout Itemize
+
+
+\family typewriter 
+script_err script_error(script_env* env)
+\newline 
+const char* script_error_message(script_env* env)
+\family default 
+
+\newline 
+Obtém o código e a mensagem de erro mais recentes do ambiente.
+ Após uma chamada a script_error, o código de erro é zerado de volta para
+ 
+\family typewriter 
+SCRIPT_OK
+\family default 
+.
+ A mensagem de erro, por sua vez, não é zerada.
+\layout Subsection
+
+Funções para implementação de plugins
+\layout Itemize
+
+
+\family typewriter 
+script_fn script_get_function(script_env* env, const char* name)
+\family default 
+
+\newline 
+Localiza uma função no ambiente.
+ Na implementação atual, todos os plugins estão fazendo o registro de funções
+ na máquina virtual sob demanda: na inicialização, um objeto é criado com
+ o nome do 
+\emph on 
+namespace
+\emph default 
+ do ambiente (uma tabela em Lua, um módulo em Python e Ruby) e acessos a
+ funções deste objeto são resolvidas chamando esta função.
+\layout Itemize
+
+
+\family typewriter 
+void script_set_error_message(script_env* env, const char* message)
+\family default 
+
+\newline 
+Define um novo valor para a mensagem de erro do ambiente.
+ Permite ao plugin propagar à aplicação as mensagens de erro da máquina
+ virtual.
+\layout Itemize
+
+
+\family typewriter 
+void script_start_params(script_env* env)
+\family default 
+
+\newline 
+Usada para zerar a lista interna de parâmetros de entrada e saída.
+ Deve ser usada na implementação da chamada de funções para garantir que
+ parâmetros que não tenham sido consumidos sejam removidos.
+\layout Itemize
+
+
+\family typewriter 
+const char* script_get_namespace(script_env* env)
+\family default 
+
+\newline 
+Retorna o nome do namespace registrado com 
+\family typewriter 
+script_init
+\family default 
+.
+\layout Standard
+
+Para linguagens que precisem carregar todas as funções na máquina virtual
+ durante a inicialização do plugin, será necessário adicionar alguma funcionalid
+ade que permita iterar sobre a lista de funções registradas.
+\layout Subsection
+
+API exportada por plugins
+\layout Standard
+
+As chamadas aos plugins que implementam interfaces com as várias máquinas
+ virtuais são realizadas internamente pela biblioteca principal, que espera
+ encontrar as seguintes funções:
+\layout Itemize
+
+
+\family typewriter 
+script_plugin_state script_plugin_init_
+\emph on 
+lang
+\emph default 
+(script_env* env)
+\family default 
+
+\newline 
+Responsável por inicializar o plugin.
+ Durante a inicialização, o espaço de nomes do ambiente deve ser exposto
+ à máquina virtual de alguma forma apropriada para a linguagem (como uma
+ tabela em Lua, ou um módulo em Python, ou ainda uma classe em Ruby).
+ A rotina de inicialização pode retornar um handle que será passado de volta
+ a ele nas chamadas subseqüentes.
+ Tipicamente, o estado da máquina virtual e o ponteiro para o ambiente LibScript
+ devem ser armazenados de modo a ser posteriormente acessíveis a partir
+ deste handle.
+\layout Itemize
+
+
+\family typewriter 
+script_err script_plugin_run_
+\emph on 
+lang
+\emph default 
+(script_plugin_state state, char* programtext)
+\family default 
+
+\newline 
+Envia código para execução na máquina virtual.
+ Esta função é utilizada internamente por 
+\family typewriter 
+script_run
+\family default 
+ e 
+\family typewriter 
+script_run_file
+\family default 
+.
+ Deve retornar 
+\family typewriter 
+SCRIPT_OK
+\family default 
+ em caso de sucesso, 
+\family typewriter 
+SCRIPT_ERRLANGCOMP
+\family default 
+ para erros de compilação ou 
+\family typewriter 
+SCRIPT_ERRLANGRUN
+\family default 
+ para erros de execução, preferencialmente definindo uma mensagem de erro
+ com 
+\family typewriter 
+script_set_error_message
+\family default 
+.
+\layout Itemize
+
+
+\family typewriter 
+script_err script_plugin_call_
+\emph on 
+lang
+\emph default 
+(script_plugin_state state, char* fn)
+\family default 
+
+\newline 
+Realiza a chamada de uma função que tenha sido definida nativamente no espaço
+ de nomes do ambiente na máquina virtual do plugin.
+ Ao chamar uma função no espaço de nomes, seja em C através de 
+\family typewriter 
+script_call
+\family default 
+ ou executando código em algum dos plugins, LibScript irá utilizar esta
+ função para tentar executar a função no contexto do plugin.
+ Se a função não foi definida no plugin, o valor 
+\family typewriter 
+SCRIPT_ERRFNUNDEF
+\family default 
+ deve ser retornado.
+ Caso contrário, ela deve ser executada, com parâmetros de entrada obtidos
+ através de 
+\family typewriter 
+script_in_*
+\family default 
+ e valores de retorno enviados com 
+\family typewriter 
+script_out_*
+\family default 
+, e os valores 
+\family typewriter 
+SCRIPT_OK
+\family default 
+ ou 
+\family typewriter 
+SCRIPT_ERRLANGRUN
+\family default 
+ devem ser retornados, conforme apropriado.
+ 
+\layout Itemize
+
+
+\family typewriter 
+void script_plugin_done_
+\emph on 
+lang
+\emph default 
+(script_plugin_state state)
+\family default 
+
+\newline 
+Responsável pelo encerramento do ambiente.
+\layout Bibliography
+\bibitem {finne-fli}
+
+
+\size footnotesize 
+FINNE, S.; LEIJEN, D.; MEIJER, E.; PEYTON JONES, S.
+ 
+\series bold 
+H/Direct: a Binary Foreign Language Interface for Haskell
+\series default 
+, Em: THIRD ACM SIGPLAN INTERNATIONAL CONFERENCE ON FUNCTIONAL PROGRAMMING,
+ PROCEEDINGS, p.
+ 153--162, Baltimore, EUA, 1998.
+ ACM Press, New York, EUA.
+ ISBN: 1581130244
+\layout Bibliography
+\bibitem {ada95}
+
+
+\size footnotesize 
+ANSI/ISO/IEC-8652:1995; 
+\series bold 
+Ada 95 Reference Manual
+\series default 
+.
+ volume 1246 de 
+\series bold 
+Lecture Notes in Computer Science
+\series default 
+, 1995.
+ Springer-Verlag.
+\layout Bibliography
+\bibitem {tarditi92no}
+
+
+\size footnotesize 
+TARDITI, D.; LEE, P.; ACHARYA, A.
+ 
+\series bold 
+No Assembly Required: Compiling Standard ML to C
+\series default 
+.
+ Em: ACM LETTERS ON PROGRAMMING LANGUAGES AND SYSTEMS, volume 1, número
+ 2, p.
+ 161--177, junho 1992.
+ ACM Press.
+\layout Bibliography
+\bibitem {tolmach-from}
+
+
+\size footnotesize 
+TOLMACH, A.; OLIVA, D.
+ 
+\series bold 
+From ML to Ada: Strongly-typed Language Interoperability via Source Translation
+\series default 
+.
+ Em: JOURNAL OF FUNCTIONAL PROGRAMMING, volume 8, número 4, p.
+ 367--412, 1998.
+\layout Bibliography
+\bibitem {jones93glasgow}
+
+
+\size footnotesize 
+PEYTON JONES, S.; HALL, C.; HAMMOND, K.; PARTAIN, W.; WADLER, P.
+ 
+\series bold 
+The Glasgow Haskell compiler: a technical overview
+\series default 
+.
+ Em: UK JOINT FRAMEWORK FOR INFORMATION TECHNOLOGY (JFIT) TECHNICAL CONFERENCE,
+ PROCEEDINGS, 1993.
+\layout Bibliography
+\bibitem {gosling-java}
+
+
+\size footnotesize 
+GOSLING, J.; JOY, B.; STEELE, G.
+ 
+\series bold 
+The Java Language Specification
+\series default 
+.
+ Addison-Wesley Professional, Reading, EUA, 3a.
+ Edição, junho 2005.
+ ISBN: 0321246780
+\layout Bibliography
+\bibitem {hugunin-jython}
+
+
+\size footnotesize 
+HUGUNIN, J.
+ 
+\series bold 
+Java and Python: the Best of Both Worlds
+\series default 
+.
+ Em: 6TH INTERNATIONAL PYTHON CONFERENCE.
+ San Jose, EUA, 1997.
+\layout Bibliography
+\bibitem {lutz-python}
+
+
+\size footnotesize 
+LUTZ, M.
+ 
+\series bold 
+Programming Python
+\series default 
+.
+ O'Reilly Media Inc.
+ 2a.
+ Edição, março 2001.
+ ISBN: 0596000855
+\layout Bibliography
+\bibitem {luajava}
+
+
+\size footnotesize 
+Kepler Project.
+
+\series bold 
+ LuaJava
+\series default 
+.
+ 
+\begin_inset LatexCommand \url{http://www.keplerproject.org/luajava/}
+
+\end_inset 
+
+
+\layout Bibliography
+\bibitem {lua}
+
+
+\size footnotesize 
+IERUSALIMSCHY, R.; FIGUEIREDO, L.H.; CELES, W.; 
+\series bold 
+Lua -- an Extensible Extension Language
+\series default 
+.
+ Em: Software--Practice and Experience, volume 26, número 6, p.
+ 635--652, 1996.
+\layout Bibliography
+\bibitem {benton99interlanguage}
+
+
+\size footnotesize 
+BENTON, N.; KENNEDY, A.
+ 
+\series bold 
+Interlanguage Working Without Tears: Blending SML with Java
+\series default 
+.
+ Em: INTERNATIONAL CONFERENCE ON FUNCTIONAL PROGRAMMING, PROCEEDINGS, p.
+ 126--137, 1999.
+ 
+\layout Bibliography
+\bibitem {box-net}
+
+
+\size footnotesize 
+BOX, D.; SELLS, C.
+ 
+\series bold 
+Essential .NET, Volume I: The Common Language Runtime
+\series default 
+.
+ Addison-Wesley Professional, 1a.
+ Edição, novembro 2002.
+ ISBN: 0201734117
+\layout Bibliography
+\bibitem {hejlsberg-csharp}
+
+
+\size footnotesize 
+HEJLSBERG, A.; WILTAMUTH, S.
+ 
+\series bold 
+C# Language Specification
+\series default 
+.
+ Microsoft Corporation, 2000.
+\layout Bibliography
+\bibitem {managedcpp}
+
+
+\size footnotesize 
+Microsoft Corporation.
+ 
+\series bold 
+Managed Extensions for C++ Specification
+\series default 
+.
+ 
+\begin_inset LatexCommand \url{http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vcmxspec/html/vcmanagedextensionsspec_start.asp}
+
+\end_inset 
+
+ 
+\layout Bibliography
+\bibitem {syme-fsharp}
+
+
+\size footnotesize 
+SYME, D.; MARGETSON, J.; MARLOW, S.
+
+\series bold 
+ F#.
+
+\series default 
+ Microsoft Corporation.
+ 
+\begin_inset LatexCommand \url{http://research.microsoft.com/projects/ilx/fsharp.aspx}
+
+\end_inset 
+
+ 
+\layout Bibliography
+\bibitem {randal-perl6}
+
+
+\size footnotesize 
+RANDAL, A.; SUGALSKI, D.; TOETSCH, L.
+ 
+\series bold 
+Perl 6 and Parrot Essentials
+\series default 
+.
+ O'Reilly Media, Inc.
+ 2a.
+ Edição, junho 2004.
+ ISBN: 059600737X
+\layout Bibliography
+\bibitem {conway-uncol}
+
+
+\size footnotesize 
+CONWAY, M.
+ 
+\series bold 
+Proposal for an UNCOL
+\series default 
+.
+ Em: COMMUNICATIONS OF THE ACM, volume 1, número 10.
+ p.
+ 5--8, ACM Press, New York, NY, EUA.
+ ISSN: 0001-0782
+\layout Bibliography
+\bibitem {metzner-xl}
+
+
+\size footnotesize 
+METZNER, J.
+ 
+\series bold 
+A Graded Bibliography on Macro Systems and Extensible Languages
+\series default 
+.
+ Em: ACM SIGPLAN NOTICES, volume 14, número 1, p.
+ 57--64, 1979.
+ ACM Press.
+ New York, NY, EUA.
+ ISSN: 0362-1340
+\layout Bibliography
+\bibitem {peterson-fpy}
+
+
+\size footnotesize 
+PETERSON, P.; MARTINS, J.R.R.A; ALONSO, J.J.; 
+\series bold 
+Fortran to Python Interface Generator with an Application to Aerospace Engineeri
+ng
+\series default 
+.
+ Em: 9TH INTERNATIONAL PYTHON CONFERENCE, PROCEEDINGS, Long Beach, EUA,
+ março 2001.
+\layout Bibliography
+\bibitem {lunatic-python}
+
+
+\size footnotesize 
+NIEMEYER, G.
+ 
+\series bold 
+Lunatic Python
+\series default 
+.
+ 
+\begin_inset LatexCommand \url{http://labix.org/lunatic-python}
+
+\end_inset 
+
+ 
+\layout Bibliography
+\bibitem {jones99portable}
+
+
+\size footnotesize 
+PEYTON JONES, S.; RAMSEY, N.; REIG, F.
+ 
+\series bold 
+C--: a Portable Assembly Language that Supports Garbage Collection
+\series default 
+, Em: INTERNATIONAL CONFERENCE ON PRINCIPLES AND PRACTICE OF DECLARATIVE
+ PROGRAMMING, PROCEEDINGS.
+ 1999.
+\layout Bibliography
+\bibitem {dvorak05gcc}
+
+
+\size footnotesize 
+DVORAK, Z.
+ 
+\series bold 
+Gimplification Improvements.
+ 
+\series default 
+Em: GCC DEVELOPERS' SUMMIT, PROCEEDINGS.
+ p.
+ 47--56.
+ Ottawa, Canada.
+ junho 2005.
+\layout Bibliography
+\bibitem {omg-corba}
+
+
+\size footnotesize 
+Object Management Group, Inc.
+ 
+\series bold 
+The Common Object Request Broker: Architecture and Specification
+\series default 
+, Versão 3.0, Framingham, MA, EUA, julho 2002.
+\layout Bibliography
+\bibitem {gelernter-linda}
+
+
+\size footnotesize 
+GELERNTER, D.
+ 
+\series bold 
+Generative communication in Linda
+\series default 
+.
+ Em: ACM TRANSACTIONS ON PROGRAMMING LANGUAGES AND SYSTEMS, volume 7, número
+ 1, p.
+ 80--112.
+ New York, NY, EUA.
+ ACM Press.
+ ISSN: 0164-0925
+\layout Bibliography
+\bibitem {chapman-opus}
+
+
+\size footnotesize 
+CHAPMAN, B.; HAINES, M.; MEHROTRA, P.; ZIMA, H.; VAN ROSENDALE, J.
+ 
+\series bold 
+Opus: A Coordination Language for Multidisciplinary Applications
+\series default 
+.
+ Em: SCIENTIFIC PROGRAMMING, volume 6, número 4.
+ p 345--362.
+ 1997.
+\layout Bibliography
+\bibitem {collin-eiffel}
+
+
+\size footnotesize 
+COLLIN, S.; COLNET, D.; ZENDRA, O.
+ 
+\series bold 
+Type Inference for Late Binding
+\series default 
+.
+ The SmallEiffel Compiler.
+ Em: JOINT MODULAR LANGUAGES CONFERENCE, (JMLC'97), 1997, volume 1204 de
+ 
+\series bold 
+Lecture Notes in Computer Science
+\series default 
+, p.
+ 67--81.
+ IEEE, Springer-Verlag.
+\layout Bibliography
+\bibitem {thomas-ruby}
+
+
+\size footnotesize 
+THOMAS, D.; FOWLER, C.; HUNT, A.
+ 
+\series bold 
+Programming Ruby: The Pragmatic Programmer's Guide
+\series default 
+.
+ 2a.
+ Edição.
+ Pragmatic Bookshelf, outubro 2004.
+\layout Bibliography
+\bibitem {vanrossum-extpy}
+
+
+\size footnotesize 
+VAN ROSSUM, G.
+ 
+\series bold 
+Extending and Embedding the Python Interpreter
+\series default 
+.
+ Versão 2.4.2.
+ Python Software Foundation, setembro 2005.
+\layout Bibliography
+\bibitem {wilson-gc}
+
+
+\size footnotesize 
+WILSON, P.
+ 
+\series bold 
+Uniprocessor Garbage Collection Techniques
+\series default 
+.
+ Em: INTERNATIONAL WORKSHOP ON MEMORY MANAGEMENT, PROCEEDINGS, p.
+ 637.
+ Saint-Malo, França, 1992.
+ Springer-Verlag.
+\layout Bibliography
+\bibitem {liang-jni}
+
+
+\size footnotesize 
+LIANG, S.
+ 
+\series bold 
+Java Native Interface: Programmer's Guide and Specification
+\series default 
+.
+ Addison-Wesley Professional, junho 1999.
+ ISBN: 0201325772
+\layout Bibliography
+\bibitem {moura-colua}
+
+
+\size footnotesize 
+MOURA, A.L.; RODRIGUEZ, N.; IERUSALIMSCHY, R.
+ 
+\series bold 
+Coroutines in Lua
+\series default 
+.
+ Em: JOURNAL OF UNIVERSAL COMPUTER SCIENCE, volume 10, número 7, p.
+ 910--925, julho 2004.
+ 
+\layout Bibliography
+\bibitem {beazley-swig}
+
+
+\size footnotesize 
+BEAZLEY, D.; 
+\series bold 
+SWIG and Automated C/C++ Scripting Extensions
+\series default 
+.
+ Em: DR.
+ DOBB'S JOURNAL, fevereiro 1998.
+\layout Bibliography
+\bibitem {ewing-pyrex}
+
+
+\size footnotesize 
+EWING, G.; 
+\series bold 
+Pyrex - a Language for Writing Python Extension Modules
+\series default 
+.
+ 
+\begin_inset LatexCommand \url{http://nz.cosc.canterbury.ac.nz/~greg/python/Pyrex/}
+
+\end_inset 
+
+
+\the_end
