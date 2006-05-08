@@ -1,1 +1,1 @@
-export TEXINPUTS=$TEXINPUTS:/Programs/ThesisPUC/1.0/Shared/texmf-dist/tex/latex/ThesisPUC
+export TEXINPUTS=$TEXINPUTS:/Programs/ThesisPUC/Current/Shared/texmf-dist/tex/latex/ThesisPUC
