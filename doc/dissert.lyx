@@ -150,9 +150,58 @@ Falta um parágrafo de fecho
 \layout Section
 
 Estrutura do Texto
+\layout Standard
+
+O trabalho está organizado da seguinte forma.
+ No Capítulo 
+\begin_inset LatexCommand \ref{cha:Interação-entre-linguagens}
+
+\end_inset 
+
+, é dada uma visão geral sobre as várias abordagens para interação entre
+ código escrito em diferentes linguagens de progamação.
+ A partir daí, o foco se concentra no método de interface externa mais comum
+ nas linguagens da atualidade: interfaces com a linguagem C.
+ São abordados no Capítulo 
+\begin_inset LatexCommand \ref{cha:Interfaces-com-C}
+
+\end_inset 
+
+ os problemas comumente envolvidos na comunicação com código escrito em
+ C.
+ No Capítulo 
+\begin_inset LatexCommand \ref{cha:APIs-de-Máquinas}
+
+\end_inset 
+
+ são apresentadas em detalhe APIs para C de um conjunto de máquinas virtuais.
+ Ao discutir estas interfaces, as diferentes soluções empregadas para os
+ problemas levantados no capítulo anterior são comparadas.
+ O Capítulo 
+\begin_inset LatexCommand \ref{cha:Estudo-de-caso:}
+
+\end_inset 
+
+ exercita estas diferentes APIs através de um estudo de caso: uma biblioteca
+ baseada em plug-ins que oferece uma interface uniforme simplificada entre
+ máquinas virtuais e C.
+ Ao examinar a implementação de cada plug-in, podemos comparar as APIs de
+ cada linguagem realizando operações equivalentes.
+ Finalmente, no Capítulo 
+\begin_inset LatexCommand \ref{cha:Considerações-Finais}
+
+\end_inset 
+
+, são apresentadas as conclusões do trabalho, bem como apontados caminhos
+ para trabalhos futuros.
 \layout Chapter
 
-Interação entre linguagens de programação
+
+\begin_inset LatexCommand \label{cha:Interação-entre-linguagens}
+
+\end_inset 
+
+Interação entre Linguagens de Programação
 \layout Standard
 
 As abordagens aplicadas na interação entre diferentes linguagens de programação
@@ -163,7 +212,7 @@ te utilizadas: tradução de linguagens, seja de uma para outra ou de ambas
  ou através de convenção de chamadas.
 \layout Section
 
-Tradução de código
+Tradução de Código
 \layout Standard
 
 Permitir o uso de duas linguagens diferentes em um programa traduzindo o
@@ -240,7 +289,7 @@ lingua franca
 .
 \layout Section
 
-Compartilhamento de máquinas virtuais
+Compartilhamento de Máquinas Virtuais
 \layout Standard
 
 Outra abordagem envolve o uso de um ambiente de execução comum, como uma
@@ -390,7 +439,7 @@ status Collapsed
 
 \end_inset 
 
-Modelos de objetos independentes de linguagem
+Modelos de Objetos Independentes de Linguagem
 \layout Standard
 
 Adotar um modelo de tipos independente de linguagem é uma outra forma de
@@ -494,7 +543,7 @@ s para indicar o fluxo destas entre agentes implementados em outras linguagens.
 
 \end_inset 
 
-C como linguagem intermediária
+C como Linguagem Intermediária
 \layout Standard
 
 O desejo de uma linguagem intermediária universal é antigo no mundo da computaçã
@@ -589,6 +638,11 @@ front-ends
 
 .
 \layout Chapter
+
+
+\begin_inset LatexCommand \label{cha:Interfaces-com-C}
+
+\end_inset 
 
 Interfaces com C
 \layout Standard
@@ -727,7 +781,7 @@ ccall
 
 \end_inset 
 
-Sistemas de tipos
+Sistemas de Tipos
 \layout Standard
 
 O principal complicador na interação entre linguagens de programação não
@@ -972,7 +1026,7 @@ PyTypeObject
 
 \end_inset 
 
-Coletores de lixo
+Coletores de Lixo
 \layout Standard
 
 A partir do momento em que código C ganha acesso a referências a dados armazenad
@@ -1092,7 +1146,7 @@ luaL_unref
 , de forma análoga às referências globais em Java.
 \layout Section
 
-Modelos de concorrência
+Modelos de Concorrência
 \layout Standard
 
 Outra possível fonte de incompatibilidade entre linguagens que deve ser
@@ -1147,7 +1201,7 @@ yield
  
 \layout Section
 
-Módulos externos
+Módulos Externos
 \layout Standard
 
 Uma das motivações mais freqüentes para integração com código C é o uso
@@ -1211,6 +1265,11 @@ stubs
  própria linguagem Python.
 \layout Chapter
 
+
+\begin_inset LatexCommand \label{cha:APIs-de-Máquinas}
+
+\end_inset 
+
 APIs de Máquinas Virtuais
 \layout Standard
 
@@ -1240,7 +1299,12 @@ Com base nesta classificação, o passo seguinte será identificar, para cada
  e o desenvolvimento de interfaces entre linguagens de programação.
 \layout Chapter
 
-Estudo de caso: LibScript
+
+\begin_inset LatexCommand \label{cha:Estudo-de-caso:}
+
+\end_inset 
+
+Estudo de Caso: LibScript
 \layout Standard
 
 
@@ -1389,7 +1453,7 @@ handles
 ).]
 \layout Section
 
-A camada independente de linguagem
+A Camada Independente de Linguagem
 \layout Standard
 
 
@@ -1524,7 +1588,7 @@ TODO: reorganizar o texto dessa seção pra ser menos bullet-centric, incluindo
  parágrafos sobre o design geral de cada parte.
 \layout Subsection
 
-Inicialização e término
+Inicialização e Término
 \layout Itemize
 
 
@@ -1563,7 +1627,7 @@ void script_done(script_env* env)
 Encerra o ambiente.
 \layout Subsection
 
-Registro de funções
+Registro de Funções
 \layout Itemize
 
 
@@ -1694,7 +1758,7 @@ in
 .
 \layout Subsection
 
-Executando código
+Executando Código
 \layout Itemize
 
 
@@ -1783,7 +1847,7 @@ SCRIPT_OK
  A mensagem de erro, por sua vez, não é zerada.
 \layout Subsection
 
-Funções para implementação de plugins
+Funções para Implementação de Plugins
 \layout Itemize
 
 
@@ -1843,7 +1907,7 @@ Para linguagens que precisem carregar todas as funções na máquina virtual
 ade que permita iterar sobre a lista de funções registradas.
 \layout Subsection
 
-API exportada por plugins
+API Exportada por Plugins
 \layout Standard
 
 As chamadas aos plugins que implementam interfaces com as várias máquinas
@@ -1967,6 +2031,19 @@ lang
 
 \newline 
 Responsável pelo encerramento do ambiente.
+\layout Chapter
+
+
+\begin_inset LatexCommand \label{cha:Considerações-Finais}
+
+\end_inset 
+
+Considerações Finais
+\layout Standard
+
+
+\color red
+TODO: Concluir alguma coisa :-)
 \layout Bibliography
 \bibitem {finne-fli}
 
