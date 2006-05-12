@@ -703,9 +703,13 @@ lang
 Responsável pelo encerramento do ambiente.
 \layout Section*
 
+
+\color red
 Múltiplos estados independentes
 \layout Standard
 
+
+\color red
 O 
 \emph on 
 design
@@ -722,6 +726,8 @@ collapsed true
 
 \layout Standard
 
+
+\color red
 Perl precisa ser compilado com -DMULTIPLICITY para permitir múltiplos estados.
 \end_inset 
 
@@ -761,6 +767,7 @@ This is a hard-to-fix bug that will be addressed in a future release
 
 
 \emph on 
+\color red
 [ Há ainda a questão da 
 \emph default 
 thread-safety
@@ -774,9 +781,13 @@ thread-safety
  Abordar isto? ]
 \layout Section*
 
+
+\color red
 Múltiplos valores de retorno
 \layout Standard
 
+
+\color red
 A API para implementação de funções em C a serem expostas às máquinas virtuais
  permite declarar funções com múltiplos valores de retorno.
  Muitas linguagens não possuem este recurso, mas é possível, ao detectar
@@ -785,9 +796,13 @@ A API para implementação de funções em C a serem expostas às máquinas virtuais
  retornando à máquina virtual um valor de retorno único.
 \layout Section*
 
+
+\color red
 Resolução de funções sob demanda
 \layout Standard
 
+
+\color red
 Uma técnica que vem sendo implementada nos plugins de LibScript, quando
  permitido pela linguagem, consiste em realizar o binding entre a função
  C declarada e uma função 
@@ -798,6 +813,8 @@ stub
  
 \layout Standard
 
+
+\color red
 O objetivo aqui, além de otimizar o tempo de inicialização e consumo de
  memória da máquina virtual (ao evitar a criação de 
 \emph on 
@@ -810,11 +827,14 @@ stubs
  avaliar os recursos de introspecção oferecidos por cada API.
 \layout Subsection*
 
+
+\color red
 Lua
 \layout Standard
 
 
 \emph on 
+\color red
 [Parágrafo carregado de jargão Lua...] 
 \emph default 
 Durante a inicialização do plugin, é criada uma tabela armazenada em uma
@@ -873,9 +893,13 @@ upvalue
  e obtém os valores de retorno.
 \layout Subsection*
 
+
+\color red
 Python
 \layout Standard
 
+
+\color red
 Na inicialização em Python, o 
 \emph on 
 namespace
@@ -930,6 +954,8 @@ o do módulo.
  Preciso conferir isso na lista de Python.]
 \layout Standard
 
+
+\color red
 Ao chamar 
 \family typewriter 
 \emph on 
@@ -981,21 +1007,29 @@ script_py_object_call
  valores de saída da função.
 \layout Subsection*
 
+
+\color red
 Ruby
 \layout Standard
 
+
+\color red
 
 \begin_inset Note
 collapsed false
 
 \layout Standard
 
+
+\color red
 TODO: update this
 \end_inset 
 
 
 \layout Standard
 
+
+\color red
 A implementação atual em Ruby ainda não está realizando a resolução de funções
  de forma transparente, mas ela já o faz de forma dinâmica.
  A inicialização do plugin em Ruby define uma classe com o nome do namespace,
@@ -1043,6 +1077,8 @@ Namespace
  passa a estar disponível na classe.
 \layout Standard
 
+
+\color red
 O método 
 \family typewriter 
 get
@@ -1112,9 +1148,13 @@ script_py_object_call
 .
 \layout Section*
 
+
+\color red
 Manipulação do estado de nomes
 \layout Standard
 
+
+\color red
 Para que o ambiente descreva um espaço de nomes consistente entre todos
  os plugins, é necessário contemplar o caso onde os plugins adicionam funções
  a ele, possivelmente sobrescrevendo funções previamente definidas.
@@ -1122,6 +1162,7 @@ Para que o ambiente descreva um espaço de nomes consistente entre todos
 
 
 \emph on 
+\color red
 Atualmente, os plugins armazenam funções registradas em uma cache (Lua e
  Python no primeiro acesso, Ruby com a função explícita 
 \family typewriter 
@@ -1290,10 +1331,14 @@ Random jot #3
 [Onde citar LuaJava? A parte Java de LibScript pode ser baseada em LuaJava.]
 \layout Subsection*
 
+
+\color red
 Random jot #4: Intro do Cap.
  4?
 \layout Standard
 
+
+\color red
 FLIs providas por máquinas virtuais são usualmente compreendidas como 
 \begin_inset Quotes eld
 \end_inset 
@@ -1314,9 +1359,13 @@ APIs de extensão
  aplicação hospedeira.
 \layout Subsection*
 
+
+\color red
 Random jot #4: Perl
 \layout Standard
 
+
+\color red
 Os processos de estender e embutir Perl são bastante distintos.
  Para extensões, Perl oferece uma linguagem para descrição de interfaces
  chamada XS.
@@ -1341,6 +1390,8 @@ xsubpp
  virtual, permitindo, por exemplo, manipular o ponteiro da sua pilha interna.
 \layout Standard
 
+
+\color red
 Para embutir a máquina virtual de Perl em uma aplicação, a biblioteca que
  a implementa oferece algumas funções que permitem disparar um interpretador.
  Na API de mais alto nível, pode-se construir um array de parâmetros a serem
@@ -1363,6 +1414,7 @@ Para embutir a máquina virtual de Perl em uma aplicação, a biblioteca que
 
 
 \emph on 
+\color red
 [Quando é necessário fazer o 'glue' diretamente no código C (em que casos?),
  é necessário usar as macros para acesso às estruturas internas de Perl,
  de modo similar ao código gerado por XS (exemplo em perlembed).
@@ -1370,18 +1422,21 @@ Para embutir a máquina virtual de Perl em uma aplicação, a biblioteca que
 
 
 \emph on 
+\color red
 Para acessar funções da aplicação onde Perl foi embutido, é possível escrever
  um módulo usando XS e linká-lo? Testar.
 \layout Standard
 
 
 \emph on 
+\color red
 XS oferece ainda algum suporte explícito a C++.
  Citar.
 \layout Standard
 
 
 \emph on 
+\color red
 Linkando, além do interpretador, módulos na aplicação.
  ExtUtils::Embed.
  DynaLoader.
@@ -1390,11 +1445,13 @@ Linkando, além do interpretador, módulos na aplicação.
 
 
 \emph on 
+\color red
 Permite múltiplas instâncias da VM: -Dusemultiplicity
 \layout Standard
 
 
 \emph on 
+\color red
 Material: perlxs, perlembed, perlguts, perlapi, perlcall.]
 \layout Bibliography
 \bibitem {ltn004}

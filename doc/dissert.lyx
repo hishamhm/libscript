@@ -48,6 +48,13 @@ Hisham H.
 Introdução
 \layout Standard
 
+
+\emph on 
+\color red
+[TODO: tem pouco aqui além do texto da proposta.
+ estender a intro como um todo]
+\layout Standard
+
 Existem muitas situações onde é necessário ou interessante que haja interação
  entre programas escritos em diferentes linguagens.
  Um caso típico é o emprego de bibliotecas externas, como 
@@ -145,8 +152,17 @@ amente, Python, Perl, Ruby, Lua e Java -- e um estudo de caso onde estas
 \layout Standard
 
 
+\emph on 
 \color red
-Falta um parágrafo de fecho
+[TODO: Continuar essa seção, botar um 
+\begin_inset Quotes eld
+\end_inset 
+
+fecho
+\begin_inset Quotes erd
+\end_inset 
+
+ na coisa.]
 \layout Section
 
 Estrutura do Texto
@@ -648,16 +664,17 @@ Interfaces com C
 \layout Standard
 
 
+\emph on 
 \color red
-TODO: OBJETIVO DESTE CAPÍTULO -> Inicialmente, pretendemos identificar o
- conjunto de problemas tratados por uma FLI implementada como uma API para
- C.
+[TODO: OBJETIVO DESTE CAPÍTULO -> (texto a seguir do Plano de Trabalho da
+ proposta) Inicialmente, pretendemos identificar o conjunto de problemas
+ tratados por uma FLI implementada como uma API para C.
  Além de apontar classes gerais de problemas como coleta de lixo e passagem
  de parâmetros, queremos aqui chegar a uma lista de problemas específicos,
  como por exemplo a validade de referências mantidas em estruturas de dados
  C entre invocações de funções, a exposição ao código C de funcionalidades
  implementadas em operadores sobrecarregados e o suporte a hierarquias de
- subtipos envolvendo tipos declarados em ambas as linguagens.
+ subtipos envolvendo tipos declarados em ambas as linguagens.]
 \layout Standard
 
 A linguagem C tem, na atualidade, um papel especial no mundo das linguagens
@@ -678,6 +695,14 @@ s e máquinas virtuais (as principais implementações de Perl, Python, Ruby,
 
 , que geram C a partir de Haskell e Eiffel, respectivamente).
  Isto faz com que a API para C seja um formato conveniente para uma FLI.
+\layout Standard
+
+
+\emph on 
+\color red
+[TODO: descrições de interfaces em linguagens específicas podem ir para
+ o cap.
+ seguinte]
 \layout Standard
 
 Para permitir invocar funções C, a FLI deve fornecer uma forma de registrar
@@ -1274,20 +1299,18 @@ APIs de Máquinas Virtuais
 \layout Standard
 
 
+\emph on 
 \color red
-TODO: OBJETIVO DESTE CAPÍTULO -> A partir dos requisitos levantados no capítulo
- anterior, pretende-se então classificar as facilidades oferecidas pelas
- APIs---suas funções, macros, estruturas---em função destes problemas.
+[TODO: OBJETIVO DESTE CAPÍTULO -> (texto a seguir do Plano de Trabalho da
+ proposta) A partir dos requisitos levantados no capítulo anterior, pretende-se
+ então classificar as facilidades oferecidas pelas APIs---suas funções,
+ macros, estruturas---em função destes problemas.
  Ao cruzar estes dados, será possivel ter uma melhor compreensão de como
  estão distribuídos o tamanho e complexidade das APIs.
  Deseja-se saber o quão completas elas são em relação às funcionalidades
  que as linguagens oferecem, ou seja, o que é possível fazer via código
  nativo que não é possível ou não é prático via API.
-\layout Standard
-
-
-\color red
-Com base nesta classificação, o passo seguinte será identificar, para cada
+ Com base nesta classificação, o passo seguinte será identificar, para cada
  problema, as abordagens gerais empregadas por cada API e assim expor com
  mais clareza as semelhanças e diferenças das APIs de diferentes linguagens.
  O objetivo é catalogar as técnicas empregadas de forma independente das
@@ -1296,7 +1319,134 @@ Com base nesta classificação, o passo seguinte será identificar, para cada
  solução dos demais.
  Espera-se que o fruto deste trabalho seja, através da documentação das
  práticas em uso corrente, proporcionar um base comum que facilite a avaliação
- e o desenvolvimento de interfaces entre linguagens de programação.
+ e o desenvolvimento de interfaces entre linguagens de programação.]
+\layout Standard
+
+FLIs providas por máquinas virtuais são usualmente compreendidas como 
+\begin_inset Quotes eld
+\end_inset 
+
+APIs de extensão
+\begin_inset Quotes erd
+\end_inset 
+
+: elas servem ou para estender a máquina virtual com recursos não oferecidos
+ por esta, ou para estender uma aplicação externa com os recursos oferecidos
+ pela máquina virtual, embarcando-a nesta aplicação.
+ O primeiro cenário é o utilizado no modelo de programação onde a coordenação
+ de alto nível é realizada em uma linguagem interpretada e módulos compilados
+ em linguagens como C e C++ são usados para acesso a bibliotecas externas
+ ou implementação de partes onde o desempenho é crítico.
+ O segundo cenário, via de regra, irá englobar também o primeiro, ao expor
+ à máquina virtual embarcada extensões que a permitam comunicar-se com a
+ aplicação hospedeira.
+\layout Standard
+
+
+\emph on 
+\color red
+[TODO: continuar]
+\layout Section
+
+Python
+\layout Section
+
+Perl
+\layout Standard
+
+Os processos de estender e embutir Perl são bastante distintos.
+ Para extensões, Perl oferece uma linguagem para descrição de interfaces
+ chamada XS.
+ Ao invés de isolar o acesso às estruturas internas de Perl através de uma
+ API pública, a abordagem proposta é encapsular o processo de geração de
+ código 
+\emph on 
+wrapper
+\emph default 
+ para a comunicação entre funções escritas em C e as estruturas internas
+ de Perl usando interfaces escritas em XS.
+ Arquivos 
+\family typewriter 
+.xs
+\family default 
+ são então alimentados ao pré-processador 
+\family typewriter 
+xsubpp
+\family default 
+, que geram então o código usando a API oferecida pela biblioteca de Perl.
+ Esta biblioteca oferece acesso de baixo nível ao funcionamento da máquina
+ virtual, permitindo, por exemplo, manipular o ponteiro da sua pilha interna.
+\layout Standard
+
+Para embutir a máquina virtual de Perl em uma aplicação, a biblioteca que
+ a implementa oferece algumas funções que permitem disparar um interpretador.
+ Na API de mais alto nível, pode-se construir um array de parâmetros a serem
+ passados para o interpretador de forma equivalente às opções do interpretador
+ Perl de linha de comando, inclusive usando a opção 
+\family typewriter 
+
+\begin_inset Quotes eld
+\end_inset 
+
+-e
+\begin_inset Quotes erd
+\end_inset 
+
+
+\family default 
+ para executar trechos de código.
+\layout Standard
+
+
+\emph on 
+\color red
+[Quando é necessário fazer o 'glue' diretamente no código C (em que casos?),
+ é necessário usar as macros para acesso às estruturas internas de Perl,
+ de modo similar ao código gerado por XS (exemplo em perlembed).
+\layout Standard
+
+
+\emph on 
+\color red
+Para acessar funções da aplicação onde Perl foi embutido, é possível escrever
+ um módulo usando XS e linká-lo? Testar.
+\layout Standard
+
+
+\emph on 
+\color red
+XS oferece ainda algum suporte explícito a C++.
+ Citar.
+\layout Standard
+
+
+\emph on 
+\color red
+Linkando, além do interpretador, módulos na aplicação.
+ ExtUtils::Embed.
+ DynaLoader.
+ Outros ExtUtils na CPAN.
+\layout Standard
+
+
+\emph on 
+\color red
+Permite múltiplas instâncias da VM: -Dusemultiplicity
+\layout Standard
+
+
+\emph on 
+\color red
+Material: perlxs, perlembed, perlguts, perlapi, perlcall.]
+\layout Section
+
+Ruby
+\layout Section
+
+Lua
+\layout Section
+
+Java
 \layout Chapter
 
 
@@ -1308,8 +1458,9 @@ Estudo de Caso: LibScript
 \layout Standard
 
 
+\emph on 
 \color red
-TODO: Explicar a intenção do estudo de caso
+[TODO: Explicar a intenção do estudo de caso]
 \layout Standard
 
 LibScript é uma biblioteca projetada para permitir a adição de extensibilidade
@@ -1356,9 +1507,10 @@ libscript-lua
 \layout Standard
 
 
+\emph on 
 \color red
-TODO: juntar o parágrafo acima ao texto abaixo para obter uma introdução
- para o capítulo de LibScript.
+[TODO: juntar o parágrafo acima ao texto abaixo para obter uma introdução
+ para o capítulo de LibScript.]
 \layout Standard
 
 Uma FLI age como uma ponte de dois sentidos: ela deve expor os tipos de
@@ -1366,7 +1518,9 @@ Uma FLI age como uma ponte de dois sentidos: ela deve expor os tipos de
  dados e permitir chamada de código da linguagem a C.
 
 \color red
- [Serão esses os 
+ 
+\emph on 
+[Serão esses os 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -1378,6 +1532,13 @@ quatro objetivos
  2 grandes grupos (cada um com 2 sub-grupos)?]
 \layout Standard
 
+
+\emph on 
+\color red
+[TODO: deixar o texto apresentável :) ]
+\color default
+ 
+\emph default 
 O objetivo geral de LibScript é tornar aplicações 
 \begin_inset Quotes eld
 \end_inset 
@@ -1415,6 +1576,7 @@ O primeiro objetivo implementa um dos sentidos da comunicação realizada
 \layout Standard
 
 
+\emph on 
 \color red
 [Um aspecto ainda um tanto nebuloso nessa classificação é a 
 \begin_inset Quotes eld
@@ -1428,9 +1590,9 @@ definição de novos tipos para a linguagem a partir de C
  Python e Ruby permitem criar em C classes que por sua vez produzem instâncias
  na VM.
  Lua permite criar tabelas, mas estas 
-\emph on 
-são
 \emph default 
+são
+\emph on 
  instâncias na VM.
  Mesmo uma FLI simplista do tipo 'tudo via string' permite criar tipos complexos
  (
@@ -1443,13 +1605,13 @@ x = { foo=4, bar=2 }
 
 ), mas possivelmente não obtê-los, a não ser que ganhem uma representação
  como 
-\emph on 
+\emph default 
 handle
-\emph default 
- (registro de Lua como exemplo de manipulação de objetos da VM via 
 \emph on 
-handles
+ (registro de Lua como exemplo de manipulação de objetos da VM via 
 \emph default 
+handles
+\emph on 
 ).]
 \layout Section
 
@@ -1457,8 +1619,9 @@ A Camada Independente de Linguagem
 \layout Standard
 
 
+\emph on 
 \color red
-TODO: reler esta seção
+[TODO: reler esta seção, contextualizá-la]
 \layout Standard
 
 A API oferecida pela biblioteca deve ser independente de linguagem e isolar
@@ -1583,9 +1746,19 @@ API de LibScript
 \layout Standard
 
 
+\emph on 
 \color red
-TODO: reorganizar o texto dessa seção pra ser menos bullet-centric, incluindo
+[TODO: reorganizar o texto dessa seção pra ser menos bullet-centric, incluindo
  parágrafos sobre o design geral de cada parte.
+ Jogar esse 
+\begin_inset Quotes eld
+\end_inset 
+
+reference guide
+\begin_inset Quotes erd
+\end_inset 
+
+ para um Apêndice?]
 \layout Subsection
 
 Inicialização e Término
@@ -1804,8 +1977,10 @@ script_in_*
 \family default 
 .
  
+\emph on 
 \color red
 [Na implementação atual,]
+\emph default 
 \color default
  Inicialmente, a tabela de funções C é consultada.
  Não havendo uma função definida em C, os plugins são consultados na seqüência
@@ -2031,6 +2206,464 @@ lang
 
 \newline 
 Responsável pelo encerramento do ambiente.
+\layout Section
+
+Múltiplos estados independentes
+\layout Standard
+
+
+\emph on 
+\color red
+[TODO: Estas questões gerais (estados independentes, valores de retorno,
+ etc.) que aparecem nas seções seguintes devem ser apresentadas nos capítulos
+ anteriores, com o texto aqui se concentrando em como estas situações aparecem
+ nos plugins de LibScript.]
+\layout Standard
+
+O 
+\emph on 
+design
+\emph default 
+ atual da API oferece suporte a múltiplos estados independentes, ao permitir
+ a manipulação de diversos ambientes, cada um possivelmente contendo um
+ estado diferente de um dado plugin.
+ Isto pode trazer problemas para linguagens que não dão suporte a múltiplos
+ estados.
+ Lua, Perl e Tcl são linguagens que permitem múltiplos estados de forma
+ simples, uma vez que as chamadas à API incluem um identificador de estado
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Perl precisa ser compilado com -DMULTIPLICITY para permitir múltiplos estados.
+\end_inset 
+
+.
+ Já linguagens que mantêm estado da máquina virtual de forma estática, como
+ Python, não permitem trabalhar com múltiplos estados facilmente.
+ O modelo de threads de Python oferece uma forma de alternar entre estados
+ na máquina virtual obtendo objetos 
+\family typewriter 
+PyThreadState
+\family default 
+ através da chamada 
+\family typewriter 
+Py_NewInterpreter()
+\family default 
+, mas isto pode causar problemas quando módulos de extensão escritos em
+ C utilizam variáveis globais estáticas ou quando módulos manipulam o seu
+ próprio dicionário, que é compartilhado entre estados 
+\emph on 
+\color red
+[a documentação diz 
+\begin_inset Quotes eld
+\end_inset 
+
+This is a hard-to-fix bug that will be addressed in a future release
+\begin_inset Quotes erd
+\end_inset 
+
+ 
+\begin_inset LatexCommand \cite{py-hardtofix}
+
+\end_inset 
+
+]
+\emph default 
+\color default
+.
+\layout Standard
+
+
+\emph on 
+\color red
+[ Há ainda a questão da 
+\emph default 
+thread-safety
+\emph on 
+ da API resultante, que é dependente da 
+\emph default 
+thread-safety
+\emph on 
+ dos plugins e, por extensão, das máquinas virtuais.
+ É uma questão prática importante, mas pode estar saindo de escopo.
+ Abordar isto? ]
+\layout Section
+
+Múltiplos valores de retorno
+\layout Standard
+
+A API para implementação de funções em C a serem expostas às máquinas virtuais
+ permite declarar funções com múltiplos valores de retorno.
+ Muitas linguagens não possuem este recurso, mas é possível, ao detectar
+ no plugin que mais de um valor foi retornado, construir um tipo de dado
+ agregado (tupla em Python, array em Ruby, etc.) e armazenar nele os valores,
+ retornando à máquina virtual um valor de retorno único.
+\layout Section
+
+Resolução de funções sob demanda
+\layout Standard
+
+Uma técnica que vem sendo implementada nos plugins de LibScript, quando
+ permitido pela linguagem, consiste em realizar o binding entre a função
+ C declarada e uma função 
+\emph on 
+stub
+\emph default 
+ nativa somente no momento em que ela é chamada.
+ 
+\layout Standard
+
+O objetivo aqui, além de otimizar o tempo de inicialização e consumo de
+ memória da máquina virtual (ao evitar a criação de 
+\emph on 
+stubs
+\emph default 
+ que não serão utilizados), é permitir a localização de funções declaradas
+ após a inicialização do ambiente -- possivelmente funções implementadas
+ em outras linguagens, declaradas em outros plugins.
+ Ao comparar as abordagens empregadas em cada plugin, isto nos permitirá
+ avaliar os recursos de introspecção oferecidos por cada API.
+\layout Subsection
+
+Lua
+\layout Standard
+
+
+\emph on 
+\color red
+[Parágrafo carregado de jargão Lua...]
+\color default
+ 
+\emph default 
+Durante a inicialização do plugin, é criada uma tabela armazenada em uma
+ variável global, com o nome do 
+\emph on 
+namespace
+\emph default 
+ declarado.
+ Esta tabela tem associada a si uma 
+\emph on 
+metatable
+\emph default 
+ cujo índice 
+\family typewriter 
+__index
+\family default 
+ aponta para uma função C interna ao plugin, 
+\family typewriter 
+script_lua_find_function
+\family default 
+, que localiza a função 
+\begin_inset Formula $f$
+\end_inset 
+
+ solicitada na lista de funções registradas no ambiente.
+ Após localizar a função, 
+\family typewriter 
+script_lua_find_function
+\family default 
+ associa à entrada da tabela do namespace outra função C interna, 
+\family typewriter 
+script_lua_call
+\family default 
+, criando uma 
+\emph on 
+C closure
+\emph default 
+ e associando a ela o endereço de 
+\begin_inset Formula $f$
+\end_inset 
+
+ como um 
+\emph on 
+upvalue
+\emph default 
+.
+ Ao ser invocada, a função 
+\family typewriter 
+script_lua_call
+\family default 
+ lê os valores da pilha de Lua (parâmetros de entrada) e os registra no
+ ambiente LibScript, invoca a função C armazenada no 
+\emph on 
+upvalue
+\emph default 
+ e obtém os valores de retorno.
+\layout Subsection
+
+Python
+\layout Standard
+
+Na inicialização em Python, o 
+\emph on 
+namespace
+\emph default 
+ é declarado como um módulo.
+ É declarado também um tipo de dado, 
+\family typewriter 
+script_py_object
+\family default 
+, definido como um objeto Python contendo um ponteiro de função C e com
+ um callback 
+\family typewriter 
+__call
+\family default 
+ definido 
+\family typewriter 
+script_py_object_call
+\family default 
+, uma função equivalente a 
+\family typewriter 
+script_lua_call
+\family default 
+.
+ Assim, objetos deste tipo correspondem à 
+\emph on 
+closure
+\emph default 
+ definida no plugin Lua.
+ O módulo é automaticamente importado na inicialização do plugin, executando
+ uma string de código Python 
+\family typewriter 
+
+\begin_inset Quotes eld
+\end_inset 
+
+import 
+\emph on 
+namespace
+\emph default 
+
+\begin_inset Quotes erd
+\end_inset 
+
+
+\family default 
+.
+ 
+\emph on 
+\color red
+[Parece não ser possível importar um módulo de outra forma pela API Python/C;
+ o opcode responsável na máquina virtual carrega as funções iterando o dicionári
+o do módulo.
+ Preciso conferir isso na lista de Python.]
+\layout Standard
+
+Ao chamar 
+\family typewriter 
+\emph on 
+namespace
+\emph default 
+.f()
+\family default 
+, o callback 
+\family typewriter 
+__getattro
+\family default 
+ do módulo, definido como a função interna 
+\family typewriter 
+script_py_get
+\family default 
+, é chamado.
+ Esta função procura uma entrada no dicionário do módulo e, caso não a encontre,
+ obtém o endereço de 
+\begin_inset Formula $f$
+\end_inset 
+
+ da lista de funções do ambiente.
+ É declarado então um objeto 
+\family typewriter 
+script_py_object
+\family default 
+ contendo o atributo 
+\begin_inset Formula $f$
+\end_inset 
+
+, que é em seguida armazenado em 
+\family typewriter 
+\emph on 
+namespace
+\emph default 
+.f
+\family default 
+.
+ A função callback do módulo retorna e o rotina 
+\family typewriter 
+__call
+\family default 
+ do objeto é invocada em seguida, executando 
+\family typewriter 
+script_py_object_call
+\family default 
+, que registra os parâmetros de entrada no ambiente LibScript, invoca a
+ função C armazenada no atributo interno do objeto e retorna a Python os
+ valores de saída da função.
+\layout Subsection
+
+Ruby
+\layout Standard
+
+
+\emph on 
+\color red
+[TODO: reescrever esta parte toda.
+ A implementação Ruby já resolve funções transparentemente.]
+\layout Standard
+
+A implementação atual em Ruby ainda não está realizando a resolução de funções
+ de forma transparente, mas ela já o faz de forma dinâmica.
+ A inicialização do plugin em Ruby define uma classe com o nome do namespace,
+ contendo dois métodos, 
+\family typewriter 
+get
+\family default 
+ e 
+\family typewriter 
+call
+\family default 
+.
+ O método get opera de modo similar a 
+\family typewriter 
+script_lua_find_function
+\family default 
+ e 
+\family typewriter 
+script_py_get
+\family default 
+, mas não é chamado automaticamente quando um método inexistente é chamado;
+ ele precisa ser invocado explicitamente.
+ Após uma chamada 
+\family typewriter 
+\emph on 
+Namespace
+\emph default 
+.get(
+\begin_inset Quotes eld
+\end_inset 
+
+f
+\begin_inset Quotes erd
+\end_inset 
+
+)
+\family default 
+, o método 
+\family typewriter 
+\emph on 
+Namespace
+\emph default 
+.f()
+\family default 
+ passa a estar disponível na classe.
+\layout Standard
+
+O método 
+\family typewriter 
+get
+\family default 
+ declara uma função wrapper Ruby que invoca 
+\family typewriter 
+\emph on 
+Namespace
+\emph default 
+.call
+\family default 
+ passando como parâmetros o endereço da função C 
+\begin_inset Formula $f$
+\end_inset 
+
+ (convertido para tipo numérico) e os parâmetros passados na chamada 
+\family typewriter 
+\emph on 
+Namespace
+\emph default 
+.f()
+\family default 
+.
+ Para fixar esse valor de 
+\begin_inset Formula $f$
+\end_inset 
+
+ na função declarada, esta declaração é feita gerando uma string de código
+ Ruby.
+ Uma vez declarada a função, o método padrão 
+\family typewriter 
+\emph on 
+Namespace
+\emph default 
+.method(
+\begin_inset Quotes eld
+\end_inset 
+
+f
+\begin_inset Quotes erd
+\end_inset 
+
+)
+\family default 
+ é chamado de modo a obter uma referência para o método recém-criado, para
+ que ele seja retornado por 
+\family typewriter 
+get
+\family default 
+.
+ O método 
+\family typewriter 
+call
+\family default 
+, por sua vez, equivale a 
+\family typewriter 
+script_lua_call
+\family default 
+ e 
+\family typewriter 
+script_py_object_call
+\family default 
+., realizando a conversão dos parâmetros e chamada da função 
+\begin_inset Formula $f$
+\end_inset 
+
+.
+\layout Section
+
+Manipulação do estado de nomes
+\layout Standard
+
+Para que o ambiente descreva um espaço de nomes consistente entre todos
+ os plugins, é necessário contemplar o caso onde os plugins adicionam funções
+ a ele, possivelmente sobrescrevendo funções previamente definidas.
+\layout Standard
+
+
+\emph on 
+\color red
+[Atualmente, os plugins armazenam funções registradas em uma cache (Lua
+ e Python no primeiro acesso, Ruby com a função explícita 
+\family typewriter 
+get
+\family default 
+).
+ Como manter a consistência entre os espaços de nomes das máquinas virtuais?
+ Deixar de usar a cache e cada chamada então deve consultar a lista de funções
+ em libscript? Ou o registro de uma nova função deve notificar os plugins?
+ Pode ser necessário utilizar soluções diferentes em cada plugin.
+ Lua, por exemplo, não chama o metamétodo 
+\family typewriter 
+__newindex
+\family default 
+ uma vez que o primeiro valor já foi armazenado.
+ Em Ruby, ao chamar um método inexistente, é chamado o callback method_missing,
+ mas chamada a Classe.method(
+\begin_inset Quotes eld
+\end_inset 
+
+inexistente
+\begin_inset Quotes erd
+\end_inset 
+
+) não ativa o callback.]
 \layout Chapter
 
 
@@ -2042,8 +2675,9 @@ Considerações Finais
 \layout Standard
 
 
+\emph on 
 \color red
-TODO: Concluir alguma coisa :-)
+[TODO: Concluir alguma coisa :-) ]
 \layout Bibliography
 \bibitem {finne-fli}
 
@@ -2465,7 +3099,8 @@ Pyrex - a Language for Writing Python Extension Modules
 
 
 \color red
-TODO - Pegar as referências de verdade;
+[TODO - Pegar as referências de verdade; essas aqui são só para o meu controle
+ interno.]
 \color default
  http://www.lua.org/notes/ltn004.html
 \layout Bibliography
