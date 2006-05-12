@@ -1155,7 +1155,9 @@ Random jots
 Random jot #1
 \layout Standard
 
-Bug 
+
+\emph on 
+[Bug 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -1174,7 +1176,7 @@ interessante
 
  para o dicionário do método.
  Trocar para PyDict_GetItem/PyDict_SetItem resolveu o problema.
- Contagem de referências de PyDict_ e PyObject_ funcionam de formas diferentes.
+ Contagem de referências de PyDict_ e PyObject_ funcionam de formas diferentes.]
 \layout Subsection*
 
 
@@ -1283,7 +1285,117 @@ handles
 Random jot #3
 \layout Standard
 
-Onde citar LuaJava?
+
+\emph on 
+[Onde citar LuaJava? A parte Java de LibScript pode ser baseada em LuaJava.]
+\layout Subsection*
+
+Random jot #4: Intro do Cap.
+ 4?
+\layout Standard
+
+FLIs providas por máquinas virtuais são usualmente compreendidas como 
+\begin_inset Quotes eld
+\end_inset 
+
+APIs de extensão
+\begin_inset Quotes erd
+\end_inset 
+
+: elas servem ou para estender a máquina virtual com recursos não oferecidos
+ por esta, ou para estender uma aplicação externa com os recursos oferecidos
+ pela máquina virtual, embarcando-a nesta aplicação.
+ O primeiro cenário é o utilizado no modelo de programação onde a coordenação
+ de alto nível é realizada em uma linguagem interpretada e módulos compilados
+ em linguagens como C e C++ são usados para acesso a bibliotecas externas
+ ou implementação de partes onde o desempenho é crítico.
+ O segundo cenário, via de regra, irá englobar também o primeiro, ao expor
+ à máquina virtual embarcada extensões que a permitam comunicar-se com a
+ aplicação hospedeira.
+\layout Subsection*
+
+Random jot #4: Perl
+\layout Standard
+
+Os processos de estender e embutir Perl são bastante distintos.
+ Para extensões, Perl oferece uma linguagem para descrição de interfaces
+ chamada XS.
+ Ao invés de isolar o acesso às estruturas internas de Perl através de uma
+ API pública, a abordagem proposta é encapsular o processo de geração de
+ código 
+\emph on 
+wrapper
+\emph default 
+ para a comunicação entre funções escritas em C e as estruturas internas
+ de Perl usando interfaces escritas em XS.
+ Arquivos 
+\family typewriter 
+.xs
+\family default 
+ são então alimentados ao pré-processador 
+\family typewriter 
+xsubpp
+\family default 
+, que geram então o código usando a API oferecida pela biblioteca de Perl.
+ Esta biblioteca oferece acesso de baixo nível ao funcionamento da máquina
+ virtual, permitindo, por exemplo, manipular o ponteiro da sua pilha interna.
+\layout Standard
+
+Para embutir a máquina virtual de Perl em uma aplicação, a biblioteca que
+ a implementa oferece algumas funções que permitem disparar um interpretador.
+ Na API de mais alto nível, pode-se construir um array de parâmetros a serem
+ passados para o interpretador de forma equivalente às opções do interpretador
+ Perl de linha de comando, inclusive usando a opção 
+\family typewriter 
+
+\begin_inset Quotes eld
+\end_inset 
+
+-e
+\begin_inset Quotes erd
+\end_inset 
+
+
+\family default 
+ para executar trechos de código.
+ 
+\layout Standard
+
+
+\emph on 
+[Quando é necessário fazer o 'glue' diretamente no código C (em que casos?),
+ é necessário usar as macros para acesso às estruturas internas de Perl,
+ de modo similar ao código gerado por XS (exemplo em perlembed).
+\layout Standard
+
+
+\emph on 
+Para acessar funções da aplicação onde Perl foi embutido, é possível escrever
+ um módulo usando XS e linká-lo? Testar.
+\layout Standard
+
+
+\emph on 
+XS oferece ainda algum suporte explícito a C++.
+ Citar.
+\layout Standard
+
+
+\emph on 
+Linkando, além do interpretador, módulos na aplicação.
+ ExtUtils::Embed.
+ DynaLoader.
+ Outros ExtUtils na CPAN.
+\layout Standard
+
+
+\emph on 
+Permite múltiplas instâncias da VM: -Dusemultiplicity
+\layout Standard
+
+
+\emph on 
+Material: perlxs, perlembed, perlguts, perlapi, perlcall.]
 \layout Bibliography
 \bibitem {ltn004}
 
