@@ -66,3 +66,30 @@ realclean: clean
 	do cd $$dir; if test -e Makefile; then make maintainer-clean; \
 	fi; ./autogen.sh --clean; \
 	cd ..; done
+
+gobo: realclean
+	cd libscript                                    ;\
+	./autogen.sh                                    ;\
+	configure --prefix=/Programs/LibScript/svn/     ;\
+	make                                            ;\
+	sudo make install                               ;\
+	sudo SymlinkProgram LibScript
+	cd libscript-lua                                ;\
+	./autogen.sh                                    ;\
+	configure --prefix=/Programs/LibScript-Lua/svn/ ;\
+	make                                            ;\
+	sudo make install                               ;\
+	sudo SymlinkProgram LibScript-Lua
+	cd libscript-rb                                 ;\
+	./autogen.sh                                    ;\
+	configure --prefix=/Programs/LibScript-Rb/svn/  ;\
+	make                                            ;\
+	sudo make install                               ;\
+	sudo SymlinkProgram LibScript-Rb
+	cd libscript-py                                 ;\
+	./autogen.sh                                    ;\
+	configure --prefix=/Programs/LibScript-Py/svn/  ;\
+	make                                            ;\
+	sudo make install                               ;\
+	sudo SymlinkProgram LibScript-Py
+
