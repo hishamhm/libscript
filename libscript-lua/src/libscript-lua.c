@@ -25,6 +25,7 @@ INLINE static void script_lua_get_params(script_env* env, lua_State *L) {
       switch(lua_type(L, i)) {
       case LUA_TNUMBER: script_out_double(env, lua_tonumber(L, i)); break;
       case LUA_TSTRING: script_out_string(env, lua_tostring(L, i)); break; /* TODO: zero-term */
+      case LUA_TBOOLEAN: script_out_bool(env, lua_toboolean(L, i)); break;
       /* TODO: other types */
       }
    }
@@ -39,6 +40,7 @@ INLINE static int script_lua_put_params(script_env* env, lua_State *L) {
       switch (type) {
       case SCRIPT_DOUBLE: lua_pushnumber(L, script_in_double(env)); break;
       case SCRIPT_STRING: lua_pushstring(L, script_in_string(env)); break;
+      case SCRIPT_BOOL: lua_pushboolean(L, script_in_bool(env)); break;
       case SCRIPT_NONE: /* pacify gcc warning */ break;
       /* TODO: other types */
       }
