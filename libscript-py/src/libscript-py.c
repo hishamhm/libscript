@@ -23,6 +23,11 @@ INLINE static void script_py_get_params(script_env* env, PyObject* args) {
          script_out_double(script_py_env, PyLong_AsDouble(arg));
       } else if (PyFloat_Check(arg)) {
          script_out_double(script_py_env, PyFloat_AS_DOUBLE(arg));
+      } else if (PyBool_Check(arg)) {
+         if (arg == Py_True)
+            script_out_bool(script_py_env, 1);
+         else
+            script_out_bool(script_py_env, 0);
       } else {
          /* TODO: other types */
       }
@@ -44,6 +49,9 @@ INLINE static PyObject* script_py_put_params(script_env* env) {
          break;
       case SCRIPT_STRING:
          arg = PyString_FromString(script_in_string(env)); 
+         break;
+      case SCRIPT_BOOL:
+         arg = PyBool_FromLong(script_in_bool(env));
          break;
       default:
          /* pacify gcc warnings */
