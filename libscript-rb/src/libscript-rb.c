@@ -27,6 +27,13 @@ static char* script_rb_namespace;
 static ID method_id;
 
 INLINE static void script_rb_get_param(script_env* env, VALUE arg) {
+   if (arg == Qtrue) {
+      script_out_bool(env, 1);
+      return;
+   } else if (arg == Qfalse) {
+      script_out_bool(env, 0);
+      return;
+   }
    switch (TYPE(arg)) {
    case T_FLOAT:
    case T_FIXNUM:
@@ -61,6 +68,12 @@ INLINE static VALUE* script_rb_put_params(script_env* env, int params) {
          break;
       case SCRIPT_STRING:
          arg = rb_str_new2(script_in_string(env)); 
+         break;
+      case SCRIPT_BOOL:
+         if (script_in_bool(env))
+            arg = Qtrue; 
+         else
+            arg = Qfalse;
          break;
       default:
          /* pacify gcc warnings */
