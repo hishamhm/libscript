@@ -136,7 +136,7 @@ script_err script_call(script_env* env, const char* fn) {
 }
 
 script_err script_done(script_env* env) {
-   script_err err;
+   script_err err = SCRIPT_OK;
    int dlerr;
    script_plugin* plugin;
    
