@@ -26,9 +26,15 @@ typedef enum {
 } script_err;
 
 typedef enum {
+   SCRIPT_FALSE = 0,
+   SCRIPT_TRUE = 1
+} script_bool;
+
+typedef enum {
    SCRIPT_NONE = 0,
    SCRIPT_STRING,
-   SCRIPT_DOUBLE
+   SCRIPT_DOUBLE,
+   SCRIPT_BOOL
 } script_type;
 
 #define SCRIPT_GLOBAL_STATE ((void*)1)
@@ -60,9 +66,11 @@ int script_param_count(script_env* env);
 const char* script_in_string(script_env* env);
 double script_in_double(script_env* env);
 int script_in_int(script_env* env);
+int script_in_bool(script_env* env);
 void script_out_string(script_env* env, const char* value);
 void script_out_double(script_env* env, double value);
 void script_out_int(script_env* env, int value);
+void script_out_bool(script_env* env, int value);
 void script_start_params(script_env* env);
 #define SCRIPT_CHECK_INPUTS(env) do { script_err err = script_error(env); if (err) return err; } while (0)
 

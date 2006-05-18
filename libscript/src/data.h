@@ -9,6 +9,7 @@ struct script_data_ {
    union {
       const char* string_value;
       double double_value;
+      int bool_value;
    } u;
 };
 

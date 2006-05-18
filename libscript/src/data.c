@@ -66,6 +66,12 @@ int script_in_int(script_env* env) {
    return (int) data->u.double_value;
 }
 
+int script_in_bool(script_env* env) {
+   script_data* data = script_in_data(env, SCRIPT_BOOL);
+   if (!data) return 0;
+   return (int) data->u.bool_value;
+}
+
 void script_out_string(script_env* env, const char* value) {
    script_data* data = script_out_data(env, SCRIPT_STRING);
    if (!data) return;
@@ -83,6 +89,12 @@ void script_out_int(script_env* env, int value) {
    script_data* data = script_out_data(env, SCRIPT_DOUBLE);
    if (!data) return;
    data->u.double_value = value;
+}
+
+void script_out_bool(script_env* env, int value) {
+   script_data* data = script_out_data(env, SCRIPT_BOOL);
+   if (!data) return;
+   data->u.bool_value = value;
 }
 
 void script_start_params(script_env* env) {
