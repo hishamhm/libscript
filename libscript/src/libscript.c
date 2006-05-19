@@ -6,6 +6,7 @@
 #include <string.h>
 #include <ltdl.h>
 #include <stdio.h>
+#include <ctype.h>
 
 #include "libscript.h"
 #include "internals.h"
@@ -92,22 +93,45 @@ script_err script_run(script_env* env, const char* language, const char* code) {
 }
 
 script_err script_run_file(script_env* env, const char* filename) {
-   char* extension;
-   char* programtext;
+   char *extension, *programtext, *programinput;
    script_err err;
 
    programtext = read_file(filename);
    script_check(!programtext, SCRIPT_ERRFILE);
+   programinput = programtext;
    /* TODO: also detect language based on first-line #! when extension fails */ 
+   if (programtext[0] == '#' && programtext[1] == '!') {
+      char *at, *start, *end;
+
+      at = programtext + 2;
+      while (isspace(*at++));
+      start = at;
+      end = at;
+      while (!isspace(*end)) {
+         end++;
+         if (*end == '/' || *end == '\\')
+            start = end + 1;
+      }
+      extension = calloc(end - start + 1, 1);
+      strncpy(extension, start, end - start);
+      programinput = strchr(end, '\n') + 1;
+   } else {
+      extension = strrchr(filename, SCRIPT_EXTSEP);
+      if (extension) {
+         extension++;
+         extension = strdup(extension);
+      } else {
+         return SCRIPT_ERRFILEUNKNOWN;
+      }
+   }
      
-   extension = strrchr(filename, SCRIPT_EXTSEP);
-   extension++;
    script_plugin* plugin = script_plugin_load(env, extension);
    /* TODO: identify errors to client code */
    script_check_err(!plugin);
 
-   err = script_plugin_run(env, plugin, programtext);
+   err = script_plugin_run(env, plugin, programinput);
    free(programtext);
+   free(extension);
    return err;
 }
 
@@ -116,7 +140,7 @@ script_err script_call(script_env* env, const char* fn) {
    script_plugin* plugin;
    script_fn function;
    ht_key key;
-
+ 
    key.str = fn;
    function = ht_get(env->functions, key);
    if (function) {
