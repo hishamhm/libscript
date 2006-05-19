@@ -149,10 +149,11 @@ void ht_start(ht* this, ht_iterator* iter) {
 void* ht_iterate(ht_iterator* iter) {
    void* result;
    for(;;) {
-      if (iter->bucket == iter->table->size)
-         return NULL;
       if (!iter->item) {
-         iter->item = iter->table->buckets[++iter->bucket];
+         iter->bucket++;
+         if (iter->bucket >= iter->table->size)
+            return NULL;
+         iter->item = iter->table->buckets[iter->bucket];
          continue;
       }
       result = iter->item->value;
