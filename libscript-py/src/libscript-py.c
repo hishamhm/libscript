@@ -66,7 +66,7 @@ INLINE static PyObject* script_py_put_params(script_env* env) {
 static void script_py_destructor(PyObject* o) {
    script_py_object* spo = (script_py_object*) o;
    free(spo->fn_name);
-   /* FIXME: looks like this is not being called */
+   spo->fn_name = NULL;
 }
 
 static PyObject* script_py_call(script_py_object *obj, PyObject *args, PyObject *kwds) {
@@ -104,8 +104,10 @@ static PyObject* script_py_getattro(PyObject* self, PyObject *attr_name) {
    char* name;
    script_py_object* obj;
 
-   if ((obj = (script_py_object*)PyDict_GetItem(script_py_dict, attr_name)))
+   if ((obj = (script_py_object*)PyDict_GetItem(script_py_dict, attr_name))) {
+      Py_INCREF(obj);
       return (PyObject*)obj;
+   }
    
    name = PyString_AS_STRING(attr_name);
    obj = PyObject_New(script_py_object, &script_py_object_type);
