@@ -1,8 +1,8 @@
 
 AC_PREREQ(2.59)
-AC_INIT([libscript-py], [1.0], [hisham@inf.puc-rio.br])
+AC_INIT([libscript-python], [1.0], [hisham@inf.puc-rio.br])
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([src/libscript-py.c])
+AC_CONFIG_SRCDIR([src/libscript-python.c])
 AC_CONFIG_HEADER([config.h])
 
 AM_PROG_LIBTOOL
