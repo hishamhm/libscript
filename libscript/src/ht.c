@@ -7,7 +7,7 @@
 ht_item* ht_item_new(ht_key key, void* value) {
    ht_item* this;
    
-   this = (ht_item*) malloc(sizeof(ht_item));
+   this = (ht_item*) calloc(sizeof(ht_item), 1);
    this->key = key;
    this->value = value;
    this->next = NULL;
@@ -19,7 +19,11 @@ int ht_int_eq(ht* this, ht_key a, ht_key b) {
 }
 
 int ht_string_eq(ht* this, ht_key a, ht_key b) {
-   return strcmp(a.str, b.str) == 0;
+   int lena = strlen(a.str);
+   int lenb = strlen(b.str);
+   if (lena != lenb)
+      return 0;
+   return (strncmp(a.str, b.str, lena) == 0);
 }
 
 int ht_int_hash(ht* this, ht_key key) {
@@ -41,9 +45,10 @@ int ht_string_hash(ht* this, ht_key key) {
 ht* ht_new(int size, ht_type type, int owner) {
    ht* this;
    
-   this = (ht*) malloc(sizeof(ht));
+   this = (ht*) calloc(sizeof(ht), 1);
    this->size = size;
    this->buckets = (ht_item**) calloc(sizeof(ht_item*), size);
+   this->type = type;
    switch (type) {
    case HT_STR:
       this->eq = ht_string_eq;
@@ -89,6 +94,11 @@ void ht_put(ht* this, ht_key key, void* value) {
          return;
       }
    }
+   if (this->type == HT_STR) {
+      char* copy = malloc(strlen(key.str) + 1);
+      strcpy(copy, key.str);
+      key.str = copy;
+   }
    *bucket = ht_item_new(key, value);
    this->items++;
    return;
@@ -102,6 +112,8 @@ void* ht_take(ht* this, ht_key key) {
       if (this->eq(this, (*bucket)->key, key)) {
          void* value = (*bucket)->value;
          ht_item* next = (*bucket)->next;
+         if (this->type == HT_STR)
+            free((*bucket)->key.str);
          free(*bucket);
          (*bucket) = next;
          this->items--;

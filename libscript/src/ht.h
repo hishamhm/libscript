@@ -34,6 +34,7 @@ struct ht_ {
    int size;
    ht_item** buckets;
    int items;
+   ht_type type;
    ht_hash_fn hash;
    ht_eq_fn eq;
    int owner;

@@ -22,6 +22,7 @@ struct script_env_ {
    int param_outs;
    int error;
    char error_message[SCRIPT_ERROR_MESSAGE_LEN];
+   const char* fn_name;
 };
 
 #define script_check_err(cond) do { if((cond)) { return env->error; } } while (0)
