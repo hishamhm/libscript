@@ -5,6 +5,8 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+#include <stdlib.h>
+
 #include "libscript-lua.h"
 
 INLINE static script_env* script_lua_get_env(lua_State *L) {
@@ -39,7 +41,12 @@ INLINE static int script_lua_put_params(script_env* env, lua_State *L) {
       nargs++;
       switch (type) {
       case SCRIPT_DOUBLE: lua_pushnumber(L, script_in_double(env)); break;
-      case SCRIPT_STRING: lua_pushstring(L, script_in_string(env)); break;
+      case SCRIPT_STRING: {
+         char* param = script_in_string(env);
+         lua_pushstring(L, param);
+         free(param);
+         break;
+      }
       case SCRIPT_BOOL: lua_pushboolean(L, script_in_bool(env)); break;
       case SCRIPT_NONE: /* pacify gcc warning */ break;
       /* TODO: other types */

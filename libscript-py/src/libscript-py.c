@@ -47,9 +47,12 @@ INLINE static PyObject* script_py_put_params(script_env* env) {
       case SCRIPT_DOUBLE:
          arg = PyFloat_FromDouble(script_in_double(env)); 
          break;
-      case SCRIPT_STRING:
-         arg = PyString_FromString(script_in_string(env)); 
+      case SCRIPT_STRING: {
+         char* param = script_in_string(env);
+         arg = PyString_FromString(param); 
+         free(param);
          break;
+      }
       case SCRIPT_BOOL:
          arg = PyBool_FromLong(script_in_bool(env));
          break;

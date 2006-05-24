@@ -48,7 +48,10 @@ static script_data* script_out_data(script_env* env, script_type type) {
    return data;
 }
 
-const char* script_in_string(script_env* env) {
+/**
+ * @return The string, now owned by the caller.
+ */
+char* script_in_string(script_env* env) {
    script_data* data = script_in_data(env, SCRIPT_STRING);
    if (!data) return NULL;
    return data->u.string_value;
@@ -72,11 +75,13 @@ int script_in_bool(script_env* env) {
    return (int) data->u.bool_value;
 }
 
+/**
+ * @param value The string value -- libscript stores its own copy of the string.
+ */
 void script_out_string(script_env* env, const char* value) {
    script_data* data = script_out_data(env, SCRIPT_STRING);
    if (!data) return;
-   /* TODO: review the lifetime of strings for leaks */
-   data->u.string_value = value;
+   data->u.string_value = strdup(value);
 }
 
 void script_out_double(script_env* env, double value) {

@@ -66,9 +66,12 @@ INLINE static VALUE* script_rb_put_params(script_env* env, int params) {
       case SCRIPT_DOUBLE:
          arg = rb_float_new(script_in_double(env)); 
          break;
-      case SCRIPT_STRING:
-         arg = rb_str_new2(script_in_string(env)); 
+      case SCRIPT_STRING: {
+         char* param = script_in_string(env);
+         arg = rb_str_new2(param); 
+         free(param);
          break;
+      }
       case SCRIPT_BOOL:
          if (script_in_bool(env))
             arg = Qtrue; 

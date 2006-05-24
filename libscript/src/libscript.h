@@ -60,11 +60,12 @@ script_err script_error(script_env* env);
 const char* script_error_message(script_env* env);
 void script_set_error_message(script_env* env, const char* message);
 const char* script_get_namespace(script_env* env);
+const char* script_fn_name(script_env* env);
 
 /* data.c */
 script_type script_in_type(script_env* env);
 int script_param_count(script_env* env);
-const char* script_in_string(script_env* env);
+char* script_in_string(script_env* env);
 double script_in_double(script_env* env);
 int script_in_int(script_env* env);
 int script_in_bool(script_env* env);

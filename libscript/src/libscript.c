@@ -99,7 +99,6 @@ script_err script_run_file(script_env* env, const char* filename) {
    programtext = read_file(filename);
    script_check(!programtext, SCRIPT_ERRFILE);
    programinput = programtext;
-   /* TODO: also detect language based on first-line #! when extension fails */ 
    if (programtext[0] == '#' && programtext[1] == '!') {
       char *at, *start, *end;
 
@@ -144,6 +143,7 @@ script_err script_call(script_env* env, const char* fn) {
    key.str = fn;
    function = ht_get(env->functions, key);
    if (function) {
+      env->fn_name = fn;
       env->error = function(env);
       return env->error;
    }
@@ -233,4 +233,8 @@ void script_set_error_message(script_env* env, const char* message) {
    } else {
       env->error_message[0] = '\0';
    }
+}
+
+const char* script_fn_name(script_env* env) {
+   return env->fn_name;
 }

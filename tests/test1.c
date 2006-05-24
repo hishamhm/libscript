@@ -4,14 +4,16 @@
 #include <stdlib.h>
 
 script_err hello_wrap(script_env* env) {
-   const char* name = script_in_string(env);
+   char* name = script_in_string(env);
    int year = script_in_int(env);
-   const char* excl = script_in_string(env);
+   char* excl = script_in_string(env);
    int ret;
    SCRIPT_CHECK_INPUTS(env);
 
    ret = hello(name, year, excl);
 
+   free(name);
+   free(excl);
    script_out_int(env, ret);
    return SCRIPT_OK;
 }
