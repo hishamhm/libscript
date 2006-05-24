@@ -1,12 +1,12 @@
 
-lib_LTLIBRARIES = libscript-rb.la
+lib_LTLIBRARIES = libscript-ruby.la
 
-libscript_rb_la_SOURCES = src/libscript-rb.c src/libscript-rb.h
+libscript_ruby_la_SOURCES = src/libscript-ruby.c src/libscript-ruby.h
 
 AM_CFLAGS = -ansi -Wall $(RUBY_CFLAGS)
 
-libscript_rb_la_LDFLAGS = -module -version-info 0:0:0 $(RUBY_LDFLAGS)
-libscript_rb_la_LIBADD = $(RUBY_LIBS)
+libscript_ruby_la_LDFLAGS = -module -version-info 0:0:0 $(RUBY_LDFLAGS)
+libscript_ruby_la_LIBADD = $(RUBY_LIBS)
 
 idsdir = $(datadir)/libscript/ids
 ids_DATA = ids/rb.id ids/ruby.id

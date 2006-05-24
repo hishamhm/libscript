@@ -1,7 +1,7 @@
 
-AC_INIT([libscript-rb], [1.0], [hisham@inf.puc-rio.br])
+AC_INIT([libscript-ruby], [1.0], [hisham@inf.puc-rio.br])
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([src/libscript-rb.c])
+AC_CONFIG_SRCDIR([src/libscript-ruby.c])
 AC_CONFIG_HEADER([config.h])
 
 AC_PROG_LIBTOOL
