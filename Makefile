@@ -8,7 +8,7 @@ LD_LIBRARY_PATH += :$(root)/build/lib
 
 TESTSDIR = tests
 
-all: libscript libscript-lua libscript-py libscript-ruby tests
+all: libscript libscript-lua libscript-python libscript-ruby tests
 
 libscript/configure: libscript/configure.ac libscript/Makefile.am
 	cd libscript; ./autogen.sh
@@ -60,6 +60,7 @@ clean:
 	do cd $$dir; if test -e Makefile; then make clean; \
 	fi; cd ..; done
 	rm -f $(TESTSDIR)/test1
+	rm -f $(TESTSDIR)/testcall
 
 realclean: clean
 	for dir in libscript libscript-lua libscript-python libscript-ruby; \
