@@ -10,6 +10,14 @@
 
 #include "ht.h"
 
+#ifndef SCRIPT_EXTSEP
+#define SCRIPT_EXTSEP '.'
+#endif
+
+#ifndef SCRIPT_DIRSEP
+#define SCRIPT_DIRSEP '/'
+#endif
+
 #define SCRIPT_ERROR_MESSAGE_LEN 128
 
 struct script_env_ {

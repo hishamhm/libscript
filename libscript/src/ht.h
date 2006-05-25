@@ -18,7 +18,7 @@ typedef enum {
 typedef union {
    void* ptr;
    int i;
-   const char* str;
+   char* str;
 } ht_key;
 
 typedef int(*ht_hash_fn)(ht*, ht_key);

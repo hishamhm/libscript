@@ -17,10 +17,6 @@
 #define SCRIPT_MAXARGS 128
 #endif
 
-#ifndef SCRIPT_EXTSEP
-#define SCRIPT_EXTSEP '.'
-#endif
-
 /**
  * @return a string with the contents of the file, or NULL on error.
  */
@@ -93,7 +89,7 @@ script_err script_run(script_env* env, const char* language, const char* code) {
 }
 
 script_err script_run_file(script_env* env, const char* filename) {
-   char *extension, *programtext, *programinput;
+   char *id, *programtext, *programinput;
    script_err err;
 
    programtext = read_file(filename);
@@ -111,26 +107,23 @@ script_err script_run_file(script_env* env, const char* filename) {
          if (*end == '/' || *end == '\\')
             start = end + 1;
       }
-      extension = calloc(end - start + 1, 1);
-      strncpy(extension, start, end - start);
+      id = calloc(end - start + 1, 1);
+      strncpy(id, start, end - start);
       programinput = strchr(end, '\n') + 1;
+   } else if ( (id = strrchr(filename, SCRIPT_EXTSEP)) ) {
+      id++;
+      id = strdup(id);
    } else {
-      extension = strrchr(filename, SCRIPT_EXTSEP);
-      if (extension) {
-         extension++;
-         extension = strdup(extension);
-      } else {
-         return SCRIPT_ERRFILEUNKNOWN;
-      }
+      return SCRIPT_ERRFILEUNKNOWN;
    }
-     
-   script_plugin* plugin = script_plugin_load(env, extension);
+    
+   script_plugin* plugin = script_plugin_load(env, id);
    /* TODO: identify errors to client code */
    script_check_err(!plugin);
 
    err = script_plugin_run(env, plugin, programinput);
    free(programtext);
-   free(extension);
+   free(id);
    return err;
 }
 

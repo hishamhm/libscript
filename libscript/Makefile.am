@@ -9,7 +9,6 @@ src/data.c src/data.h \
 src/libscript-plugin.h \
 src/internals.h
 
-
 AM_CFLAGS = -ansi -Wall
 
 libscript_la_LDFLAGS = -version-info 0:0:0

@@ -9,6 +9,8 @@
 #include "internals.h"
 #include "plugin.h"
 
+#include "config.h"
+
 #ifndef SCRIPT_NAME_LEN
 #define SCRIPT_NAME_LEN 1024
 #endif
@@ -18,7 +20,7 @@
  */
 static lt_dlhandle get_symbol(script_plugin* plugin, char* name) {
    char symname[SCRIPT_NAME_LEN + 1];
-   snprintf(symname, SCRIPT_NAME_LEN, "script_plugin_%s_%s", name, plugin->extension);
+   snprintf(symname, SCRIPT_NAME_LEN, "script_plugin_%s_%s", name, plugin->name);
    return lt_dlsym(plugin->dlhandle, symname);
 }
 
@@ -33,7 +35,7 @@ static script_err free_plugin(script_env* env, script_plugin* plugin) {
       
       err = lt_dlclose(plugin->dlhandle);
    }
-   free(plugin->extension);
+   free(plugin->name);
    free(plugin);
    script_check(err != 0, SCRIPT_ERRDLCLOSE);
    return SCRIPT_OK;
@@ -51,14 +53,31 @@ static void* fail_plugin(script_env* env, script_plugin* plugin, script_err erro
 /**
  * @return a handle to the plugin on success, NULL on error (setting env->error).
  */
-script_plugin* script_plugin_load(script_env* env, const char* extension) {
+script_plugin* script_plugin_load(script_env* env, const char* id) {
    script_plugin* plugin;
    char name[SCRIPT_NAME_LEN + 1];
+   char plugin_name[SCRIPT_NAME_LEN + 1];
+   FILE* id_file;
    lt_dlhandle dlhandle;
    script_plugin_init_fn init_fn;
    ht_key key;
    
-   key.str = extension;
+   snprintf(name, SCRIPT_NAME_LEN, "%s" "%c" "libscript" "%c" "ids" "%c" "%s.id", DATADIR, SCRIPT_DIRSEP, SCRIPT_DIRSEP, SCRIPT_DIRSEP, id);
+   id_file = fopen(name, "r");
+   if (id_file) {
+      char* linebreak;
+      fgets(name, SCRIPT_NAME_LEN, id_file);
+      linebreak = strchr(name, '\n');
+      if (linebreak)
+         *linebreak = '\0';
+      strncpy(plugin_name, name, SCRIPT_NAME_LEN);
+      fclose(id_file);
+   } else {
+      strncpy(plugin_name, id,  SCRIPT_NAME_LEN);
+   }
+   plugin_name[SCRIPT_NAME_LEN] = '\0';
+   key.str = plugin_name;
+
    /* FIXME: different envs can try to load the same library multiple times.
       Works for dlopen, but it's better not to rely on this. */
    plugin = ht_get(env->plugins, key);
@@ -66,8 +85,8 @@ script_plugin* script_plugin_load(script_env* env, const char* extension) {
       return plugin;
 
    plugin = calloc(sizeof(script_plugin), 1);
-   plugin->extension = strdup(extension);
-   snprintf(name, SCRIPT_NAME_LEN, "libscript-%s", extension);
+   plugin->name = strdup(key.str);
+   snprintf(name, SCRIPT_NAME_LEN, "libscript-%s", plugin->name);
 
    dlhandle = lt_dlopenext(name);
    if (! dlhandle) return fail_plugin(env, plugin, SCRIPT_ERRDLOPEN);
@@ -104,8 +123,5 @@ script_err script_plugin_call(script_env* env, script_plugin* plugin, const char
 }
 
 script_err script_plugin_unload(script_env* env, script_plugin* plugin) {
-   ht_key key;
-   
-   key.str = plugin->extension;
    return free_plugin(env, plugin);
 }
