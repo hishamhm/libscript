@@ -1466,6 +1466,33 @@ Random jot #6: Coleta de lixo em Ruby
 
 Objetos criados via API C não são protegidos da coleta de lixo (exemplo
  em ~/ruby-tests)
+\layout Subsection*
+
+Random jot #7: Múltiplos estados em Perl
+\layout Standard
+
+Funções em Perl são ocultas por macros [warn() é Perl_warn()].
+ Ao compilar Perl com 
+\begin_inset Quotes eld
+\end_inset 
+
+multiplicity
+\begin_inset Quotes erd
+\end_inset 
+
+, Perl adiciona um primeiro parâmetro a todas as funções, com o handle para
+ o estado atual [como Lua_State* L].
+ Para evitar conflitos de nomes, é possível desabilitar essas macros utilizado
+ -DPERL_NO_SHORT_NAMES.
+ Torna-se necessário então, passar 
+\begin_inset Quotes eld
+\end_inset 
+
+aTHX_
+\begin_inset Quotes erd
+\end_inset 
+
+ no início de cada chamada.
 \layout Bibliography
 \bibitem {ltn004}
 
