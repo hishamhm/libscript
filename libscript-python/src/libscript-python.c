@@ -70,6 +70,7 @@ static void script_python_destructor(PyObject* o) {
    script_python_object* spo = (script_python_object*) o;
    free(spo->fn_name);
    spo->fn_name = NULL;
+   PyObject_DEL(o);
 }
 
 static PyObject* script_python_call(script_python_object *obj, PyObject *args, PyObject *kwds) {
