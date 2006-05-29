@@ -2,46 +2,67 @@
 Ruby 1.8.4 (do header)
 530 funções
 
-void *ruby_xmalloc (long);
-void *ruby_xcalloc (long,long);
-void *ruby_xrealloc (void*,long);
-void ruby_xfree (void*);
-VALUE rb_int2inum (long);
-VALUE rb_uint2inum (unsigned long);
-VALUE rb_ll2inum (long long);
-VALUE rb_ull2inum (unsigned long long);
-void rb_check_type (VALUE,int);
-VALUE rb_str_to_str (VALUE);
-VALUE rb_string_value (volatile VALUE*);
-char *rb_string_value_ptr (volatile VALUE*);
-char *rb_string_value_cstr (volatile VALUE*);
-void rb_check_safe_obj (VALUE);
-void rb_check_safe_str (VALUE);
-void rb_secure (int);
-void rb_set_safe_level (int);
-void rb_secure_update (VALUE);
-long rb_num2long (VALUE);
-unsigned long rb_num2ulong (VALUE);
-long long rb_num2ll (VALUE);
-unsigned long long rb_num2ull (VALUE);
-double rb_num2dbl (VALUE);
-char *rb_str2cstr (VALUE,long*);
-VALUE rb_newobj (void);
-VALUE rb_data_object_alloc (VALUE,void*,RUBY_DATA_FUNC,RUBY_DATA_FUNC);
-void rb_obj_infect (VALUE,VALUE);
-void rb_glob (const char*,void(*)(const char*,VALUE),VALUE);
-void rb_globi (const char*,void(*)(const char*,VALUE),VALUE);
-VALUE rb_define_class (const char*,VALUE);
-VALUE rb_define_module (const char*);
-VALUE rb_define_class_under (VALUE, const char*, VALUE);
-VALUE rb_define_module_under (VALUE, const char*);
-void rb_include_module (VALUE,VALUE);
+Interface de alto nível
+	Executar uma string
+		VALUE rb_eval_string (const char*);
+		VALUE rb_eval_string_protect (const char*, int*);
+		VALUE rb_eval_string_wrap (const char*, int*);
+Tipos de dados
+		VALUE rb_funcall (VALUE, ID, int, ...);
+		VALUE rb_funcall2 (VALUE, ID, int, const VALUE*);
+		VALUE rb_funcall3 (VALUE, ID, int, const VALUE*);
+	Verificação de tipo
+		void rb_check_type (VALUE,int);
+	Criação de classes e objetos
+		Via C
+			VALUE rb_newobj (void);
+			VALUE rb_data_object_alloc (VALUE,void*,RUBY_DATA_FUNC,RUBY_DATA_FUNC); [macro Data_Wrap_Struct]
+		Via Ruby
+			VALUE rb_define_class (const char*,VALUE);
+			VALUE rb_define_module (const char*);
+			VALUE rb_define_class_under (VALUE, const char*, VALUE);
+			VALUE rb_define_module_under (VALUE, const char*);
+	Conversão de objetos
+		C para Ruby
+			VALUE rb_int2inum (long);
+			VALUE rb_uint2inum (unsigned long);
+			VALUE rb_ll2inum (long long);
+			VALUE rb_ull2inum (unsigned long long);
+		Ruby para C
+			char *rb_string_value_ptr (volatile VALUE*);
+			@@~ char *rb_string_value_cstr (volatile VALUE*); [Verifica se a string contém \0]
+			long rb_num2long (VALUE);
+			unsigned long rb_num2ulong (VALUE);
+			long long rb_num2ll (VALUE);
+			unsigned long long rb_num2ull (VALUE);
+			double rb_num2dbl (VALUE);
+			@@~ char *rb_str2cstr (VALUE,long*);
+		Em Ruby
+			VALUE rb_str_to_str (VALUE);
+			@@~ VALUE rb_string_value (volatile VALUE*); [Gera string vazia se não pôde converter]
+	Diretórios
+		void rb_glob (const char*,void(*)(const char*,VALUE),VALUE);
+		void rb_globi (const char*,void(*)(const char*,VALUE),VALUE);
+	Módulos
+		void rb_include_module (VALUE,VALUE);
+Segurança
+	void rb_check_safe_obj (VALUE);
+	@@~ void rb_check_safe_str (VALUE);
+	void rb_secure (int);
+	void rb_set_safe_level (int);
+	void rb_secure_update (VALUE);
+	void rb_obj_infect (VALUE,VALUE);
+Camada de portabilidade
+	Alocação de memória
+		void *ruby_xmalloc (long);
+		void *ruby_xcalloc (long,long);
+		void *ruby_xrealloc (void*,long);
+		void ruby_xfree (void*);
+
 void rb_extend_object (VALUE,VALUE);
 void rb_define_variable (const char*,VALUE*);
 void rb_define_virtual_variable (const char*,VALUE(*)(),void(*)());
 void rb_define_hooked_variable (const char*,VALUE*,VALUE(*)(),void(*)());
-int ruby_glob (const char*,int,int(*)(const char*,VALUE),VALUE);
-int ruby_globi (const char*,int,int(*)(const char*,VALUE),VALUE);
 void rb_define_readonly_variable (const char*,VALUE*);
 void rb_define_const (VALUE,const char*,VALUE);
 void rb_define_global_const (const char*,VALUE);
@@ -60,12 +81,6 @@ ID rb_to_id (VALUE);
 char *rb_class2name (VALUE);
 char *rb_obj_classname (VALUE);
 void rb_p (VALUE);
-VALUE rb_eval_string (const char*);
-VALUE rb_eval_string_protect (const char*, int*);
-VALUE rb_eval_string_wrap (const char*, int*);
-VALUE rb_funcall (VALUE, ID, int, ...);
-VALUE rb_funcall2 (VALUE, ID, int, const VALUE*);
-VALUE rb_funcall3 (VALUE, ID, int, const VALUE*);
 int rb_scan_args (int, const VALUE*, const char*, ...);
 VALUE rb_call_super (int, const VALUE*);
 VALUE rb_gv_set (const char*, VALUE);
