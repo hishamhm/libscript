@@ -1,10 +1,11 @@
-void ruby_load_script (void);
-void rb_gc_mark_trap_list (void);
 
 Ruby 1.8.4 (do header)
 530 funções
 
-Interface de alto nível
+Execução
+	Inicialização
+		void ruby_init (void);
+		void ruby_prog_init (void);
 	Loop padrão do interpretador
 		void ruby_run (void) __attribute__ ((noreturn));
 	Executar uma string
@@ -14,10 +15,6 @@ Interface de alto nível
 	Pré-compilar código
 		void rb_load_file (const char*);
 		void ruby_script (const char*);
-Execução
-	Inicialização
-		void ruby_init (void);
-		void ruby_prog_init (void);
 	Finalização
 		VALUE rb_f_exit (int,VALUE*);
 		VALUE rb_f_abort (int,VALUE*);
@@ -76,6 +73,7 @@ Coleta de lixo
 	VALUE rb_gc_disable (void);
 	VALUE rb_gc_start (void);
 	void rb_gc_mark_threads (void);
+	void rb_gc_mark_trap_list (void);
 	void rb_gc_register_address (VALUE*);
 	void rb_gc_unregister_address (VALUE*);
 Tratamento de exceções
@@ -154,6 +152,7 @@ Tipos de dados
 			VALUE rb_str_new2 (const char*);
 			VALUE rb_time_new (time_t, time_t);
 			VALUE rb_float_new (double);
+			ID rb_intern (const char*);
 		Ruby para C
 			char *rb_string_value_ptr (volatile VALUE*);
 			@@~ char *rb_string_value_cstr (volatile VALUE*); [Verifica se a string contém \0]
@@ -165,6 +164,9 @@ Tipos de dados
 			@@~ char *rb_str2cstr (VALUE,long*);
 			long rb_big2long (VALUE);
 			double rb_str_to_dbl (VALUE, int);
+			char *rb_id2name (ID);
+			char *rb_class2name (VALUE);
+			char *rb_obj_classname (VALUE);
 		Em Ruby
 			VALUE rb_str_to_str (VALUE);
 			@@~ VALUE rb_string_value (volatile VALUE*); [Gera string vazia se não pôde converter]
@@ -181,6 +183,7 @@ Tipos de dados
 			void rb_big_2comp (VALUE);
 			VALUE rb_num2fix (VALUE);
 			VALUE rb_fix2str (VALUE, int);
+			ID rb_to_id (VALUE);
 	Variáveis (atributos, globais, constantes)
 		Consulta
 			VALUE rb_ivar_defined (VALUE, ID);
@@ -296,11 +299,6 @@ void rb_undef_method (VALUE,const char*);
 void rb_define_alias (VALUE,const char*,const char*);
 void rb_define_attr (VALUE,const char*,int,int);
 void rb_global_variable (VALUE*);
-ID rb_intern (const char*);
-char *rb_id2name (ID);
-ID rb_to_id (VALUE);
-char *rb_class2name (VALUE);
-char *rb_obj_classname (VALUE);
 void rb_p (VALUE);
 int rb_scan_args (int, const VALUE*, const char*, ...);
 VALUE rb_equal (VALUE,VALUE);

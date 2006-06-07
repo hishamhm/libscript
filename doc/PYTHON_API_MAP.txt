@@ -7,7 +7,11 @@ Python 2.4.3 (da documentação de 2006-03-29)
 @@n função C equivalente a uma função ou variável Python
 %%% "somente para uso interno"
 
-Interface de alto nível
+Execução
+	Inicialização
+		@@~ void Py_Initialize(  )
+		void Py_InitializeEx(  int initsigs)
+		int Py_IsInitialized(  )
 	Loop padrão do interpretador
 		int Py_Main(int argc, char **argv)
 		@@@ int PyRun_InteractiveOne(  FILE *fp, const char *filename)
@@ -40,11 +44,6 @@ Interface de alto nível
 		struct _node* PyParser_SimpleParseFileFlags(  FILE *fp, const char *filename, int start, int flags)
 		@@@ PyObject* Py_CompileString(  const char *str, const char *filename, int start)
 		PyObject* Py_CompileStringFlags(  const char *str, const char *filename, int start, PyCompilerFlags *flags)
-Execução
-	Inicialização
-		@@~ void Py_Initialize(  )
-		void Py_InitializeEx(  int initsigs)
-		int Py_IsInitialized(  )
 	Finalização
 		void Py_Finalize(  )
 		void Py_FatalError(  const char *message)

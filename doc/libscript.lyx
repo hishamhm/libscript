@@ -1493,6 +1493,12 @@ aTHX_
 \end_inset 
 
  no início de cada chamada.
+\layout Subsection*
+
+Random jot #8: Tainted Objects em Ruby 
+\layout Standard
+
+http://www.rubycentral.com/book/taint.html
 \layout Bibliography
 \bibitem {ltn004}
 
