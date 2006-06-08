@@ -63,7 +63,7 @@ script_err script_new_function(script_env* env, script_fn fn, const char* name) 
    script_fn existing;
    ht_key key;
 
-   key.str = name;
+   key.str = (char*) name;
    existing = ht_get(env->functions, key);
    script_check(existing, SCRIPT_ERRFNREDEF);
 
@@ -75,7 +75,7 @@ script_fn script_get_function(script_env* env, const char* name) {
    script_fn fn;
    ht_key key;
 
-   key.str = name;
+   key.str = (char*) name;
    fn = ht_get(env->functions, key);
    script_check_ret(!fn, SCRIPT_ERRFNUNDEF, NULL);
    env->error = SCRIPT_OK;
@@ -133,7 +133,7 @@ script_err script_call(script_env* env, const char* fn) {
    script_fn function;
    ht_key key;
  
-   key.str = fn;
+   key.str = (char*) fn;
    function = ht_get(env->functions, key);
    if (function) {
       env->fn_name = fn;
