@@ -1359,13 +1359,9 @@ APIs de extensão
  aplicação hospedeira.
 \layout Subsection*
 
-
-\color red
 Random jot #4: Perl
 \layout Standard
 
-
-\color red
 Os processos de estender e embutir Perl são bastante distintos.
  Para extensões, Perl oferece uma linguagem para descrição de interfaces
  chamada XS.
@@ -1390,8 +1386,6 @@ xsubpp
  virtual, permitindo, por exemplo, manipular o ponteiro da sua pilha interna.
 \layout Standard
 
-
-\color red
 Para embutir a máquina virtual de Perl em uma aplicação, a biblioteca que
  a implementa oferece algumas funções que permitem disparar um interpretador.
  Na API de mais alto nível, pode-se construir um array de parâmetros a serem
@@ -1449,28 +1443,6 @@ Linkando, além do interpretador, módulos na aplicação.
 Permite múltiplas instâncias da VM: -Dusemultiplicity
 \layout Standard
 
-
-\emph on 
-\color red
-Material: perlxs, perlembed, perlguts, perlapi, perlcall.]
-\layout Subsection*
-
-Random jot #5: Strings
-\layout Standard
-
-lua_pushstring, PyString_FromString e rb_str_new{,2} fazem cópias da string.
-\layout Subsection*
-
-Random jot #6: Coleta de lixo em Ruby
-\layout Standard
-
-Objetos criados via API C não são protegidos da coleta de lixo (exemplo
- em ~/ruby-tests)
-\layout Subsection*
-
-Random jot #7: Múltiplos estados em Perl
-\layout Standard
-
 Funções em Perl são ocultas por macros [warn() é Perl_warn()].
  Ao compilar Perl com 
 \begin_inset Quotes eld
@@ -1493,6 +1465,25 @@ aTHX_
 \end_inset 
 
  no início de cada chamada.
+\layout Standard
+
+
+\emph on 
+\color red
+Material: perlxs, perlembed, perlguts, perlapi, perlcall.]
+\layout Subsection*
+
+Random jot #5: Strings
+\layout Standard
+
+lua_pushstring, PyString_FromString e rb_str_new{,2} fazem cópias da string.
+\layout Subsection*
+
+Random jot #6: Coleta de lixo em Ruby
+\layout Standard
+
+Objetos criados via API C não são protegidos da coleta de lixo (exemplo
+ em ~/ruby-tests)
 \layout Subsection*
 
 Random jot #8: Tainted Objects em Ruby 
