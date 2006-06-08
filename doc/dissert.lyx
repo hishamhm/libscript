@@ -939,6 +939,8 @@ A alternativa para permitir que código C opere sobre dados estruturados,
  discute esta questão em mais detalhe.
 \layout Standard
 
+
+\color red
 As abordagens empregadas em diferentes FLIs para expor estruturas C às suas
  linguagens de origem possuem diversas variações.
  Python permite a definição de novos tipos de objetos a partir de uma 
@@ -984,6 +986,8 @@ Data_Wrap_Struct
 , que recebe o tipo da estrutura como parâmetro.
 \layout Standard
 
+
+\color red
 Lua define tipos primitivos 
 \emph on 
 function
@@ -1020,6 +1024,8 @@ collapsed true
 
 \layout Standard
 
+
+\color red
 Estas funções são usadas, por exemplo, para permitir ao programador liberar
  recursos quando o objeto é coletado (função 
 \family typewriter 
@@ -1084,6 +1090,8 @@ ores, o programador deve levar em consideração as diferenças entre os modelos
  pela implementação da linguagem.
 \layout Standard
 
+
+\color red
 A API de Python retorna ao código C ponteiros para os objetos alocados pela
  máquina virtual.
  Como esta utiliza um coletor de lixo baseado em contagem de referências,
@@ -1128,6 +1136,8 @@ rb_gc_mark
  aos objetos internos da instância.
 \layout Standard
 
+
+\color red
 Para reduzir a necessidade de controle explícito de referências, Java faz
  uma distinção entre referências globais e locais.
  Referências globais são explicitamente criadas com 
@@ -1155,6 +1165,8 @@ DeleteLocalRef
 .
 \layout Standard
 
+
+\color red
 A abordagem adotada por Lua evita o problema de gerência de referências
  ao não expor ponteiros para os seus objetos ao código C e adotar uma API
  de pilha.
@@ -1340,113 +1352,442 @@ APIs de extensão
  O segundo cenário, via de regra, irá englobar também o primeiro, ao expor
  à máquina virtual embarcada extensões que a permitam comunicar-se com a
  aplicação hospedeira.
+\layout Section
+
+Transferência de dados
+\layout Subsection
+
+Python
+\layout Standard
+
+Para a conversão de objetos de C para Python, a linguagem oferece uma série
+ de funções que recebem variáveis de tipos primitivos de C como parâmetro,
+ como PyString_FromStringAndSize e PyFloat_FromDouble.
+ Cada uma destas funções retorna ao código C um ponteiro para um novo objeto
+ PyObject.
+ Dados passados para estas funções, como por exemplo strings, são copiados
+ por Python.
+ 
+\layout Standard
+
+Para o retorno de dados de Python para C, um conjunto complementar de funções
+ é oferecido, mapeando os tipos básicos de Python de volta a tipos de C.
+ Alguns exemplos destas funções que recebem um ponteiro para um PyObject
+ como parâmetro e retornam o dado correspondente em C são PyLong_\SpecialChar \-
+AsUnsignedLong,
+ PyLong_\SpecialChar \-
+AsUnsignedLongLong, PyComplex_\SpecialChar \-
+RealAsDouble e PyString_\SpecialChar \-
+AsStringAndSize.
+ Diferentemente das funções de entrada, nas fun\SpecialChar \-
+ções de saída as strings
+ retornadas são ponteiros para a área armazenada internamente por Python.
+ A documentação recomenda não modificar o conteúdo da string exceto no caso
+ de esta área de memória haver sido recém alocada por uma chamada a PyString_\SpecialChar \-
+Fro
+mStringAndSize(NULL, 
+\emph on 
+tamanho
+\emph default 
+).
+ Desta forma, é possível alocar uma string para armazenamento em Python
+ e preenchê-la posteriormente através de código C, possivelmente através
+ de uma série de comandos.
+ 
+\layout Standard
+
+Para alguns de seus tipos básicos que não possuem correspondente direto
+ em ANSI C 89, Python define tipos em C equivalentes: Py_UNICODE e Py_complex
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Um tipo de dado para 
+\begin_inset Quotes eld
+\end_inset 
+
+wide strings
+\begin_inset Quotes erd
+\end_inset 
+
+, wchar_t, foi introduzido pela emenda de 1995 de ANSI C, e um tipo para
+ números complexos, complex, no padrão ISO C 99.
+\end_inset 
+
+.
+ Estes tipos foram adicionados com o objetivo de aumentar o desempenho de
+ módulos Python para manipulação numérica ou de texto Unicode implementados
+ em C, evitando conversões freqüentes de e para PyObject.
+\layout Standard
+
+Python oferece ainda algumas versões de funções de conversão para C implementada
+s como macros sem a verificação de tipo, assumindo que o PyObject passado
+ será compatível.
+ Estas funções podem ser identificadas pelos nomes em maiúsculas.
+ As únicas macros de conversão oferecidas são PyString_\SpecialChar \-
+AS_STRING, PyInt_\SpecialChar \-
+AS_LONG,
+ PyFloat_\SpecialChar \-
+AS_DOUBLE, PyUnicode_\SpecialChar \-
+AS_\SpecialChar \-
+UNICODE e PyUnicode_\SpecialChar \-
+AS_DATA, além de macros
+ especiais para obter valores dos campos de objetos PyDateTime_DateTime
+ e PyDateTime_Time.
+\layout Standard
+
+Além de funções para conversão de tipos entre Python e C, a API de Python
+ oferece ainda algumas funções de conversão entre tipos de Python.
+ Estas funções recebem um PyObject como parâmetro e retornam um novo PyObject
+ com o resultado da conversão, e são equivalentes a funções Python que realizam
+ estas conversões (na verdade chamadas a tipos PyTypeObject que respondem
+ ao método __call__).
+ A Figura 
+\begin_inset LatexCommand \ref{cap:PyObject_Str}
+
+\end_inset 
+
+ demonstra a equivalência entre PyObject_Str e str.
 \layout Standard
 
 
-\emph on 
-\color red
-[TODO: continuar]
-\layout Section
+\begin_inset Float figure
+wide false
+collapsed true
 
-Python
-\layout Section
+\layout LyX-Code
+
+
+\size footnotesize 
+#include <Python.h>
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject *str;
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject* my_PyObject_Str(PyObject* o) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   return PyObject_CallFunctionObjArgs(str, o, NULL);
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout LyX-Code
+
+
+\size footnotesize 
+int main() {
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyObject *builtins_module, *builtins, *an_int, *a_str;
+\layout LyX-Code
+
+
+\size footnotesize 
+   char *result; 
+\layout LyX-Code
+
+
+\size footnotesize 
+   Py_Initialize();
+\layout LyX-Code
+
+
+\size footnotesize 
+   builtins_module = PyImport_AddModule("__builtin__");
+\layout LyX-Code
+
+
+\size footnotesize 
+   builtins = PyModule_GetDict(builtins_module);
+\layout LyX-Code
+
+
+\size footnotesize 
+   str = PyDict_GetItemString(builtins, "str");
+\layout LyX-Code
+
+
+\size footnotesize 
+   an_int = PyInt_FromLong(5556);
+\layout LyX-Code
+
+
+\size footnotesize 
+   a_str = my_PyObject_Str(an_int);
+\layout LyX-Code
+
+
+\size footnotesize 
+   Py_DECREF(an_int);
+\layout LyX-Code
+
+
+\size footnotesize 
+   result = PyString_AsString(a_str);
+\layout LyX-Code
+
+
+\size footnotesize 
+   printf("%s
+\backslash 
+n", result);
+\layout LyX-Code
+
+
+\size footnotesize 
+   Py_DECREF(a_str);
+\layout LyX-Code
+
+
+\size footnotesize 
+   Py_Finalize();
+\layout LyX-Code
+
+
+\size footnotesize 
+} 
+\layout Caption
+
+
+\begin_inset LatexCommand \label{cap:PyObject_Str}
+
+\end_inset 
+
+A implementação de uma função equivalente a PyObject_Str
+\end_inset 
+
+
+\layout Standard
+
+Para referenciar-se a objetos Python a partir de código C, é preciso obter
+ uma referência a um objeto onde ele esteja contido.
+ Variáveis são armazenadas em um 
+\emph on 
+ambiente
+\emph default 
+, representado como um dicionário.
+ Funções como PyRun_File recebem, entre seus parâmetros, um dicionário de
+ variáveis globais e outro de variáveis locais.
+ O ambiente 
+\emph on 
+top-level
+\emph default 
+ é identificado através do módulo __main__.
+ Objetos 
+\emph on 
+built-in
+\emph default 
+ são acessíveis através do módulo __builtin__, como pode também ser observado
+ na Figura 
+\begin_inset LatexCommand \ref{cap:PyObject_Str}
+
+\end_inset 
+
+, ao obter-se uma referência para str.
+ Funções C chamadas a partir de Python não recebem referências ao ambiente
+ além dos parâmetros da chamada da função (que podem incluir o objeto self).
+ Para evitar a busca dos dicionários de globais e 
+\emph on 
+built-ins
+\emph default 
+, o programador deve tipicamente recorrer a armazená-los em ponteiros globais
+ em C.
+ 
+\layout Standard
+
+como guardar dados de C em L
+\layout Subsection
+
+Java
+\layout Standard
+
+como transferir dados de C para L
+\layout Standard
+
+como transferir dados de L para C
+\layout Standard
+
+conversões em L
+\layout Standard
+
+como encontrar dados (resolver nomes)
+\layout Standard
+
+como guardar dados de C em L
+\layout Subsection
+
+Ruby
+\layout Standard
+
+como transferir dados de C para L
+\layout Standard
+
+como transferir dados de L para C
+\layout Standard
+
+conversões em L
+\layout Standard
+
+como encontrar dados (resolver nomes: rb_gv_get...)
+\layout Standard
+
+como guardar dados de C em L
+\layout Subsection
 
 Perl
 \layout Standard
 
-Os processos de estender e embutir Perl são bastante distintos.
- Para extensões, Perl oferece uma linguagem para descrição de interfaces
- chamada XS.
- Ao invés de isolar o acesso às estruturas internas de Perl através de uma
- API pública, a abordagem proposta é encapsular o processo de geração de
- código 
-\emph on 
-wrapper
-\emph default 
- para a comunicação entre funções escritas em C e as estruturas internas
- de Perl usando interfaces escritas em XS.
- Arquivos 
-\family typewriter 
-.xs
-\family default 
- são então alimentados ao pré-processador 
-\family typewriter 
-xsubpp
-\family default 
-, que geram então o código usando a API oferecida pela biblioteca de Perl.
- Esta biblioteca oferece acesso de baixo nível ao funcionamento da máquina
- virtual, permitindo, por exemplo, manipular o ponteiro da sua pilha interna.
+como transferir dados de C para L
 \layout Standard
 
-Para embutir a máquina virtual de Perl em uma aplicação, a biblioteca que
- a implementa oferece algumas funções que permitem disparar um interpretador.
- Na API de mais alto nível, pode-se construir um array de parâmetros a serem
- passados para o interpretador de forma equivalente às opções do interpretador
- Perl de linha de comando, inclusive usando a opção 
-\family typewriter 
-
-\begin_inset Quotes eld
-\end_inset 
-
--e
-\begin_inset Quotes erd
-\end_inset 
-
-
-\family default 
- para executar trechos de código.
+como transferir dados de L para C
 \layout Standard
 
-
-\emph on 
-\color red
-[Quando é necessário fazer o 'glue' diretamente no código C (em que casos?),
- é necessário usar as macros para acesso às estruturas internas de Perl,
- de modo similar ao código gerado por XS (exemplo em perlembed).
+conversões em L
 \layout Standard
 
-
-\emph on 
-\color red
-Para acessar funções da aplicação onde Perl foi embutido, é possível escrever
- um módulo usando XS e linká-lo? Testar.
+como encontrar dados (resolver nomes)
 \layout Standard
 
-
-\emph on 
-\color red
-XS oferece ainda algum suporte explícito a C++.
- Citar.
-\layout Standard
-
-
-\emph on 
-\color red
-Linkando, além do interpretador, módulos na aplicação.
- ExtUtils::Embed.
- DynaLoader.
- Outros ExtUtils na CPAN.
-\layout Standard
-
-
-\emph on 
-\color red
-Permite múltiplas instâncias da VM: -Dusemultiplicity
-\layout Standard
-
-
-\emph on 
-\color red
-Material: perlxs, perlembed, perlguts, perlapi, perlcall.]
-\layout Section
-
-Ruby
-\layout Section
+como guardar dados de C em L
+\layout Subsection
 
 Lua
+\layout Standard
+
+como transferir dados de C para L
+\layout Standard
+
+* strings imutáveis
+\layout Standard
+
+como transferir dados de L para C
+\layout Standard
+
+* duas strings iguais são a mesma string
+\layout Standard
+
+* diferentemente de Python, luaL_Buffer
+\layout Standard
+
+conversões em L
+\layout Standard
+
+como encontrar dados (resolver nomes: lua_getglobal)
+\layout Standard
+
+como guardar dados de C em L
 \layout Section
 
+Coleta de lixo
+\layout Subsection
+
+Python
+\layout Standard
+
+que dados sobrevivem durante uma função
+\layout Standard
+
+* borrowed references
+\layout Standard
+
+como salvar dados de L em estruturas C
+\layout Subsection
+
 Java
+\layout Standard
+
+que dados sobrevivem durante uma função
+\layout Standard
+
+como salvar dados de L em estruturas C
+\layout Subsection
+
+Ruby
+\layout Standard
+
+que dados sobrevivem durante uma função
+\layout Standard
+
+como salvar dados de L em estruturas C
+\layout Subsection
+
+Perl
+\layout Standard
+
+que dados sobrevivem durante uma função
+\layout Standard
+
+como salvar dados de L em estruturas C
+\layout Subsection
+
+Lua
+\layout Standard
+
+que dados sobrevivem durante uma função
+\layout Standard
+
+como salvar dados de L em estruturas C
+\layout Section
+
+Chamada de funções
+\layout Subsection
+
+Python
+\layout Standard
+
+como chamar uma função L em C
+\layout Standard
+
+como chamar uma função C em L
+\layout Subsection
+
+Java
+\layout Standard
+
+como chamar uma função L em C
+\layout Standard
+
+como chamar uma função C em L
+\layout Subsection
+
+Ruby
+\layout Standard
+
+como chamar uma função L em C
+\layout Standard
+
+como chamar uma função C em L
+\layout Subsection
+
+Perl
+\layout Standard
+
+como chamar uma função L em C
+\layout Standard
+
+como chamar uma função C em L
+\layout Subsection
+
+Lua
+\layout Standard
+
+como chamar uma função L em C
+\layout Standard
+
+como chamar uma função C em L
 \layout Chapter
 
 
