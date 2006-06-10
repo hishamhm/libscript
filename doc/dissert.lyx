@@ -943,30 +943,6 @@ A alternativa para permitir que código C opere sobre dados estruturados,
 \color red
 As abordagens empregadas em diferentes FLIs para expor estruturas C às suas
  linguagens de origem possuem diversas variações.
- Python permite a definição de novos tipos de objetos a partir de uma 
-\emph on 
-struct
-\emph default 
- C com um cabeçalho definido pela macro 
-\family typewriter 
-PyObject_HEAD
-\family default 
- seguido de atributos definidos pelo usuário 
-\begin_inset LatexCommand \cite{vanrossum-extpy}
-
-\end_inset 
-
-.
- Ao registrar o tipo, uma estrutura do tipo 
-\family typewriter 
-PyTypeObject
-\family default 
- declara funções C a serem usadas pelo ambiente de execução e um array de
- estruturas 
-\family typewriter 
-PyMethodDef
-\family default 
- declara os métodos associados ao objeto.
  A declaração de classes Ruby a partir de C se dá através de uma série de
  chamadas da API.
  Uma classe é criada com 
@@ -1607,16 +1583,366 @@ built-ins
  
 \layout Standard
 
-como guardar dados de C em L
+O armazenamento de dados de C no espaço de objetos de Python pode ser feito
+ de duas formas.
+ Uma maneira consiste em criar um objeto do tipo CObject a partir de um
+ ponteiro C qualquer, construindo assim um valor opaco para Python.
+ As funções de construção deste tipo, PyCObject_\SpecialChar \-
+FromVoidPtr e PyCObject_\SpecialChar \-
+FromVoid
+PtrAndDesc, permitem associar ao dado uma função C a ser chamada quando
+ o CObject for desalocado.
+ Segundo a documentação de Python, CObjects têm como objetivo principal
+ permitir a passagem de dados em C de um módulo de extensão para outro 
+\begin_inset LatexCommand \cite{pyvhll_cobjects}
+
+\end_inset 
+
+.
+\layout Standard
+
+A outra forma consiste em declarar novos tipos Python através de estruturas
+ em C.
+ Para isto, deve-se definir uma 
+\emph on 
+struct
+\emph default 
+ C com um cabeçalho definido pela macro PyObject_HEAD, seguido de atributos
+ definidos pelo usuário 
+\begin_inset LatexCommand \cite{vanrossum-extpy}
+
+\end_inset 
+
+, que será usada para alocar instâncias do novo tipo.
+ Em seguida, define-se uma instância de PyTypeObject, onde podem-se passar
+ ponteiros para as funções C a serem usadas pelo ambiente de execução Python
+ como metamétodos, para operações como __call__ e __getattr__.
+ Funções C podem ser associadas ao novo tipo como métodos, declarando-os
+ em estruturas PyMethodDef e realizando chamadas a PyDescr_NewMethod.
+ 
 \layout Subsection
 
 Java
 \layout Standard
 
-como transferir dados de C para L
+A JNI define no cabeçalho jni.h tipos em C equivalentes a cada um dos tipos
+ primitivos de Java (jint para int, jfloat para float, e assim por diante).
+ Os 
+\begin_inset Quotes eld
+\end_inset 
+
+tipos de referências
+\begin_inset Quotes erd
+\end_inset 
+
+, como classes e objetos, são expostos a C como referências opacas, instâncias
+ de jobject.
+ Strings e arrays também são objetos em Java e são portanto também expostos
+ como instâncias de jobject.
+ Entretanto, a JNI define como conveniência alguns tipos em C que agem como
+ 
+\begin_inset Quotes eld
+\end_inset 
+
+subtipos
+\begin_inset Quotes erd
+\end_inset 
+
+ de jobject: jclass, jstring, jthrowable, jarray, jobjectArray, além de
+ um tipo array para cada tipo primitivo (jbooleanArray, jbyteArray, etc.).
 \layout Standard
 
-como transferir dados de L para C
+A leitura do conteúdo de uma jstring em C requer a conversão do formato
+ interno usado por Java, UTF-16.
+ A API oferece uma função utilitária que aloca uma string contendo a representaç
+ão do texto em UTF-8 (formato compatível com ASCII), GetStringUTFChars.
+ Esta string deve ser posteriormente desalocada com ReleaseStringUTFChars.
+ A função GetStringChars permite acesso direto à string em formato UTF-16;
+ ela possui um parâmetro adicional que 
+\emph on 
+retorna
+\emph default 
+ se a string retornada é o 
+\emph on 
+buffer
+\emph default 
+ interno da JVM ou uma cópia.
+ Ao mesmo tempo que isto permite ao código C evitar duplicação da string
+ nos casos onde deseja-se modificá-la e a JVM optou por retornar uma cópia,
+ tal parâmetro expõe na API questões de baixo nível da gerência de strings
+ na JVM.
+ Adicionalmente, as funções GetStringRegion e GetStringUTFRegion realizam
+ a cópia da string para um buffer pré-alocado pelo programador.
+ GetStringCritical permite obter o ponteiro para o buffer interno da JVM,
+ mas isto envolve cuidados especiais em relação à coleta de lixo, discutidos
+ na Seção 
+\begin_inset LatexCommand \ref{sub:Coleta-Java}
+
+\end_inset 
+
+.
+\layout Standard
+
+Arrays de elementos primitivos são tratados diferentemente de arrays de
+ objetos
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Arrays multi-dimensionais são considerados 
+\begin_inset Quotes eld
+\end_inset 
+
+arrays de arrays
+\begin_inset Quotes erd
+\end_inset 
+
+ e, portanto, são, exceto na última dimensão, também arrays de objetos.
+\end_inset 
+
+.
+ Arrays de elementos primitivos são tratados de forma similar a strings.
+ Há funções para realizar a cópia de arrays (Get/Set
+\emph on 
+<tipo
+\emph default 
+>ArrayRegion), funções que retornam ponteiros para o array podendo ou não
+ realizar cópias, de forma similar a GetStringChars (Get/Release
+\emph on 
+<tipo
+\emph default 
+>ArrayElements) e que podem acessar o buffer interno da JVM diretamente,
+ como em GetStringCritical (Get/Release
+\emph on 
+<tipo
+\emph default 
+>ArrayCritical).
+ Para arrays de objetos, é possível apenas obter elementos do array, sob
+ forma de referências jobject, um a um, com GetObjectArrayElement.
+\layout Standard
+
+A obtenção de valores de atributos se dá através de métodos como GetObjectField
+ e GetStaticField, que retornam referências do tipo jobject.
+ Para cada um dos tipos primitivos há uma chamada equivalente, como GetIntField
+ e GetStaticIntField.
+ Todas estas funções recebem como parâmetro um 
+\emph on 
+identificador de campo
+\emph default 
+.
+ Apesar de a linguagem Java definir uma classe java.lang.reflect.Field, os
+ identificadores de campo são valores C do tipo jfieldID.
+ Estes valores são obtidos com uma chamada a GetFieldID, que recebe entre
+ seus parâmetros uma string chamada de 
+\begin_inset Quotes eld
+\end_inset 
+
+descritor de campo JNI
+\begin_inset Quotes erd
+\end_inset 
+
+ com uma sintaxe especial.
+ Por exemplo, o tipo int[][] é descrito com 
+\begin_inset Quotes eld
+\end_inset 
+
+[[I
+\begin_inset Quotes erd
+\end_inset 
+
+ e o tipo java.lang.String como 
+\begin_inset Quotes eld
+\end_inset 
+
+Ljava/lang/String;
+\begin_inset Quotes erd
+\end_inset 
+
+
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Este é outro ponto onde detalhes da implementação transparece na API.
+ Não por coincidência, esta sintaxe é a mesma usada na representação interna
+ de tipos em 
+\emph on 
+bytecodes
+\emph default 
+ da JVM.
+\end_inset 
+
+.
+ A Figura 
+\begin_inset LatexCommand \ref{cap:Acesso-JNI}
+
+\end_inset 
+
+ demonstra o acesso de um atributo Java a partir de C.
+\layout Standard
+
+
+\begin_inset Float figure
+wide false
+collapsed true
+
+\layout LyX-Code
+
+
+\size footnotesize 
+public class ExemploJNI {
+\layout LyX-Code
+
+
+\size footnotesize 
+   private String[] elementos = { "Terra", "Ar", "Fogo", "Agua" };
+\layout LyX-Code
+
+
+\size footnotesize 
+   private native void segundoElemento();
+\layout LyX-Code
+
+
+\size footnotesize 
+   public static void main(String[] args) {
+\layout LyX-Code
+
+
+\size footnotesize 
+      new ExemploJNI().segundoElemento();
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+   static {
+\layout LyX-Code
+
+
+\size footnotesize 
+      System.loadLibrary("ExemploJNI");
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout LyX-Code
+\align center 
+
+\family roman 
+\size footnotesize 
+(a) ExemploJNI.java
+\layout LyX-Code
+
+
+\size footnotesize 
+include <jni.h>
+\layout LyX-Code
+
+
+\size footnotesize 
+#include <stdio.h>
+\layout LyX-Code
+
+
+\size footnotesize 
+#include "ExemploJNI.h"
+\layout LyX-Code
+
+
+\size footnotesize 
+JNIEXPORT void JNICALL
+\layout LyX-Code
+
+
+\size footnotesize 
+Java_ExemploJNI_segundoElemento(JNIEnv *J, jobject this) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   jclass classe = (*J)->GetObjectClass(env, this);
+\layout LyX-Code
+
+
+\size footnotesize 
+   jfieldID elemsID = (*J)->GetFieldID(env, classe,
+\layout LyX-Code
+
+
+\size footnotesize 
+      "elementos", "[Ljava/lang/String;");
+\layout LyX-Code
+
+
+\size footnotesize 
+   jarray elems = (*J)->GetObjectField(env, this, elemsID);
+\layout LyX-Code
+
+
+\size footnotesize 
+   jstring elems_1 = (*J)->GetObjectArrayElement(env, elems, 1);
+\layout LyX-Code
+
+
+\size footnotesize 
+   const char* elems_1_c = (*J)->GetStringUTFChars(env, elems_1, NULL);
+\layout LyX-Code
+
+
+\size footnotesize 
+   printf("%s
+\backslash 
+n", elems_1_c);
+\layout LyX-Code
+
+
+\size footnotesize 
+   (*J)->ReleaseStringUTFChars(env, elems_1, elems_1_c);
+\layout LyX-Code
+
+
+\size footnotesize 
+} 
+\layout LyX-Code
+\align center 
+
+\family roman 
+\size footnotesize 
+(b) ExemploJNI.c
+\layout Caption
+
+
+\begin_inset LatexCommand \label{cap:Acesso-JNI}
+
+\end_inset 
+
+Acesso a atributos Java em C via JNI
+\end_inset 
+
+
+\layout Standard
+
+Para o armazenamento de valores de C que podem ser convertidos para tipos
+ primitivos de Java, a JNI possui funções como SetIntField e SetFloatArrayRegion.
+ Para os demais tipos, não há uma provisão específica para o armazenamento
+ de dados de C no espaço de objetos de Java.
+ Nestes casos, a documentação recomenda o armazenamento de ponteiros em
+ tipos numéricos, apesar dos problemas de portabilidade em que tal abordagem
+ incorre.
+ 
 \layout Standard
 
 conversões em L
@@ -1625,7 +1951,8 @@ conversões em L
 como encontrar dados (resolver nomes)
 \layout Standard
 
-como guardar dados de C em L
+como guardar dados de C em L.
+ 
 \layout Subsection
 
 Ruby
@@ -1707,9 +2034,21 @@ como salvar dados de L em estruturas C
 \layout Subsection
 
 Java
+\begin_inset LatexCommand \label{sub:Coleta-Java}
+
+\end_inset 
+
+
 \layout Standard
 
 que dados sobrevivem durante uma função
+\layout Standard
+
+* Get/ReleaseStringCritical ( http://java.sun.com/docs/books/jni/html/objtypes.html
+#30934 )
+\layout Standard
+
+* DeleteLocalRef em loops, Push/PopLocalFrame, comparar com Lua 2/3.x?
 \layout Standard
 
 como salvar dados de L em estruturas C
@@ -1755,6 +2094,24 @@ como chamar uma função C em L
 \layout Subsection
 
 Java
+\layout Standard
+
+* Apesar de métodos em Java poderem ser representados como objetos da classe
+ java.lang.Method, para fins de realização de chamadas, métodos não são expostos
+ na JNI como jobjects, mas como 
+\begin_inset Quotes eld
+\end_inset 
+
+IDs
+\begin_inset Quotes erd
+\end_inset 
+
+, do tipo jmethodID.
+ 
+\layout Standard
+
+* Caching de IDs pode ser necessário para assegurar-se que o método correto
+ é chamado.
 \layout Standard
 
 como chamar uma função L em C
@@ -3448,6 +3805,10 @@ Pyrex - a Language for Writing Python Extension Modules
 \bibitem {pyvhll_ext}
 
 http://www.python.org/doc/ext/high-level-embedding.html
+\layout Bibliography
+\bibitem {pyvhll_cobjects}
+
+http://www.python.org/doc/ext/using-cobjects.html
 \layout Bibliography
 \bibitem {pyvhll_ref}
 
