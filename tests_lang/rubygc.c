@@ -16,6 +16,11 @@ static VALUE a_method(VALUE self) {
       rb_ary_push(some_garbage, rb_str_new2(strdup("666")));
       /* rb_eval_string("print 'objects: ', ObjectSpace.each_object {}, '\n'"); */
    }
+   
+   /*
+   This is still valid because Ruby scans the C stack to protect its VALUES.
+   See [ruby-core:7983]
+   */
    will_i_get_this = rb_iv_get(an_object, "@an_attribute");
    fprintf(stderr, "The answer is %s.\n", RSTRING(will_i_get_this)->ptr);
 }
