@@ -1338,9 +1338,21 @@ Python
 
 Para a conversão de objetos de C para Python, a linguagem oferece uma série
  de funções que recebem variáveis de tipos primitivos de C como parâmetro,
- como PyString_FromStringAndSize e PyFloat_FromDouble.
+ como 
+\family typewriter 
+PyString_FromStringAndSize
+\family default 
+ e 
+\family typewriter 
+PyFloat_FromDouble
+\family default 
+.
  Cada uma destas funções retorna ao código C um ponteiro para um novo objeto
- PyObject.
+ 
+\family typewriter 
+PyObject
+\family default 
+.
  Dados passados para estas funções, como por exemplo strings, são copiados
  por Python.
  
@@ -1348,24 +1360,47 @@ Para a conversão de objetos de C para Python, a linguagem oferece uma série
 
 Para o retorno de dados de Python para C, um conjunto complementar de funções
  é oferecido, mapeando os tipos básicos de Python de volta a tipos de C.
- Alguns exemplos destas funções que recebem um ponteiro para um PyObject
- como parâmetro e retornam o dado correspondente em C são PyLong_\SpecialChar \-
-AsUnsignedLong,
- PyLong_\SpecialChar \-
-AsUnsignedLongLong, PyComplex_\SpecialChar \-
-RealAsDouble e PyString_\SpecialChar \-
-AsStringAndSize.
+ Alguns exemplos destas funções que recebem um ponteiro para um 
+\family typewriter 
+PyObject
+\family default 
+ como parâmetro e retornam o dado correspondente em C são 
+\family typewriter 
+PyLong_\SpecialChar \-
+AsUnsignedLong
+\family default 
+, 
+\family typewriter 
+PyLong_\SpecialChar \-
+AsUnsignedLongLong
+\family default 
+, 
+\family typewriter 
+PyComplex_\SpecialChar \-
+RealAsDouble
+\family default 
+ e 
+\family typewriter 
+PyString_\SpecialChar \-
+AsStringAndSize
+\family default 
+.
  Diferentemente das funções de entrada, nas fun\SpecialChar \-
 ções de saída as strings
  retornadas são ponteiros para a área armazenada internamente por Python.
  A documentação recomenda não modificar o conteúdo da string exceto no caso
- de esta área de memória haver sido recém alocada por uma chamada a PyString_\SpecialChar \-
-Fro
-mStringAndSize(NULL, 
+ de esta área de memória haver sido recém alocada por uma chamada a 
+\family typewriter 
+PyString_\SpecialChar \-
+FromStringAndSize(NULL, 
+\family default 
 \emph on 
 tamanho
+\family typewriter 
 \emph default 
-).
+)
+\family default 
+.
  Desta forma, é possível alocar uma string para armazenamento em Python
  e preenchê-la posteriormente através de código C, possivelmente através
  de uma série de comandos.
@@ -1373,7 +1408,15 @@ tamanho
 \layout Standard
 
 Para alguns de seus tipos básicos que não possuem correspondente direto
- em ANSI C 89, Python define tipos em C equivalentes: Py_UNICODE e Py_complex
+ em ANSI C 89, Python define tipos em C equivalentes: 
+\family typewriter 
+Py_UNICODE
+\family default 
+ e 
+\family typewriter 
+Py_complex
+\family default 
+
 \begin_inset Foot
 collapsed true
 
@@ -1394,37 +1437,91 @@ wide strings
 .
  Estes tipos foram adicionados com o objetivo de aumentar o desempenho de
  módulos Python para manipulação numérica ou de texto Unicode implementados
- em C, evitando conversões freqüentes de e para PyObject.
+ em C, evitando conversões freqüentes de e para 
+\family typewriter 
+PyObject
+\family default 
+.
 \layout Standard
 
 Python oferece ainda algumas versões de funções de conversão para C implementada
-s como macros sem a verificação de tipo, assumindo que o PyObject passado
- será compatível.
+s como macros sem a verificação de tipo, assumindo que o 
+\family typewriter 
+PyObject
+\family default 
+ passado será compatível.
  Estas funções podem ser identificadas pelos nomes em maiúsculas.
- As únicas macros de conversão oferecidas são PyString_\SpecialChar \-
-AS_STRING, PyInt_\SpecialChar \-
-AS_LONG,
- PyFloat_\SpecialChar \-
-AS_DOUBLE, PyUnicode_\SpecialChar \-
+ As únicas macros de conversão oferecidas são 
+\family typewriter 
+PyString_\SpecialChar \-
+AS_STRING
+\family default 
+, 
+\family typewriter 
+PyInt_\SpecialChar \-
+AS_LONG
+\family default 
+, 
+\family typewriter 
+PyFloat_\SpecialChar \-
+AS_DOUBLE
+\family default 
+, 
+\family typewriter 
+PyUnicode_\SpecialChar \-
 AS_\SpecialChar \-
-UNICODE e PyUnicode_\SpecialChar \-
-AS_DATA, além de macros
- especiais para obter valores dos campos de objetos PyDateTime_DateTime
- e PyDateTime_Time.
+UNICODE
+\family default 
+ e 
+\family typewriter 
+PyUnicode_\SpecialChar \-
+AS_DATA
+\family default 
+, além de macros especiais para obter valores dos campos de objetos 
+\family typewriter 
+PyDateTime_DateTime
+\family default 
+ e 
+\family typewriter 
+PyDateTime_Time
+\family default 
+.
 \layout Standard
 
 Além de funções para conversão de tipos entre Python e C, a API de Python
  oferece ainda algumas funções de conversão entre tipos de Python.
- Estas funções recebem um PyObject como parâmetro e retornam um novo PyObject
+ Estas funções recebem um 
+\family typewriter 
+PyObject
+\family default 
+ como parâmetro e retornam um novo 
+\family typewriter 
+PyObject
+\family default 
  com o resultado da conversão, e são equivalentes a funções Python que realizam
- estas conversões (na verdade chamadas a tipos PyTypeObject que respondem
- ao método __call__).
+ estas conversões (na verdade chamadas a tipos 
+\family typewriter 
+PyTypeObject
+\family default 
+ que respondem ao método 
+\family typewriter 
+__call__
+\family default 
+).
  A Figura 
 \begin_inset LatexCommand \ref{cap:PyObject_Str}
 
 \end_inset 
 
- demonstra a equivalência entre PyObject_Str e str.
+ demonstra a equivalência entre 
+\family typewriter 
+PyObject_Str
+\family default 
+ e 
+\family typewriter 
+str
+\family default 
+.
 \layout Standard
 
 
@@ -1554,26 +1651,45 @@ Para referenciar-se a objetos Python a partir de código C, é preciso obter
 ambiente
 \emph default 
 , representado como um dicionário.
- Funções como PyRun_File recebem, entre seus parâmetros, um dicionário de
- variáveis globais e outro de variáveis locais.
+ Funções como 
+\family typewriter 
+PyRun_File
+\family default 
+ recebem, entre seus parâmetros, um dicionário de variáveis globais e outro
+ de variáveis locais.
  O ambiente 
 \emph on 
 top-level
 \emph default 
- é identificado através do módulo __main__.
+ é identificado através do módulo 
+\family typewriter 
+__main__
+\family default 
+.
  Objetos 
 \emph on 
 built-in
 \emph default 
- são acessíveis através do módulo __builtin__, como pode também ser observado
- na Figura 
+ são acessíveis através do módulo 
+\family typewriter 
+__builtin__
+\family default 
+, como pode também ser observado na Figura 
 \begin_inset LatexCommand \ref{cap:PyObject_Str}
 
 \end_inset 
 
-, ao obter-se uma referência para str.
+ ao obter-se uma referência para 
+\family typewriter 
+str
+\family default 
+.
  Funções C chamadas a partir de Python não recebem referências ao ambiente
- além dos parâmetros da chamada da função (que podem incluir o objeto self).
+ além dos parâmetros da chamada da função (que podem incluir o objeto 
+\family typewriter 
+self
+\family default 
+).
  Para evitar a busca dos dicionários de globais e 
 \emph on 
 built-ins
@@ -1585,15 +1701,33 @@ built-ins
 
 O armazenamento de dados de C no espaço de objetos de Python pode ser feito
  de duas formas.
- Uma maneira consiste em criar um objeto do tipo CObject a partir de um
- ponteiro C qualquer, construindo assim um valor opaco para Python.
- As funções de construção deste tipo, PyCObject_\SpecialChar \-
-FromVoidPtr e PyCObject_\SpecialChar \-
-FromVoid
-PtrAndDesc, permitem associar ao dado uma função C a ser chamada quando
- o CObject for desalocado.
- Segundo a documentação de Python, CObjects têm como objetivo principal
- permitir a passagem de dados em C de um módulo de extensão para outro 
+ Uma maneira consiste em criar um objeto do tipo 
+\family typewriter 
+CObject
+\family default 
+ a partir de um ponteiro C qualquer, construindo assim um valor opaco para
+ Python.
+ As funções de construção deste tipo, 
+\family typewriter 
+PyCObject_\SpecialChar \-
+FromVoidPtr
+\family default 
+ e 
+\family typewriter 
+PyCObject_\SpecialChar \-
+FromVoidPtrAndDesc
+\family default 
+, permitem associar ao dado uma função C a ser chamada quando o 
+\family typewriter 
+CObject
+\family default 
+ for desalocado.
+ Segundo a documentação de Python, 
+\family typewriter 
+CObject
+\family default 
+s têm como objetivo principal permitir a passagem de dados em C de um módulo
+ de extensão para outro 
 \begin_inset LatexCommand \cite{pyvhll_cobjects}
 
 \end_inset 
@@ -1607,26 +1741,67 @@ A outra forma consiste em declarar novos tipos Python através de estruturas
 \emph on 
 struct
 \emph default 
- C com um cabeçalho definido pela macro PyObject_HEAD, seguido de atributos
- definidos pelo usuário 
+ C com um cabeçalho definido pela macro 
+\family typewriter 
+PyObject_HEAD
+\family default 
+, seguido de atributos definidos pelo usuário 
 \begin_inset LatexCommand \cite{vanrossum-extpy}
 
 \end_inset 
 
 , que será usada para alocar instâncias do novo tipo.
- Em seguida, define-se uma instância de PyTypeObject, onde podem-se passar
- ponteiros para as funções C a serem usadas pelo ambiente de execução Python
- como metamétodos, para operações como __call__ e __getattr__.
+ Em seguida, define-se uma instância de 
+\family typewriter 
+PyTypeObject
+\family default 
+, onde podem-se passar ponteiros para as funções C a serem usadas pelo ambiente
+ de execução Python como metamétodos, para operações como 
+\family typewriter 
+__call__
+\family default 
+ e 
+\family typewriter 
+__getattr__
+\family default 
+.
  Funções C podem ser associadas ao novo tipo como métodos, declarando-os
- em estruturas PyMethodDef e realizando chamadas a PyDescr_NewMethod.
+ em estruturas 
+\family typewriter 
+PyMethodDef
+\family default 
+ e realizando chamadas a 
+\family typewriter 
+PyDescr_NewMethod
+\family default 
+.
  
 \layout Subsection
 
 Java
 \layout Standard
 
-A JNI define no cabeçalho jni.h tipos em C equivalentes a cada um dos tipos
- primitivos de Java (jint para int, jfloat para float, e assim por diante).
+A JNI define no cabeçalho 
+\family typewriter 
+jni.h
+\family default 
+ tipos em C equivalentes a cada um dos tipos primitivos de Java (
+\family typewriter 
+jint
+\family default 
+ para 
+\family typewriter 
+int
+\family default 
+, 
+\family typewriter 
+jfloat
+\family default 
+ para 
+\family typewriter 
+float
+\family default 
+, e assim por diante).
  Os 
 \begin_inset Quotes eld
 \end_inset 
@@ -1636,9 +1811,17 @@ tipos de referências
 \end_inset 
 
 , como classes e objetos, são expostos a C como referências opacas, instâncias
- de jobject.
+ de 
+\family typewriter 
+jobject
+\family default 
+.
  Strings e arrays também são objetos em Java e são portanto também expostos
- como instâncias de jobject.
+ como instâncias de
+\family typewriter 
+ jobject
+\family default 
+.
  Entretanto, a JNI define como conveniência alguns tipos em C que agem como
  
 \begin_inset Quotes eld
@@ -1648,17 +1831,65 @@ subtipos
 \begin_inset Quotes erd
 \end_inset 
 
- de jobject: jclass, jstring, jthrowable, jarray, jobjectArray, além de
- um tipo array para cada tipo primitivo (jbooleanArray, jbyteArray, etc.).
+ de 
+\family typewriter 
+jobject
+\family default 
+: 
+\family typewriter 
+jclass
+\family default 
+, 
+\family typewriter 
+jstring
+\family default 
+, 
+\family typewriter 
+jthrowable
+\family default 
+, 
+\family typewriter 
+jarray
+\family default 
+, 
+\family typewriter 
+jobjectArray
+\family default 
+, além de um tipo array para cada tipo primitivo (
+\family typewriter 
+jbooleanArray
+\family default 
+, 
+\family typewriter 
+jbyteArray
+\family default 
+, etc.).
 \layout Standard
 
-A leitura do conteúdo de uma jstring em C requer a conversão do formato
- interno usado por Java, UTF-16.
+Diferentes métodos são utilizados para a leitura de tipos prmitivos, strings,
+ arrays e outros objetos.
+ A leitura do conteúdo de uma 
+\family typewriter 
+jstring
+\family default 
+ em C requer a conversão do formato interno usado por Java, UTF-16.
  A API oferece uma função utilitária que aloca uma string contendo a representaç
-ão do texto em UTF-8 (formato compatível com ASCII), GetStringUTFChars.
- Esta string deve ser posteriormente desalocada com ReleaseStringUTFChars.
- A função GetStringChars permite acesso direto à string em formato UTF-16;
- ela possui um parâmetro adicional que 
+ão do texto em UTF-8 (formato compatível com ASCII), 
+\family typewriter 
+GetStringUTFChars
+\family default 
+.
+ Esta string deve ser posteriormente desalocada com 
+\family typewriter 
+ReleaseStringUTFChars
+\family default 
+.
+ A função 
+\family typewriter 
+GetStringChars
+\family default 
+ permite acesso direto à string em formato UTF-16; ela possui um parâmetro
+ adicional que 
 \emph on 
 retorna
 \emph default 
@@ -1668,14 +1899,24 @@ buffer
 \emph default 
  interno da JVM ou uma cópia.
  Ao mesmo tempo que isto permite ao código C evitar duplicação da string
- nos casos onde deseja-se modificá-la e a JVM optou por retornar uma cópia,
- tal parâmetro expõe na API questões de baixo nível da gerência de strings
- na JVM.
- Adicionalmente, as funções GetStringRegion e GetStringUTFRegion realizam
- a cópia da string para um buffer pré-alocado pelo programador.
- GetStringCritical permite obter o ponteiro para o buffer interno da JVM,
- mas isto envolve cuidados especiais em relação à coleta de lixo, discutidos
- na Seção 
+ nos casos onde deseja-se modificá-la e a JVM tenha optado por retornar
+ uma cópia, tal parâmetro expõe na API questões de baixo nível da gerência
+ de strings na JVM.
+ Alternativamente, as funções 
+\family typewriter 
+GetStringRegion
+\family default 
+ e 
+\family typewriter 
+GetStringUTFRegion
+\family default 
+ realizam a cópia da string para um buffer pré-alocado pelo programador.
+ 
+\family typewriter 
+GetStringCritical
+\family default 
+ permite obter o ponteiro para o buffer interno da JVM, mas isto envolve
+ cuidados especiais em relação à coleta de lixo, discutidos na Seção 
 \begin_inset LatexCommand \ref{sub:Coleta-Java}
 
 \end_inset 
@@ -1703,38 +1944,107 @@ arrays de arrays
 
 .
  Arrays de elementos primitivos são tratados de forma similar a strings.
- Há funções para realizar a cópia de arrays (Get/Set
+ Há funções para realizar a cópia de arrays (
+\family typewriter 
+Get
+\family default 
+/
+\family typewriter 
+Set
+\family default 
 \emph on 
 <tipo
 \emph default 
->ArrayRegion), funções que retornam ponteiros para o array podendo ou não
- realizar cópias, de forma similar a GetStringChars (Get/Release
+>
+\family typewriter 
+ArrayRegion
+\family default 
+), funções que retornam ponteiros para o array podendo ou não realizar cópias,
+ de forma similar a 
+\family typewriter 
+GetStringChars
+\family default 
+ (
+\family typewriter 
+Get
+\family default 
+/
+\family typewriter 
+Release
+\family default 
 \emph on 
 <tipo
 \emph default 
->ArrayElements) e que podem acessar o buffer interno da JVM diretamente,
- como em GetStringCritical (Get/Release
-\emph on 
-<tipo
-\emph default 
->ArrayCritical).
+>
+\family typewriter 
+ArrayElements
+\family default 
+) e que podem acessar o buffer interno da JVM diretamente, como em 
+\family typewriter 
+GetStringCritical
+\family default 
+ (
+\family typewriter 
+Get
+\family default 
+/
+\family typewriter 
+ReleasePrimitiveArrayCritical
+\family default 
+).
  Para arrays de objetos, é possível apenas obter elementos do array, sob
- forma de referências jobject, um a um, com GetObjectArrayElement.
+ forma de referências 
+\family typewriter 
+jobject
+\family default 
+, um a um, com 
+\family typewriter 
+GetObjectArrayElement
+\family default 
+.
 \layout Standard
 
-A obtenção de valores de atributos se dá através de métodos como GetObjectField
- e GetStaticField, que retornam referências do tipo jobject.
- Para cada um dos tipos primitivos há uma chamada equivalente, como GetIntField
- e GetStaticIntField.
+A obtenção de valores de atributos se dá através de métodos como 
+\family typewriter 
+GetObjectField
+\family default 
+ e 
+\family typewriter 
+GetStaticField
+\family default 
+, que retornam referências do tipo 
+\family typewriter 
+jobject
+\family default 
+.
+ Para cada um dos tipos primitivos há uma chamada equivalente, como 
+\family typewriter 
+GetIntField
+\family default 
+ e 
+\family typewriter 
+GetStaticIntField
+\family default 
+.
  Todas estas funções recebem como parâmetro um 
 \emph on 
 identificador de campo
 \emph default 
 .
- Apesar de a linguagem Java definir uma classe java.lang.reflect.Field, os
- identificadores de campo são valores C do tipo jfieldID.
- Estes valores são obtidos com uma chamada a GetFieldID, que recebe entre
- seus parâmetros uma string chamada de 
+ Apesar de a linguagem Java definir uma classe 
+\family typewriter 
+java.lang.reflect.Field
+\family default 
+, os identificadores de campo são valores C do tipo 
+\family typewriter 
+jfieldID
+\family default 
+.
+ Estes valores são obtidos com uma chamada a 
+\family typewriter 
+GetFieldID
+\family default 
+, que recebe entre seus parâmetros uma string chamada de 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -1743,29 +2053,25 @@ descritor de campo JNI
 \end_inset 
 
  com uma sintaxe especial.
- Por exemplo, o tipo int[][] é descrito com 
-\begin_inset Quotes eld
-\end_inset 
-
-[[I
-\begin_inset Quotes erd
-\end_inset 
-
+ Por exemplo, o tipo 
+\family typewriter 
+int[][]
+\family default 
+ é descrito com 
+\family typewriter 
+"[[I"
+\family default 
  e o tipo java.lang.String como 
-\begin_inset Quotes eld
-\end_inset 
-
-Ljava/lang/String;
-\begin_inset Quotes erd
-\end_inset 
-
+\family typewriter 
+"Ljava/lang/String;"
+\family default 
 
 \begin_inset Foot
 collapsed true
 
 \layout Standard
 
-Este é outro ponto onde detalhes da implementação transparece na API.
+Este é outro ponto onde detalhes da implementação transparecem na API.
  Não por coincidência, esta sintaxe é a mesma usada na representação interna
  de tipos em 
 \emph on 
@@ -1781,6 +2087,12 @@ bytecodes
 \end_inset 
 
  demonstra o acesso de um atributo Java a partir de C.
+ É possível ainda obter um jfieldID a partir de um objeto Field usando a
+ função 
+\family typewriter 
+FromReflectedField
+\family default 
+.
 \layout Standard
 
 
@@ -1935,27 +2247,83 @@ Acesso a atributos Java em C via JNI
 
 \layout Standard
 
+A manipulação de objetos do tipo 
+\family typewriter 
+Class
+\family default 
+ também é feita através de funções específicas.
+ É possível criar uma nova classe Java em tempo de execução a partir da
+ API C usando a função 
+\family typewriter 
+DefineClass
+\family default 
+, que recebe um buffer contendo a representação de uma classe Java pré-compilada.
+ Referências do tipo 
+\family typewriter 
+jclass
+\family default 
+ podem ser obtidas através do nome da classe usando 
+\family typewriter 
+FindClass
+\family default 
+, que utiliza uma sintaxe de descritores de classe similar à de descritor
+ de campos usada por 
+\family typewriter 
+GetFieldID
+\family default 
+
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Tanto em descritores de classe como de campo, 
+\family typewriter 
+"[Ljava/lang/String;"
+\family default 
+ representam 
+\family typewriter 
+String[]
+\family default 
+.
+ Para o tipo 
+\family typewriter 
+String
+\family default 
+, entretanto, 
+\family typewriter 
+"Ljava/lang/String;"
+\family default 
+ é o descritor de campo e 
+\family typewriter 
+"java/lang/String"
+\family default 
+ o de classe.
+\end_inset 
+
+.
+\layout Standard
+
 Para o armazenamento de valores de C que podem ser convertidos para tipos
- primitivos de Java, a JNI possui funções como SetIntField e SetFloatArrayRegion.
+ primitivos de Java, a JNI possui funções como 
+\family typewriter 
+SetIntField
+\family default 
+ e 
+\family typewriter 
+SetFloatArrayRegion
+\family default 
+.
  Para os demais tipos, não há uma provisão específica para o armazenamento
  de dados de C no espaço de objetos de Java.
  Nestes casos, a documentação recomenda o armazenamento de ponteiros em
  tipos numéricos, apesar dos problemas de portabilidade em que tal abordagem
  incorre.
- 
-\layout Standard
-
-conversões em L
-\layout Standard
-
-como encontrar dados (resolver nomes)
-\layout Standard
-
-como guardar dados de C em L.
- 
 \layout Subsection
 
 Ruby
+\layout Standard
+
 \layout Standard
 
 como transferir dados de C para L
