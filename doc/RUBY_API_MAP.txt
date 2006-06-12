@@ -200,7 +200,7 @@ Tipos de dados
 			VALUE rb_iv_get (VALUE, const char*);
 			VALUE rb_ivar_get (VALUE, ID);
 			VALUE rb_gv_get (const char*);
-			VALUE rb_attr_get (VALUE, ID);
+			VALUE rb_attr_get (VALUE, ID); [variante de rb_ivar_get]
 			VALUE rb_cv_get (VALUE, const char*);
 			VALUE rb_cvar_get (VALUE, ID);
 			VALUE rb_const_get (VALUE, ID);

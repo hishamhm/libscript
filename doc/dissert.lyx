@@ -2003,7 +2003,8 @@ GetStaticField
 jobject
 \family default 
 .
- Para cada um dos tipos primitivos há uma chamada equivalente, como 
+ Para cada um dos tipos primitivos existe uma chamada equivalente, como
+ 
 \family typewriter 
 GetIntField
 \family default 
@@ -2470,16 +2471,34 @@ rb_class_new_instance
 initialize
 \family default 
 , que pode ser implementado em C.
- Variáveis de instância são ser declaradas usando 
+\layout Standard
+
+O acesso a objetos Ruby se dá através da família de funções 
 \family typewriter 
-rb_iv_set
+rb_
 \family default 
- ou 
+*
 \family typewriter 
-rb_ivar_set
+_get
 \family default 
-.
- A primeira forma usa strings C como nomes, a segunda usa 
+, que retornam 
+\family typewriter 
+VALUE
+\family default 
+s.
+ As funções 
+\family typewriter 
+rb_iv_get
+\family default 
+ e 
+\family typewriter 
+rb_ivar_get
+\family default 
+ obtêm atributos de objetos (
+\emph on 
+instance variables
+\emph default 
+), A primeira forma usa strings C como nomes, a segunda usa 
 \family typewriter 
 ID
 \family default 
@@ -2503,6 +2522,32 @@ ID
 \family default 
  pode ser usado para referenciar-se a atributos de objetos de classes diferentes
  que tenham o mesmo nome.
+ Há ainda as funções 
+\family typewriter 
+rb_cv_get
+\family default 
+ e 
+\family typewriter 
+rb_cvar_get
+\family default 
+ para atributos de classes, 
+\family typewriter 
+rb_gv_get
+\family default 
+ para variáveis globais e 
+\family typewriter 
+rb_const_get
+\family default 
+ para constantes.
+ Para cada uma destas, há uma função 
+\family typewriter 
+rb_
+\family default 
+*
+\family typewriter 
+_set
+\family default 
+ análoga.
 \layout Standard
 
 Para o armazenamento de dados de C no espaço de objetos de Ruby, a API oferece
@@ -2538,21 +2583,260 @@ dup
 clone
 \family default 
 .
+\layout Subsection
+
+Lua
 \layout Standard
 
-como transferir dados de C para L
+A API de Lua define uma abordagem diferente para a manipulação de dados
+ em C: não são expostos ao código C ponteiros ou 
+\emph on 
+handles
+\emph default 
+ para objetos Lua.
+ As operações são definidas em termos de índices de uma pilha virtual.
+ Assim, a transferência de dados de C para Lua se dá através de funções
+ que recebem tipos de C, os convertem para valores Lua e os empilham, como
+ 
+\family typewriter 
+lua_pushboolean
+\family default 
+, 
+\family typewriter 
+lua_pushinteger
+\family default 
+ e 
+\family typewriter 
+lua_pushlstring
+\family default 
+.
+ Diversas operações da API operam sobre o valor no topo da pilha, como por
+ exemplo 
+\family typewriter 
+lua_setglobal
+\family default 
+.
+ A maioria das funções de consulta, entretanto, permitem especificar um
+ índice qualquer da pilha (com valores positivos para indexação a partir
+ da base e negativos para índices a partir do topo).
 \layout Standard
 
-como transferir dados de L para C
+A conversão de dados de Lua para C é feita através de funções como lua_tonumber
+ e lua_tolstring, que recebem um índice da pilha, convertem o valor no índice
+ para o tipo Lua especificado, e retornam o valor no tipo C equivalente.
+ Números têm o tipo C 
+\family typewriter 
+lua_Number
+\family default 
+, que corresponde a 
+\family typewriter 
+double
+\family default 
+ por padrão mas é um parâmetro na compilação de Lua.
+ Strings, em particular, são objetos imutáveis e têm sua representação internali
+zada: duas strings de conteúdo idêntico compartilham a mesma representação
+ interna.
+ Para tornar mais eficiente a construção de strings Lua a partir de C, a
+ biblioteca auxiliar define um tipo C 
+\family typewriter 
+luaL_Buffer
+\family default 
+ e funções como 
+\family typewriter 
+luaL_addstring
+\family default 
+ e 
+\family typewriter 
+luaL_addvalue
+\family default 
+, que permitem a construção de uma string em etapas até que ela possa ser
+ finalmente convertida para uma string Lua com 
+\family typewriter 
+luaL_pushresult
+\family default 
+.
 \layout Standard
 
-conversões em L
+Lua define dois tipos de dados específicos para o armazenamento de dados
+ para C, 
+\emph on 
+full userdata
+\emph default 
+ e 
+\emph on 
+light userdata
+\emph default 
+.
+ 
+\emph on 
+Full userdata
+\emph default 
+ descrevem blocos de memória gerenciados por Lua e utilizados por código
+ C.
+ Eles existem em Lua como objetos opacos, e são criados por 
+\family typewriter 
+lua_newuserdata
+\family default 
+, que insere o novo objeto na pilha de Lua e retorna a C um ponteiro com
+ a área de memória do tamanho requisitado.
+ Objetos do tipo 
+\emph on 
+light userdata
+\emph default 
+, criados através de 
+\family typewriter 
+lua_pushlightuserdata
+\family default 
+, permitem armazenar ponteiros de C em Lua; a alocação e gerência do bloco
+ de memória ficam a cargo do código C.
+ 
 \layout Standard
 
-como encontrar dados (resolver nomes: rb_gv_get...)
+A área de armazenamento da pilha não se ajusta dinamicamente e as funções
+ da API não realizam controle de 
+\emph on 
+overflow
+\emph default 
+.
+ Assim, o programador é responsável por controlar o tamanho da pilha, através
+ da função 
+\family typewriter 
+lua_checkstack
+\family default 
+.
+ Na prática, o tamanho da pilha só irá crescer na ocorrência de laços empilhando
+ elementos, já que seqüências típicas de operações tendem a empilhar valores
+ e desempilhá-los em seguida.
 \layout Standard
 
-como guardar dados de C em L
+Tabelas são o único tipo para construção de estruturas de dados em Lua.
+ Lua oferece uma API completa para manipulação de tabelas a partir de C.
+ Tabelas podem ser criadas com 
+\family typewriter 
+lua_newtable
+\family default 
+ ou 
+\family typewriter 
+lua_createtable
+\family default 
+; a segunda forma permite pré-alocar memória para os elementos da tabela.
+ As funções 
+\family typewriter 
+lua_gettable
+\family default 
+ e 
+\family typewriter 
+lua_settable
+\family default 
+ implementam a semântica de leitura e atribuição de campos em uma tabela
+ em Lua, incluindo a possível chamada a metamétodos; para chamadas sem a
+ invocação de metamétodos existem as funções 
+\family typewriter 
+lua_rawget
+\family default 
+ e 
+\family typewriter 
+lua_rawset
+\family default 
+, equivalentes a 
+\family typewriter 
+rawget
+\family default 
+ e 
+\family typewriter 
+rawset
+\family default 
+ em Lua (além das variantes 
+\family typewriter 
+lua_rawgeti
+\family default 
+ e 
+\family typewriter 
+lua_rawseti
+\family default 
+ para conveniência).
+ Há ainda a função 
+\family typewriter 
+lua_next
+\family default 
+, equivalente à função Lua 
+\family typewriter 
+next
+\family default 
+, que permite percorrer os elementos de uma tabela.
+\layout Standard
+
+Diversos conceitos de Lua são representados através de tabelas -- ambiente
+ global, metatabelas, 
+\emph on 
+registry
+\emph default 
+ -- e são assim manipulados usando as funções da API para gerência de tabelas.
+ A tabela do ambiente global da 
+\emph on 
+thread
+\emph default 
+ em execução pode ser acessada através de um índice especial da pilha virtual,
+ 
+\family typewriter 
+LUA_GLOBALSINDEX
+\family default 
+.
+ Pode-se ainda definir uma tabela de ambiente da função, indexada em 
+\family typewriter 
+LUA_ENVIRONINDEX
+\family default 
+, para isolar dados a serem compartilhados internamente em funções de módulos
+ escritos em C.
+ 
+\layout Standard
+
+Embora referências explícitas para objetos não sejam manipuladas na API,
+ algumas funções retornam ponteiros para estruturas gerenciadas por Lua:
+ 
+\family typewriter 
+lua_newuserdata
+\family default 
+, 
+\family typewriter 
+lua_push
+\family default 
+*
+\family typewriter 
+string
+\family default 
+, 
+\family typewriter 
+lua_to
+\family default 
+*
+\family typewriter 
+string
+\family default 
+, 
+\family typewriter 
+lua_touserdata
+\family default 
+ e 
+\family typewriter 
+lua_topointer
+\family default 
+.
+ Esta última função permite obter ponteiros para alguns tipos de objetos
+ (
+\emph on 
+userdata
+\emph default 
+, tabelas, 
+\emph on 
+threads
+\emph default 
+ e funções), mas somente com o objetivo de obter informação para depuração,
+ já que não é possível converter o ponteiro de volta para um valor Lua.
+ A validade dos ponteiros retornados por estas funções é dependente do tempo
+ de vida do objeto correspondente a eles; para strings em particular, o
+ ponteiro retornado só é garantidamente válido enquanto o dado estiver na
+ pilha.
 \layout Subsection
 
 Perl
@@ -2568,33 +2852,6 @@ conversões em L
 \layout Standard
 
 como encontrar dados (resolver nomes)
-\layout Standard
-
-como guardar dados de C em L
-\layout Subsection
-
-Lua
-\layout Standard
-
-como transferir dados de C para L
-\layout Standard
-
-* strings imutáveis
-\layout Standard
-
-como transferir dados de L para C
-\layout Standard
-
-* duas strings iguais são a mesma string
-\layout Standard
-
-* diferentemente de Python, luaL_Buffer
-\layout Standard
-
-conversões em L
-\layout Standard
-
-como encontrar dados (resolver nomes: lua_getglobal)
 \layout Standard
 
 como guardar dados de C em L
@@ -2664,16 +2921,22 @@ que dados sobrevivem durante uma função
 como salvar dados de L em estruturas C
 \layout Subsection
 
-Perl
+Lua
 \layout Standard
 
 que dados sobrevivem durante uma função
 \layout Standard
 
 como salvar dados de L em estruturas C
+\layout Standard
+
+* permite especificar um alocador
+\layout Standard
+
+* gc de full x light userdata
 \layout Subsection
 
-Lua
+Perl
 \layout Standard
 
 que dados sobrevivem durante uma função
