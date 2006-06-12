@@ -18,7 +18,7 @@ static VALUE a_method(VALUE self) {
    }
    
    /*
-   This is still valid because Ruby scans the C stack to protect its VALUES.
+   This is still valid because Ruby scans the C stack to protect its VALUEs.
    See [ruby-core:7983]
    */
    will_i_get_this = rb_iv_get(an_object, "@an_attribute");

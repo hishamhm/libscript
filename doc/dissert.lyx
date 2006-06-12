@@ -126,7 +126,7 @@ Objetivo
 Este trabalho realiza, a partir da pesquisa de implementações de FLIs, um
  estudo e comparação de interfaces entre diferentes linguagens de programação.
  Partindo de uma análise das abordagens gerais para interação entre linguagens,
- o estudo é baseado na análise de uma série de interfaces com C providas
+ o estudo é baseado na análise de um conjunto de interfaces com C providas
  por linguagens imperativas baseadas em máquina virtual.
  Além de se tratar da classe de linguagens mais popular atualmente para
  desenvolvimento multi-linguagem, características típicas de máquinas virtuais
@@ -771,11 +771,11 @@ ccall
  foi integrada, mas o uso da mônada é opcional, cabendo ao programador garantir
  que funções que não a utilizem sejam puras
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
-Uma série de convenções de chamada são definidas (
+Diversas convenções de chamada são definidas (
 \family typewriter 
 stdcall
 \family default 
@@ -945,21 +945,7 @@ As abordagens empregadas em diferentes FLIs para expor estruturas C às suas
  linguagens de origem possuem diversas variações.
  A declaração de classes Ruby a partir de C se dá através de uma série de
  chamadas da API.
- Uma classe é criada com 
-\family typewriter 
-rb_define_class
-\family default 
- e funções C podem ser registradas como métodos com 
-\family typewriter 
-rb_define_method
-\family default 
-.
- A estrutura C definida pelo usuário é convertida em uma classe Ruby através
- de uma chamada à macro 
-\family typewriter 
-Data_Wrap_Struct
-\family default 
-, que recebe o tipo da estrutura como parâmetro.
+ 
 \layout Standard
 
 
@@ -1186,8 +1172,8 @@ Java Native Interface
 
 \end_inset 
 
- define uma série de funções para controlar exclusão mútua entre dados compartil
-hados entre C e Java.
+ define funções para controlar exclusão mútua entre dados compartilhados
+ entre C e Java.
  O programador deve tomar o cuidado de buscar o equilíbrio entre o tempo
  gasto bloqueando a máquina virtual acessando dados compartilhados e o tempo
  gasto realizando cópia de dados entre os ambientes para reduzir o compartilhame
@@ -1336,7 +1322,7 @@ Transferência de dados
 Python
 \layout Standard
 
-Para a conversão de objetos de C para Python, a linguagem oferece uma série
+Para a conversão de dados de C para Python, a linguagem oferece uma série
  de funções que recebem variáveis de tipos primitivos de C como parâmetro,
  como 
 \family typewriter 
@@ -1403,7 +1389,7 @@ tamanho
 .
  Desta forma, é possível alocar uma string para armazenamento em Python
  e preenchê-la posteriormente através de código C, possivelmente através
- de uma série de comandos.
+ de uma seqüência de comandos.
  
 \layout Standard
 
@@ -2160,7 +2146,7 @@ public class ExemploJNI {
 
 
 \size footnotesize 
-include <jni.h>
+#include <jni.h>
 \layout LyX-Code
 
 
@@ -2324,6 +2310,234 @@ SetFloatArrayRegion
 Ruby
 \layout Standard
 
+Para a comunicação de dados entre Ruby e C, a API de Ruby define um tipo
+ de dados em C chamado 
+\family typewriter 
+VALUE
+\family default 
+, que referencia um objeto Ruby.
+ 
+\family typewriter 
+VALUE
+\family default 
+ pode representar tanto uma referência para um objeto (isto é, um ponteiro
+ para a 
+\emph on 
+heap
+\emph default 
+ de Ruby) como um valor imediato.
+ Em particular, as constantes 
+\family typewriter 
+Qtrue
+\family default 
+, 
+\family typewriter 
+Qfalse
+\family default 
+ e 
+\family typewriter 
+Qnil
+\family default 
+ são definidas como valores imediatos, permitindo a comparação destas usando
+ 
+\family typewriter 
+==
+\family default 
+.
+ Para os tipos numéricos, a conversão entre C e Ruby é feita através de
+ macros como 
+\family typewriter 
+INT2NUM
+\family default 
+ e de funções como 
+\family typewriter 
+rb_float_new
+\family default 
+, que recebem ou retornam 
+\family typewriter 
+VALUE
+\family default 
+s.
+\layout Standard
+
+Para a passagem de strings para Ruby a partir de C, são oferecidas as funções
+ 
+\family typewriter 
+rb_str_new
+\family default 
+, que recebe um ponteiro e um argumento numérico de tamanho, de modo a permitir
+ a passagem de strings contendo caracteres nulos, e 
+\family typewriter 
+rb_str_new2
+\family default 
+, que assume uma string padrão de C, com o caracter nulo como terminador.
+ 
+\family typewriter 
+VALUE
+\family default 
+s que apontam para strings de Ruby permitem acessar o seu conteúdo através
+ do 
+\emph on 
+cast
+\emph default 
+ 
+\family typewriter 
+RSTRING(uma_string)->ptr
+\family default 
+.
+ Todavia, a API recomenda o uso da macro 
+\family typewriter 
+StringValue
+\family default 
+, que retorna o próprio 
+\family typewriter 
+VALUE
+\family default 
+ passado caso este seja uma string, ou um novo 
+\family typewriter 
+VALUE
+\family default 
+ da classe String produzido através do método de conversão 
+\family typewriter 
+to_s
+\family default 
+ aplicado ao objeto passado (ou ainda causar uma exceção 
+\family typewriter 
+TypeError
+\family default 
+ caso a conversão não seja possível).
+ Sob a justificativa de aumentar o desempenho no acesso, alguns outros tipos
+ de Ruby como 
+\family typewriter 
+Array
+\family default 
+, 
+\family typewriter 
+Hash
+\family default 
+ e 
+\family typewriter 
+File
+\family default 
+ permitem este tipo de acesso de baixo nível aos membros das estruturas
+ utilizadas na implementação dos objetos.
+ Por exemplo, 
+\family typewriter 
+RARRAY(um_array)->len
+\family default 
+ permite ler o tamanho de um array diretamente.
+ A recomendação da API é utilizar este tipo de acesso somente para leitura,
+ já que a alteração destes valores pode facilmente tornar o estado interno
+ dos objetos inconsistente.
+\layout Standard
+
+A API permite criar classes a partir de C através da função 
+\family typewriter 
+rb_define_class
+\family default 
+.
+ Esta função recebe uma string C com o nome da nova classe e um 
+\family typewriter 
+VALUE
+\family default 
+ a ser usado como superclasse (como por exemplo a constante C 
+\family typewriter 
+rb_cObject
+\family default 
+, que representa a classe Ruby 
+\family typewriter 
+Object
+\family default 
+) e retorna um novo 
+\family typewriter 
+VALUE
+\family default 
+ representando a nova classe.
+ Esta nova referência pode então ser usada como parâmetro em chamadas de
+ de 
+\family typewriter 
+rb_define_method
+\family default 
+, que adiciona um método à classe recebendo um ponteiro para função C como
+ parâmetro, e 
+\family typewriter 
+rb_class_new_instance
+\family default 
+, que produz novos objetos Ruby que são instâncias da classe.
+ Como em código Ruby, a declaração de atributos de objetos é feita no método
+ 
+\family typewriter 
+initialize
+\family default 
+, que pode ser implementado em C.
+ Variáveis de instância são ser declaradas usando 
+\family typewriter 
+rb_iv_set
+\family default 
+ ou 
+\family typewriter 
+rb_ivar_set
+\family default 
+.
+ A primeira forma usa strings C como nomes, a segunda usa 
+\family typewriter 
+ID
+\family default 
+s, identificadores que substituem strings internalizadas na tabela de símbolos
+ de Ruby, que podem ser obtidos usando a função 
+\family typewriter 
+rb_intern
+\family default 
+.
+ Diferentemente de 
+\family typewriter 
+jfieldID
+\family default 
+s de Java, que contêm informação de tipo, 
+\family typewriter 
+ID
+\family default 
+s de Ruby meramente correspondem a uma string: um mesmo 
+\family typewriter 
+ID
+\family default 
+ pode ser usado para referenciar-se a atributos de objetos de classes diferentes
+ que tenham o mesmo nome.
+\layout Standard
+
+Para o armazenamento de dados de C no espaço de objetos de Ruby, a API oferece
+ uma macro, 
+\family typewriter 
+Data_Wrap_Struct
+\family default 
+, que recebe um ponteiro C e cria um objeto Ruby que armazena este ponteiro.
+ O ponteiro pode ser acessado a partir de código C usando 
+\family typewriter 
+Data_Get_Struct
+\family default 
+, mas não a partir de Ruby.
+ Para classes cujas instâncias irão conter dados de C, é possível associar
+ a uma classe uma função C responsável por realizar a alocação de memória
+ das instâncias usando a função 
+\family typewriter 
+rb_define_alloc_func
+\family default 
+.
+ Definindo uma função de alocação desta forma e implementando um método
+ 
+\family typewriter 
+initialize_copy
+\family default 
+, torna-se possível implementar classes Ruby em C compatíveis com as rotinas
+ de cópia de objetos 
+\family typewriter 
+dup
+\family default 
+ e 
+\family typewriter 
+clone
+\family default 
+.
 \layout Standard
 
 como transferir dados de C para L
@@ -2423,6 +2637,25 @@ como salvar dados de L em estruturas C
 \layout Subsection
 
 Ruby
+\layout Standard
+
+* Segredo da mágica de VALUEs locais em Ruby (ruby-core 7983), incluindo
+ setjmp pra forçar flush de registradores.
+\layout Standard
+
+* 
+\family typewriter 
+Data_Wrap_Struct
+\family default 
+,recebe como parâmetros ponteiros para duas funções C a serem chamadas pelo
+ coletor de lixo 
+\layout Standard
+
+* Ruby oferece ainda wrappers para a função 
+\family typewriter 
+malloc
+\family default 
+ que interagem com o coletor de lixo.
 \layout Standard
 
 que dados sobrevivem durante uma função

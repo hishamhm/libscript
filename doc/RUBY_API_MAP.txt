@@ -119,8 +119,12 @@ Tipos de dados
 		Via C
 			VALUE rb_newobj (void);
 			VALUE rb_data_object_alloc (VALUE,void*,RUBY_DATA_FUNC,RUBY_DATA_FUNC); [macro Data_Wrap_Struct]
-		Via Ruby
 			VALUE rb_define_class (const char*,VALUE);
+			void rb_define_method (VALUE,const char*,VALUE(*)(),int);
+			void rb_define_module_function (VALUE,const char*,VALUE(*)(),int);
+			void rb_define_global_function (const char*,VALUE(*)(),int);
+		Via Ruby
+			VALUE rb_class_new_instance (int, VALUE*, VALUE);
 			VALUE rb_define_module (const char*);
 			VALUE rb_define_class_under (VALUE, const char*, VALUE);
 			VALUE rb_define_module_under (VALUE, const char*);
@@ -292,9 +296,6 @@ void rb_define_hooked_variable (const char*,VALUE*,VALUE(*)(),void(*)());
 void rb_define_readonly_variable (const char*,VALUE*);
 void rb_define_const (VALUE,const char*,VALUE);
 void rb_define_global_const (const char*,VALUE);
-void rb_define_method (VALUE,const char*,VALUE(*)(),int);
-void rb_define_module_function (VALUE,const char*,VALUE(*)(),int);
-void rb_define_global_function (const char*,VALUE(*)(),int);
 void rb_undef_method (VALUE,const char*);
 void rb_define_alias (VALUE,const char*,const char*);
 void rb_define_attr (VALUE,const char*,int,int);
@@ -392,7 +393,6 @@ void rb_provide (const char*);
 VALUE rb_f_require (VALUE, VALUE);
 VALUE rb_require_safe (VALUE, int);
 void rb_obj_call_init (VALUE, int, VALUE*);
-VALUE rb_class_new_instance (int, VALUE*, VALUE);
 VALUE rb_block_proc (void);
 VALUE rb_f_lambda (void);
 VALUE rb_proc_new (VALUE (*)( ), VALUE);
