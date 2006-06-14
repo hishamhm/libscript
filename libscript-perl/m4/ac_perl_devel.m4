@@ -10,6 +10,17 @@ AC_DEFUN([CS_PATH_NORMALIZE],
 	[`echo "x$1" | tr '\\\\' '/' | sed 's/^x//;s/   */ /g;s/^ //;s/ $//'`]
 )
 
+AC_DEFUN(AC_PERL_DEFINE_CHECK,
+	[
+		if $PERL -V | grep config_args | tr ' ' '\n' | grep -q "^-D$1"
+		then
+			ifelse($2,,:,[$2])
+		else
+			ifelse($3,,:,[$3])
+		fi
+	]
+)
+
 AC_DEFUN(AC_PERL_DEVEL,
 	[
 		AC_ARG_WITH(perl-prefix,
@@ -96,6 +107,7 @@ AC_DEFUN(AC_PERL_DEVEL,
 
 			PERL_CFLAGS=$ac_cv_perl_cflags
 			AC_SUBST(PERL_CFLAGS)
+					
 			PERL_LDFLAGS=$ac_cv_perl_lflags
 			AC_SUBST(PERL_LDFLAGS)
 		fi

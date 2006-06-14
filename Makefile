@@ -1,14 +1,17 @@
 
-CFLAGS = -g -DDEBUG -ansi -Wall
+export CFLAGS = -g -DDEBUG -ansi -Wall
 
 root = $(PWD)
-LDFLAGS = -L$(root)/build/lib
+BUILD_LIBDIR=$(root)/build/lib
+LDFLAGS = -L$(BUILD_LIBDIR)
 CPPFLAGS = -I$(root)/build/include
 LD_LIBRARY_PATH += :$(root)/build/lib
 
 TESTSDIR = tests
 
-all: libscript libscript-lua libscript-python libscript-ruby tests
+LIBSCRIPT_MODULES = libscript libscript-lua libscript-python libscript-ruby libscript-perl
+
+all: $(LIBSCRIPT_MODULES) $(TESTS)
 
 libscript/configure: libscript/configure.ac libscript/Makefile.am
 	cd libscript; ./autogen.sh
@@ -42,6 +45,14 @@ build/lib/libscript-ruby.so: libscript-ruby/Makefile libscript-ruby/src/*
 	cd libscript-ruby; make all install
 libscript-ruby: build/lib/libscript-ruby.so
 
+libscript-perl/configure: libscript-perl/configure.ac libscript-perl/Makefile.am
+	cd libscript-perl; ./autogen.sh
+libscript-perl/Makefile: libscript-perl/configure
+	cd libscript-perl; LDFLAGS=$(LDFLAGS) CPPFLAGS=$(CPPFLAGS) ./configure --prefix=$(root)/build
+build/lib/libscript-perl.so: libscript-perl/Makefile libscript-perl/src/*
+	cd libscript-perl; make all install
+libscript-perl: build/lib/libscript-perl.so
+
 test1: $(TESTSDIR)/test1.c
 	gcc -o $(TESTSDIR)/test1 $(TESTSDIR)/test1.c -lscript $(LDFLAGS) $(CPPFLAGS)
 
@@ -49,21 +60,22 @@ testcall: $(TESTSDIR)/testcall.c
 	gcc -o $(TESTSDIR)/testcall $(TESTSDIR)/testcall.c -lscript $(LDFLAGS) $(CPPFLAGS)
 
 tests: test1 testcall
-	$(TESTSDIR)/test1 $(TESTSDIR)/test1.lua
-	$(TESTSDIR)/test1 $(TESTSDIR)/test1.py
-	$(TESTSDIR)/test1 $(TESTSDIR)/test1.rb
-	$(TESTSDIR)/testcall
+	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test1 $(TESTSDIR)/test1.lua
+	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test1 $(TESTSDIR)/test1.py
+	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test1 $(TESTSDIR)/test1.rb
+	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test1 $(TESTSDIR)/test1.pl
+	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/testcall
 
 clean:
 	rm -rf build
-	for dir in libscript libscript-lua libscript-python libscript-ruby; \
+	for dir in $(LIBSCRIPT_MODULES); \
 	do cd $$dir; if test -e Makefile; then make clean; \
 	fi; cd ..; done
 	rm -f $(TESTSDIR)/test1
 	rm -f $(TESTSDIR)/testcall
 
 realclean: clean
-	for dir in libscript libscript-lua libscript-python libscript-ruby; \
+	for dir in $(LIBSCRIPT_MODULES); \
 	do cd $$dir; if test -e Makefile; then make maintainer-clean; \
 	fi; ./autogen.sh --clean; \
 	cd ..; done

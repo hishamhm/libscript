@@ -171,27 +171,21 @@ AC_DEFUN([CS_BUILD_IFELSE],
 #	are ignored upon entry to this macro, however they are still set to
 #	appropriate values upon exit.
 #------------------------------------------------------------------------------
+
+dnl Tweak: don't mess with _cflags, _lflags and _libs. --Hisham [2006.06.14]
 AC_DEFUN([CS_CHECK_BUILD],
     [AS_IF([test "$8" != yes],
 	[AC_CACHE_CHECK([$1], [$2],
 	    [CS_BUILD_IFELSE([$3], [$4], [$5],
-		[$2=yes
-		$2_cflags=$cs_build_cflags
-		$2_lflags=$cs_build_lflags
-		$2_libs=$cs_build_libs],
+		[$2=yes],
 		[$2=no], [$9], [$10], [$11], [$12], [$13])])],
 	[AC_MSG_CHECKING([$1])
 	    CS_BUILD_IFELSE([$3], [$4], [$5],
-		[$2=yes
-		$2_cflags=$cs_build_cflags
-		$2_lflags=$cs_build_lflags
-		$2_libs=$cs_build_libs],
+		[$2=yes],
 		[$2=no], [$9], [$10], [$11], [$12], [$13])
 	    AC_MSG_RESULT([$$2])])
     AS_IF([test $$2 = yes], [$6],
-	[$2_cflags=''
-	$2_lflags=''
-	$2_libs=''
+	[:
 	$7])])
 
 
