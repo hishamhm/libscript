@@ -1054,52 +1054,6 @@ ores, o programador deve levar em consideração as diferenças entre os modelos
 
 
 \color red
-A API de Python retorna ao código C ponteiros para os objetos alocados pela
- máquina virtual.
- Como esta utiliza um coletor de lixo baseado em contagem de referências,
- o programador é obrigado então a controlar o número de referências dos
- ponteiros do tipo 
-\family typewriter 
-PyObject*
-\family default 
- com macros 
-\family typewriter 
-Py_INCREF
-\family default 
- e 
-\family typewriter 
-Py_DECREF
-\family default 
-.
- Além disso, tipos definidos pelo usuário através da API C devem implementar
- funções adicionais na sua estrutura 
-\family typewriter 
-PyTypeObject
-\family default 
-, para evitar ciclos na contagem de referência.
- Ruby, que utiliza um coletor 
-\emph on 
-mark-and-sweep
-\emph default 
- 
-\begin_inset LatexCommand \cite{wilson-gc}
-
-\end_inset 
-
-, requer que classes definidas em C que armazenem outros objetos Ruby declarem
- uma função 
-\family typewriter 
-mark
-\family default 
-, que propague chamadas a 
-\family typewriter 
-rb_gc_mark
-\family default 
- aos objetos internos da instância.
-\layout Standard
-
-
-\color red
 Para reduzir a necessidade de controle explícito de referências, Java faz
  uma distinção entre referências globais e locais.
  Referências globais são explicitamente criadas com 
@@ -2085,7 +2039,7 @@ FromReflectedField
 
 \begin_inset Float figure
 wide false
-collapsed true
+collapsed false
 
 \layout LyX-Code
 
@@ -2863,13 +2817,565 @@ Coleta de lixo
 Python
 \layout Standard
 
-que dados sobrevivem durante uma função
+A máquina virtual de Python possui um coletor de lixo baseado em contagem
+ de referências.
+ Combinado ao fato de que a API de Python retorna ao código C ponteiros
+ a 
+\family typewriter 
+PyObject
+\family default 
+s, tem-se que o controle de validade dos objetos deve ser feito explicitamente
+ pelo programador, incrementando e decrementando a contagem de referências
+ de objetos conforme deseja-se manter a validade dos ponteiros em código
+ C.
 \layout Standard
 
-* borrowed references
+De maneira geral, uma vez que código C deseja reter um 
+\family typewriter 
+PyObject*
+\family default 
+, ele deve utilizar a macro 
+\family typewriter 
+Py_INCREF
+\family default 
+ para incrementar a sua contagem de referências e assim impedi-lo de ser
+ coletado.
+ Uma vez que o valor não seja mais necessário, decrementa-se a contagem
+ similarmente com 
+\family typewriter 
+Py_DECREF
+\family default 
+.
+ Python trabalha com o conceito de 
+\emph on 
+
+\begin_inset Quotes eld
+\end_inset 
+
+propriedade de referências
+\begin_inset Quotes erd
+\end_inset 
+
+
+\emph default 
+ para definir quando o programador deve incrementar ou decrementar o contador
+ de referências retornadas pelas funções da API.
+ A maior parte das funções da API que retornam ponteiros a 
+\family typewriter 
+PyObject
+\family default 
+s 
+\emph on 
+transferem
+\emph default 
+ referências para o chamador; a referência passa então a ser sua responsabilidad
+e -- ele pode passá-la adiante ou terá o dever de decrementá-la com 
+\family typewriter 
+Py_DECREF
+\family default 
+ assim que não precisar mais usá-la (o código C pode guardar referências
+ que sejam de sua propriedade em suas estruturas de dados; elas continuarão
+ válidas mesmo após o retorno da função, até serem explicitamente decrementadas).
+ Outras funções 
+\emph on 
+emprestam
+\emph default 
+ referências; o código que recebe uma referência deste tipo não precisa
+ decrementá-la ao terminar de utilizá-la, mas a validade do objeto está
+ atrelado à validade da referência no objeto que a retornou ao código C.
+ Por exemplo, 
+\family typewriter 
+PyList_GetItem
+\family default 
+ empresta uma referência a um elemento da lista.
+ O ponteiro retornado continuará válido enquanto este item continuar contido
+ na lista.
+ Pode-se obter a 
+\begin_inset Quotes eld
+\end_inset 
+
+propriedade
+\begin_inset Quotes erd
+\end_inset 
+
+ de uma referência emprestada incrementando a contagem do objeto com 
+\family typewriter 
+Py_INCREF
+\family default 
+: a validade do ponteiro passa a ser independente o objeto 
+\emph on 
+container
+\emph default 
+ que o retornou, mas o código C passa a ser responsável por decrementar
+ a referência posteriormente com 
+\family typewriter 
+Py_DECREF
+\family default 
+.
 \layout Standard
 
-como salvar dados de L em estruturas C
+Para referências de objetos passadas de código C de volta para Python, há
+ dois casos na API em que funções 
+\emph on 
+
+\begin_inset Quotes eld
+\end_inset 
+
+roubam
+\begin_inset Quotes erd
+\end_inset 
+
+
+\emph default 
+ referências, isto é, em que a referência deixa de pertencer à função C
+ chamadora: 
+\family typewriter 
+PyList_SetItem
+\family default 
+ e 
+\family typewriter 
+PyTuple_SetItem
+\family default 
+.
+ A referência passada, que deve pertencer ao chamador, passa então a ser
+ uma referência emprestada após a chamada.
+ O objetivo disto é permitir chamadas de função aninhadas onde, por exemplo,
+ o argumento a 
+\family typewriter 
+PyList_SetItem
+\family default 
+ é o retorno de 
+\family typewriter 
+PyString_FromString
+\family default 
+, que produz uma nova referência.
+\layout Standard
+
+
+\begin_inset Float figure
+wide false
+collapsed true
+
+\layout LyX-Code
+
+
+\size footnotesize 
+void bug(PyObject *list) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyObject *item = PyList_GetItem(list, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyList_SetItem(list, 1, PyInt_FromLong(0L));
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyObject_Print(item, stdout, 0); /* BUG! */
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+\align center 
+
+\series bold 
+\size footnotesize 
+(a) 
+\series default 
+Acesso possivelmente inválido em 
+\family typewriter 
+PyObject_Print
+\layout LyX-Code
+
+
+\size footnotesize 
+void no_bug(PyObject *list) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyObject *item = PyList_GetItem(list, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
+   Py_INCREF(item);
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyList_SetItem(list, 1, PyInt_FromLong(0L));
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyObject_Print(item, stdout, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
+   Py_DECREF(item);
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+\align center 
+
+\size footnotesize 
+(b) 
+\family typewriter 
+item
+\family default 
+ é garantidamente válido em 
+\family typewriter 
+PyObject_Print
+\family default 
+ 
+\layout Caption
+
+
+\begin_inset LatexCommand \label{cap:python-gc}
+
+\end_inset 
+
+Acesso possivelmente inválido a uma referência a um 
+\family typewriter 
+PyObject
+\family default 
+ em código C
+\end_inset 
+
+
+\layout Standard
+
+A interação com o contador de referências pode ser bastante sutil.
+ O exemplo da Figura 
+\begin_inset LatexCommand \ref{cap:python-gc}
+
+\end_inset 
+
+, extraído da documentação de Python, demonstra que uma referência pode
+ ser invalidada por código aparentemente não relacionado
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+De fato, a documentação informa que versões antigas de Python continham
+ variantes deste 
+\emph on 
+bug
+\emph default 
+.
+\end_inset 
+
+.
+ À primeira vista, a inclusão de um elemento em 
+\family typewriter 
+list[1]
+\family default 
+ parece não afetar a referência 
+\family typewriter 
+item
+\family default 
+, que corresponde a 
+\family typewriter 
+list[0]
+\family default 
+.
+ Todavia, a inclusão de 
+\family typewriter 
+list[1]
+\family default 
+ pode haver removido da lista um elemento que se encontrava nesta posição.
+ Caso a lista fosse a última referência válida para o elemento, este poderia
+ ser coletado.
+ A coleta do objeto pode invocar o seu método finalizador 
+\family typewriter 
+__del__
+\family default 
+, que pode rodar código Python arbitrário.
+ Se este código remove o elemento da posição 0 de 
+\family typewriter 
+list
+\family default 
+ e isto causar a sua coleta, a referência 
+\family typewriter 
+item
+\family default 
+ passa a ser inválida, porque 
+\family typewriter 
+PyList_GetItem
+\family default 
+ retorna uma referência emprestada.
+ 
+\layout Standard
+
+Ao implementar funções em C que retornam referências a 
+\family typewriter 
+PyObject
+\family default 
+s, o mesmo cuidado de definir a política de tempo de vida da referência
+ deve ser tomado.
+ Para retornar uma referência nova, pode ser necessário incrementar a contagem
+ do objeto.
+ Isto se manifesta, por exemplo, na forma correta de uma função C retornar
+ o valor 
+\family typewriter 
+None
+\family default 
+, que envolve chamar 
+\family typewriter 
+Py_INCREF(Py_none)
+\family default 
+
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Este padrão é tão comum que a seqüência 
+\family typewriter 
+Py_INCREF(Py_none); return Py_none;
+\family default 
+ foi encapsulada na macro 
+\family typewriter 
+Py_RETURN_NONE
+\family default 
+.
+\end_inset 
+
+.
+ Mesmo objetos Python representando números devem ter a sua contagem de
+ referências controlada pelo programador C.
+ 
+\layout Standard
+
+O modelo de coleta de lixo utilizando contagem de referências traz consigo
+ preocupações sobre referências circulares: uma cadeia de objetos que mantêm
+ referências 
+\begin_inset Quotes eld
+\end_inset 
+
+vivas
+\begin_inset Quotes erd
+\end_inset 
+
+ entre si mantém a contagem de cada um dos seus elementos acima de zero,
+ mesmo que eles não sejam alcançáveis a partir de nenhum outro objeto.
+ Python inclui um detector de ciclos, entretanto, este é incapaz de coletar
+ ciclos cujos objetos contenham finalizadores implementados em Python (métodos
+ 
+\family typewriter 
+__del__
+\family default 
+); a única forma de acessar estes objetos é então através da lista 
+\family typewriter 
+garbage
+\family default 
+ no módulo 
+\family typewriter 
+gc
+\family default 
+.
+ 
+\layout Standard
+
+Para tipos implementados em C, provisões especiais devem ser tomadas para
+ que eles se comportem corretamente na presença de ciclos.
+ Deve-se implementar uma função para percorrer referências contidas no objeto
+ e uma função que decremente a contagem destas referências, descritos nos
+ campos 
+\family typewriter 
+tp_traverse
+\family default 
+ e 
+\family typewriter 
+tp_clear
+\family default 
+ de 
+\family typewriter 
+PyTypeObject
+\family default 
+.
+ A função 
+\family typewriter 
+tp_clear
+\family default 
+ do tipo deve ter o cuidado de zerar o valor de seus campos 
+\family typewriter 
+PyObject*
+\family default 
+ para 
+\family typewriter 
+NULL
+\family default 
+ antes de decrementar cada referência, uma vez que a operação de decremento
+ pode iniciar a desalocação do objeto e disparar uma chamada a 
+\family typewriter 
+tp_traverse
+\family default 
+ que, devido ao ciclo, retorne ao objeto anterior.
+ O tipo deve ser, então, identificado com a flag 
+\family typewriter 
+Py_TPFLAGS_HAVE_GC
+\family default 
+ em 
+\family typewriter 
+tp_flags
+\family default 
+.
+ 
+\layout Standard
+
+Além disso, a implementação de objetos Python que suportem coleta cíclica
+ em C implica ainda em outros cuidados.
+ Objetos devem ser alocados com 
+\family typewriter 
+PyObject_GC_New
+\family default 
+ ou 
+\family typewriter 
+PyObject_GC_NewVar
+\family default 
+ ao invés da funções usuais 
+\family typewriter 
+PyObject_New
+\family default 
+ e 
+\family typewriter 
+PyObject_NewVar
+\family default 
+.
+ Durante a construção do objeto, após os campos a serem visitados por tp_travers
+e terem sido preenchidos, é necessário ainda chamar uma função de notificação
+ 
+\family typewriter 
+PyObject_GC_Track
+\family default 
+ e durante a desalocação, antes de invalidar os campos do objeto, chamar
+ 
+\family typewriter 
+PyObject_GC_UnTrack
+\family default 
+.
+ 
+\layout Subsection
+
+Ruby
+\layout Standard
+
+Ruby utiliza um coletor de lixo 
+\emph on 
+mark-and-sweep
+\emph default 
+ 
+\begin_inset LatexCommand \cite{wilson-gc}
+
+\end_inset 
+
+: ele funciona em duas passadas, inicialmente marcando os objetos alcançáveis
+ e depois percorrendo a lista completa de objetos coletando aqueles que
+ não tenham sido marcados.
+ Esta técnica evita o problema de referências cíclicas enfrentado por Python.
+ Objetos Ruby criados com 
+\family typewriter 
+Data_Wrap_Struct
+\family default 
+ e 
+\family typewriter 
+Data_Make_Struct
+\family default 
+ contêm 
+\emph on 
+structs
+\emph default 
+ C que podem conter referências a 
+\family typewriter 
+VALUE
+\family default 
+s Ruby.
+ A struct encapsulada, entretanto, é opaca para o universo Ruby, então para
+ garantir que estes 
+\family typewriter 
+VALUE
+\family default 
+s sejam marcados como alcançáveis durante a coleta de lixo é necessário
+ fazer isto via código C.
+ As funções recebem como parâmetro um ponteiro para uma função de marcação
+ e uma função de desalocação a serem implementadas pelo programador.
+ Quando o coletor de lixo visita o objeto na fase de marcação, ele invoca
+ a função registrada, que deve chamar 
+\family typewriter 
+rb_gc_mark
+\family default 
+ em cada um dos 
+\family typewriter 
+VALUE
+\family default 
+s armazenados na 
+\emph on 
+struct
+\emph default 
+ do objeto, informando assim que os objetos são alcançáveis.
+ Quando um objeto encapsulado via 
+\family typewriter 
+Data_
+\family default 
+*
+\family typewriter 
+_Struct
+\family default 
+ for dado como não alcançável, a função de desalocação registrada é chamada.
+\layout Standard
+
+* que dados sobrevivem durante uma função: Segredo da mágica de VALUEs locais
+ em Ruby (ruby-core 7983), incluindo setjmp pra forçar flush de registradores.
+\layout Standard
+
+* como salvar dados de L em estruturas C
+\layout Standard
+
+Ruby oferece ainda como conveniência alguns 
+\emph on 
+wrappers
+\emph default 
+ para as funções 
+\family typewriter 
+malloc
+\family default 
+ e 
+\family typewriter 
+realloc
+\family default 
+ que interagem com o coletor de lixo, forçando a execução do coletor durante
+ alocações grandes
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+O limite para definir 
+\begin_inset Quotes eld
+\end_inset 
+
+grande
+\begin_inset Quotes erd
+\end_inset 
+
+ se ajusta de acordo com o funcionamento do coletor e com as alocações realizada
+s anteriormente.
+\end_inset 
+
+ ou em situações de pouca memória disponível.
 \layout Subsection
 
 Java
@@ -2883,42 +3389,18 @@ Java
 que dados sobrevivem durante uma função
 \layout Standard
 
-* Get/ReleaseStringCritical ( http://java.sun.com/docs/books/jni/html/objtypes.html
-#30934 )
+* questões de threading: Get/ReleaseStringCritical ( http://java.sun.com/docs/book
+s/jni/html/objtypes.html#30934 )
 \layout Standard
 
 * DeleteLocalRef em loops, Push/PopLocalFrame, comparar com Lua 2/3.x?
 \layout Standard
 
 como salvar dados de L em estruturas C
-\layout Subsection
-
-Ruby
 \layout Standard
 
-* Segredo da mágica de VALUEs locais em Ruby (ruby-core 7983), incluindo
- setjmp pra forçar flush de registradores.
-\layout Standard
-
-* 
-\family typewriter 
-Data_Wrap_Struct
-\family default 
-,recebe como parâmetros ponteiros para duas funções C a serem chamadas pelo
- coletor de lixo 
-\layout Standard
-
-* Ruby oferece ainda wrappers para a função 
-\family typewriter 
-malloc
-\family default 
- que interagem com o coletor de lixo.
-\layout Standard
-
-que dados sobrevivem durante uma função
-\layout Standard
-
-como salvar dados de L em estruturas C
+coleta de dados L definidos via C (não é possível definir novos tipos Java
+ em C)
 \layout Subsection
 
 Lua
@@ -2928,6 +3410,9 @@ que dados sobrevivem durante uma função
 \layout Standard
 
 como salvar dados de L em estruturas C
+\layout Standard
+
+coleta de dados L definidos via C
 \layout Standard
 
 * permite especificar um alocador
@@ -2940,6 +3425,9 @@ Perl
 \layout Standard
 
 que dados sobrevivem durante uma função
+\layout Standard
+
+coleta de dados L definidos via C
 \layout Standard
 
 como salvar dados de L em estruturas C

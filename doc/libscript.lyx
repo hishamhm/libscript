@@ -1479,13 +1479,6 @@ Random jot #5: Strings
 lua_pushstring, PyString_FromString e rb_str_new{,2} fazem cópias da string.
 \layout Subsection*
 
-Random jot #6: Coleta de lixo em Ruby
-\layout Standard
-
-Objetos criados via API C não são protegidos da coleta de lixo (exemplo
- em ~/ruby-tests)
-\layout Subsection*
-
 Random jot #8: Tainted Objects em Ruby 
 \layout Standard
 
