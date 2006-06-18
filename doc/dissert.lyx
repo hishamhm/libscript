@@ -3498,11 +3498,60 @@ Java
 
 \layout Standard
 
-que dados sobrevivem durante uma função
+Assim como Python e Ruby, a API de Java retorna referências a objetos da
+ máquina virtual que podem ser armazenados em variáveis C.
+ A JNI define três tipos de referências, 
+\emph on 
+locais
+\emph default 
+, 
+\emph on 
+globais
+\emph default 
+ e 
+\emph on 
+globais fracas
+\emph default 
+, para auxiliar no controle do tempo de vida destas e a sua interação com
+ o coletor de lixo.
+\layout Standard
+
+Referências locais são retornadas pela maioria das funções da JNI e são
+ válidas até o retorno da função C que a obteve.
+ Não é necessário desalocar explicitamente uma referência local: após a
+ execução de uma função C, a JVM mantém uma lista de referências locais
+ passadas à função e libera todas elas quando o controle retorna à máquina
+ virtual.
+ Isto faz com que, de maneira geral, o programador não precise se preocupar
+ com o coletor de lixo enquanto manipula valores retornados durante uma
+ função.
+ Por outro lado, em código que pode utilizar uma grande quantidade de referência
+s locais -- por exemplo, realizando operações sobre cada objeto de um vetor
+ de tamanho arbitrário -- é mais eficiente desalocar referências locais
+ explicitamente, usando 
+\family typewriter 
+DeleteLocalRef
+\family default 
+.
+ A partir da versão 1.2 de Java, funções foram adicionadas para permitir
+ a gerência de referências locais em blocos.
+ 
+\family typewriter 
+PushLocalFrame
+\family default 
+ e 
+\family typewriter 
+PopLocalFrame
+\family default 
+ permitem criar escopos aninhados de referências locais, que são desalocados
+ de uma só vez.
 \layout Standard
 
 * questões de threading: Get/ReleaseStringCritical ( http://java.sun.com/docs/book
 s/jni/html/objtypes.html#30934 )
+\layout Standard
+
+* referências locais são válidas apenas na thread onde foram criadas
 \layout Standard
 
 * DeleteLocalRef em loops, Push/PopLocalFrame, comparar com Lua 2/3.x?
@@ -3513,6 +3562,10 @@ como salvar dados de L em estruturas C
 
 coleta de dados L definidos via C (não é possível definir novos tipos Java
  em C)
+\layout Standard
+
+* referências fracas - http://java.sun.com/j2se/1.5.0/docs/guide/jni/spec/functions.h
+tml#weak
 \layout Subsection
 
 Lua
