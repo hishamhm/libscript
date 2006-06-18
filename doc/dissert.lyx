@@ -1864,8 +1864,8 @@ GetStringCritical
 .
 \layout Standard
 
-Arrays de elementos primitivos são tratados diferentemente de arrays de
- objetos
+Arrays de elementos primitivos são tratados de forma similar a strings,
+ diferentemente de arrays de objetos
 \begin_inset Foot
 collapsed true
 
@@ -1883,7 +1883,6 @@ arrays de arrays
 \end_inset 
 
 .
- Arrays de elementos primitivos são tratados de forma similar a strings.
  Há funções para realizar a cópia de arrays (
 \family typewriter 
 Get
@@ -1932,12 +1931,12 @@ Get
 ReleasePrimitiveArrayCritical
 \family default 
 ).
- Para arrays de objetos, é possível apenas obter elementos do array, sob
- forma de referências 
+ Para arrays de objetos, é possível apenas obter elementos do array um a
+ um, sob forma de referências 
 \family typewriter 
 jobject
 \family default 
-, um a um, com 
+, com 
 \family typewriter 
 GetObjectArrayElement
 \family default 
@@ -3545,6 +3544,238 @@ PopLocalFrame
 \family default 
  permitem criar escopos aninhados de referências locais, que são desalocados
  de uma só vez.
+ 
+\family typewriter 
+PushLocalFrame
+\family default 
+ recebe ainda um parâmetro indicando um número de 
+\emph on 
+slots
+\emph default 
+ a serem pré-alocados, como otimização.
+ Esse valor pode ser configurado também com 
+\family typewriter 
+EnsureLocalCapacity
+\family default 
+.
+\layout Standard
+
+A Figura 
+\begin_inset LatexCommand \ref{cap:JNI-global-ref}
+
+\end_inset 
+
+ mostra um exemplo da gerência de referências em código C usando a JNI.
+ A função converte os elementos de um array para strings usando 
+\family typewriter 
+Object.toString
+\family default 
+ e os concatena usando 
+\family typewriter 
+String.concat
+\family default 
+.
+ Note que, no laço, à medida que o valor de 
+\family typewriter 
+s
+\family default 
+ é substituído, é necessário liberar a referência global antes de armazenar
+ uma nova; para a referência local 
+\family typewriter 
+str
+\family default 
+ isto não é necessário pois o primeiro valor retornado por 
+\family typewriter 
+toString
+\family default 
+ é liberado implicitamente por 
+\family typewriter 
+PopLocalFrame
+\family default 
+.
+
+\family typewriter 
+ 
+\layout Standard
+
+
+\begin_inset Float figure
+wide false
+collapsed true
+
+\layout LyX-Code
+
+
+\size footnotesize 
+JNIEXPORT jstring JNICALL
+\layout LyX-Code
+
+
+\size footnotesize 
+Java_Exemplo_concatArray(JNIEnv *J, jobject this, jobjectArray t) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   static jmethodID concat = NULL, toString = NULL;
+\layout LyX-Code
+
+
+\size footnotesize 
+   if (!concat) {
+\layout LyX-Code
+
+
+\size footnotesize 
+     jclass cls = (*J)->FindClass(J, "java/lang/String");
+\layout LyX-Code
+
+
+\size footnotesize 
+     concat = (*J)->GetMethodID(J, cls, "concat",
+\layout LyX-Code
+
+
+\size footnotesize 
+        "(Ljava/lang/String;)Ljava/lang/String;");
+\layout LyX-Code
+
+
+\size footnotesize 
+     cls = (*J)->FindClass(J, "java/lang/Object");
+\layout LyX-Code
+
+
+\size footnotesize 
+     toString = (*J)->GetMethodID(J, cls, "toString",
+\layout LyX-Code
+
+
+\size footnotesize 
+        "()Ljava/lang/String;");
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+   jstring s = (*J)->NewString(J, NULL, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
+   s = (*J)->NewGlobalRef(J, (jobject) s);
+\layout LyX-Code
+
+
+\size footnotesize 
+   int len = (*J)->GetArrayLength(J, t);
+\layout LyX-Code
+
+
+\size footnotesize 
+   for (int i = 0; i < len; i++) {
+\layout LyX-Code
+
+
+\size footnotesize 
+      (*J)->PushLocalFrame(J, 16);
+\layout LyX-Code
+
+
+\size footnotesize 
+      jobject r = (*J)->GetObjectArrayElement(J, t, i);
+\layout LyX-Code
+
+
+\size footnotesize 
+      jstring str = (*J)->CallObjectMethod(J, r, toString);
+\layout LyX-Code
+
+
+\size footnotesize 
+      str = (*J)->CallObjectMethod(J, s, concat, str);
+\layout LyX-Code
+
+
+\size footnotesize 
+      (*J)->DeleteGlobalRef(J, s);
+\layout LyX-Code
+
+
+\size footnotesize 
+      s = (*J)->NewGlobalRef(J, str);
+\layout LyX-Code
+
+
+\size footnotesize 
+      (*J)->PopLocalFrame(J, NULL);
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+   jobject ret = (*J)->NewLocalRef(J, s);
+\layout LyX-Code
+
+
+\size footnotesize 
+   (*J)->DeleteGlobalRef(J, s);
+\layout LyX-Code
+
+
+\size footnotesize 
+   return ret; 
+\layout LyX-Code
+
+
+\size footnotesize 
+} 
+\layout Caption
+
+
+\begin_inset LatexCommand \label{cap:JNI-global-ref}
+
+\end_inset 
+
+Rotina para concatenar os elementos de um array representados como strings.
+\end_inset 
+
+
+\layout Standard
+
+Referências globais são geradas a partir de referências locais usando 
+\family typewriter 
+NewGlobalRef
+\family default 
+.
+ Referências deste tipo mantêm-se válidas até serem explicitamente desalocadas
+ com 
+\family typewriter 
+DeleteGlobalRef
+\family default 
+.
+ Uma referência global impede o objeto de ser coletado, podendo assim, ser
+ utilizada para armazenar objetos Java no espaço de C além da duração de
+ uma função, por exemplo, em variáveis globais ou estáticas.
+ Uma técnica comum consiste em fazer o 
+\emph on 
+caching
+\emph default 
+ de classes Java em referências globais associadas a variáveis estáticas
+ dentro de funções C, como também pode ser visto na Figura 
+\begin_inset LatexCommand \ref{cap:JNI-global-ref}
+
+\end_inset 
+
+.
 \layout Standard
 
 * questões de threading: Get/ReleaseStringCritical ( http://java.sun.com/docs/book
@@ -3552,9 +3783,6 @@ s/jni/html/objtypes.html#30934 )
 \layout Standard
 
 * referências locais são válidas apenas na thread onde foram criadas
-\layout Standard
-
-* DeleteLocalRef em loops, Push/PopLocalFrame, comparar com Lua 2/3.x?
 \layout Standard
 
 como salvar dados de L em estruturas C

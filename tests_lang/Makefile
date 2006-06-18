@@ -6,7 +6,7 @@ PYTHON_LDFLAGS = -L/Programs/Python/2.4/lib/python2.4 -lpython2.4
 PYTHON_FLAGS = $(PYTHON_CPPFLAGS) $(PYTHON_EXTRA_LDFLAGS) $(PYTHON_EXTRA_LIBS) $(PYTHON_LDFLAGS)
 PYTHON_PROGS = pythonstring pythonconvert pythonbuiltins
 
-JAVA_CFLAGS = -shared -I/Programs/JDK/Current/include/linux/
+JAVA_CFLAGS = -g -shared -I/Programs/JDK/Current/include/linux/
 JAVA = java -Djava.library.path=.
 JAVA_PROGS = libjavatestjni.so javatestjni.h javatestjni.class
 
@@ -47,7 +47,7 @@ javatestjni.h: javatestjni.class
 	javah -jni javatestjni
 
 libjavatestjni.so: javatestjni.c javatestjni.h
-	gcc -o libjavatestjni.so javatestjni.c $(JAVA_CFLAGS)
+	gcc $(JAVA_CFLAGS) -o libjavatestjni.so javatestjni.c
 
 run_ruby: $(RUBY_PROGS)
 	./rubygc
