@@ -3286,7 +3286,9 @@ mark-and-sweep
  e depois percorrendo a lista completa de objetos coletando aqueles que
  não tenham sido marcados.
  Esta técnica evita o problema de referências cíclicas enfrentado por Python.
- Objetos Ruby criados com 
+\layout Standard
+
+Objetos Ruby criados com 
 \family typewriter 
 Data_Wrap_Struct
 \family default 
@@ -3303,15 +3305,31 @@ structs
 VALUE
 \family default 
 s Ruby.
- A struct encapsulada, entretanto, é opaca para o universo Ruby, então para
- garantir que estes 
+ A 
+\emph on 
+struct
+\emph default 
+ encapsulada, entretanto, é opaca para o universo Ruby, então para garantir
+ que estes 
 \family typewriter 
 VALUE
 \family default 
 s sejam marcados como alcançáveis durante a coleta de lixo é necessário
  fazer isto via código C.
- As funções recebem como parâmetro um ponteiro para uma função de marcação
- e uma função de desalocação a serem implementadas pelo programador.
+ 
+\family typewriter 
+Data_Wrap_Struct
+\family default 
+ e 
+\family typewriter 
+Data_Make_Struct
+\family default 
+ recebem, além da 
+\emph on 
+struct
+\emph default 
+ a encapsular, dois ponteiros, um para uma função de marcação e outra para
+ uma função de desalocação.
  Quando o coletor de lixo visita o objeto na fase de marcação, ele invoca
  a função registrada, que deve chamar 
 \family typewriter 
@@ -3335,13 +3353,107 @@ Data_
 _Struct
 \family default 
  for dado como não alcançável, a função de desalocação registrada é chamada.
+ Para estruturas que não armazenam outros 
+\family typewriter 
+VALUE
+\family default 
+s, pode-se definir a função de marcação como 
+\family typewriter 
+NULL
+\family default 
+ e a de desalocação como 
+\family typewriter 
+free
+\family default 
+.
 \layout Standard
 
-* que dados sobrevivem durante uma função: Segredo da mágica de VALUEs locais
- em Ruby (ruby-core 7983), incluindo setjmp pra forçar flush de registradores.
+Muitas funções de API de Ruby retornam 
+\family typewriter 
+VALUE
+\family default 
+s.
+ Caso estes objetos não sejam alcançáveis a partir do espaço de objetos
+ de Ruby -- por exemplo, tendo sido atribuídos a uma variável global Ruby
+ ou inserido em alguma estrutura de dados alcançável em Ruby -- estes objetos
+ estarão, a princípio, sujeitos à coleta de lixo.
+ A documentação alerta que, para armazenar objetos Ruby em variáveis globais
+ ou estruturas de dados de C, é necessário notificar à máquina virtual que
+ o valor não deve ser coletado, usando 
+\family typewriter 
+rb_global_variable
+\family default 
+
+\begin_inset Foot
+collapsed true
+
 \layout Standard
 
-* como salvar dados de L em estruturas C
+Embora a documentação não informe, é possível desmarcar um valor global
+ com 
+\family typewriter 
+rb_gc_unregister_address
+\family default 
+.
+\end_inset 
+
+.
+\layout Standard
+
+Objetos de escopo local a uma função C, entretanto, não precisam ser notificados.
+ A forma como Ruby garante a validade de 
+\family typewriter 
+VALUE
+\family default 
+s locais é bastante peculiar: ao realizar a fase de marcação, o coletor
+ de lixo varre a pilha de C em busca de valores que se pareçam com endereços
+ de 
+\family typewriter 
+VALUE
+\family default 
+s (isto é, seqüências numéricas que correspondam a endereços de 
+\family typewriter 
+VALUE
+\family default 
+s válidos).
+ Cada 
+\family typewriter 
+VALUE
+\family default 
+ encontrado na pilha é então marcado.
+ Isto garante que nenhum 
+\family typewriter 
+VALUE
+\family default 
+ localmente alcançável por código C seja invalidado, mas pode gerar 
+\begin_inset Quotes eld
+\end_inset 
+
+falsos positivos
+\begin_inset Quotes erd
+\end_inset 
+
+ evitando que dados que poderiam ser coletados o sejam.
+\layout Standard
+
+Apesar da conveniência para o programador, tal abortagem é extremamente
+ não-portável.
+ A implementação do coletor de lixo em Ruby 1.8.2 possui 
+\family typewriter 
+#ifdef
+\family default 
+s para IA-64, DJGPP, FreeBSD, Win32, Cygwin, GCC, Atari ST, AIX, MS-DOS,
+ Human68k, Windows CE, SPARC e Motorola 68000.
+ Além disso, o coletor força a descarga dos registradores para a pilha usando
+ 
+\family typewriter 
+setjmp
+\family default 
+, para evitar que variáveis do tipo 
+\family typewriter 
+VALUE
+\family default 
+ que tenham sido otimizadas pelo compilador deixem de ser verificadas.
 \layout Standard
 
 Ruby oferece ainda como conveniência alguns 
