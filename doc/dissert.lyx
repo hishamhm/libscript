@@ -3778,6 +3778,16 @@ caching
 .
 \layout Standard
 
+A partir da versão 1.2, a JNI inclui referências globais fracas, com o objetivo
+ de oferecer uma forma simplificada das referências fracas de Java (
+\family typewriter 
+java.lang.ref
+\family default 
+): um objeto que esteja sendo apontado apenas por referências globais fraca
+ pode ser coletado.
+ 
+\layout Standard
+
 * questões de threading: Get/ReleaseStringCritical ( http://java.sun.com/docs/book
 s/jni/html/objtypes.html#30934 )
 \layout Standard
