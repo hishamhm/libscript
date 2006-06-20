@@ -3783,27 +3783,69 @@ A partir da versão 1.2, a JNI inclui referências globais fracas, com o objetivo
 \family typewriter 
 java.lang.ref
 \family default 
-): um objeto que esteja sendo apontado apenas por referências globais fraca
- pode ser coletado.
- 
+) -- um objeto que esteja sendo apontado apenas por referências globais
+ fracas pode ser coletado.
+ Originalmente, a API incluiu a função 
+\family typewriter 
+IsSameObject
+\family default 
+ como forma de verificar a validade de uma referência fraca, mas evidentemente
+ este método é insuficiente: como Java é 
+\emph on 
+multi-threaded
+\emph default 
+, o coletor de lixo pode invalidar a referência entre o teste e a instrução
+ seguinte no código C.
+ A documentação revisada avisa sobre esta limitação e recomenda a aquisição
+ de referências globais, além de comportamentos indefinidos nas relações
+ entre referências globais fracas em C e os tipos de referências fracas
+ definidos em Java.
 \layout Standard
 
-* questões de threading: Get/ReleaseStringCritical ( http://java.sun.com/docs/book
-s/jni/html/objtypes.html#30934 )
-\layout Standard
+Além desta, outras questões surgem a partir da combinação do modelo 
+\emph on 
+multi-threaded
+\emph default 
+ de Java com a exposição de referências a objetos da máquina virtual ao
+ código C.
+ Para reduzir a quantidade de cópia de dados entre Java e C, a JNI oferece
+ algumas funções que retornam ponteiros para a representação interna de
+ strings e arrays de tipos primitivos: 
+\family typewriter 
+Get
+\family default 
+/
+\family typewriter 
+ReleaseStringCritical
+\family default 
+ e 
+\family typewriter 
+Get
+\family default 
+/
+\family typewriter 
+ReleasePrimitiveArrayCritical
+\family default 
+.
+ O uso destas funções, porém, possui importantes restrições.
+ A API especifica que, uma vez obtido um ponteiro através destas funções,
+ o código C não deve chamar outras funções da JNI ou realizar chamadas de
+ sistema que possam bloquear a thread atual e fazer com que ela espere por
+ outra thread Java.
+ Recomenda-se não manter blocos de memória bloqueados usando estas funções
+ por muito tempo já que uma das técnicas possíveis para a implementação
+ desta 
+\begin_inset Quotes eld
+\end_inset 
 
-* referências locais são válidas apenas na thread onde foram criadas
-\layout Standard
+região crítica
+\begin_inset Quotes erd
+\end_inset 
 
-como salvar dados de L em estruturas C
-\layout Standard
-
-coleta de dados L definidos via C (não é possível definir novos tipos Java
- em C)
-\layout Standard
-
-* referências fracas - http://java.sun.com/j2se/1.5.0/docs/guide/jni/spec/functions.h
-tml#weak
+ consiste em desabilitar o coletor de lixo da JVM.
+ É importante notar ainda que referências locais e o ponteiro para o ambiente
+ JNI passado para funções nativas são válidos apenas na thread onde foram
+ criados; referências globais podem ser compartilhadas entre threads.
 \layout Subsection
 
 Lua
@@ -5588,4 +5630,8 @@ http://www.janino.net
 \bibitem {py-hardtofix}
 
 http://www.python.org/doc/api/initialization.html
+\layout Bibliography
+\bibitem {java-weak}
+
+http://java.sun.com/j2se/1.5.0/docs/guide/jni/spec/functions.html#weak
 \the_end
