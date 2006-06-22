@@ -1,26 +1,14 @@
 #LyX 1.3 created this file. For more info see http://www.lyx.org/
 \lyxformat 221
-\textclass ThesisPUC
-\begin_preamble
-\titulo{Estudo sobre APIs para Máquinas Virtuais}
-\autor{Hisham H. Muhammad}
-\autorR{Muhammad, Hisham H.}
-\orientador{Roberto Ierusalimschy}
-\orientadorR{Ierusalimschy, Roberto}
-\dia{11} \mes{Junho} \ano{2006}
-\cidade{Rio de Janeiro}
-\departamento{Informática}
-\programa{Informática}
-\centro{Centro Técnico Científico}
-\end_preamble
+\textclass book
 \language brazil
 \inputencoding auto
 \fontscheme default
 \graphics default
-\paperfontsize default
+\paperfontsize 12
 \spacing single 
-\papersize Default
-\paperpackage a4
+\papersize a4paper
+\paperpackage widemarginsa4
 \use_geometry 0
 \use_amsmath 0
 \use_natbib 0
@@ -36,6 +24,61 @@
 \papersides 1
 \paperpagestyle default
 
+\layout Comment
+
+
+\backslash 
+titulo{Estudo sobre APIs para Máquinas Virtuais}
+\layout Comment
+
+
+\backslash 
+autor{Hisham H.
+ Muhammad}
+\layout Comment
+
+
+\backslash 
+autorR{Muhammad, Hisham H.}
+\layout Comment
+
+
+\backslash 
+orientador{Roberto Ierusalimschy}
+\layout Comment
+
+
+\backslash 
+orientadorR{Ierusalimschy, Roberto}
+\layout Comment
+
+
+\backslash 
+dia{11} 
+\backslash 
+mes{Junho} 
+\backslash 
+ano{2006}
+\layout Comment
+
+
+\backslash 
+cidade{Rio de Janeiro}
+\layout Comment
+
+
+\backslash 
+departamento{Informática}
+\layout Comment
+
+
+\backslash 
+programa{Informática}
+\layout Comment
+
+
+\backslash 
+centro{Centro Técnico Científico} 
 \layout Title
 
 Estudo sobre APIs para máquinas virtuais
@@ -937,81 +980,6 @@ A alternativa para permitir que código C opere sobre dados estruturados,
 \end_inset 
 
  discute esta questão em mais detalhe.
-\layout Standard
-
-
-\color red
-As abordagens empregadas em diferentes FLIs para expor estruturas C às suas
- linguagens de origem possuem diversas variações.
- A declaração de classes Ruby a partir de C se dá através de uma série de
- chamadas da API.
- 
-\layout Standard
-
-
-\color red
-Lua define tipos primitivos 
-\emph on 
-function
-\emph default 
-, 
-\emph on 
-userdata
-\emph default 
- e 
-\emph on 
-lightuserdata
-\emph default 
- que permitem armazenar ponteiros para funções e estruturas C.
- Um objeto 
-\emph on 
-lightuserdata
-\emph default 
- corresponde a um ponteiro C simples; um objeto 
-\emph on 
-userdata
-\emph default 
- pode ter associado a si uma 
-\emph on 
-metatable
-\emph default 
-: uma tabela contendo uma série de funções a serem usadas pelo ambiente
- de execução, de forma similar à estrutura 
-\family typewriter 
-PyTypeObject
-\family default 
-
-\begin_inset Foot
-collapsed true
-
-\layout Standard
-
-
-\color red
-Estas funções são usadas, por exemplo, para permitir ao programador liberar
- recursos quando o objeto é coletado (função 
-\family typewriter 
-__gc
-\family default 
- na 
-\emph on 
-metatable
-\emph default 
- Lua, 
-\family typewriter 
-dealloc
-\family default 
- na estrutura 
-\family typewriter 
-PyTypeObject
-\family default 
-).
- 
-\end_inset 
-
-.
- Um objeto é então construindo armazenando instâncias destes tipos em uma
- tabela Lua através de chamadas de API, de forma similar a Ruby.
 \layout Section
 
 
@@ -1280,7 +1248,8 @@ Para a conversão de dados de C para Python, a linguagem oferece uma série
  de funções que recebem variáveis de tipos primitivos de C como parâmetro,
  como 
 \family typewriter 
-PyString_FromStringAndSize
+PyString_FromString\SpecialChar \-
+AndSize
 \family default 
  e 
 \family typewriter 
@@ -1821,7 +1790,8 @@ GetStringUTFChars
 .
  Esta string deve ser posteriormente desalocada com 
 \family typewriter 
-ReleaseStringUTFChars
+ReleaseString\SpecialChar \-
+UTFChars
 \family default 
 .
  A função 
@@ -1896,6 +1866,7 @@ Set
 \emph default 
 >
 \family typewriter 
+\SpecialChar \-
 ArrayRegion
 \family default 
 ), funções que retornam ponteiros para o array podendo ou não realizar cópias,
@@ -1928,7 +1899,8 @@ Get
 \family default 
 /
 \family typewriter 
-ReleasePrimitiveArrayCritical
+Release\SpecialChar \-
+PrimitiveArrayCritical
 \family default 
 ).
  Para arrays de objetos, é possível apenas obter elementos do array um a
@@ -2038,7 +2010,7 @@ FromReflectedField
 
 \begin_inset Float figure
 wide false
-collapsed false
+collapsed true
 
 \layout LyX-Code
 
@@ -2539,6 +2511,11 @@ clone
 \layout Subsection
 
 Lua
+\begin_inset LatexCommand \label{sub:Lua-dados}
+
+\end_inset 
+
+
 \layout Standard
 
 A API de Lua define uma abordagem diferente para a manipulação de dados
@@ -2720,11 +2697,8 @@ next
 \layout Standard
 
 Diversos conceitos de Lua são representados através de tabelas -- ambiente
- global, metatabelas, 
-\emph on 
-registry
-\emph default 
- -- e são assim manipulados usando as funções da API para gerência de tabelas.
+ global, metatabelas, registro -- e são assim manipulados usando as funções
+ da API para gerência de tabelas.
  A tabela do ambiente global da 
 \emph on 
 thread
@@ -2752,7 +2726,8 @@ lua_newuserdata
 \family default 
 , 
 \family typewriter 
-lua_push
+lua_\SpecialChar \-
+push
 \family default 
 *
 \family typewriter 
@@ -3235,6 +3210,12 @@ tp_flags
  
 \layout Standard
 
+
+\emph on 
+\color red
+[falar de dealloc em PyTypeObject]
+\layout Standard
+
 Além disso, a implementação de objetos Python que suportem coleta cíclica
  em C implica ainda em outros cuidados.
  Objetos devem ser alocados com 
@@ -3267,6 +3248,12 @@ PyObject_GC_UnTrack
 \family default 
 .
  
+\layout Standard
+
+
+\emph on 
+\color red
+[interface com o coletor? mais sobre o módulo gc]
 \layout Subsection
 
 Ruby
@@ -3487,6 +3474,12 @@ s anteriormente.
 \end_inset 
 
  ou em situações de pouca memória disponível.
+\layout Standard
+
+
+\emph on 
+\color red
+[interface com o coletor: rb_gc_*]
 \layout Subsection
 
 Java
@@ -3759,7 +3752,8 @@ NewGlobalRef
  Referências deste tipo mantêm-se válidas até serem explicitamente desalocadas
  com 
 \family typewriter 
-DeleteGlobalRef
+Delete\SpecialChar \-
+GlobalRef
 \family default 
 .
  Uma referência global impede o objeto de ser coletado, podendo assim, ser
@@ -3810,7 +3804,10 @@ multi-threaded
  código C.
  Para reduzir a quantidade de cópia de dados entre Java e C, a JNI oferece
  algumas funções que retornam ponteiros para a representação interna de
- strings e arrays de tipos primitivos: 
+ strings e arrays de tipos pri\SpecialChar \-
+mi\SpecialChar \-
+ti\SpecialChar \-
+vos: 
 \family typewriter 
 Get
 \family default 
@@ -3846,24 +3843,209 @@ região crítica
  É importante notar ainda que referências locais e o ponteiro para o ambiente
  JNI passado para funções nativas são válidos apenas na thread onde foram
  criados; referências globais podem ser compartilhadas entre threads.
+\layout Standard
+
+
+\emph on 
+\color red
+[interface com o coletor? System.gc]
 \layout Subsection
 
 Lua
 \layout Standard
 
-que dados sobrevivem durante uma função
+Por não retornar referências explícitas a objetos Lua ao código C, a interação
+ do código nativo com o coletor de lixo é bastante simplificada.
+ Operações sobre objetos Lua são sempre especificadas através de índices
+ da pilha virtual.
+ Mesmo objetos armazenados em outras estruturas, como o registro (uma tabela
+ Lua globalmente acessível pelas funções C) ou o ambiente global, são referencia
+dos através de índices especiais na pilha.
+ Assim, a máquina virtual mantém o controle sobre quais os objetos são acessívei
+s a partir de C em qualquer dado momento.
+ Para as funções da API que retornam ponteiros apontando para o espaço de
+ dados de Lua, garantir a validade destes ponteiros consiste apenas em manter
+ o objeto na pilha.
 \layout Standard
 
-como salvar dados de L em estruturas C
+A pilha virtual é desalocada uma vez que a função C retorna o controle à
+ máquina virtual de Lua.
+ Como a API não retorna explicitamente objetos a código C, não é possível
+ reter referências para uso posterior em variáveis globais ou estruturas
+ de C.
+ Para referenciar-se a objetos entre chamadas de função é necessário armazená-lo
+s em um nome conhecido no espaço de Lua, que possa ser acessado em funções
+ C subseqüentes.
+ A biblioteca auxiliar de Lua encapsula tal idioma através de duas funções,
+ 
+\family typewriter 
+luaL_ref
+\family default 
+ e 
+\family typewriter 
+luaL_unref
+\family default 
+.
+ A função 
+\family typewriter 
+luaL_ref
+\family default 
+ associa o valor contido no índice passado como parâmetro a uma chave numérica
+ inteira no registro, e retorna esse valor.
+ Como o tabela que implementa o registro não é coletada ao longo da execução,
+ a inclusão do objeto nesta tabela o mantém alcançável.
+ A chave numérica é retornada ao código C e pode então ser vista como um
+ 
+\emph on 
+handle
+\emph default 
+ de alto nível para o objeto: ele pode armazená-la em variáveis ou estruturas
+ e utilizá-la para referenciar-se ao objeto através do campo no registro.
+ Assim que o código C não necessitar mais do valor, este deve ser liberado
+ com 
+\family typewriter 
+luaL_unref
+\family default 
+, que simplesmente o remove do registro e libera o índice para reuso.
+ Para o bom funcionamento deste mecanismo, chaves inteiras não devem ser
+ utilizadas diretamente pelo programador para armazenar dados no registro.
 \layout Standard
 
-coleta de dados L definidos via C
+A API permite associar a objetos do tipo 
+\emph on 
+full userdata
+\emph default 
+ -- dados arbitrários de C armazenados em variáveis Lua -- uma função de
+ desalocação, 
+\family typewriter 
+__gc
+\family default 
+, na sua metatabela.
+ Quando presente, esta função será tipicamente implementada em C, realizando
+ a finalização de recursos.
+ Por exemplo, o metamétodo 
+\family typewriter 
+__gc
+\family default 
+ de objetos retornados pela função Lua 
+\family typewriter 
+io.open
+\family default 
+ é uma função C que fecha o descritor de arquivo correspondente com a função
+ C 
+\family typewriter 
+fclose
+\family default 
+.
+ Metatabelas só podem ser associadas a 
+\emph on 
+userdata
+\emph default 
+ através de código C; a função Lua de atribuição de metatabelas, 
+\family typewriter 
+setmetatable
+\family default 
+, só opera sobre tabelas.
+ Uma vez que uma metatabela já foi atribuída, o seu conteúdo pode ser modificado
+ através de Lua, obtendo-a com 
+\family typewriter 
+getmetatable
+\family default 
+.
+ 
 \layout Standard
 
-* permite especificar um alocador
+A princípio, o fato de que é possível obter e modificar a metatabela de
+ um userdata pode parecer tão problemático quanto seria substituir a metatabela,
+ caso isto fosse permitido por 
+\family typewriter 
+setmetatable
+\family default 
+.
+ Entretanto, funções de coleta implementadas em C tipicamente validam o
+ userdata recebido verificando o seu 
+\begin_inset Quotes eld
+\end_inset 
+
+tipo
+\begin_inset Quotes erd
+\end_inset 
+
+, identificado através da metatabela.
+ Duas funções da biblioteca auxiliar que implementam este mecanismo: 
+\family typewriter 
+luaL_newmetatable
+\family default 
+ cria uma metatabela e a associa a uma entrada no registro; 
+\family typewriter 
+luaL_checkudata
+\family default 
+ compara a metatabela de um userdata com uma entrada do registro especificada.
+ Assim, mesmo que código Lua manipule a metatabela, uma função de coleta
+ implementada em C que use 
+\family typewriter 
+luaL_checkudata
+\family default 
+ não será levada a operar sobre um 
+\emph on 
+userdata
+\emph default 
+ de tipo incorreto.
+ Para impedir o código Lua de alterar a função de coleta de um objeto 
+\emph on 
+userdata
+\emph default 
+, pode-se atribuir um valor qualquer, como 
+\family typewriter 
+false
+\family default 
+, ao campo 
+\family typewriter 
+__metatable
+\family default 
+ da metatabela, que, quando presente, é retornado por 
+\family typewriter 
+getmetatable
+\family default 
+.
 \layout Standard
 
-* gc de full x light userdata
+Outro recurso relacionado à gerência de memória oferecido por Lua é a possibilid
+ade de configurar, em tempo de execução, a função de alocação de memória
+ a ser usada pela máquina virtual.
+ Na criação de um novo estado com 
+\family typewriter 
+lua_newstate
+\family default 
+, passa-se como parâmetro uma função de alocação que deve oferecer funcionalidad
+e similar às funções C 
+\family typewriter 
+free
+\family default 
+ e 
+\family typewriter 
+realloc
+\family default 
+, dependendo se o tamanho de bloco passado for igual ou maior do que zero.
+ A função auxiliar 
+\family typewriter 
+luaL_newstate
+\family default 
+ cria um estado usando um alocador padrão baseado em 
+\family typewriter 
+realloc
+\family default 
+ e 
+\family typewriter 
+free
+\family default 
+.
+\layout Standard
+
+* implementação: incremental mark-and-sweep
+\layout Standard
+
+interface com o coletor
 \layout Subsection
 
 Perl
@@ -3876,6 +4058,9 @@ coleta de dados L definidos via C
 \layout Standard
 
 como salvar dados de L em estruturas C
+\layout Standard
+
+interface com o coletor
 \layout Section
 
 Chamada de funções
