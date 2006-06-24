@@ -1018,53 +1018,6 @@ ores, o programador deve levar em consideração as diferenças entre os modelos
  A forma como a FLI irá fornecer estas funcionalidades depende não só do
  projeto da API para C, mas também do modelo de coleta de lixo empregado
  pela implementação da linguagem.
-\layout Standard
-
-
-\color red
-Para reduzir a necessidade de controle explícito de referências, Java faz
- uma distinção entre referências globais e locais.
- Referências globais são explicitamente criadas com 
-\family typewriter 
-NewGlobalRef
-\family default 
- e que permanecem válidas até serem explicitamente liberadas com 
-\family typewriter 
-DeleteGlobalRef
-\family default 
-.
- Referências locais, passadas ao código C pelas demais funções da API, não
- precisam ser explicitamente liberadas, mas assume-se que perdem a validade
- ao final da função C invocada via JNI.
- É relevante notar que a simplificação trazida por esta abordagem deve-se
- ao fato da máquina virtual Java estar controlando as invocações de código
- C.
- No caso oposto, quando a máquina Java é embutida em uma aplicação C, referência
-s locais permanecem válidas até o encerramento da thread, fazendo com que
- na prática seja recomendável o programador liberar as referências explicitament
-e com 
-\family typewriter 
-DeleteLocalRef
-\family default 
-.
-\layout Standard
-
-
-\color red
-A abordagem adotada por Lua evita o problema de gerência de referências
- ao não expor ponteiros para os seus objetos ao código C e adotar uma API
- de pilha.
- O armazenamento de objetos Lua em estruturas de dados em C ainda é possível,
- utilizando índices de uma tabela global como referências e funções explícitas
- 
-\family typewriter 
-luaL_ref
-\family default 
- e 
-\family typewriter 
-luaL_unref
-\family default 
-, de forma análoga às referências globais em Java.
 \layout Section
 
 Modelos de Concorrência
@@ -4042,10 +3995,22 @@ free
 .
 \layout Standard
 
-* implementação: incremental mark-and-sweep
-\layout Standard
-
-interface com o coletor
+Lua oferece uma interface com o coletor de lixo através das funções 
+\family typewriter 
+lua_gc
+\family default 
+ em C e 
+\family typewriter 
+collectgarbage
+\family default 
+ em Lua.
+ O coletor de Lua implementa 
+\emph on 
+mark-and-sweep
+\emph default 
+ incremental e permite ao programador configurar parâmetros relacionados
+ aos intervalos de coleta, bem como ativar, desativar e disparar ciclos
+ completos ou passos do coletor.
 \layout Subsection
 
 Perl
