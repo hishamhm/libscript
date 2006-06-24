@@ -14,14 +14,17 @@ RUBY_CFLAGS = -I/Programs/Ruby/1.8.4/lib/ruby/1.8/i686-linux
 RUBY_LDFLAGS = -rdynamic -Wl,-export-dynamic
 RUBY_LIBS = -lruby-static -ldl -lcrypt -lm 
 RUBY_FLAGS = $(RUBY_CFLAGS) $(RUBY_LDFLAGS) $(RUBY_LIBS)
-
 RUBY_PROGS = rubygc
 
-PROGS = $(PYTHON_PROGS) $(JAVA_PROGS) $(RUBY_PROGS)
+LUA_LDFLAGS = -llua -ldl -lm
+LUA_FLAGS = $(LUA_LDFLAGS)
+LUA_PROGS = luafnmt luauserdata
+
+PROGS = $(PYTHON_PROGS) $(JAVA_PROGS) $(RUBY_PROGS) $(LUA_PROGS)
 
 all: $(PROGS)
 
-run: run_python run_java
+run: run_python run_java run_ruby run_lua
 
 run_python: $(PYTHON_PROGS)
 	./pythonstring
@@ -54,6 +57,15 @@ run_ruby: $(RUBY_PROGS)
 
 rubygc: rubygc.c
 	gcc -o rubygc rubygc.c $(RUBY_FLAGS)
+
+run_lua: $(LUA_PROGS)
+	./luafnmt
+
+luafnmt: luafnmt.c
+	gcc -o luafnmt luafnmt.c $(LUA_FLAGS)
+
+luauserdata: luauserdata.c
+	gcc -o luauserdata luauserdata.c $(LUA_FLAGS)
 
 clean:
 	rm -f $(PROGS)
