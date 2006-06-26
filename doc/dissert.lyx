@@ -1195,6 +1195,11 @@ Transferência de dados
 \layout Subsection
 
 Python
+\begin_inset LatexCommand \label{sub:Dados-Python}
+
+\end_inset 
+
+
 \layout Standard
 
 Para a conversão de dados de C para Python, a linguagem oferece uma série
@@ -1628,13 +1633,13 @@ __getattr__
 \family default 
 .
  Funções C podem ser associadas ao novo tipo como métodos, declarando-os
- em estruturas 
+ em um array de estruturas 
 \family typewriter 
 PyMethodDef
 \family default 
- e realizando chamadas a 
+ no campo 
 \family typewriter 
-PyDescr_NewMethod
+tp_methods
 \family default 
 .
  
@@ -3324,7 +3329,7 @@ rb_global_variable
 \family default 
 
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -3395,6 +3400,47 @@ VALUE
  que tenham sido otimizadas pelo compilador deixem de ser verificadas.
 \layout Standard
 
+Ruby possui um módulo 
+\family typewriter 
+GC
+\family default 
+ que disponibiliza funções para ativar e desativar o coletor (
+\family typewriter 
+GC.enable
+\family default 
+ e 
+\family typewriter 
+GC.disable
+\family default 
+), bem como disparar uma coleta imediatamente (
+\family typewriter 
+GC.start
+\family default 
+).
+ Na API em C há funções equivalentes: 
+\family typewriter 
+rb_gc_enable
+\family default 
+, 
+\family typewriter 
+rb_gc_disable
+\family default 
+ e 
+\family typewriter 
+rb_gc_start
+\family default 
+.
+ A API de C inclui ainda uma função que insere um objeto imediatamente na
+ lista de objetos a serem reciclados pelo alocador de memória de Ruby, 
+\family typewriter 
+rb_gc_force_recycle
+\family default 
+.
+ Esta função deve ser usada com cuidado, já que se houverem outras referências
+ apontando ao objeto elas passarão a apontar para outro objeto quando a
+ área de memória for reutilizada pelo alocador de Ruby.
+\layout Standard
+
 Ruby oferece ainda como conveniência alguns 
 \emph on 
 wrappers
@@ -3427,12 +3473,6 @@ s anteriormente.
 \end_inset 
 
  ou em situações de pouca memória disponível.
-\layout Standard
-
-
-\emph on 
-\color red
-[interface com o coletor: rb_gc_*]
 \layout Subsection
 
 Java
@@ -3798,10 +3838,24 @@ região crítica
  criados; referências globais podem ser compartilhadas entre threads.
 \layout Standard
 
-
-\emph on 
-\color red
-[interface com o coletor? System.gc]
+Além do mecanismo de referências fracas fornecido pelas classes do pacote
+ 
+\family typewriter 
+java.lang.ref
+\family default 
+, a única forma oferecida por Java para interagir de maneira mais direta
+ com o coletor de lixo é através da chamada 
+\family typewriter 
+System.gc()
+\family default 
+, que solicita à máquina virtual que dispare tão logo quanto possível a
+ thread de coleta para que esta desaloque objetos não alcançáveis.
+ Não há uma função C equivalente na JNI, mas este método pode ser invocado
+ a partir de C com 
+\family typewriter 
+CallStaticVoidMethod
+\family default 
+.
 \layout Subsection
 
 Lua
@@ -4034,10 +4088,239 @@ Chamada de funções
 Python
 \layout Standard
 
-como chamar uma função L em C
+Funções C são registradas em um módulo Python passando-se um array de estruturas
+ 
+\family typewriter 
+PyMethodDef
+\family default 
+ para a função 
+\family typewriter 
+Py_InitModule
+\family default 
+; na declaração de um novo tipo, um array de 
+\family typewriter 
+PyMethodDef
+\family default 
+s pode ser passado no campo 
+\family typewriter 
+tp_methods
+\family default 
+ da estrutura 
+\family typewriter 
+PyTypeObject
+\family default 
+.
+ Uma vez registradas, as funções podem ser chamadas de forma igual a funções
+ implementadas nativamente em Python.
 \layout Standard
 
-como chamar uma função C em L
+Estruturas 
+\family typewriter 
+PyMethodDef
+\family default 
+ possuem quatro campos: o nome da função, o ponteiro da função C, uma string
+ de documentação (acessível através do atributo 
+\family typewriter 
+__doc__
+\family default 
+) e um vetor de flags.
+ Estas flags são usadas para indicar a convenção de conversão de parâmetros
+ esperada pela função C, como 
+\family typewriter 
+METH_NOARGS
+\family default 
+ para funções que não recebem parâmetros, 
+\family typewriter 
+METH_VARARGS
+\family default 
+ para funções que recebem um número variável de parâmetros como uma tupla
+ passada à função C e 
+\family typewriter 
+METH_KEYWORDS
+\family default 
+ para indicar que a função recebe um parâmetro adicional contendo um dicionário
+ contendo os parâmetros passados à função como 
+\emph on 
+keywords
+\emph default 
+.
+\layout Standard
+
+Para consumir os parâmetros passados à função C como uma tupla, Python possui
+ uma função de conveniência, 
+\family typewriter 
+PyArg_ParseTuple
+\family default 
+, que evita que o acesso aos elementos da tupla e a verificação dos seus
+ tipos seja feita item a item pelo programador.
+ Trata-se de uma função C 
+\emph on 
+vararg
+\emph default 
+ que recebe como parâmetros a tupla, uma string indicando os tipos dos parâmetro
+s esperados e os endereços dos ponteiros para os 
+\family typewriter 
+PyObject
+\family default 
+s onde os parâmetros devem ser armazenados.
+ A função define uma sintaxe para os indicadores de tipo da string passada
+ e os tipos C correspondentes.
+ Por exemplo: 
+\family typewriter 
+"s#"
+\family default 
+ indica que a tupla deve conter um objeto Python de tipo 
+\family typewriter 
+string
+\family default 
+ ou 
+\family typewriter 
+Unicode
+\family default 
+ e que dois parâmetros devem ser passados à função C, de tipos const 
+\family typewriter 
+char**
+\family default 
+ e 
+\family typewriter 
+int*
+\family default 
+.
+ Em um exemplo mais elaborado, 
+\family typewriter 
+"iiO!|(dd):funcao"
+\family default 
+ indica que a função espera dois endereços de inteiros, seguido do endereço
+ de um ponteiro 
+\family typewriter 
+PyObject
+\family default 
+ e de um objeto 
+\family typewriter 
+PyTypeObject
+\family default 
+ a ser usado na verificação do tipo do objeto recebido e opcionalmente (indicado
+ pela barra vertical), dois endereços de ponto flutuantes passados via Python
+ através de uma tupla.
+ O texto passado após o dois-pontos é utilizado em mensagens de erro caso
+ hajam problemas de conversão.
+\layout Standard
+
+De forma similar, a API de Python possui a função 
+\family typewriter 
+Py_BuildValue
+\family default 
+, que permite a construção de objetos estruturados em uma só chamada.
+ A sintaxe da string de parâmetros é similar à de 
+\family typewriter 
+PyArg_ParseTuple
+\family default 
+, mas possui um conjunto de indicadores de tipo suportados diferente, além
+ de permitir descrever listas e dicionários.
+ Por exemplo, a seguinte chamada cria uma lista contendo um inteiro, um
+ número de ponto flutuante e um dicionário contendo um elemento de chave
+ string e valor inteiro:
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject* lista = Py_BuildValue("[id{si}]", 123, 12.30, "foo", 1234);
+\layout Standard
+
+Esta função é útil tanto para para construir tuplas em funções C que desejem
+ passar múltiplos valores de retorno de volta a Python, como para construir
+ a tupla de parâmetros ao chamar funções Python a partir de C.
+\layout Standard
+
+Para chamar uma função Python a partir de C, deve-se inicialmente obter
+ um ponteiro para o 
+\family typewriter 
+PyObject
+\family default 
+ correspondente à função, omo visto na Seção 
+\begin_inset LatexCommand \ref{sub:Dados-Python}
+
+\end_inset 
+
+.
+ Além de funções implementadas em Python e funções C registradas a partir
+ da API, qualquer tipo de dado que implemente o método 
+\family typewriter 
+__call__
+\family default 
+ (ou declare uma função no campo 
+\family typewriter 
+tp_call
+\family default 
+ de sua estrutura 
+\family typewriter 
+PyTypeObject
+\family default 
+) pode ser chamado como uma função, e retornará 1 em 
+\family typewriter 
+PyCallable_Check
+\family default 
+.
+\layout Standard
+
+A API de Python oferece diversas funções para realização de chamadas a partir
+ de C.
+ A chamada mais geral, 
+\family typewriter 
+PyObject_Call
+\family default 
+, recebe como parâmetros o objeto a ser chamado, uma tupla de parâmetros
+ e um dicionário de argumentos 
+\emph on 
+keyword
+\emph default 
+.
+ Como conveniência, outras funções permitem passar os argumentos de outras
+ formas.
+ 
+\family typewriter 
+PyObject_CallFunction
+\family default 
+ encapsula a chamada a 
+\family typewriter 
+Py_BuildValue
+\family default 
+, aceitando diretamente a string de formato desta e os valores a serem convertid
+os diretamente.
+ 
+\family typewriter 
+PyObject_CallFunctionObjArgs
+\family default 
+ é outra função 
+\emph on 
+vararg
+\emph default 
+ que aceita um objeto chamável qualquer seguido de uma seqüência terminada
+ por 
+\family typewriter 
+NULL
+\family default 
+ de ponteiros para 
+\family typewriter 
+PyObject
+\family default 
+s.
+ 
+\family typewriter 
+PyObject_CallMethod
+\family default 
+ e 
+\family typewriter 
+PyObject_CallMethodObjArgs
+\family default 
+ são funções análogas que recebem ao invés de um objeto chamável como primeiro
+ parâmetro, um objeto qualquer e uma string contendo o nome de um atributo
+ deste objeto que corresponda a um objeto chamável, poupando uma chamada
+ a 
+\family typewriter 
+PyObject_GetItem
+\family default 
+.
 \layout Subsection
 
 Java

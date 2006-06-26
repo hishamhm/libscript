@@ -59,23 +59,30 @@ Execução
 Importar módulos
 	VALUE rb_require (const char*);
 Coleta de lixo
-	void rb_gc_mark_locations (VALUE*, VALUE*);
-	void rb_mark_tbl (struct st_table*);
-	void rb_mark_hash (struct st_table*);
-	void rb_gc_mark_maybe (VALUE);
-	void rb_gc_mark (VALUE);
-	void rb_gc_force_recycle (VALUE);
-	void rb_gc (void);
-	void rb_gc_copy_finalizer (VALUE,VALUE);
-	void rb_gc_finalize_deferred (void);
-	void rb_gc_call_finalizer_at_exit (void);
-	VALUE rb_gc_enable (void);
-	VALUE rb_gc_disable (void);
-	VALUE rb_gc_start (void);
-	void rb_gc_mark_threads (void);
-	void rb_gc_mark_trap_list (void);
-	void rb_gc_register_address (VALUE*);
-	void rb_gc_unregister_address (VALUE*);
+	Marcação
+		void rb_gc_mark_locations (VALUE*, VALUE*);		[marca uma seqüência de endereços]
+		void rb_gc_mark_maybe (VALUE);				[marca um valor se ele aponta para a heap]
+		void rb_gc_mark (VALUE);				[chamada para marcar objetos durante a função de marcação de objetos C]
+	Controle do coletor
+		VALUE rb_gc_enable (void);				[habilita o coletor == GC.enable]
+		VALUE rb_gc_disable (void);				[desativa o coletor == GC.disable]
+		VALUE rb_gc_start (void);				[realiza uma coleta de lixo (a não ser que o coletor tenha sido desativado) == GC.start]
+		void rb_gc (void);					[realiza uma coleta de lixo (a não ser que o coletor tenha sido desativado)]
+	Validade de referências
+		void rb_gc_force_recycle (VALUE);			[invalida o objeto: coloca um objeto na lista de objetos a serem reciclados pelo coletor]
+		void rb_gc_register_address (VALUE*);			[impede que o VALUE seja coletado]
+		void rb_gc_unregister_address (VALUE*);			[permite que um VALUE anteriormente registrado seja coletado]
+	Finalizadores
+		void rb_gc_copy_finalizer (VALUE,VALUE);		[associa o finalizador de um objeto a outro]
+	Uso interno
+		%%% void rb_gc_mark_threads (void);			[marca os objetos Thread]
+		%%% void rb_gc_mark_global_tbl (void);			[marca as variáveis globais]
+		%%% void rb_gc_mark_parser (void);			[marca dados durante o parsing]
+		%%% void rb_gc_mark_trap_list (void);			[marca os signal handlers]
+		%%% void rb_mark_tbl (struct st_table*);		[marca todos os endereços de uma tabela]
+		%%% void rb_mark_hash (struct st_table*);		[marca todos os endereços de uma hash (chave e valor)]
+		%%% void rb_gc_finalize_deferred (void);		[finaliza objetos marcados como 'deferred' durante a fase de sweep]
+		%%% void rb_gc_call_finalizer_at_exit (void);		[chama os finalizadores no término do programa]
 Tratamento de exceções
 	Tratar exceções
 		VALUE rb_rescue (VALUE(*)(),VALUE,VALUE(*)(),VALUE);
@@ -476,7 +483,6 @@ ID rb_id_attrset (ID);
 void rb_parser_append_print (void);
 void rb_parser_while_loop (int, int);
 int ruby_parser_stack_on_heap (void);
-void rb_gc_mark_parser (void);
 int rb_is_const_id (ID);
 int rb_is_instance_id (ID);
 int rb_is_class_id (ID);
@@ -547,7 +553,6 @@ VALUE rb_class_name (VALUE);
 void rb_autoload (VALUE, ID, const char*);
 VALUE rb_autoload_load (VALUE, ID);
 VALUE rb_autoload_p (VALUE, ID);
-void rb_gc_mark_global_tbl (void);
 VALUE rb_f_trace_var (int, VALUE*);
 VALUE rb_f_untrace_var (int, VALUE*);
 VALUE rb_f_global_variables (void);
