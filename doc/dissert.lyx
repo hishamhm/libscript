@@ -696,7 +696,7 @@ front-ends
 \end_inset 
 
 .
-\layout Chapter
+\layout Section
 
 
 \begin_inset LatexCommand \label{cha:Interfaces-com-C}
@@ -704,20 +704,6 @@ front-ends
 \end_inset 
 
 Interfaces com C
-\layout Standard
-
-
-\emph on 
-\color red
-[TODO: OBJETIVO DESTE CAPÍTULO -> (texto a seguir do Plano de Trabalho da
- proposta) Inicialmente, pretendemos identificar o conjunto de problemas
- tratados por uma FLI implementada como uma API para C.
- Além de apontar classes gerais de problemas como coleta de lixo e passagem
- de parâmetros, queremos aqui chegar a uma lista de problemas específicos,
- como por exemplo a validade de referências mantidas em estruturas de dados
- C entre invocações de funções, a exposição ao código C de funcionalidades
- implementadas em operadores sobrecarregados e o suporte a hierarquias de
- subtipos envolvendo tipos declarados em ambas as linguagens.]
 \layout Standard
 
 A linguagem C tem, na atualidade, um papel especial no mundo das linguagens
@@ -740,12 +726,203 @@ s e máquinas virtuais (as principais implementações de Perl, Python, Ruby,
  Isto faz com que a API para C seja um formato conveniente para uma FLI.
 \layout Standard
 
+Na grande maioria dos casos, a representação interna de código produzida
+ por compiladores de outras linguagens não é compatível com C, seja por
+ diferenças em convenções de chamadas ou de nomes, ou por produzirem código
+ para execução em máquinas virtuais.
+ Desta forma, para permitir a um programa em C acessar este código, cabe
+ à linguagem expor uma biblioteca de funções C que realizem a tradução necessári
+a.
+ Em ambientes de máquina virtual, esta biblioteca de funções normalmente
+ é genérica, oferecendo facilidades para comunicação com a própria máquina
+ virtual.
+ Para linguagens estáticas, normalmente é necessário criar uma biblioteca
+ específica que realize a conversão das chamadas, como ocorre em interfaces
+ C para APIs C++.
+\layout Standard
 
+Para linguagens não imperativas, há ainda o problema de código C potencialmente
+ gerar efeitos colaterais.
+ Algum recurso para isolamento das chamadas deve ser oferecido.
+ No GHC, a construção para chamadas em C, 
+\family typewriter 
+_ccall_
+\family default 
+, é definida na mônada de IO; no adendo do padrão Haskell 98, a diretiva
+ 
+\family typewriter 
+ccall
+\family default 
+ foi integrada, mas o uso da mônada é opcional, cabendo ao programador garantir
+ que funções que não a utilizem sejam puras
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Diversas convenções de chamada são definidas (
+\family typewriter 
+stdcall
+\family default 
+, 
+\family typewriter 
+cplusplus
+\family default 
+, 
+\family typewriter 
+jvm
+\family default 
+, 
+\family typewriter 
+dotnet
+\family default 
+) mas 
+\family typewriter 
+ccall
+\family default 
+ é a única declarada como obrigatória pelo documento.
+\end_inset 
+
+.
+\layout Standard
+
+Outra possível fonte de incompatibilidade entre linguagens que deve ser
+ tratada quando estas interagem é a diferença entre modelos de concorrência.
+ C, em particular, não define construções de concorrência, sendo estas implement
+adas através de bibliotecas.
+ Ao mesmo tempo que isto traz grande flexibilidade à linguagem, implica
+ também em problemas de portabilidade para linguagens que dependam da disponibil
+idade de mecanismos de concorrência em C compatíveis com os modelos que
+ elas utilizam.
+\layout Standard
+
+Por exemplo, APIs entre C e Java devem levar em conta o modelo de 
 \emph on 
-\color red
-[TODO: descrições de interfaces em linguagens específicas podem ir para
- o cap.
- seguinte]
+multithreading
+\emph default 
+ preemptivo adotado por Java.
+ A JNI (
+\emph on 
+Java Native Interface
+\emph default 
+) 
+\begin_inset LatexCommand \cite{liang-jni}
+
+\end_inset 
+
+ define funções para controlar exclusão mútua entre dados compartilhados
+ entre C e Java.
+ O programador deve tomar o cuidado de buscar o equilíbrio entre o tempo
+ gasto bloqueando a máquina virtual acessando dados compartilhados e o tempo
+ gasto realizando cópia de dados entre os ambientes para reduzir o compartilhame
+nto.
+ Outra situação em que o modelo de concorrência da linguagem demanda cuidados
+ por parte do programador na integração com C ocorre no uso de co-rotinas
+ em Lua.
+ A combinação de dois recursos de Lua, multitarefa cooperativa com múltiplas
+ pilhas de execução e a capacidade de alternar entre chamadas a funções
+ Lua e C em uma pilha, traz consigo uma limitação: uma co-rotina não pode
+ executar a operação de 
+\emph on 
+yield
+\emph default 
+ caso haja uma função C na sua pilha, uma vez que não há uma forma portável
+ de alternar entre múltiplas pilhas em C 
+\begin_inset LatexCommand \cite{moura-colua}
+
+\end_inset 
+
+.
+ 
+\layout Standard
+
+Uma das motivações mais freqüentes para integração com código C é o uso
+ de bibliotecas externas.
+ Expor uma biblioteca C através da FLI para acesso em uma linguagem pode
+ incorrer no registro de centenas de funções.
+ É comum definir também tipos de dados que dêem às estruturas definidas
+ pela biblioteca uma aparência mais nativa, como por exemplo converter funções
+ C que registram 
+\emph on 
+callbacks
+\emph default 
+ em métodos Ruby que aceitam blocos de código como parâmetro.
+ Essas inicializações e adaptações são usualmente definidas em uma biblioteca
+ de 
+\emph on 
+bindings
+\emph default 
+, que serve de ponte entre a linguagem e a biblioteca C encapsulando a interação
+ com a FLI.
+\layout Standard
+
+Os padrões que ocorrem na produção de bindings são tão comuns que deram
+ origem a programas visam automatizar o processo.
+ Estes geradores de 
+\emph on 
+bindings
+\emph default 
+ costumam trabalhar a partir de alguma representação preparada para o seu
+ uso, já que analisar os cabeçalhos C pode-se mostrar insuficiente: por
+ exemplo, o programa muitas vezes não seria capaz de interpretar a intenção
+ de uma construção como 
+\family typewriter 
+int**
+\family default 
+.
+ SWIG 
+\begin_inset LatexCommand \cite{beazley-swig}
+
+\end_inset 
+
+ é uma popular ferramenta multi-linguagem para geração de 
+\emph on 
+bindings
+\emph default 
+ de bibliotecas C e C++ que utiliza um formato próprio para descrição de
+ interfaces.
+ FLIs podem ainda utilizar geradores de 
+\emph on 
+stubs
+\emph default 
+ para poupar o programador de escrever código C repetitivo ou não portável.
+ Java possui um gerador de cabeçalhos C contendo os protótipos dos métodos
+ nativos a serem implementados.
+ Pyrex 
+\begin_inset LatexCommand \cite{ewing-pyrex}
+
+\end_inset 
+
+ é um gerador de módulos C para Python a partir de uma sintaxe baseada na
+ própria linguagem Python.
+\layout Chapter
+
+
+\begin_inset LatexCommand \label{cha:APIs-de-Máquinas}
+
+\end_inset 
+
+APIs de Máquinas Virtuais
+\layout Standard
+
+FLIs providas por máquinas virtuais são usualmente compreendidas como 
+\begin_inset Quotes eld
+\end_inset 
+
+APIs de extensão
+\begin_inset Quotes erd
+\end_inset 
+
+: elas servem ou para estender a máquina virtual com recursos não oferecidos
+ por esta, ou para estender uma aplicação externa com os recursos oferecidos
+ pela máquina virtual, embarcando-a nesta aplicação.
+ O primeiro cenário é o utilizado no modelo de programação onde a coordenação
+ de alto nível é realizada em uma linguagem interpretada e módulos compilados
+ em linguagens como C e C++ são usados para acesso a bibliotecas externas
+ ou implementação de partes onde o desempenho é crítico.
+ O segundo cenário, via de regra, irá englobar também o primeiro, ao expor
+ à máquina virtual embarcada extensões que a permitam comunicar-se com a
+ aplicação hospedeira.
 \layout Standard
 
 Para permitir invocar funções C, a FLI deve fornecer uma forma de registrar
@@ -782,74 +959,9 @@ rb_define_method
 \end_inset 
 
 .
-\layout Standard
-
-Na grande maioria dos casos, a representação interna de código produzida
- por compiladores de outras linguagens não é compatível com C, seja por
- diferenças em convenções de chamadas ou de nomes, ou por produzirem código
- para execução em máquinas virtuais.
- Desta forma, para permitir a um programa em C acessar este código, cabe
- à linguagem expor uma biblioteca de funções C que realizem a tradução necessári
-a.
- Em ambientes de máquina virtual, esta biblioteca de funções normalmente
- é genérica, oferecendo facilidades para comunicação com a própria máquina
- virtual.
- Para linguagens estáticas, normalmente é necessário criar uma biblioteca
- específica que realize a conversão das chamadas, como ocorre em interfaces
- C para APIs C++.
-\layout Standard
-
-Para linguagens não imperativas, há ainda o problema de código C potencialmente
- gerar efeitos colaterais.
- Algum recurso para isolamento das chamadas deve ser oferecido.
- No GHC, a construção para chamadas em C, 
-\family typewriter 
-_ccall_
-\family default 
-, é definida na mônada de IO; no adendo do padrão Haskell 98, a diretiva
- 
-\family typewriter 
-ccall
-\family default 
- foi integrada, mas o uso da mônada é opcional, cabendo ao programador garantir
- que funções que não a utilizem sejam puras
-\begin_inset Foot
-collapsed false
-
-\layout Standard
-
-Diversas convenções de chamada são definidas (
-\family typewriter 
-stdcall
-\family default 
-, 
-\family typewriter 
-cplusplus
-\family default 
-, 
-\family typewriter 
-jvm
-\family default 
-, 
-\family typewriter 
-dotnet
-\family default 
-) mas 
-\family typewriter 
-ccall
-\family default 
- é a única declarada como obrigatória pelo documento.
-\end_inset 
-
-.
 \layout Section
 
-
-\begin_inset LatexCommand \label{sub:Sistemas-de-tipos}
-
-\end_inset 
-
-Sistemas de Tipos
+Transferência de dados
 \layout Standard
 
 O principal complicador na interação entre linguagens de programação não
@@ -975,223 +1087,11 @@ A alternativa para permitir que código C opere sobre dados estruturados,
  ponteiros e o ciclo de vida dos objetos, que podem estar sujeitos a coleta
  de lixo.
  A Seção 
-\begin_inset LatexCommand \ref{sub:Coletores-de-lixo}
+\begin_inset LatexCommand \ref{sec:Coleta-de-lixo}
 
 \end_inset 
 
  discute esta questão em mais detalhe.
-\layout Section
-
-
-\begin_inset LatexCommand \label{sub:Coletores-de-lixo}
-
-\end_inset 
-
-Coletores de Lixo
-\layout Standard
-
-A partir do momento em que código C ganha acesso a referências a dados armazenad
-os no espaço de armazenamento de outra linguagem, sejam ponteiros ou identificad
-ores, o programador deve levar em consideração as diferenças entre os modelos
- de gerência de memória envolvidos, já que código executado na outra linguagem
- pode liberar o dado (destruir o objeto, remover um elemento de uma estrutura).
- Em princípio, isto não é diferente da gerência de memória realizada normalmente
- pelo programador em C.
- Entretanto, a interação com algumas linguagens adiciona um complicador:
- mecanismos de coleta de lixo realizam liberação de dados da memória de
- forma implícita.
- O princípio fundamental da coleta de lixo dita que um objeto não é coletado
- caso haja algum elemento (variável, estrutura de dados) apontando para
- ele.
- Todavia, o mesmo não vale para o ambiente C: a presença de um ponteiro
- apontando para um objeto não garante que ele não será coletado, uma vez
- que o coletor de lixo não gerencia os ponteiros do código C.
-\layout Standard
-
-É preciso, então, indicar a partir do código C que os dados que continuam
- acessíveis por ele não devem ser coletados.
- De forma complementar, ao transferir o controle de objetos C para o domínio
- da outra linguagem---por exemplo, para armazená-los em uma estrutura de
- dados desta---é necessário indicar à linguagem como desalocar a memória
- da estrutura quando o coletor de lixo detectar que ela não está mais em
- uso.
- A forma como a FLI irá fornecer estas funcionalidades depende não só do
- projeto da API para C, mas também do modelo de coleta de lixo empregado
- pela implementação da linguagem.
-\layout Section
-
-Modelos de Concorrência
-\layout Standard
-
-Outra possível fonte de incompatibilidade entre linguagens que deve ser
- tratada quando estas interagem é a diferença entre modelos de concorrência.
- C, em particular, não define construções de concorrência, sendo estas implement
-adas através de bibliotecas.
- Ao mesmo tempo que isto traz grande flexibilidade à linguagem, implica
- também em problemas de portabilidade para linguagens que dependam da disponibil
-idade de mecanismos de concorrência em C compatíveis com os modelos que
- elas utilizam.
-\layout Standard
-
-Por exemplo, APIs entre C e Java devem levar em conta o modelo de 
-\emph on 
-multithreading
-\emph default 
- preemptivo adotado por Java.
- A JNI (
-\emph on 
-Java Native Interface
-\emph default 
-) 
-\begin_inset LatexCommand \cite{liang-jni}
-
-\end_inset 
-
- define funções para controlar exclusão mútua entre dados compartilhados
- entre C e Java.
- O programador deve tomar o cuidado de buscar o equilíbrio entre o tempo
- gasto bloqueando a máquina virtual acessando dados compartilhados e o tempo
- gasto realizando cópia de dados entre os ambientes para reduzir o compartilhame
-nto.
-\layout Standard
-
-Outra situação em que o modelo de concorrência da linguagem demanda cuidados
- por parte do programador na integração com C ocorre no uso de co-rotinas
- em Lua.
- A combinação de dois recursos de Lua, multitarefa cooperativa com múltiplas
- pilhas de execução e a capacidade de alternar entre chamadas a funções
- Lua e C em uma pilha, traz consigo uma limitação: uma co-rotina não pode
- executar a operação de 
-\emph on 
-yield
-\emph default 
- caso haja uma função C na sua pilha, uma vez que não há uma forma portável
- de alternar entre múltiplas pilhas em C 
-\begin_inset LatexCommand \cite{moura-colua}
-
-\end_inset 
-
-.
- 
-\layout Section
-
-Módulos Externos
-\layout Standard
-
-Uma das motivações mais freqüentes para integração com código C é o uso
- de bibliotecas externas.
- Expor uma biblioteca C através da FLI para acesso em uma linguagem pode
- incorrer no registro de centenas de funções.
- É comum definir também tipos de dados que dêem às estruturas definidas
- pela biblioteca uma aparência mais nativa, como por exemplo converter funções
- C que registram 
-\emph on 
-callbacks
-\emph default 
- em métodos Ruby que aceitam blocos de código como parâmetro.
- Essas inicializações e adaptações são usualmente definidas em uma biblioteca
- de 
-\emph on 
-bindings
-\emph default 
-, que serve de ponte entre a linguagem e a biblioteca C encapsulando a interação
- com a FLI.
-\layout Standard
-
-Os padrões que ocorrem na produção de bindings são tão comuns que deram
- origem a programas visam automatizar o processo.
- Estes geradores de 
-\emph on 
-bindings
-\emph default 
- costumam trabalhar a partir de alguma representação preparada para o seu
- uso, já que analisar os cabeçalhos C pode-se mostrar insuficiente: por
- exemplo, o programa muitas vezes não seria capaz de interpretar a intenção
- de uma construção como 
-\family typewriter 
-int**
-\family default 
-.
- SWIG 
-\begin_inset LatexCommand \cite{beazley-swig}
-
-\end_inset 
-
- é uma popular ferramenta multi-linguagem para geração de 
-\emph on 
-bindings
-\emph default 
- de bibliotecas C e C++ que utiliza um formato próprio para descrição de
- interfaces.
- FLIs podem ainda utilizar geradores de 
-\emph on 
-stubs
-\emph default 
- para poupar o programador de escrever código C repetitivo ou não portável.
- Java possui um gerador de cabeçalhos C contendo os protótipos dos métodos
- nativos a serem implementados.
- Pyrex 
-\begin_inset LatexCommand \cite{ewing-pyrex}
-
-\end_inset 
-
- é um gerador de módulos C para Python a partir de uma sintaxe baseada na
- própria linguagem Python.
-\layout Chapter
-
-
-\begin_inset LatexCommand \label{cha:APIs-de-Máquinas}
-
-\end_inset 
-
-APIs de Máquinas Virtuais
-\layout Standard
-
-
-\emph on 
-\color red
-[TODO: OBJETIVO DESTE CAPÍTULO -> (texto a seguir do Plano de Trabalho da
- proposta) A partir dos requisitos levantados no capítulo anterior, pretende-se
- então classificar as facilidades oferecidas pelas APIs---suas funções,
- macros, estruturas---em função destes problemas.
- Ao cruzar estes dados, será possivel ter uma melhor compreensão de como
- estão distribuídos o tamanho e complexidade das APIs.
- Deseja-se saber o quão completas elas são em relação às funcionalidades
- que as linguagens oferecem, ou seja, o que é possível fazer via código
- nativo que não é possível ou não é prático via API.
- Com base nesta classificação, o passo seguinte será identificar, para cada
- problema, as abordagens gerais empregadas por cada API e assim expor com
- mais clareza as semelhanças e diferenças das APIs de diferentes linguagens.
- O objetivo é catalogar as técnicas empregadas de forma independente das
- implementações específicas, bem como o impacto que a escolha de uma determinada
- técnica na solução de um problema tem no espaço de alternativas para a
- solução dos demais.
- Espera-se que o fruto deste trabalho seja, através da documentação das
- práticas em uso corrente, proporcionar um base comum que facilite a avaliação
- e o desenvolvimento de interfaces entre linguagens de programação.]
-\layout Standard
-
-FLIs providas por máquinas virtuais são usualmente compreendidas como 
-\begin_inset Quotes eld
-\end_inset 
-
-APIs de extensão
-\begin_inset Quotes erd
-\end_inset 
-
-: elas servem ou para estender a máquina virtual com recursos não oferecidos
- por esta, ou para estender uma aplicação externa com os recursos oferecidos
- pela máquina virtual, embarcando-a nesta aplicação.
- O primeiro cenário é o utilizado no modelo de programação onde a coordenação
- de alto nível é realizada em uma linguagem interpretada e módulos compilados
- em linguagens como C e C++ são usados para acesso a bibliotecas externas
- ou implementação de partes onde o desempenho é crítico.
- O segundo cenário, via de regra, irá englobar também o primeiro, ao expor
- à máquina virtual embarcada extensões que a permitam comunicar-se com a
- aplicação hospedeira.
-\layout Section
-
-Transferência de dados
 \layout Subsection
 
 Python
@@ -2743,7 +2643,42 @@ como encontrar dados (resolver nomes)
 como guardar dados de C em L
 \layout Section
 
+
+\begin_inset LatexCommand \label{sec:Coleta-de-lixo}
+
+\end_inset 
+
 Coleta de lixo
+\layout Standard
+
+A partir do momento em que código C ganha acesso a referências a dados armazenad
+os no espaço de armazenamento de outra linguagem, sejam ponteiros ou identificad
+ores, o programador deve levar em consideração as diferenças entre os modelos
+ de gerência de memória envolvidos, já que código executado na outra linguagem
+ pode liberar o dado (destruir o objeto, remover um elemento de uma estrutura).
+ Em princípio, isto não é diferente da gerência de memória realizada normalmente
+ pelo programador em C.
+ Entretanto, a interação com algumas linguagens adiciona um complicador:
+ mecanismos de coleta de lixo realizam liberação de dados da memória de
+ forma implícita.
+ O princípio fundamental da coleta de lixo dita que um objeto não é coletado
+ caso haja algum elemento (variável, estrutura de dados) apontando para
+ ele.
+ Todavia, o mesmo não vale para o ambiente C: a presença de um ponteiro
+ apontando para um objeto não garante que ele não será coletado, uma vez
+ que o coletor de lixo não gerencia os ponteiros do código C.
+\layout Standard
+
+É preciso, então, indicar a partir do código C que os dados que continuam
+ acessíveis por ele não devem ser coletados.
+ De forma complementar, ao transferir o controle de objetos C para o domínio
+ da outra linguagem---por exemplo, para armazená-los em uma estrutura de
+ dados desta---é necessário indicar à linguagem como desalocar a memória
+ da estrutura quando o coletor de lixo detectar que ela não está mais em
+ uso.
+ A forma como a FLI irá fornecer estas funcionalidades depende não só do
+ projeto da API para C, mas também do modelo de coleta de lixo empregado
+ pela implementação da linguagem.
 \layout Subsection
 
 Python
@@ -3091,6 +3026,64 @@ Py_RETURN_NONE
  
 \layout Standard
 
+Para que o código C possa realizar operações de finalização sobre os dados
+ armazenados em um tipo Python definido em C, é possível definir uma função
+ de desalocação no campo 
+\family typewriter 
+tp_dealloc
+\family default 
+ da estrutura 
+\family typewriter 
+PyTypeObject
+\family default 
+ que descreve o tipo.
+ Esta função é normalmente responsável por liberar recursos alocados via
+ código C (arquivos abertos, ponteiros para áreas de memória não acessíveis
+ por Python, etc.) e decrementar referências a outros objetos Python mantidas
+ pelo objeto.
+\layout Standard
+
+Ao desalocar estruturas de dados como listas pode-se provocar uma cadeia
+ arbitrariamente grande de desalocações, à medida que o decremento da contagem
+ de referências de cada elemento reduz o número de referências do objeto
+ seguinte da estrutura para zero, disparando a função de desalocação recursivame
+nte.
+ Isto pode facilmente causar estouro da pilha de C.
+ Para contornar este problema, Python inclui um par de macros, 
+\family typewriter 
+Py_TRASHCAN_SAFE_BEGIN
+\family default 
+ e 
+\family typewriter 
+Py_TRASHCAN_SAFE_END
+\family default 
+, que controla o número de níveis de recursão aceitos.
+ Quando a pilha de chamadas excede um valor limite definido na constante
+ 
+\family typewriter 
+PyTrash_UNWIND_LEVEL
+\family default 
+ (50 por padrão), 
+\family typewriter 
+Py_TRASHCAN_SAFE_BEGIN
+\family default 
+ armazena o objeto em uma lista e salta diretamente para 
+\family typewriter 
+Py_TRASHCAN_SAFE_END
+\family default 
+, adiando a execução da função de desalocação.
+ Quando a pilha diminui de volta ao tamanho original, 
+\family typewriter 
+Py_TRASHCAN_SAFE_END
+\family default 
+ dispara 
+\family typewriter 
+tp_dealloc
+\family default 
+ sobre os elementos da lista de pendências, reiniciando assim a recursão.
+ 
+\layout Standard
+
 O modelo de coleta de lixo utilizando contagem de referências traz consigo
  preocupações sobre referências circulares: uma cadeia de objetos que mantêm
  referências 
@@ -3103,26 +3096,9 @@ vivas
 
  entre si mantém a contagem de cada um dos seus elementos acima de zero,
  mesmo que eles não sejam alcançáveis a partir de nenhum outro objeto.
- Python inclui um detector de ciclos, entretanto, este é incapaz de coletar
- ciclos cujos objetos contenham finalizadores implementados em Python (métodos
- 
-\family typewriter 
-__del__
-\family default 
-); a única forma de acessar estes objetos é então através da lista 
-\family typewriter 
-garbage
-\family default 
- no módulo 
-\family typewriter 
-gc
-\family default 
-.
- 
-\layout Standard
-
-Para tipos implementados em C, provisões especiais devem ser tomadas para
- que eles se comportem corretamente na presença de ciclos.
+ Python inclui um detector de ciclos, mas provisões especiais devem ser
+ tomadas para que tipos implementados em C se comportem corretamente caso
+ possam gerar ciclos.
  Deve-se implementar uma função para percorrer referências contidas no objeto
  e uma função que decremente a contagem destas referências, descritos nos
  campos 
@@ -3165,13 +3141,6 @@ Py_TPFLAGS_HAVE_GC
 tp_flags
 \family default 
 .
- 
-\layout Standard
-
-
-\emph on 
-\color red
-[falar de dealloc em PyTypeObject]
 \layout Standard
 
 Além disso, a implementação de objetos Python que suportem coleta cíclica
@@ -3205,13 +3174,92 @@ PyObject_GC_Track
 PyObject_GC_UnTrack
 \family default 
 .
+ Para objetos que necessitem do mecanismo de 
+\emph on 
+
+\begin_inset Quotes eld
+\end_inset 
+
+trashcan
+\begin_inset Quotes erd
+\end_inset 
+
+
+\emph default 
+ para evitar estouro de pilha, é ainda preciso tomar o cuidado de desmarcar
+ o objeto com 
+\family typewriter 
+PyObject_GC_UnTrack
+\family default 
+ antes de entrar no bloco 
+\family typewriter 
+Py_TRASHCAN_SAFE_BEGIN
+\family default 
+/
+\family typewriter 
+END
+\family default 
+.
+\layout Comment
+
+Um longo comentário em typeobject.c descreve cuidados adicionais e um cenário
+ de bug que pode ser causado pela interação incorreta entre Track/Untrack
+ e a trashcan.
  
 \layout Standard
 
-
-\emph on 
-\color red
-[interface com o coletor? mais sobre o módulo gc]
+Apesar de oferecer um mecanismo de detecção de ciclos, Python é incapaz
+ de coletar ciclos cujos objetos contenham finalizadores implementados em
+ Python (métodos 
+\family typewriter 
+__del__
+\family default 
+); a única forma de acessar estes objetos é então através da lista 
+\family typewriter 
+garbage
+\family default 
+ no módulo 
+\family typewriter 
+gc
+\family default 
+.
+ Este módulo (acessível a partir de C através de chamadas de função Python
+ via API) oferece uma interface com o coletor de lixo, incluindo funções
+ como 
+\family typewriter 
+enable
+\family default 
+ e 
+\family typewriter 
+disable
+\family default 
+, para ativar e desativar o coletor de lixo; 
+\family typewriter 
+collect
+\family default 
+ para executar uma coleta; 
+\family typewriter 
+get_objects
+\family default 
+, que retorna uma lista contendo todos os objetos controlados pelo coletor
+ (exceto a própria lista); 
+\family typewriter 
+get_referrers
+\family default 
+ e 
+\family typewriter 
+get_referents
+\family default 
+, que retornam a lista de objetos que referenciam ou são referenciados por
+ um dado objeto -- estas listas são obtidas percorrendo objetos com a função
+ 
+\family typewriter 
+tp_traverse
+\family default 
+, o que pode não apontar para todos os objetos realmente alcançáveis, ou
+ ainda retornar objetos em estado inválido (como objetos em ciclos ainda
+ não coletados ou objetos ainda não totalmente construídos) e assim devem
+ ser usadas apenas para fins de depuração.
 \layout Subsection
 
 Ruby
