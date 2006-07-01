@@ -186,8 +186,22 @@ Este trabalho realiza, a partir da pesquisa de implementações de FLIs, um
 \layout Standard
 
 O estudo consiste da análise em profundidade de um conjunto de FLIs -- especific
-amente, Python, Perl, Ruby, Lua e Java -- e um estudo de caso onde estas
- FLIs são exercitadas em tarefas semelhantes.
+amente, Python , Perl, Ruby 
+\begin_inset LatexCommand \cite{thomas-ruby}
+
+\end_inset 
+
+, Lua 
+\begin_inset LatexCommand \cite{lua}
+
+\end_inset 
+
+ e Java 
+\begin_inset LatexCommand \cite{gosling-java}
+
+\end_inset 
+
+ -- e um estudo de caso onde estas FLIs são exercitadas em tarefas semelhantes.
  Diferentemente das demais, Java possui tipagem estática, mas com a sua
  biblioteca de reflexão, que oferece recursos de intercessão como carga
  de classes em tempo de execução e invocação dinâmica de métodos, é possível
@@ -925,43 +939,17 @@ APIs de extensão
  aplicação hospedeira.
 \layout Standard
 
-Para permitir invocar funções C, a FLI deve fornecer uma forma de registrar
- estas funções no ambiente de execução, idealmente permitindo ao programa
- chamá-las de forma igual a funções nativas.
- A linguagem Java, por exemplo, possui uma palavra reservada,
-\family typewriter 
- native
-\family default 
-, para indicar funções não implementadas em Java.
- Assim, ao contrário do que o nome pode dar a entender, 
-\family typewriter 
-native
-\family default 
- não se refere a uma implementação nativa em Java, mas ao código do método
- ter sido compilado com código nativo do ambiente de execução, em oposição
- a 
-\emph on 
-bytecodes
-\emph default 
- da máquina virtual.
- Em linguagens dinâmicas, declarações de funções podem ser realizadas em
- tempo de execução, usando funções como 
-\family typewriter 
-lua_register
-\family default 
- em Lua ou 
-\family typewriter 
-rb_define_method
-\family default 
- em Ruby 
-\begin_inset LatexCommand \cite{thomas-ruby}
-
-\end_inset 
-
-.
+As seções seguintes discutem as principais questões envolvidas na comunicação
+ entre código C e máquinas virtuais, e apresenta as abordagens empregadas
+ pelas APIs de Python, Ruby, Java, Lua e Perl no tratamento destas questões.
 \layout Section
 
 Transferência de dados
+\begin_inset LatexCommand \label{sec:Dados}
+
+\end_inset 
+
+
 \layout Standard
 
 O principal complicador na interação entre linguagens de programação não
@@ -1546,6 +1534,11 @@ tp_methods
 \layout Subsection
 
 Java
+\begin_inset LatexCommand \label{sub:Dados-Java}
+
+\end_inset 
+
+
 \layout Standard
 
 A JNI define no cabeçalho 
@@ -1631,6 +1624,15 @@ jbooleanArray
 jbyteArray
 \family default 
 , etc.).
+ O tipo 
+\family typewriter 
+jvalue
+\family default 
+ é uma 
+\emph on 
+union
+\emph default 
+ dos tipos primitivos e de referências.
 \layout Standard
 
 Diferentes métodos são utilizados para a leitura de tipos prmitivos, strings,
@@ -2643,12 +2645,12 @@ como encontrar dados (resolver nomes)
 como guardar dados de C em L
 \layout Section
 
-
+Coleta de lixo
 \begin_inset LatexCommand \label{sec:Coleta-de-lixo}
 
 \end_inset 
 
-Coleta de lixo
+
 \layout Standard
 
 A partir do momento em que código C ganha acesso a referências a dados armazenad
@@ -3076,7 +3078,7 @@ Py_TRASHCAN_SAFE_END
 \family typewriter 
 Py_TRASHCAN_SAFE_END
 \family default 
- dispara 
+ dispara novamente 
 \family typewriter 
 tp_dealloc
 \family default 
@@ -4131,6 +4133,54 @@ interface com o coletor
 \layout Section
 
 Chamada de funções
+\layout Standard
+
+Para permitir a invocação de funções C a partir de código executado na máquina
+ virtual, a FLI deve fornecer uma forma de registrar estas funções no ambiente
+ de execução.
+ De forma análoga, a FLI deve prover uma forma de invocar a partir de C
+ funções a serem executadas na máquina virtual.
+ Isto envolve a passagem de dados entre estes dois 
+\begin_inset Quotes eld
+\end_inset 
+
+espaços
+\begin_inset Quotes erd
+\end_inset 
+
+, conforme visto na Seção 
+\begin_inset LatexCommand \ref{sec:Dados}
+
+\end_inset 
+
+ e as implicações que isto traz sobre o tempo de vida dos objetos, abordadas
+ na Seção 
+\begin_inset LatexCommand \ref{sec:Coleta-de-lixo}
+
+\end_inset 
+
+.
+ 
+\layout Standard
+
+Em linguagens de tipagem estática como Java, para que seja possível chamar
+ funções externas usando uma sintaxe igual à de funções nativas, o conjunto
+ de funções externas deve ser declarado 
+\emph on 
+a priori
+\emph default 
+ de alguma forma.
+ Já em linguagens com tipagem dinâmica, como é o caso de Python, Lua, Ruby
+ e Perl, as funções podem ser usadas diretamente, bastando que sejam definidas
+ em algum momento da execução antes de sua chamada.
+ Assim, pode-se declarar as funções externas em tempo de execução através
+ de código C usando a API da máquina virtual.
+ Para o caso de funções implementadas na linguagem externa a serem chamadas
+ a partir de C, tem-se que a FLI da linguagem externa deve normalmente permitir
+ a definição de chamadas em tempo de execução.
+ Assim, devido à tipagem estática de C, não é possível usar uma sintaxe
+ transparente, havendo então chamadas na FLI para realizar invocação de
+ funções.
 \layout Subsection
 
 Python
@@ -4374,37 +4424,508 @@ PyObject_GetItem
 Java
 \layout Standard
 
-* Apesar de métodos em Java poderem ser representados como objetos da classe
- java.lang.Method, para fins de realização de chamadas, métodos não são expostos
- na JNI como jobjects, mas como 
-\begin_inset Quotes eld
+De forma similar ao acesso a atributos, na chamada de métodos deve-se inicialmen
+te obter um identificador para o método, do tipo 
+\family typewriter 
+jmethodID
+\family default 
+.
+ Estes identificadores são tipicamente obtidos com a função GetMethodID,
+ que recebe como parâmetros a classe (instância de 
+\family typewriter 
+jclass
+\family default 
+) e duas strings, uma com o nome do método e outra que descreve a assinatura
+ do método.
+ A sintaxe que descreve assinaturas de método é similar à de descritores
+ de campos discutida na Seção 
+\begin_inset LatexCommand \ref{sub:Dados-Java}
+
 \end_inset 
 
-IDs
-\begin_inset Quotes erd
-\end_inset 
+.
+ Parâmetros são listados entre parênteses, seguidos do tipo de retorno.
+ Por exemplo, 
+\family typewriter 
+"([Ljava/lang/String;II)V"
+\family default 
+ indica uma função com parâmetros 
+\family typewriter 
+String[], int, int
+\family default 
+ e retorno 
+\family typewriter 
+void
+\family default 
+.
+ Alternativamente, a partir de Java 1.2 é possível obter um 
+\family typewriter 
+jmethodID
+\family default 
+ correspondente a um objeto Java do tipo 
+\family typewriter 
+Method
+\family default 
+ -- isto é, um método reificado através da API de reflexão de Java -- usando
+ a função 
+\family typewriter 
+FromReflectedMethod
+\family default 
+.
+\layout Standard
 
-, do tipo jmethodID.
+Uma vez obtido o 
+\family typewriter 
+jmethodID
+\family default 
+, um método pode ser invocado através de alguma das 90 funções da família
+ 
+\family typewriter 
+Call
+\family default 
+*
+\family typewriter 
+Method
+\family default 
+*.
+ Os nomes das funções seguem a forma
+\layout LyX-Code
+
+Call
+\family roman 
+\emph on 
+<tipo><retorno>
+\family default 
+\emph default 
+Method
+\family roman 
+\emph on 
+<argumentos>
+\layout Standard
+
+O 
+\emph on 
+<tipo>
+\emph default 
+ pode ser 
+\family typewriter 
+Static
+\family default 
+ para funções estáticas, recebendo na chamada uma 
+\family typewriter 
+jclass
+\family default 
+ como parâmetro; 
+\family typewriter 
+Nonvirtual
+\family default 
+ para invocar implementações de um método em uma classe específica sobre
+ um determinado objeto, passando uma 
+\family typewriter 
+jclass
+\family default 
+ e um 
+\family typewriter 
+jobject
+\family default 
+ como parâmetros; ou omitido para métodos de instância, passando o 
+\family typewriter 
+jobject
+\family default 
+ sobre o qual o método será aplicado.
+ O tipo de retorno é indicado em 
+\emph on 
+<retorno>
+\emph default 
+: 
+\family typewriter 
+Void
+\family default 
+ para funções sem retorno; 
+\family typewriter 
+Object
+\family default 
+ para funções que retornam tipos de referência (objetos, strings e arrays);
+ ou nomes como 
+\family typewriter 
+Int
+\family default 
+ e 
+\family typewriter 
+Float
+\family default 
+ indicando funções que retornam tipos primitivos.
+ Para os argumentos passados para o método, pode-se utilizar três formas:
+ passando-os como 
+\emph on 
+varargs
+\emph default 
+, indicada omitindo a parte 
+\emph on 
+<argumentos>
+\emph default 
+ do nome da função; como um array de 
+\family typewriter 
+jvalue
+\family default 
+s, usando 
+\family typewriter 
+A
+\family default 
+ em 
+\emph on 
+<argumentos>
+\emph default 
+; ou propagando uma 
+\family typewriter 
+va_list
+\family default 
+ recebida com 
+\family typewriter 
+V
+\family default 
+ em 
+\emph on 
+<argumentos>
+\emph default 
+.
+ Por exemplo, na forma mais simples, um método de instância sem retorno
+ e sem parâmetros é invocado com 
+\family typewriter 
+CallVoidMethod
+\family default 
+.
+ Já 
+\family typewriter 
+CallStaticIntMethodA
+\family default 
+ chama um método estático que retorna um 
+\family typewriter 
+jint
+\family default 
+ com a lista de parâmetros passada em um array de 
+\family typewriter 
+jvalue
+\family default 
+s.
+\layout Standard
+
+É importante notar que, ao obter identificadores de métodos e campos fazendo
+ a resolução a partir do 
+\family typewriter 
+jobject
+\family default 
+ recebido na variável 
+\family typewriter 
+this
+\family default 
+ e do nome do método ou campo, com 
+\family typewriter 
+GetObjectClass
+\family default 
+ e 
+\family typewriter 
+GetFieldID
+\family default 
+, se está efetivamente resolvendo variáveis através de escopo dinâmico.
+ Isso implica que, por exemplo, caso um método 
+\family typewriter 
+Pai.metodo
+\family default 
+ implementado em C acesse um atributo privado 
+\family typewriter 
+umAtributo
+\family default 
+ e uma subclasse 
+\family typewriter 
+Filho
+\family default 
+ também defina um atributo privado 
+\family typewriter 
+umAtributo
+\family default 
+, a chamada a esse método em uma instância 
+\family typewriter 
+f
+\family default 
+ de 
+\family typewriter 
+Filho
+\family default 
+ acabaria por acessar 
+\family typewriter 
+Filho.umAtributo
+\family default 
+ e não 
+\family typewriter 
+Pai.umAtributo
+\family default 
+.
+ Este comportamento é diferente do que ocorreria se 
+\family typewriter 
+Pai.metodo
+\family default 
+ fosse implementado em Java, onde o 
+\emph on 
+binding
+\emph default 
+ dos métodos e atributos privados é definido lexicamente.
+ Para garantir à implementação em C de 
+\family typewriter 
+Pai.metodo
+\family default 
+ que o atributo 
+\family typewriter 
+umAtributo
+\family default 
+ acessado é realmente 
+\family typewriter 
+Pai.umAtributo
+\family default 
+, deve-se armazenar no espaço de C o identificador do campo obtido a partir
+ da 
+\family typewriter 
+jclass
+\family default 
+ de 
+\family typewriter 
+Pai
+\family default 
+ -- obtida, por exemplo, em uma função 
+\family typewriter 
+static native
+\family default 
+.
  
 \layout Standard
 
-* Caching de IDs pode ser necessário para assegurar-se que o método correto
- é chamado.
-\layout Standard
-
-como chamar uma função L em C
-\layout Standard
-
-como chamar uma função C em L
+Métodos não implementados em Java devem ser declarados através de um protótipo
+ incluindo o modificador 
+\family typewriter 
+native
+\family default 
+.
+ Assim, 
+\family typewriter 
+native
+\family default 
+ não se refere a uma implementação nativa em Java, mas ao código do método
+ ter sido compilado com código nativo do ambiente de execução, em oposição
+ a 
+\emph on 
+bytecodes
+\emph default 
+ da máquina virtual.
+ A implementação do método deve ser carregada antes de sua execução usando
+ a chamada 
+\family typewriter 
+System.loadLibrary
+\family default 
+ em Java, usualmente em um bloco 
+\family typewriter 
+static
+\family default 
+ da classe correspondente.
+ Para cada método 
+\family typewriter 
+native
+\family default 
+, uma função C correspondente deve ser definida na biblioteca carregada.
+ O utilitário 
+\family typewriter 
+javah
+\family default 
+ gera arquivos de cabeçalho C a partir de classes Java, com os protótipos
+ de funções C no formato esperado pela JVM.
 \layout Subsection
 
 Ruby
 \layout Standard
 
-como chamar uma função L em C
+Para a chamada de métodos Ruby em C, a API oferece a função 
+\family typewriter 
+rb_funcall
+\family default 
+ e algumas variantes.
+ Todas recebem como parâmetro o 
+\family typewriter 
+VALUE
+\family default 
+ referente ao objeto sobre o qual o método se refere, um 
+\family typewriter 
+ID
+\family default 
+ referente à string internalizada contendo o nome do método e um inteiro
+ indicando o número de argumentos.
+ A função 
+\family typewriter 
+rb_funcall
+\family default 
+ recebe os argumentos na forma de varargs C; 
+\family typewriter 
+VALUE
+\family default 
+s passados como parâmetros adicionais; 
+\family typewriter 
+rb_funcall2
+\family default 
+ recebe um array C de 
+\family typewriter 
+VALUE
+\family default 
+s (
+\family typewriter 
+rb_funcall3
+\family default 
+ é idêntica a 
+\family typewriter 
+rb_funcall2
+\family default 
+, mas não chama métodos privados); 
+\family typewriter 
+rb_apply
+\family default 
+ recebe um 
+\family typewriter 
+VALUE
+\family default 
+ que deve ser um array Ruby contendo os parâmetros.
+ Todas retornam um 
+\family typewriter 
+VALUE
+\family default 
+ como parâmetro.
+ 
 \layout Standard
 
-como chamar uma função C em L
+* como chamar uma função Ruby em C passando um bloco de código
+\layout Standard
+
+Para que funções C possam ser chamadas a partir de Ruby, elas devem ser
+ declaradas como métodos de alguma classe ou módulo, ou como uma função
+ global.
+ Para isto, passa-se um ponteiro de uma função C e o número de argumentos
+ que a função espera para uma das funções apropriadas da API de Ruby: 
+\family typewriter 
+rb_define_method
+\family default 
+, 
+\family typewriter 
+rb_define_module_function
+\family default 
+, 
+\family typewriter 
+rb_define_global_function
+\family default 
+ ou 
+\family typewriter 
+rb_define_singleton_method
+\family default 
+.
+ O número de parâmetros passado indica a assinatura esperada para a função
+ C.
+ Ruby suporta explicitamente funções C com até 15 argumentos; como alternativa,
+ os valores especiais -1 e -2 indicam, respectivamente, que a função C irá
+ receber os parâmetros na forma de um array C de 
+\family typewriter 
+VALUE
+\family default 
+s ou de um 
+\family typewriter 
+VALUE
+\family default 
+ correspondente a um array Ruby.
+\layout Standard
+
+* como chamar uma função C em L
+\layout Standard
+
+A função C pode verificar se o código Ruby lhe passou um bloco de código
+ através da função 
+\family typewriter 
+rb_block_given_p
+\family default 
+.
+ O bloco pode então ser invocado com 
+\family typewriter 
+rb_yield
+\family default 
+, que recebe um 
+\family typewriter 
+VALUE
+\family default 
+ como argumento.
+ Para passar múltiplos argumentos para 
+\family typewriter 
+rb_yield
+\family default 
+, deve-se passar um array Ruby.
+ Para obter um 
+\family typewriter 
+VALUE
+\family default 
+ contendo o bloco de código recebido, usa-se a função vararg 
+\family typewriter 
+rb_scan_args
+\family default 
+, que recebe uma string de formato seguida de ponteiros para 
+\family typewriter 
+VALUE
+\family default 
+s.
+ A string de formato permite indicar o número mínimo e máximo de parâmetros
+ aceitos, se os parâmetros devem ser coletados em um array Ruby ou armazenados
+ diretamente nos 
+\family typewriter 
+VALUE
+\family default 
+s passados como varargs, e se um bloco de código deve ser coletado em um
+ 
+\family typewriter 
+VALUE
+\family default 
+ (caso nenhum bloco seja passado, o 
+\family typewriter 
+VALUE
+\family default 
+ correspondente receberá a constante 
+\family typewriter 
+Qnil
+\family default 
+).
+\layout Standard
+
+A API de Ruby inclui ainda uma função 
+\family typewriter 
+rb_iterate
+\family default 
+ que permite, a partir de C, chamar uma função C de forma similar a uma
+ função Ruby invocada com um bloco de código.
+ Esta função recebe dois ponteiros de função, um para a função a ser invocada
+ e outro para a função que atuará como o bloco de código; chamadas a 
+\family typewriter 
+rb_yield
+\family default 
+ dentro da primeira função invocarão a segunda.
+ O bloco pode quebrar o fluxo de execução com 
+\family typewriter 
+rb_iter_break
+\family default 
+.
+ O mecanismo de 
+\emph on 
+yield
+\emph default 
+, tanto para código C quanto para chamadas nativas em Ruby, é implementado
+ usando as funções C 
+\family typewriter 
+setjmp
+\family default 
+ e 
+\family typewriter 
+longjmp
+\family default 
+.
 \layout Subsection
 
 Perl
