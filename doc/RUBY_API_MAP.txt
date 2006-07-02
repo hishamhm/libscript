@@ -19,6 +19,9 @@ Execução
 		VALUE rb_f_exit (int,VALUE*);
 		VALUE rb_f_abort (int,VALUE*);
 		VALUE rb_f_kill (int, VALUE*);
+		void rb_set_end_proc (void (*)(VALUE), VALUE);
+		void rb_mark_end_proc (void);
+		void rb_exec_end_proc (void);
 	Threads
 		Inicialização
 			VALUE rb_thread_create (VALUE (*)(), void*);
@@ -89,6 +92,7 @@ Tratamento de exceções
 		VALUE rb_rescue2 (VALUE(*)(),VALUE,VALUE(*)(),VALUE,...);
 		VALUE rb_ensure (VALUE(*)(),VALUE,VALUE(*)(),VALUE);
 		VALUE rb_catch (const char*,VALUE(*)(),VALUE);
+		VALUE rb_funcall_rescue (VALUE, ID, int, ...);
 	Sinalizar exceções
 		VALUE rb_exc_new (VALUE, const char*, long);
 		VALUE rb_exc_new2 (VALUE, const char*);
@@ -120,6 +124,13 @@ Tipos de dados
 		VALUE rb_funcall3 (VALUE, ID, int, const VALUE*);
 		VALUE rb_apply (VALUE, ID, VALUE);
 		VALUE rb_call_super (int, const VALUE*);
+		VALUE rb_iterate (VALUE(*)(VALUE),VALUE,VALUE(*)(),VALUE);
+		int rb_scan_args (int, const VALUE*, const char*, ...);
+	Blocos de código
+		int rb_block_given_p (void);
+		void rb_need_block (void); [retorna erro caso um bloco não tenha sido dado]
+		VALUE rb_block_proc (void); [retorna um Proc com o bloco passado para a função]
+		??? VALUE rb_proc_new (VALUE (*)( ), VALUE); [gera um proc a partir de uma função C]
 	Verificação de tipo
 		void rb_check_type (VALUE,int);
 	Criação de classes e objetos
@@ -295,6 +306,10 @@ Camada de portabilidade
 		void *ruby_xcalloc (long,long);
 		void *ruby_xrealloc (void*,long);
 		void ruby_xfree (void*);
+	Acesso ao sistema operacional
+		int rb_proc_exec (const char*); [executa um comando externo]
+Depuração
+	void rb_p (VALUE);
 
 void rb_extend_object (VALUE,VALUE);
 void rb_define_variable (const char*,VALUE*);
@@ -307,16 +322,11 @@ void rb_undef_method (VALUE,const char*);
 void rb_define_alias (VALUE,const char*,const char*);
 void rb_define_attr (VALUE,const char*,int,int);
 void rb_global_variable (VALUE*);
-void rb_p (VALUE);
-int rb_scan_args (int, const VALUE*, const char*, ...);
 VALUE rb_equal (VALUE,VALUE);
 VALUE rb_each (VALUE);
 VALUE rb_yield (VALUE);
 VALUE rb_yield_values (int n, ...);
 VALUE rb_yield_splat (VALUE);
-int rb_block_given_p (void);
-void rb_need_block (void);
-VALUE rb_iterate (VALUE(*)(VALUE),VALUE,VALUE(*)(),VALUE);
 void ruby_options (int, char**);
 static inline VALUE rb_class_of(VALUE obj);
 static inline int rb_type(VALUE obj);
@@ -400,18 +410,12 @@ void rb_provide (const char*);
 VALUE rb_f_require (VALUE, VALUE);
 VALUE rb_require_safe (VALUE, int);
 void rb_obj_call_init (VALUE, int, VALUE*);
-VALUE rb_block_proc (void);
 VALUE rb_f_lambda (void);
-VALUE rb_proc_new (VALUE (*)( ), VALUE);
 VALUE rb_protect (VALUE (*)(VALUE), VALUE, int*);
-void rb_set_end_proc (void (*)(VALUE), VALUE);
-void rb_mark_end_proc (void);
-void rb_exec_end_proc (void);
 void ruby_finalize (void);
 void ruby_stop (int) __attribute__ ((noreturn));
 int ruby_cleanup (int);
 int ruby_exec (void);
-VALUE rb_funcall_rescue (VALUE, ID, int, ...);
 int eaccess (const char*, int);
 VALUE rb_file_s_expand_path (int, VALUE *);
 VALUE rb_file_expand_path (VALUE, VALUE);
@@ -494,7 +498,6 @@ void rb_backref_set (VALUE);
 VALUE rb_lastline_get (void);
 void rb_lastline_set (VALUE);
 VALUE rb_sym_all_symbols (void);
-int rb_proc_exec (const char*);
 VALUE rb_f_exec (int,VALUE*);
 int rb_waitpid (int,int*,int);
 void rb_syswait (int);

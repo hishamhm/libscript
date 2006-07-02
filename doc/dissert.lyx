@@ -4757,7 +4757,27 @@ ID
 \family default 
  referente à string internalizada contendo o nome do método e um inteiro
  indicando o número de argumentos.
- A função 
+ Funções globais em Ruby são definidas como métodos do módulo 
+\family typewriter 
+Kernel
+\family default 
+, que é incluído pela classe 
+\family typewriter 
+Object
+\family default 
+ e são, assim, acessíveis a partir de qualquer objeto, incluindo 
+\family typewriter 
+nil
+\family default 
+.
+ como atalho pode-se invocar funções globais passando a constante C 
+\family typewriter 
+Qnil
+\family default 
+ como o objeto alvo do método.
+\layout Standard
+
+A função 
 \family typewriter 
 rb_funcall
 \family default 
@@ -4795,10 +4815,6 @@ VALUE
 VALUE
 \family default 
  como parâmetro.
- 
-\layout Standard
-
-* como chamar uma função Ruby em C passando um bloco de código
 \layout Standard
 
 Para que funções C possam ser chamadas a partir de Ruby, elas devem ser
@@ -4837,10 +4853,9 @@ VALUE
  correspondente a um array Ruby.
 \layout Standard
 
-* como chamar uma função C em L
-\layout Standard
-
-A função C pode verificar se o código Ruby lhe passou um bloco de código
+Uma vez declarada no espaço de objetos de Ruby, uma função C pode ser chamada
+ como qualquer outro método Ruby.
+ A função C pode verificar se o código Ruby lhe passou um bloco de código
  através da função 
 \family typewriter 
 rb_block_given_p
@@ -4888,7 +4903,7 @@ VALUE
 \family typewriter 
 VALUE
 \family default 
- correspondente receberá a constante 
+ correspondente receberá 
 \family typewriter 
 Qnil
 \family default 
@@ -4904,7 +4919,7 @@ rb_iterate
  Esta função recebe dois ponteiros de função, um para a função a ser invocada
  e outro para a função que atuará como o bloco de código; chamadas a 
 \family typewriter 
-rb_yield
+yield
 \family default 
  dentro da primeira função invocarão a segunda.
  O bloco pode quebrar o fluxo de execução com 
@@ -4926,6 +4941,14 @@ setjmp
 longjmp
 \family default 
 .
+\layout Standard
+
+* Blocos não são 
+\emph on 
+exatamente
+\emph default 
+ valores de primeira classe: ruby-talk 144097.
+ Verificar Ruby 1.9?
 \layout Subsection
 
 Perl
