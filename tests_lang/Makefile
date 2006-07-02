@@ -14,7 +14,7 @@ RUBY_CFLAGS = -I/Programs/Ruby/1.8.4/lib/ruby/1.8/i686-linux
 RUBY_LDFLAGS = -rdynamic -Wl,-export-dynamic
 RUBY_LIBS = -lruby-static -ldl -lcrypt -lm 
 RUBY_FLAGS = $(RUBY_CFLAGS) $(RUBY_LDFLAGS) $(RUBY_LIBS)
-RUBY_PROGS = rubygc
+RUBY_PROGS = rubygc rubycall
 
 LUA_LDFLAGS = -llua -ldl -lm
 LUA_FLAGS = $(LUA_LDFLAGS)
@@ -54,9 +54,13 @@ libjavatestjni.so: javatestjni.c javatestjni.h
 
 run_ruby: $(RUBY_PROGS)
 	./rubygc
+	./rubycall
 
 rubygc: rubygc.c
 	gcc -o rubygc rubygc.c $(RUBY_FLAGS)
+
+rubycall: rubycall.c
+	gcc -o rubycall rubycall.c $(RUBY_FLAGS)
 
 run_lua: $(LUA_PROGS)
 	./luafnmt
