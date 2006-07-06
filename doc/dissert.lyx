@@ -4604,28 +4604,160 @@ Perl
 
 \layout Standard
 
-
+Como Python, Perl realiza coleta de lixo baseada em contagem de referências.
+ A API provê funções para o controle explícito da contagem: 
+\family typewriter 
+SvREFCNT_inc
+\family default 
+ e 
+\family typewriter 
+SvREFCNT_dec
+\family default 
+ para incremento e decremento e um 
 \emph on 
-\color red
-que dados sobrevivem durante uma função
+getter
+\emph default 
+, 
+\family typewriter 
+SvREFCNT
+\family default 
+.
+ Outra forma de alterar a contagem de referências de um valor é atribuindo-o
+ a uma referência Perl com 
+\family typewriter 
+newRV_inc
+\family default 
+.
+ A contagem do valor referenciado será incrementada, fazendo com que --
+ salvo tenha sua contagem alterada explicitamente -- este se mantenha válido
+ enquanto for referenciado pelo 
+\family typewriter 
+RV
+\family default 
+.
+ É importante notar, porém, que as funções da API que criam valores, como
+ 
+\family typewriter 
+newSViv
+\family default 
+, inicializam os seus contadores de referências com 1.
+ Isto tem o efeito de que se um valor criado é em uma função C, armazenado
+ em um 
+\family typewriter 
+RV
+\family default 
+ com 
+\family typewriter 
+newRV_inc
+\family default 
+ e esta referência é retornada a Perl, o valor nunca será coletado, pois
+ o seu contador não retornará a 0 quando a referência for destruída.
+ A forma correta, então, é usar 
+\family typewriter 
+newRV_noinc
+\family default 
+ para 
+\family typewriter 
+RV
+\family default 
+s contendo valores recém-criados e 
+\family typewriter 
+newRV_inc
+\family default 
+ quando um 
+\family typewriter 
+RV
+\family default 
+ deve manter válido um valor já existente.
 \layout Standard
 
+A inicialização da contagem de referências em 1 garante que valores criados
+ continuarão válidos durante a execução de uma função C sem que seja necessário
+ armazenar o valor no espaço de Perl.
+ Estes valores podem também ser armazenados em variáveis globais e estruturas
+ de dados de C e se manterão válidos até que a sua contagem de referências
+ seja decrementada.
+ Para valores cujo tempo de vida é restrito a uma função, a API de Perl
+ define o conceito de valores 
+\begin_inset Quotes eld
+\end_inset 
 
-\emph on 
-\color red
-coleta de dados L definidos via C
+mortais
+\begin_inset Quotes erd
+\end_inset 
+
+ como uma forma de permitir desalocar todos os valores temporários de uma
+ função de uma só vez.
+ Um 
+\family typewriter 
+SV
+\family default 
+, 
+\family typewriter 
+AV
+\family default 
+ ou 
+\family typewriter 
+HV
+\family default 
+ pode ser criado com 
+\family typewriter 
+sv_newmortal
+\family default 
+ ou mais comumente convertido para mortal com 
+\family typewriter 
+sv_2mortal
+\family default 
+.
+ Na prática, marcar um valor como mortal corresponde a indicar que ele deve
+ ter a sua contagem de referências decrementada na chamada da macro 
+\family typewriter 
+FREETMPS
+\family default 
+ ao término da função, conforme será visto na Seção 
+\begin_inset LatexCommand \ref{sub:Perl-call}
+
+\end_inset 
+
+.
+ Algumas funções da API retornam valores mortais: por exemplo, 
+\family typewriter 
+hv_delete
+\family default 
+ remove um elemento de uma hash e, caso a flag 
+\family typewriter 
+G_DISCARD
+\family default 
+ não seja passada, retorna o elemento removido como um 
+\family typewriter 
+SV
+\family default 
+ mortal.
 \layout Standard
 
-
+A API de Perl não possui facilidades de interface com o coletor de lixo,
+ mas possui algumas funções para auxílio em depuração que reportam informações
+ sobre o status da coleta de lixo.
+ A função 
+\family typewriter 
+sv_report_used
+\family default 
+ exibe o conteúdo de todos os 
+\family typewriter 
+SV
+\family default 
+s da máquina virtual.
+ O módulo 
+\family typewriter 
+Devel::Peek
+\family default 
+ permite examinar a partir de Perl o conteúdo de valores (contagem de referência
+s, 
 \emph on 
-\color red
-como salvar dados de L em estruturas C
-\layout Standard
-
-
-\emph on 
-\color red
-interface com o coletor
+flags
+\emph default 
+, etc.) -- a partir de C, estas informações estão disponíveis diretamente
+ já que as estruturas não são opacas.
 \layout Section
 
 Chamada de funções
@@ -6042,6 +6174,13 @@ function
 \layout Subsection
 
 Perl
+\begin_inset LatexCommand \label{sub:Perl-call}
+
+\end_inset 
+
+
+\layout Standard
+
 \layout Standard
 
 
