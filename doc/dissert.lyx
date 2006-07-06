@@ -186,7 +186,12 @@ Este trabalho realiza, a partir da pesquisa de implementações de FLIs, um
 \layout Standard
 
 O estudo consiste da análise em profundidade de um conjunto de FLIs -- especific
-amente, Python , Perl, Ruby 
+amente, Python, Perl 
+\begin_inset LatexCommand \cite{wall-perl}
+
+\end_inset 
+
+, Ruby 
 \begin_inset LatexCommand \cite{thomas-ruby}
 
 \end_inset 
@@ -1533,6 +1538,283 @@ tp_methods
  
 \layout Subsection
 
+Ruby
+\layout Standard
+
+Para a comunicação de dados entre Ruby e C, a API de Ruby define um tipo
+ de dados em C chamado 
+\family typewriter 
+VALUE
+\family default 
+, que referencia um objeto Ruby.
+ 
+\family typewriter 
+VALUE
+\family default 
+ pode representar tanto uma referência para um objeto (isto é, um ponteiro
+ para a 
+\emph on 
+heap
+\emph default 
+ de Ruby) como um valor imediato.
+ Em particular, as constantes 
+\family typewriter 
+Qtrue
+\family default 
+, 
+\family typewriter 
+Qfalse
+\family default 
+ e 
+\family typewriter 
+Qnil
+\family default 
+ são definidas como valores imediatos, permitindo a comparação destas usando
+ 
+\family typewriter 
+==
+\family default 
+.
+ Para os tipos numéricos, a conversão entre C e Ruby é feita através de
+ macros como 
+\family typewriter 
+INT2NUM
+\family default 
+ e de funções como 
+\family typewriter 
+rb_float_new
+\family default 
+, que recebem ou retornam 
+\family typewriter 
+VALUE
+\family default 
+s.
+\layout Standard
+
+Para a passagem de strings para Ruby a partir de C, são oferecidas as funções
+ 
+\family typewriter 
+rb_str_new
+\family default 
+, que recebe um ponteiro e um argumento numérico de tamanho, de modo a permitir
+ a passagem de strings contendo caracteres nulos, e 
+\family typewriter 
+rb_str_new2
+\family default 
+, que assume uma string padrão de C, com o caracter nulo como terminador.
+ 
+\family typewriter 
+VALUE
+\family default 
+s que apontam para strings de Ruby permitem acessar o seu conteúdo através
+ do 
+\emph on 
+cast
+\emph default 
+ 
+\family typewriter 
+RSTRING(uma_string)->ptr
+\family default 
+.
+ Todavia, a API recomenda o uso da macro 
+\family typewriter 
+StringValue
+\family default 
+, que retorna o próprio 
+\family typewriter 
+VALUE
+\family default 
+ passado caso este seja uma string, ou um novo 
+\family typewriter 
+VALUE
+\family default 
+ da classe String produzido através do método de conversão 
+\family typewriter 
+to_s
+\family default 
+ aplicado ao objeto passado (ou ainda causar uma exceção 
+\family typewriter 
+TypeError
+\family default 
+ caso a conversão não seja possível).
+ Sob a justificativa de aumentar o desempenho no acesso, alguns outros tipos
+ de Ruby como 
+\family typewriter 
+Array
+\family default 
+, 
+\family typewriter 
+Hash
+\family default 
+ e 
+\family typewriter 
+File
+\family default 
+ permitem este tipo de acesso de baixo nível aos membros das estruturas
+ utilizadas na implementação dos objetos.
+ Por exemplo, 
+\family typewriter 
+RARRAY(um_array)->len
+\family default 
+ permite ler o tamanho de um array diretamente.
+ A recomendação da API é utilizar este tipo de acesso somente para leitura,
+ já que a alteração destes valores pode facilmente tornar o estado interno
+ dos objetos inconsistente.
+\layout Standard
+
+A API permite criar classes a partir de C através da função 
+\family typewriter 
+rb_define_class
+\family default 
+.
+ Esta função recebe uma string C com o nome da nova classe e um 
+\family typewriter 
+VALUE
+\family default 
+ a ser usado como superclasse (como por exemplo a constante C 
+\family typewriter 
+rb_cObject
+\family default 
+, que representa a classe Ruby 
+\family typewriter 
+Object
+\family default 
+) e retorna um novo 
+\family typewriter 
+VALUE
+\family default 
+ representando a nova classe.
+ Esta nova referência pode então ser usada como parâmetro em chamadas de
+ de 
+\family typewriter 
+rb_define_method
+\family default 
+, que adiciona um método à classe recebendo um ponteiro para função C como
+ parâmetro, e 
+\family typewriter 
+rb_class_new_instance
+\family default 
+, que produz novos objetos Ruby que são instâncias da classe.
+ Como em código Ruby, a declaração de atributos de objetos é feita no método
+ 
+\family typewriter 
+initialize
+\family default 
+, que pode ser implementado em C.
+\layout Standard
+
+O acesso a objetos Ruby se dá através da família de funções 
+\family typewriter 
+rb_
+\family default 
+*
+\family typewriter 
+_get
+\family default 
+, que retornam 
+\family typewriter 
+VALUE
+\family default 
+s.
+ As funções 
+\family typewriter 
+rb_iv_get
+\family default 
+ e 
+\family typewriter 
+rb_ivar_get
+\family default 
+ obtêm atributos de objetos (
+\emph on 
+instance variables
+\emph default 
+), A primeira forma usa strings C como nomes, a segunda usa 
+\family typewriter 
+ID
+\family default 
+s, identificadores que substituem strings internalizadas na tabela de símbolos
+ de Ruby, que podem ser obtidos usando a função 
+\family typewriter 
+rb_intern
+\family default 
+.
+ Diferentemente de 
+\family typewriter 
+jfieldID
+\family default 
+s de Java, que contêm informação de tipo, 
+\family typewriter 
+ID
+\family default 
+s de Ruby meramente correspondem a uma string: um mesmo 
+\family typewriter 
+ID
+\family default 
+ pode ser usado para referenciar-se a atributos de objetos de classes diferentes
+ que tenham o mesmo nome.
+ Há ainda as funções 
+\family typewriter 
+rb_cv_get
+\family default 
+ e 
+\family typewriter 
+rb_cvar_get
+\family default 
+ para atributos de classes, 
+\family typewriter 
+rb_gv_get
+\family default 
+ para variáveis globais e 
+\family typewriter 
+rb_const_get
+\family default 
+ para constantes.
+ Para cada uma destas, há uma função 
+\family typewriter 
+rb_
+\family default 
+*
+\family typewriter 
+_set
+\family default 
+ análoga.
+\layout Standard
+
+Para o armazenamento de dados de C no espaço de objetos de Ruby, a API oferece
+ uma macro, 
+\family typewriter 
+Data_Wrap_Struct
+\family default 
+, que recebe um ponteiro C e cria um objeto Ruby que armazena este ponteiro.
+ O ponteiro pode ser acessado a partir de código C usando 
+\family typewriter 
+Data_Get_Struct
+\family default 
+, mas não a partir de Ruby.
+ Para classes cujas instâncias irão conter dados de C, é possível associar
+ a uma classe uma função C responsável por realizar a alocação de memória
+ das instâncias usando a função 
+\family typewriter 
+rb_define_alloc_func
+\family default 
+.
+ Definindo uma função de alocação desta forma e implementando um método
+ 
+\family typewriter 
+initialize_copy
+\family default 
+, torna-se possível implementar classes Ruby em C compatíveis com as rotinas
+ de cópia de objetos 
+\family typewriter 
+dup
+\family default 
+ e 
+\family typewriter 
+clone
+\family default 
+.
+\layout Subsection
+
 Java
 \begin_inset LatexCommand \label{sub:Dados-Java}
 
@@ -2088,286 +2370,8 @@ SetFloatArrayRegion
 .
  Para os demais tipos, não há uma provisão específica para o armazenamento
  de dados de C no espaço de objetos de Java.
- Nestes casos, a documentação recomenda o armazenamento de ponteiros em
- tipos numéricos, apesar dos problemas de portabilidade em que tal abordagem
- incorre.
-\layout Subsection
-
-Ruby
-\layout Standard
-
-Para a comunicação de dados entre Ruby e C, a API de Ruby define um tipo
- de dados em C chamado 
-\family typewriter 
-VALUE
-\family default 
-, que referencia um objeto Ruby.
- 
-\family typewriter 
-VALUE
-\family default 
- pode representar tanto uma referência para um objeto (isto é, um ponteiro
- para a 
-\emph on 
-heap
-\emph default 
- de Ruby) como um valor imediato.
- Em particular, as constantes 
-\family typewriter 
-Qtrue
-\family default 
-, 
-\family typewriter 
-Qfalse
-\family default 
- e 
-\family typewriter 
-Qnil
-\family default 
- são definidas como valores imediatos, permitindo a comparação destas usando
- 
-\family typewriter 
-==
-\family default 
-.
- Para os tipos numéricos, a conversão entre C e Ruby é feita através de
- macros como 
-\family typewriter 
-INT2NUM
-\family default 
- e de funções como 
-\family typewriter 
-rb_float_new
-\family default 
-, que recebem ou retornam 
-\family typewriter 
-VALUE
-\family default 
-s.
-\layout Standard
-
-Para a passagem de strings para Ruby a partir de C, são oferecidas as funções
- 
-\family typewriter 
-rb_str_new
-\family default 
-, que recebe um ponteiro e um argumento numérico de tamanho, de modo a permitir
- a passagem de strings contendo caracteres nulos, e 
-\family typewriter 
-rb_str_new2
-\family default 
-, que assume uma string padrão de C, com o caracter nulo como terminador.
- 
-\family typewriter 
-VALUE
-\family default 
-s que apontam para strings de Ruby permitem acessar o seu conteúdo através
- do 
-\emph on 
-cast
-\emph default 
- 
-\family typewriter 
-RSTRING(uma_string)->ptr
-\family default 
-.
- Todavia, a API recomenda o uso da macro 
-\family typewriter 
-StringValue
-\family default 
-, que retorna o próprio 
-\family typewriter 
-VALUE
-\family default 
- passado caso este seja uma string, ou um novo 
-\family typewriter 
-VALUE
-\family default 
- da classe String produzido através do método de conversão 
-\family typewriter 
-to_s
-\family default 
- aplicado ao objeto passado (ou ainda causar uma exceção 
-\family typewriter 
-TypeError
-\family default 
- caso a conversão não seja possível).
- Sob a justificativa de aumentar o desempenho no acesso, alguns outros tipos
- de Ruby como 
-\family typewriter 
-Array
-\family default 
-, 
-\family typewriter 
-Hash
-\family default 
- e 
-\family typewriter 
-File
-\family default 
- permitem este tipo de acesso de baixo nível aos membros das estruturas
- utilizadas na implementação dos objetos.
- Por exemplo, 
-\family typewriter 
-RARRAY(um_array)->len
-\family default 
- permite ler o tamanho de um array diretamente.
- A recomendação da API é utilizar este tipo de acesso somente para leitura,
- já que a alteração destes valores pode facilmente tornar o estado interno
- dos objetos inconsistente.
-\layout Standard
-
-A API permite criar classes a partir de C através da função 
-\family typewriter 
-rb_define_class
-\family default 
-.
- Esta função recebe uma string C com o nome da nova classe e um 
-\family typewriter 
-VALUE
-\family default 
- a ser usado como superclasse (como por exemplo a constante C 
-\family typewriter 
-rb_cObject
-\family default 
-, que representa a classe Ruby 
-\family typewriter 
-Object
-\family default 
-) e retorna um novo 
-\family typewriter 
-VALUE
-\family default 
- representando a nova classe.
- Esta nova referência pode então ser usada como parâmetro em chamadas de
- de 
-\family typewriter 
-rb_define_method
-\family default 
-, que adiciona um método à classe recebendo um ponteiro para função C como
- parâmetro, e 
-\family typewriter 
-rb_class_new_instance
-\family default 
-, que produz novos objetos Ruby que são instâncias da classe.
- Como em código Ruby, a declaração de atributos de objetos é feita no método
- 
-\family typewriter 
-initialize
-\family default 
-, que pode ser implementado em C.
-\layout Standard
-
-O acesso a objetos Ruby se dá através da família de funções 
-\family typewriter 
-rb_
-\family default 
-*
-\family typewriter 
-_get
-\family default 
-, que retornam 
-\family typewriter 
-VALUE
-\family default 
-s.
- As funções 
-\family typewriter 
-rb_iv_get
-\family default 
- e 
-\family typewriter 
-rb_ivar_get
-\family default 
- obtêm atributos de objetos (
-\emph on 
-instance variables
-\emph default 
-), A primeira forma usa strings C como nomes, a segunda usa 
-\family typewriter 
-ID
-\family default 
-s, identificadores que substituem strings internalizadas na tabela de símbolos
- de Ruby, que podem ser obtidos usando a função 
-\family typewriter 
-rb_intern
-\family default 
-.
- Diferentemente de 
-\family typewriter 
-jfieldID
-\family default 
-s de Java, que contêm informação de tipo, 
-\family typewriter 
-ID
-\family default 
-s de Ruby meramente correspondem a uma string: um mesmo 
-\family typewriter 
-ID
-\family default 
- pode ser usado para referenciar-se a atributos de objetos de classes diferentes
- que tenham o mesmo nome.
- Há ainda as funções 
-\family typewriter 
-rb_cv_get
-\family default 
- e 
-\family typewriter 
-rb_cvar_get
-\family default 
- para atributos de classes, 
-\family typewriter 
-rb_gv_get
-\family default 
- para variáveis globais e 
-\family typewriter 
-rb_const_get
-\family default 
- para constantes.
- Para cada uma destas, há uma função 
-\family typewriter 
-rb_
-\family default 
-*
-\family typewriter 
-_set
-\family default 
- análoga.
-\layout Standard
-
-Para o armazenamento de dados de C no espaço de objetos de Ruby, a API oferece
- uma macro, 
-\family typewriter 
-Data_Wrap_Struct
-\family default 
-, que recebe um ponteiro C e cria um objeto Ruby que armazena este ponteiro.
- O ponteiro pode ser acessado a partir de código C usando 
-\family typewriter 
-Data_Get_Struct
-\family default 
-, mas não a partir de Ruby.
- Para classes cujas instâncias irão conter dados de C, é possível associar
- a uma classe uma função C responsável por realizar a alocação de memória
- das instâncias usando a função 
-\family typewriter 
-rb_define_alloc_func
-\family default 
-.
- Definindo uma função de alocação desta forma e implementando um método
- 
-\family typewriter 
-initialize_copy
-\family default 
-, torna-se possível implementar classes Ruby em C compatíveis com as rotinas
- de cópia de objetos 
-\family typewriter 
-dup
-\family default 
- e 
-\family typewriter 
-clone
-\family default 
-.
+ Nestes casos, a documentação sugere o armazenamento de ponteiros em tipos
+ numéricos, apesar dos problemas de portabilidade em que tal abordagem incorre.
 \layout Subsection
 
 Lua
@@ -2411,9 +2415,16 @@ lua_setglobal
  da base e negativos para índices a partir do topo).
 \layout Standard
 
-A conversão de dados de Lua para C é feita através de funções como lua_tonumber
- e lua_tolstring, que recebem um índice da pilha, convertem o valor no índice
- para o tipo Lua especificado, e retornam o valor no tipo C equivalente.
+A conversão de dados de Lua para C é feita através de funções como 
+\family typewriter 
+lua_tonumber
+\family default 
+ e 
+\family typewriter 
+lua_tolstring
+\family default 
+, que recebem um índice da pilha, convertem o valor no índice para o tipo
+ Lua especificado, e retornam o valor no tipo C equivalente.
  Números têm o tipo C 
 \family typewriter 
 lua_Number
@@ -2630,19 +2641,486 @@ threads
 Perl
 \layout Standard
 
-como transferir dados de C para L
+Os processos de estender e embutir Perl são bastante distintos.
+ Para extensões, Perl oferece uma linguagem para descrição de interfaces
+ chamada XS.
+ Ao invés de isolar o acesso às estruturas internas de Perl através de uma
+ API pública, a abordagem proposta é encapsular o processo de geração de
+ código 
+\emph on 
+wrapper
+\emph default 
+ para a comunicação entre funções escritas em C e as estruturas internas
+ de Perl usando interfaces escritas em XS.
+ Arquivos 
+\family typewriter 
+.xs
+\family default 
+ contêm código C acompanhado de anotações que simplificam o tratamento dos
+ parâmetros de entrada e saída.
+ Estes são alimentados ao pré-processador 
+\family typewriter 
+xsubpp
+\family default 
+, que geram então o código usando a API oferecida pela biblioteca de Perl.
+ Esta biblioteca oferece acesso de baixo nível ao funcionamento da máquina
+ virtual, permitindo, por exemplo, manipular o ponteiro da sua pilha interna.
+ O objetivo de XS é ocultar ao desenvolvedor de extensões estes detalhes.
 \layout Standard
 
-como transferir dados de L para C
+Para embutir a máquina virtual de Perl em uma aplicação, a biblioteca que
+ a implementa oferece algumas funções que permitem disparar um interpretador.
+ Na API de mais alto nível, pode-se construir um array de parâmetros a serem
+ passados para o interpretador de forma equivalente às opções do interpretador
+ Perl de linha de comando, inclusive usando a opção 
+\family typewriter 
+
+\begin_inset Quotes eld
+\end_inset 
+
+-e
+\begin_inset Quotes erd
+\end_inset 
+
+
+\family default 
+ para executar trechos de código.
 \layout Standard
 
-conversões em L
+Os tipos fundamentais de Perl são mapeados para 
+\emph on 
+typedefs
+\emph default 
+ em C: 
+\family typewriter 
+SV
+\family default 
+ para valores escalares, 
+\family typewriter 
+AV
+\family default 
+ para arrays, 
+\family typewriter 
+HV
+\family default 
+ para hashes.
+ Os 
+\emph on 
+typedefs
+\emph default 
+ 
+\family typewriter 
+IV
+\family default 
+, 
+\family typewriter 
+UV
+\family default 
+, 
+\family typewriter 
+NV
+\family default 
+ e 
+\family typewriter 
+PV
+\family default 
+ correspondem, respectivamente, a inteiros com e sem sinal, valores de ponto
+ flutuante e strings, e podem ser copiados para 
+\family typewriter 
+SV
+\family default 
+s.
+ Referências em Perl são representados como 
+\family typewriter 
+RV
+\family default 
+, e também são um tipo de 
+\family typewriter 
+SV
+\family default 
+.
+ Há ainda o tipo 
+\family typewriter 
+GV
+\family default 
+, capaz de referenciar qualquer tipo representável em uma variável Perl.
 \layout Standard
 
-como encontrar dados (resolver nomes)
+Valores escalares são criados com as funções 
+\family typewriter 
+newSV
+\family default 
+*: 
+\family typewriter 
+newSViv
+\family default 
+ gera um 
+\family typewriter 
+SV
+\family default 
+ a partir de um inteiro com sinal; 
+\family typewriter 
+newSVpv
+\family default 
+ a partir de uma string, e assim por diante.
+ A função 
+\family typewriter 
+newSV
+\family default 
+ permite criar um 
+\family typewriter 
+SV
+\family default 
+ com área de memória não inicializada, acessível através da função 
+\family typewriter 
+SvPVX
+\family default 
+, permitindo assim criar escalares com valores arbitrários gerenciados por
+ código C.
+ Valores são atribuídos a SVs usando as funções 
+\family typewriter 
+sv_set
+\family default 
+*: 
+\family typewriter 
+sv_setiv
+\family default 
+, 
+\family typewriter 
+sv_setpv
+\family default 
+, etc.
+ As funções para manipulação de strings possuem variantes como 
+\family typewriter 
+newSVpvn
+\family default 
+ e 
+\family typewriter 
+sv_setpvf
+\family default 
+, que permitem especificar o comprimento da string ou realizar formatação
+ como em 
+\family typewriter 
+sprintf
+\family default 
+.
+ Para strings, há ainda funções 
+\family typewriter 
+sv_cat
+\family default 
+*, que atuam como 
+\family typewriter 
+sv_set
+\family default 
+* mas concatenam o valor dado ao conteúdo atual da string ao invés de substituí-
+lo.
+ O tipo dos dados armazenados em 
+\family typewriter 
+SV
+\family default 
+s é verificado com as macros 
+\family typewriter 
+SvIOK
+\family default 
+ para inteiros, 
+\family typewriter 
+SvNOK
+\family default 
+ para valores de ponto flutuante e 
+\family typewriter 
+SvPOK
+\family default 
+ para strings.
+ Estas funções retornam sucesso se o escalar é conversível para o tipo especific
+ado -- as variantes 
+\family typewriter 
+SvIOKp
+\family default 
+, 
+\family typewriter 
+SvNOKp
+\family default 
+, 
+\family typewriter 
+SvPOKp
+\family default 
+ verificam se o valor armazenado é realmente do tipo.
 \layout Standard
 
-como guardar dados de C em L
+Arrays e hashes são criados com 
+\family typewriter 
+newAV
+\family default 
+ e 
+\family typewriter 
+newHV
+\family default 
+.
+ Arrays podem ser populados com 
+\family typewriter 
+SV
+\family default 
+s através de 
+\family typewriter 
+av_make
+\family default 
+.
+ Operações como 
+\family typewriter 
+av_fetch
+\family default 
+, 
+\family typewriter 
+av_pop
+\family default 
+, 
+\family typewriter 
+hv_fetch
+\family default 
+ e 
+\family typewriter 
+hv_exists
+\family default 
+ permitem operar sobre elementos das estruturas -- referências para elementos
+ são retornadas como ponteiros para 
+\family typewriter 
+SV
+\family default 
+.
+ A API original de hashes utilizava chaves declaradas como strings C; esta
+ foi estendida a partir de Perl 5.004 com funções como 
+\family typewriter 
+hv_fetch_ent
+\family default 
+ que permitem usar 
+\family typewriter 
+SV
+\family default 
+s como strings.
+ As funções novas expõem os pares chave/valor como ponteiros 
+\family typewriter 
+HE
+\family default 
+, anteriormente retornado apenas em funções de iteração como 
+\family typewriter 
+hv_iternext
+\family default 
+; as macros 
+\family typewriter 
+HeSVKEY
+\family default 
+ e 
+\family typewriter 
+HeVAL
+\family default 
+ permitem extrair a chave e valor de um 
+\family typewriter 
+HE
+\family default 
+.
+ Cuidados especiais devem ser tomados ao utilizar os valores 
+\family typewriter 
+undef
+\family default 
+, 
+\family typewriter 
+true
+\family default 
+ e 
+\family typewriter 
+false
+\family default 
+ em arrays e hashes, embora Perl exponha estas constantes na API de C (
+\family typewriter 
+PL_sv_undef
+\family default 
+, 
+\family typewriter 
+PL_sv_true
+\family default 
+, 
+\family typewriter 
+PL_sv_false
+\family default 
+).
+ 
+\family typewriter 
+PL_sv_undef
+\family default 
+ é usado internamente na implementação de 
+\family typewriter 
+AV
+\family default 
+s e 
+\family typewriter 
+HV
+\family default 
+s, e a atualização de valores em 
+\family typewriter 
+HV
+\family default 
+s ocorre 
+\emph on 
+in-place
+\emph default 
+, o que gera problemas ao atualizar elementos contendo estas constantes.
+ A documentação recomenda gerar cópias destes valores ao usá-los em estruturas
+ 
+\family typewriter 
+AV
+\family default 
+ e 
+\family typewriter 
+HV
+\family default 
+ 
+\begin_inset LatexCommand \cite{perlguts}
+
+\end_inset 
+
+.
+\layout Standard
+
+Referências Perl são criadas com 
+\family typewriter 
+newRV_inc
+\family default 
+ e 
+\family typewriter 
+newRV_noinc
+\family default 
+, que recebem um ponteiro para 
+\family typewriter 
+SV
+\family default 
+, 
+\family typewriter 
+AV
+\family default 
+ ou 
+\family typewriter 
+HV
+\family default 
+ como parâmetro (as duas funções diferem entre si no que tange à contagem
+ de referências, que será abordada na Seção 
+\begin_inset LatexCommand \ref{sub:Perl-GC}
+
+\end_inset 
+
+).
+ O valor apontado por uma referência é obtido com 
+\family typewriter 
+SvRV
+\family default 
+.
+ O retorno desta macro deve ser convertido via 
+\emph on 
+cast
+\emph default 
+ para o tipo apropriado (
+\family typewriter 
+IV
+\family default 
+, 
+\family typewriter 
+PV
+\family default 
+, 
+\family typewriter 
+AV
+\family default 
+, etc.), que pode ser verificado com 
+\family typewriter 
+SvTYPE
+\family default 
+.
+ Diversas funções da API têm tipo de parâmetros ou retorno declarados como
+ 
+\family typewriter 
+SV
+\family default 
+ quando na verdade aceitam 
+\family typewriter 
+AV
+\family default 
+s ou 
+\family typewriter 
+HV
+\family default 
+s; isto é análogo ao conceito de 
+\emph on 
+contextos
+\emph default 
+ de Perl, onde um mesmo valor pode ser tratado como lista (array ou hash)
+ ou escalar dependendo da expressão onde ele é inserido.
+\layout Standard
+
+Valores são obtidos a partir do espaço de Perl com 
+\family typewriter 
+get_sv
+\family default 
+, 
+\family typewriter 
+get_av
+\family default 
+ e 
+\family typewriter 
+get_hv
+\family default 
+.
+ Estas funções recebem uma string C com o nome da variável (possivelmente
+ qualificado da forma 
+\family typewriter 
+"pacote::variavel"
+\family default 
+) e uma flag indicando se o valor deve ser criado se inexistente.
+ O conteúdo de valores escalares é convertido de volta para um tipo C com
+ as macros 
+\family typewriter 
+Sv
+\family default 
+*: 
+\family typewriter 
+SvIV
+\family default 
+ retorna um inteiro, 
+\family typewriter 
+SvPV
+\family default 
+ retorna um 
+\family typewriter 
+char*
+\family default 
+ e o comprimento da string no segundo parâmetro, etc.
+ O seguinte código C exibe o conteúdo da variável Perl 
+\family typewriter 
+$a
+\family default 
+, assumindo que ela contenha um valor inteiro:
+\layout LyX-Code
+
+
+\size footnotesize 
+printf("a = %d
+\backslash 
+n", SvIV(get_sv("a", FALSE)));
+\layout Standard
+
+Usar 
+\family typewriter 
+TRUE
+\family default 
+ no segundo parâmetro de 
+\family typewriter 
+get_sv
+\family default 
+ é uma forma conveniente de alocar uma nova variável acessível no espaço
+ de C já realizando o 
+\emph on 
+binding
+\emph default 
+ do nome no espaço de Perl.
+ 
 \layout Section
 
 Coleta de lixo
@@ -3891,7 +4369,8 @@ região crítica
 Além do mecanismo de referências fracas fornecido pelas classes do pacote
  
 \family typewriter 
-java.lang.ref
+java.lang.\SpecialChar \-
+ref
 \family default 
 , a única forma oferecida por Java para interagir de maneira mais direta
  com o coletor de lixo é através da chamada 
@@ -4118,17 +4597,34 @@ mark-and-sweep
 \layout Subsection
 
 Perl
+\begin_inset LatexCommand \label{sub:Perl-GC}
+
+\end_inset 
+
+
 \layout Standard
 
+
+\emph on 
+\color red
 que dados sobrevivem durante uma função
 \layout Standard
 
+
+\emph on 
+\color red
 coleta de dados L definidos via C
 \layout Standard
 
+
+\emph on 
+\color red
 como salvar dados de L em estruturas C
 \layout Standard
 
+
+\emph on 
+\color red
 interface com o coletor
 \layout Section
 
@@ -4335,7 +4831,7 @@ Para chamar uma função Python a partir de C, deve-se inicialmente obter
 \family typewriter 
 PyObject
 \family default 
- correspondente à função, omo visto na Seção 
+ correspondente à função, como visto na Seção 
 \begin_inset LatexCommand \ref{sub:Dados-Python}
 
 \end_inset 
@@ -4417,6 +4913,592 @@ PyObject_CallMethodObjArgs
  a 
 \family typewriter 
 PyObject_GetItem
+\family default 
+.
+\layout Subsection
+
+Ruby
+\layout Standard
+
+Para a chamada de métodos Ruby em C, a API oferece a função 
+\family typewriter 
+rb_funcall
+\family default 
+ e algumas variantes.
+ Todas recebem como parâmetro o 
+\family typewriter 
+VALUE
+\family default 
+ referente ao objeto sobre o qual o método se refere, um 
+\family typewriter 
+ID
+\family default 
+ referente à string internalizada contendo o nome do método e um inteiro
+ indicando o número de argumentos.
+ Funções globais em Ruby são definidas como métodos do módulo 
+\family typewriter 
+Kernel
+\family default 
+, que é incluído pela classe 
+\family typewriter 
+Object
+\family default 
+ e são, assim, acessíveis a partir de qualquer objeto, incluindo 
+\family typewriter 
+nil
+\family default 
+.
+ como atalho pode-se invocar funções globais passando a constante C 
+\family typewriter 
+Qnil
+\family default 
+ como o objeto alvo do método.
+\layout Standard
+
+A função 
+\family typewriter 
+rb_funcall
+\family default 
+ recebe os argumentos na forma de varargs C; 
+\family typewriter 
+VALUE
+\family default 
+s passados como parâmetros adicionais; 
+\family typewriter 
+rb_funcall2
+\family default 
+ recebe um array C de 
+\family typewriter 
+VALUE
+\family default 
+s (
+\family typewriter 
+rb_funcall3
+\family default 
+ é idêntica a 
+\family typewriter 
+rb_funcall2
+\family default 
+, mas não chama métodos privados); 
+\family typewriter 
+rb_apply
+\family default 
+ recebe um 
+\family typewriter 
+VALUE
+\family default 
+ que deve ser um array Ruby contendo os parâmetros.
+ Todas retornam um 
+\family typewriter 
+VALUE
+\family default 
+ como parâmetro.
+\layout Standard
+
+Para que funções C possam ser chamadas a partir de Ruby, elas devem ser
+ declaradas como métodos de alguma classe ou módulo, ou como uma função
+ global.
+ Para isto, passa-se um ponteiro de uma função C e o número de argumentos
+ que a função espera para uma das funções apropriadas da API de Ruby: 
+\family typewriter 
+rb_define_method
+\family default 
+, 
+\family typewriter 
+rb_define_module_function
+\family default 
+, 
+\family typewriter 
+rb_define_global_function
+\family default 
+ ou 
+\family typewriter 
+rb_define_singleton_method
+\family default 
+.
+ O número de parâmetros passado indica a assinatura esperada para a função
+ C.
+ Ruby suporta explicitamente funções C com até 15 argumentos; como alternativa,
+ os valores especiais -1 e -2 indicam, respectivamente, que a função C irá
+ receber os parâmetros na forma de um array C de 
+\family typewriter 
+VALUE
+\family default 
+s ou de um 
+\family typewriter 
+VALUE
+\family default 
+ correspondente a um array Ruby.
+\layout Standard
+
+Uma vez declarada no espaço de objetos de Ruby, uma função C pode ser chamada
+ como qualquer outro método Ruby.
+ A função C pode verificar se o código Ruby lhe passou um bloco de código
+ através da função 
+\family typewriter 
+rb_block_given_p
+\family default 
+.
+ O bloco pode então ser invocado com 
+\family typewriter 
+rb_yield
+\family default 
+, que recebe um 
+\family typewriter 
+VALUE
+\family default 
+ como argumento.
+ Para passar múltiplos argumentos para 
+\family typewriter 
+rb_yield
+\family default 
+, deve-se passar um array Ruby.
+ Para obter um 
+\family typewriter 
+VALUE
+\family default 
+ contendo o bloco de código recebido, usa-se a função vararg 
+\family typewriter 
+rb_scan_args
+\family default 
+, que recebe uma string de formato seguida de ponteiros para 
+\family typewriter 
+VALUE
+\family default 
+s.
+ A string de formato permite indicar o número mínimo e máximo de parâmetros
+ aceitos, se os parâmetros devem ser coletados em um array Ruby ou armazenados
+ diretamente nos 
+\family typewriter 
+VALUE
+\family default 
+s passados como varargs, e se um bloco de código deve ser coletado em um
+ 
+\family typewriter 
+VALUE
+\family default 
+ (caso nenhum bloco seja passado, o 
+\family typewriter 
+VALUE
+\family default 
+ correspondente receberá 
+\family typewriter 
+Qnil
+\family default 
+).
+\layout Standard
+
+
+\begin_inset Float figure
+wide false
+collapsed false
+
+\layout LyX-Code
+
+
+\size footnotesize 
+def a_ruby_function()
+\layout LyX-Code
+
+
+\size footnotesize 
+   print("a_ruby_function will yield.
+\backslash 
+n")
+\layout LyX-Code
+
+
+\size footnotesize 
+   yield
+\layout LyX-Code
+
+
+\size footnotesize 
+   print("a_ruby_function is done.
+\backslash 
+n")
+\layout LyX-Code
+
+
+\size footnotesize 
+   return 42
+\layout LyX-Code
+
+
+\size footnotesize 
+end
+\layout Standard
+\align center 
+
+\size footnotesize 
+(a) Uma função Ruby que espera um bloco de código
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE a_C_block() {
+\layout LyX-Code
+
+
+\size footnotesize 
+   fprintf(stderr, "a_C_block is running.
+\backslash 
+n");
+\layout LyX-Code
+
+
+\size footnotesize 
+} 
+\layout Standard
+\align center 
+
+\size footnotesize 
+(b) Uma função C que atuará como bloco de código
+\layout LyX-Code
+
+
+\size footnotesize 
+a_proc = rb_proc_new(a_C_block, Qnil);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Não funciona! Um Proc não é um bloco de código.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+result = rb_funcall(Qnil, a_ruby_function_ID, 1, a_proc);
+\layout Standard
+\align center 
+
+\size footnotesize 
+(c) Uma chamada de função com bloco inválida a partir de C
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_define_global_function("a_C_block", a_C_block, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_eval_string("$result = a_ruby_function { a_C_block }");
+\layout LyX-Code
+
+
+\size footnotesize 
+result = rb_gv_get("$result");
+\layout Standard
+\align center 
+
+\size footnotesize 
+(d) Passando código C em um bloco declarado via 
+\family typewriter 
+rb_eval_string
+\layout LyX-Code
+
+
+\size footnotesize 
+a_proc = rb_proc_new(a_C_block, Qnil);
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_gv_set("$a_proc", a_proc);
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_eval_string("$result = a_ruby_function(&$a_proc)"); 
+\newline 
+result = rb_gv_get("$result");
+\layout Standard
+\align center 
+
+\size footnotesize 
+(e) Passando código C encapsulado como 
+\family typewriter 
+Proc
+\family default 
+ como um bloco via 
+\family typewriter 
+rb_eval_string
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE call_a_ruby_function() {
+\layout LyX-Code
+
+
+\size footnotesize 
+   return rb_funcall(Qnil, a_ruby_function_ID, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
+} 
+\layout LyX-Code
+
+
+\size footnotesize 
+...
+\layout LyX-Code
+
+
+\size footnotesize 
+result = rb_iterate(call_a_ruby_function, Qnil, a_C_block, Qnil);
+\layout Standard
+\align center 
+
+\size footnotesize 
+(f) Passando um bloco de código via 
+\family typewriter 
+rb_iterate
+\layout Caption
+
+
+\begin_inset LatexCommand \label{cap:Blocos-Ruby}
+
+\end_inset 
+
+Invocação de métodos Ruby passando blocos de código a partir de C
+\end_inset 
+
+
+\layout Standard
+
+A linguagem trata blocos de código de forma um tanto irregular, e isto se
+ reflete na API de C.
+ A sintaxe para a declaração de blocos é especial: blocos só podem ser definidos
+ como o último argumento de uma chamada de método.
+ Assim, eles não são valores de primeira classe, não podendo ser, por exemplo,
+ declarados em uma atribuição a variável.
+ Eles podem, no entanto, ser 
+\begin_inset Quotes eld
+\end_inset 
+
+promovidos
+\begin_inset Quotes erd
+\end_inset 
+
+ a valores de primeira classe, na forma de objetos da classe 
+\family typewriter 
+Proc
+\family default 
+.
+ Isto pode ser feito de duas formas: explicitamente, passando um bloco para
+ uma declaração 
+\family typewriter 
+Proc.new
+\family default 
+, ou implicitamente, declarando em um método um último parâmetro formal
+ precedido de 
+\family typewriter 
+&
+\family default 
+.
+ Esta variável conterá o bloco convertido para um 
+\family typewriter 
+Proc
+\family default 
+.
+ Na chamada de funções que esperam blocos, 
+\family typewriter 
+&
+\family default 
+ converte o 
+\family typewriter 
+Proc
+\family default 
+ para um bloco.
+ Este status especial dos blocos de código complica a sua manipulação a
+ partir de código C.
+ A Figura 
+\begin_inset LatexCommand \ref{cap:Blocos-Ruby}
+
+\end_inset 
+
+ exemplifica isto ao apresentar formas de invocar um método Ruby (Fig.
+ 
+\begin_inset LatexCommand \ref{cap:Blocos-Ruby}
+
+\end_inset 
+
+(a)) passando como bloco de código uma função C (Fig.
+ 
+\begin_inset LatexCommand \ref{cap:Blocos-Ruby}
+
+\end_inset 
+
+(b)).
+ A equivalência de blocos com objetos Proc proporcionada pelo operador 
+\family typewriter 
+&
+\family default 
+ não é oferecida na API C: as funções para chamada de métodos como 
+\family typewriter 
+rb_funcall
+\family default 
+ não são capazes de realizar tal conversão e passar 
+\family typewriter 
+Proc
+\family default 
+s para funções que aceitam blocos (Fig.
+ 
+\begin_inset LatexCommand \ref{cap:Blocos-Ruby}
+
+\end_inset 
+
+(c)).
+\layout Standard
+
+As únicas formas de invocar uma método passando um bloco de código são,
+ então, através de 
+\family typewriter 
+rb_eval_string
+\family default 
+ e 
+\family typewriter 
+rb_iterate
+\family default 
+.
+ A primeira abordagem, além do custo de desempenho causado pelo 
+\emph on 
+parsing
+\emph default 
+ da string de código, tem a inconveniência de exigir o uso de variáveis
+ temporárias para que se possa obter os valores de retorno de volta ao espaço
+ de C.
+ No modelo usando 
+\family typewriter 
+rb_eval_string
+\family default 
+, a função C que atuará como bloco deve ser declarada no espaço de Ruby.
+ Há duas alternativas de como fazer isto: expondo o método (por exemplo,
+ usando 
+\family typewriter 
+rb_define_global_function
+\family default 
+) e invocando-o em um bloco 
+\emph on 
+wrapper
+\emph default 
+ declarado no texto da string Ruby (Fig.
+ 
+\begin_inset LatexCommand \ref{cap:Blocos-Ruby}
+
+\end_inset 
+
+(d)), ou encapsulando a função em um objeto 
+\family typewriter 
+Proc
+\family default 
+ a partir de C com 
+\family typewriter 
+rb_proc_new
+\family default 
+ e então usando a notação 
+\family typewriter 
+&
+\family default 
+ na string de código Ruby avaliada (Fig.
+ 
+\begin_inset LatexCommand \ref{cap:Blocos-Ruby}
+
+\end_inset 
+
+(e)).
+\layout Standard
+
+A segunda abordagem explora o fato de que a única função da API de C capaz
+ de produzir blocos de código diretamente é 
+\family typewriter 
+rb_iterate
+\family default 
+.
+ Esta função recebe dois ponteiros de função, um para a função a ser invocada
+ e outro para a função que atuará como o bloco de código; chamadas a 
+\family typewriter 
+yield
+\family default 
+ dentro da primeira função invocarão a segunda.
+ O bloco pode quebrar o fluxo de execução com 
+\family typewriter 
+rb_iter_break
+\family default 
+.
+ Passando como 
+\begin_inset Quotes eld
+\end_inset 
+
+função de iteração
+\begin_inset Quotes erd
+\end_inset 
+
+ para 
+\family typewriter 
+rb_iterate
+\family default 
+ uma função 
+\emph on 
+wrapper
+\emph default 
+ que simplesmente chama o método Ruby desejado com 
+\family typewriter 
+rb_funcall
+\family default 
+, é possível simular uma chamada a 
+\family typewriter 
+rb_funcall
+\family default 
+ que recebe uma função C como bloco de código (Fig.
+ 
+\begin_inset LatexCommand \ref{cap:Blocos-Ruby}
+
+\end_inset 
+
+(f)).
+ Para o caso comum de realizar iterações sobre o método 
+\family typewriter 
+each
+\family default 
+ de coleções, Ruby oferece uma função 
+\emph on 
+wrapper
+\emph default 
+ 
+\family typewriter 
+rb_each
+\family default 
+, projetada para ser passada como primeiro argumento de 
+\family typewriter 
+rb_iterate
+\family default 
+.
+\layout Standard
+
+Funções C executando como bloco de código podem quebrar o fluxo de execução
+ com 
+\family typewriter 
+rb_iter_break
+\family default 
+.
+ O mecanismo de 
+\emph on 
+yield
+\emph default 
+, tanto para código C quanto para chamadas nativas em Ruby, é implementado
+ usando as funções C 
+\family typewriter 
+setjmp
+\family default 
+ e 
+\family typewriter 
+longjmp
 \family default 
 .
 \layout Subsection
@@ -4739,233 +5821,238 @@ javah
  de funções C no formato esperado pela JVM.
 \layout Subsection
 
-Ruby
+Lua
 \layout Standard
 
-Para a chamada de métodos Ruby em C, a API oferece a função 
+Funções C expostas ao espaço de Lua devem ter o tipo 
 \family typewriter 
-rb_funcall
+lua_CFunction
 \family default 
- e algumas variantes.
- Todas recebem como parâmetro o 
+, isto é, retornar um 
 \family typewriter 
-VALUE
+int
 \family default 
- referente ao objeto sobre o qual o método se refere, um 
+ e receber como único parâmetro um ponteiro para uma variável do tipo 
 \family typewriter 
-ID
+lua_State
 \family default 
- referente à string internalizada contendo o nome do método e um inteiro
- indicando o número de argumentos.
- Funções globais em Ruby são definidas como métodos do módulo 
+.
+ Um 
 \family typewriter 
-Kernel
+lua_State
 \family default 
-, que é incluído pela classe 
+ encapsula todo o estado da máquina virtual de Lua, tornando-a assim reentrante;
+ múltiplos estados Lua podem ser mantidos em paralelo.
+ Todas as funções da API 
+\emph on 
+core
+\emph default 
+ de Lua recebem um 
 \family typewriter 
-Object
+lua_State
 \family default 
- e são, assim, acessíveis a partir de qualquer objeto, incluindo 
+ como primeiro parâmetro.
+\layout Standard
+
+Tanto em funções C disparadas por Lua como em chamadas de funções Lua realizadas
+ a partir de código C, os parâmetros de entrada e saída são passados através
+ da pilha virtual apresentada na Seção 
+\begin_inset LatexCommand \ref{sub:Lua-dados}
+
+\end_inset 
+
+.
+ Ao início da função C, o primeiro elemento na pilha de Lua é o primeiro
+ argumento, e assim por diante.
+ O valor de retorno passado pela função C indicará quantos argumentos devem
+ ser retornados a Lua; o elemento no topo da pilha conterá o último valor
+ de retorno, o seguinte o penúltimo e assim sucessivamente (em outras palavras,
+ os valores de retorno devem ser empilhados em ordem).
+\layout Standard
+
+Como em funções Lua, não há verificação sobre o número de argumentos passados
+ para uma função C declarada no espaço de Lua.
+ O código C pode verificar o número de argumentos passados inspecionando
+ o tamanho da pilha recebida com 
+\family typewriter 
+lua_gettop
+\family default 
+.
+ A biblioteca auxiliar provê ainda funções para verificar de forma mais
+ conveniente o tipo argumentos passados.
+ Funções da família 
+\family typewriter 
+luaL_check
+\family default 
+* (
+\family typewriter 
+luaL_checkint
+\family default 
+, 
+\family typewriter 
+luaL_checkstring
+\family default 
+, etc.) verificam o tipo de um elemento da pilha e o retornam, sinalizando
+ erro caso tipo do elemento não seja o requisitado.
+ As funções 
+\family typewriter 
+luaL_opt
+\family default 
+* se comportam de forma similar, permitindo ainda indicar um valor padrão
+ caso o elemento esteja ausente ou seja 
 \family typewriter 
 nil
 \family default 
 .
- como atalho pode-se invocar funções globais passando a constante C 
-\family typewriter 
-Qnil
-\family default 
- como o objeto alvo do método.
+ 
 \layout Standard
 
-A função 
+Uma função C do tipo 
 \family typewriter 
-rb_funcall
+lua_CFunction
 \family default 
- recebe os argumentos na forma de varargs C; 
+ é passada para o espaço de Lua através da função 
 \family typewriter 
-VALUE
+lua_pushcclosure
 \family default 
-s passados como parâmetros adicionais; 
+.
+ É possível associar à função valores Lua que serão acessíveis à função
+ sempre que esta for chamada, de forma similar a variáveis locais 
 \family typewriter 
-rb_funcall2
+static
 \family default 
- recebe um array C de 
+ C.
+ Este recurso provê uma funcionalidade similar às 
+\emph on 
+closures
+\emph default 
+ de Lua, porém mais limitado: os valores associados são privados às funções
+ C, enquanto em Lua duas 
+\emph on 
+closures
+\emph default 
+ definidas num mesmo escopo terão acesso efetivamente às mesmas variáveis,
+ isto é, alterações nos valores em uma afetarão a outra.
+ Esta forma restrita, porém, já permite a implementação em C de 
+\begin_inset Quotes eld
+\end_inset 
+
+funções com estado
+\begin_inset Quotes erd
+\end_inset 
+
+, como iteradores e geradores.
+ A chamada 
 \family typewriter 
-VALUE
+lua_pushcfunction
 \family default 
-s (
+ equivale a chamar 
 \family typewriter 
-rb_funcall3
+lua_pushcclosure
 \family default 
- é idêntica a 
+ sem definir valores associados à função.
+ Uma vez registrada no espaço de Lua, funções C passam a ser vistos como
+ valores do tipo 
 \family typewriter 
-rb_funcall2
+function
 \family default 
-, mas não chama métodos privados); 
-\family typewriter 
-rb_apply
-\family default 
- recebe um 
-\family typewriter 
-VALUE
-\family default 
- que deve ser um array Ruby contendo os parâmetros.
- Todas retornam um 
-\family typewriter 
-VALUE
-\family default 
- como parâmetro.
+, de forma igual a funções Lua.
 \layout Standard
 
-Para que funções C possam ser chamadas a partir de Ruby, elas devem ser
- declaradas como métodos de alguma classe ou módulo, ou como uma função
- global.
- Para isto, passa-se um ponteiro de uma função C e o número de argumentos
- que a função espera para uma das funções apropriadas da API de Ruby: 
+Lua possui algumas funções de conveniência para registrar funções C no espaço
+ de Lua.
+ A 
+\emph on 
+macro
+\emph default 
+ 
 \family typewriter 
-rb_define_method
+lua_register
 \family default 
-, 
+ declara uma 
 \family typewriter 
-rb_define_module_function
+lua_CFunction
 \family default 
-, 
+ como uma variável global.
+ A função 
 \family typewriter 
-rb_define_global_function
+luaL_register
+\family default 
+, da biblioteca auxiliar, registra uma lista de funções em lote, recebendo
+ um array de estruturas 
+\family typewriter 
+luaL_Reg
+\family default 
+, contendo nomes e ponteiros de função.
+\layout Standard
+
+Uma função é invocada em lua empilhando-se a 
+\family typewriter 
+function
+\family default 
+ e os seus parâmetros e em seguida invocando 
+\family typewriter 
+lua_call
 \family default 
  ou 
 \family typewriter 
-rb_define_singleton_method
+lua_pcall
 \family default 
 .
- O número de parâmetros passado indica a assinatura esperada para a função
- C.
- Ruby suporta explicitamente funções C com até 15 argumentos; como alternativa,
- os valores especiais -1 e -2 indicam, respectivamente, que a função C irá
- receber os parâmetros na forma de um array C de 
-\family typewriter 
-VALUE
-\family default 
-s ou de um 
-\family typewriter 
-VALUE
-\family default 
- correspondente a um array Ruby.
-\layout Standard
-
-Uma vez declarada no espaço de objetos de Ruby, uma função C pode ser chamada
- como qualquer outro método Ruby.
- A função C pode verificar se o código Ruby lhe passou um bloco de código
- através da função 
-\family typewriter 
-rb_block_given_p
-\family default 
-.
- O bloco pode então ser invocado com 
-\family typewriter 
-rb_yield
-\family default 
-, que recebe um 
-\family typewriter 
-VALUE
-\family default 
- como argumento.
- Para passar múltiplos argumentos para 
-\family typewriter 
-rb_yield
-\family default 
-, deve-se passar um array Ruby.
- Para obter um 
-\family typewriter 
-VALUE
-\family default 
- contendo o bloco de código recebido, usa-se a função vararg 
-\family typewriter 
-rb_scan_args
-\family default 
-, que recebe uma string de formato seguida de ponteiros para 
-\family typewriter 
-VALUE
-\family default 
-s.
- A string de formato permite indicar o número mínimo e máximo de parâmetros
- aceitos, se os parâmetros devem ser coletados em um array Ruby ou armazenados
- diretamente nos 
-\family typewriter 
-VALUE
-\family default 
-s passados como varargs, e se um bloco de código deve ser coletado em um
- 
-\family typewriter 
-VALUE
-\family default 
- (caso nenhum bloco seja passado, o 
-\family typewriter 
-VALUE
-\family default 
- correspondente receberá 
-\family typewriter 
-Qnil
-\family default 
-).
-\layout Standard
-
-A API de Ruby inclui ainda uma função 
-\family typewriter 
-rb_iterate
-\family default 
- que permite, a partir de C, chamar uma função C de forma similar a uma
- função Ruby invocada com um bloco de código.
- Esta função recebe dois ponteiros de função, um para a função a ser invocada
- e outro para a função que atuará como o bloco de código; chamadas a 
-\family typewriter 
-yield
-\family default 
- dentro da primeira função invocarão a segunda.
- O bloco pode quebrar o fluxo de execução com 
-\family typewriter 
-rb_iter_break
-\family default 
-.
- O mecanismo de 
-\emph on 
-yield
-\emph default 
-, tanto para código C quanto para chamadas nativas em Ruby, é implementado
- usando as funções C 
-\family typewriter 
-setjmp
-\family default 
- e 
+ A diferença entre as duas funções está no tratamento de erros: lua_call
+ propaga os erros sinalizados, usando 
 \family typewriter 
 longjmp
 \family default 
-.
-\layout Standard
-
-* Blocos não são 
+; 
+\family typewriter 
+lua_pcall
+\family default 
+ os captura os erros, retornando um código de 
 \emph on 
-exatamente
+status
 \emph default 
- valores de primeira classe: ruby-talk 144097.
- Verificar Ruby 1.9?
+ e a mensagem de erro na pilha.
+ No caso de execução sem erros, a pilha conterá os valores de retorno da
+ função chamada.
+ O número de valores de retorno pode ser explicitamente requisitado na chamada
+ da função ou definido em tempo de execução, requisitando o valor especial
+ 
+\family typewriter 
+LUA_MULTRET
+\family default 
+.
+ A função 
+\family typewriter 
+lua_cpcall
+\family default 
+ permite chamar funções C do tipo 
+\family typewriter 
+lua_CFunction
+\family default 
+ realizando captura de erros de forma similar a 
+\family typewriter 
+lua_pcall
+\family default 
+ sem precisar produzir um valor do tipo 
+\family typewriter 
+function
+\family default 
+ na pilha de Lua.
 \layout Subsection
 
 Perl
 \layout Standard
 
+
+\emph on 
+\color red
 como chamar uma função L em C
 \layout Standard
 
-como chamar uma função C em L
-\layout Subsection
 
-Lua
-\layout Standard
-
-como chamar uma função L em C
-\layout Standard
-
+\emph on 
+\color red
 como chamar uma função C em L
 \layout Chapter
 
@@ -6615,6 +7702,14 @@ Pyrex - a Language for Writing Python Extension Modules
 
 
 \layout Bibliography
+\bibitem {wall-perl}
+
+WALL, L.; CHRISTIANSEN, T.; ORWANT, J.
+ Programming Perl.
+ 3a.
+ Edição.
+ O'Reilly, julho 2000.
+\layout Bibliography
 \bibitem {ltn004}
 
 
@@ -6659,4 +7754,12 @@ http://www.python.org/doc/api/initialization.html
 \bibitem {java-weak}
 
 http://java.sun.com/j2se/1.5.0/docs/guide/jni/spec/functions.html#weak
+\layout Bibliography
+\bibitem {perlguts}
+
+OKAMOTO, J.
+ et al.
+ PERLGUTS(1).
+ Man-page da documentação de Perl 5.8.8.
+ Janeiro 2006.
 \the_end
