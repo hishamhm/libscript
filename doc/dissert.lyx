@@ -1095,6 +1095,99 @@ Python
 
 \layout Standard
 
+Todos os valores na máquina virtual de Python são representados como objetos,
+ mapeados para a API de C como a estrutura 
+\family typewriter 
+PyObject
+\family default 
+.
+ Tipos mais específicos como 
+\family typewriter 
+PyStringObject
+\family default 
+, 
+\family typewriter 
+PyBooleanObject
+\family default 
+ e 
+\family typewriter 
+PyListObject
+\family default 
+ são 
+\family typewriter 
+PyObject
+\family default 
+s por equivalência estrutural, isto é, podem ser convertidos através de
+ um 
+\emph on 
+cast
+\emph default 
+ C.
+ Refletindo o modelo de tipagem dinâmica de Python, as funções da API usam
+ 
+\family typewriter 
+PyObject*
+\family default 
+ como tipo sempre que se referem a objetos Python, mesmo quando são projetadas
+ para atuar sobre tipos mais específicos, como por exemplo 
+\family typewriter 
+PyString_Size
+\family default 
+.
+ Cada tipo específico possui uma função de verificação na API, como 
+\family typewriter 
+PyNumber_Check
+\family default 
+ e 
+\family typewriter 
+PyDict_Check
+\family default 
+.
+ Há ainda funções genéricas 
+\family typewriter 
+PyObject_IsInstance
+\family default 
+ e 
+\family typewriter 
+PyObject_IsSubclass
+\family default 
+, que comparam um objeto Python a um objeto Python que representa uma classe.
+\layout Standard
+
+Python é uma linguagem fortemente tipada: cada objeto é amarrado a um tipo.
+ Tipos são representados por estruturas 
+\family typewriter 
+PyTypeObject
+\family default 
+, que também são estruturalmente equivalentes a 
+\family typewriter 
+PyObject
+\family default 
+.
+ Cada tipo Python possui um PyObject definido na API, como 
+\family typewriter 
+PyString_Type
+\family default 
+, 
+\family typewriter 
+PyBoolean_Type
+\family default 
+ e 
+\family typewriter 
+PyList_Type
+\family default 
+.
+ 
+\family typewriter 
+PyObject_TypeCheck
+\family default 
+ compara um objeto Python a um 
+\family typewriter 
+PyTypeObject
+\family default 
+.
+\layout Standard
+
 Para a conversão de dados de C para Python, a linguagem oferece uma série
  de funções que recebem variáveis de tipos primitivos de C como parâmetro,
  como 
@@ -1113,8 +1206,7 @@ PyFloat_FromDouble
 PyObject
 \family default 
 .
- Dados passados para estas funções, como por exemplo strings, são copiados
- por Python.
+ Strings passadas são copiadas por Python.
  
 \layout Standard
 
@@ -1176,24 +1268,6 @@ Py_UNICODE
 \family typewriter 
 Py_complex
 \family default 
-
-\begin_inset Foot
-collapsed true
-
-\layout Standard
-
-Um tipo de dado para 
-\begin_inset Quotes eld
-\end_inset 
-
-wide strings
-\begin_inset Quotes erd
-\end_inset 
-
-, wchar_t, foi introduzido pela emenda de 1995 de ANSI C, e um tipo para
- números complexos, complex, no padrão ISO C 99.
-\end_inset 
-
 .
  Estes tipos foram adicionados com o objetivo de aumentar o desempenho de
  módulos Python para manipulação numérica ou de texto Unicode implementados
@@ -1202,6 +1276,33 @@ wide strings
 PyObject
 \family default 
 .
+ Em plataformas onde 
+\family typewriter 
+wchar_t
+\family default 
+, o tipo padrão ANSI C para 
+\begin_inset Quotes eld
+\end_inset 
+
+wide strings
+\begin_inset Quotes erd
+\end_inset 
+
+ introduzido em 1995, está disponível, 
+\family typewriter 
+Py_UNICODE
+\family default 
+ é um 
+\emph on 
+typedef
+\emph default 
+ para este; nas demais, corresponde a um tipo numérico de 16 ou 32 bits,
+ dependendo das 
+\emph on 
+flags
+\emph default 
+ de compilação de Python.
+ 
 \layout Standard
 
 Python oferece ainda algumas versões de funções de conversão para C implementada
@@ -1209,7 +1310,7 @@ s como macros sem a verificação de tipo, assumindo que o
 \family typewriter 
 PyObject
 \family default 
- passado será compatível.
+ passado será compatível, oferecendo melhor desempenho às custas de segurança.
  Estas funções podem ser identificadas pelos nomes em maiúsculas.
  As únicas macros de conversão oferecidas são 
 \family typewriter 
@@ -1268,37 +1369,33 @@ PyTypeObject
 __call__
 \family default 
 ).
+ Por exemplo, a função 
+\family typewriter 
+PyObject_Str
+\family default 
+ é equivalente à função Python 
+\family typewriter 
+str
+\family default 
+.
  A Figura 
 \begin_inset LatexCommand \ref{cap:PyObject_Str}
 
 \end_inset 
 
- demonstra a equivalência entre 
-\family typewriter 
-PyObject_Str
-\family default 
- e 
+ demonstra a equivalência entre estas, implementando uma função em C que
+ realiza a chamada a 
 \family typewriter 
 str
 \family default 
-.
+ através da API.
 \layout Standard
 
 
 \begin_inset Float figure
 wide false
-collapsed true
+collapsed false
 
-\layout LyX-Code
-
-
-\size footnotesize 
-#include <Python.h>
-\layout LyX-Code
-
-
-\size footnotesize 
-PyObject *str;
 \layout LyX-Code
 
 
@@ -1308,32 +1405,7 @@ PyObject* my_PyObject_Str(PyObject* o) {
 
 
 \size footnotesize 
-   return PyObject_CallFunctionObjArgs(str, o, NULL);
-\layout LyX-Code
-
-
-\size footnotesize 
-}
-\layout LyX-Code
-
-
-\size footnotesize 
-int main() {
-\layout LyX-Code
-
-
-\size footnotesize 
-   PyObject *builtins_module, *builtins, *an_int, *a_str;
-\layout LyX-Code
-
-
-\size footnotesize 
-   char *result; 
-\layout LyX-Code
-
-
-\size footnotesize 
-   Py_Initialize();
+   PyObject *builtins_module, *builtins, *str;
 \layout LyX-Code
 
 
@@ -1353,44 +1425,12 @@ int main() {
 
 
 \size footnotesize 
-   an_int = PyInt_FromLong(5556);
+   return PyObject_CallFunctionObjArgs(str, o, NULL);
 \layout LyX-Code
 
 
 \size footnotesize 
-   a_str = my_PyObject_Str(an_int);
-\layout LyX-Code
-
-
-\size footnotesize 
-   Py_DECREF(an_int);
-\layout LyX-Code
-
-
-\size footnotesize 
-   result = PyString_AsString(a_str);
-\layout LyX-Code
-
-
-\size footnotesize 
-   printf("%s
-\backslash 
-n", result);
-\layout LyX-Code
-
-
-\size footnotesize 
-   Py_DECREF(a_str);
-\layout LyX-Code
-
-
-\size footnotesize 
-   Py_Finalize();
-\layout LyX-Code
-
-
-\size footnotesize 
-} 
+}
 \layout Caption
 
 
@@ -1443,6 +1483,14 @@ __builtin__
 \family typewriter 
 str
 \family default 
+: obtêm-se uma referência ao módulo com 
+\family typewriter 
+PyImport_AddModule
+\family default 
+ e em seguida o dicionário do módulo com 
+\family typewriter 
+PyModule_GetDict
+\family default 
 .
  Funções C chamadas a partir de Python não recebem referências ao ambiente
  além dos parâmetros da chamada da função (que podem incluir o objeto 
@@ -1465,7 +1513,7 @@ O armazenamento de dados de C no espaço de objetos de Python pode ser feito
 \family typewriter 
 CObject
 \family default 
- a partir de um ponteiro C qualquer, construindo assim um valor opaco para
+ encapsulando um ponteiro C qualquer, construindo assim um valor opaco para
  Python.
  As funções de construção deste tipo, 
 \family typewriter 
@@ -1495,9 +1543,16 @@ s têm como objetivo principal permitir a passagem de dados em C de um módulo
 .
 \layout Standard
 
+
+\color red
 A outra forma consiste em declarar novos tipos Python através de estruturas
  em C.
- Para isto, deve-se definir uma 
+ Para isso, define-se um tipo........................
+\layout Standard
+
+
+\color red
+Para isto, deve-se definir uma 
 \emph on 
 struct
 \emph default 
@@ -2151,8 +2206,9 @@ FromReflectedField
 
 
 \begin_inset Float figure
+placement tb
 wide false
-collapsed true
+collapsed false
 
 \layout LyX-Code
 
@@ -3053,6 +3109,29 @@ contextos
 \emph default 
  de Perl, onde um mesmo valor pode ser tratado como lista (array ou hash)
  ou escalar dependendo da expressão onde ele é inserido.
+ Em código Perl, o contexto em que uma função está executando pode ser verificad
+o com 
+\family typewriter 
+wantarray
+\family default 
+.
+ Em C, o contexto pode ser verificado com a macro 
+\family typewriter 
+GIMME_V
+\family default 
+, que retorna 
+\family typewriter 
+G_VOID
+\family default 
+, 
+\family typewriter 
+G_SCALAR
+\family default 
+ ou 
+\family typewriter 
+G_ARRAY
+\family default 
+.
 \layout Standard
 
 Valores são obtidos a partir do espaço de Perl com 
@@ -4114,8 +4193,9 @@ PopLocalFrame
 
 
 \begin_inset Float figure
+placement tb
 wide false
-collapsed true
+collapsed false
 
 \layout LyX-Code
 
@@ -4760,14 +4840,11 @@ flags
  já que as estruturas não são opacas.
 \layout Section
 
-Chamada de funções
+Chamada de funções a partir de C
 \layout Standard
 
-Para permitir a invocação de funções C a partir de código executado na máquina
- virtual, a FLI deve fornecer uma forma de registrar estas funções no ambiente
- de execução.
- De forma análoga, a FLI deve prover uma forma de invocar a partir de C
- funções a serem executadas na máquina virtual.
+A FLI deve prover uma forma de invocar a partir de C funções a serem executadas
+ na máquina virtual.
  Isto envolve a passagem de dados entre estes dois 
 \begin_inset Quotes eld
 \end_inset 
@@ -4788,10 +4865,899 @@ espaços
 \end_inset 
 
 .
- 
+ Devido à tipagem estática de C, não é possível usar uma sintaxe transparente
+ para chamada de funções registradas em tempo de execução.
+ É necessário então que a API defina funções para realizar chamadas na máquina
+ virtual.
+\layout Subsection
+
+Python
 \layout Standard
 
-Em linguagens de tipagem estática como Java, para que seja possível chamar
+
+\emph on 
+\color red
+[introduzir a discussão sobre tuplas nesta subseção]
+\layout Standard
+
+Para chamar uma função Python a partir de C, deve-se inicialmente obter
+ um ponteiro para o 
+\family typewriter 
+PyObject
+\family default 
+ correspondente à função, como visto na Seção 
+\begin_inset LatexCommand \ref{sub:Dados-Python}
+
+\end_inset 
+
+.
+ Além de funções implementadas em Python e funções C registradas a partir
+ da API, qualquer tipo de dado que implemente o método 
+\family typewriter 
+__call__
+\family default 
+ (ou declare uma função no campo 
+\family typewriter 
+tp_call
+\family default 
+ de sua estrutura 
+\family typewriter 
+PyTypeObject
+\family default 
+) pode ser chamado como uma função, e retornará 1 em 
+\family typewriter 
+PyCallable_Check
+\family default 
+.
+\layout Standard
+
+A API de Python oferece diversas funções para realização de chamadas a partir
+ de C.
+ A chamada mais geral, 
+\family typewriter 
+PyObject_Call
+\family default 
+, recebe como parâmetros o objeto a ser chamado, uma tupla de parâmetros
+ e um dicionário de argumentos 
+\emph on 
+keyword
+\emph default 
+.
+ Como conveniência, outras funções permitem passar os argumentos de outras
+ formas.
+ 
+\family typewriter 
+PyObject_CallFunction
+\family default 
+ encapsula a chamada a 
+\family typewriter 
+Py_BuildValue
+\family default 
+, aceitando diretamente a string de formato desta e os valores a serem convertid
+os diretamente.
+ 
+\family typewriter 
+PyObject_CallFunctionObjArgs
+\family default 
+ é outra função 
+\emph on 
+vararg
+\emph default 
+ que aceita um objeto chamável qualquer seguido de uma seqüência terminada
+ por 
+\family typewriter 
+NULL
+\family default 
+ de ponteiros para 
+\family typewriter 
+PyObject
+\family default 
+s.
+ 
+\family typewriter 
+PyObject_CallMethod
+\family default 
+ e 
+\family typewriter 
+PyObject_CallMethodObjArgs
+\family default 
+ são funções análogas que recebem ao invés de um objeto chamável como primeiro
+ parâmetro, um objeto qualquer e uma string contendo o nome de um atributo
+ deste objeto que corresponda a um objeto chamável, poupando uma chamada
+ a 
+\family typewriter 
+PyObject_GetItem
+\family default 
+.
+\layout Subsection
+
+Ruby
+\layout Standard
+
+
+\emph on 
+\color red
+[introduzir a discussão sobre blocos nesta subseção]
+\layout Standard
+
+Para a chamada de métodos Ruby em C, a API oferece a função 
+\family typewriter 
+rb_funcall
+\family default 
+ e algumas variantes.
+ Todas recebem como parâmetro o 
+\family typewriter 
+VALUE
+\family default 
+ referente ao objeto sobre o qual o método se refere, um 
+\family typewriter 
+ID
+\family default 
+ referente à string internalizada contendo o nome do método e um inteiro
+ indicando o número de argumentos.
+ Funções globais em Ruby são definidas como métodos do módulo 
+\family typewriter 
+Kernel
+\family default 
+, que é incluído pela classe 
+\family typewriter 
+Object
+\family default 
+ e são, assim, acessíveis a partir de qualquer objeto, incluindo 
+\family typewriter 
+nil
+\family default 
+.
+ como atalho pode-se invocar funções globais passando a constante C 
+\family typewriter 
+Qnil
+\family default 
+ como o objeto alvo do método.
+\layout Standard
+
+A função 
+\family typewriter 
+rb_funcall
+\family default 
+ recebe os argumentos na forma de varargs C; 
+\family typewriter 
+VALUE
+\family default 
+s passados como parâmetros adicionais; 
+\family typewriter 
+rb_funcall2
+\family default 
+ recebe um array C de 
+\family typewriter 
+VALUE
+\family default 
+s (
+\family typewriter 
+rb_funcall3
+\family default 
+ é idêntica a 
+\family typewriter 
+rb_funcall2
+\family default 
+, mas não chama métodos privados); 
+\family typewriter 
+rb_apply
+\family default 
+ recebe um 
+\family typewriter 
+VALUE
+\family default 
+ que deve ser um array Ruby contendo os parâmetros.
+ Todas retornam um 
+\family typewriter 
+VALUE
+\family default 
+ como parâmetro.
+\layout Subsection
+
+Java
+\layout Standard
+
+De forma similar ao acesso a atributos, na chamada de métodos deve-se inicialmen
+te obter um identificador para o método, do tipo 
+\family typewriter 
+jmethodID
+\family default 
+.
+ Estes identificadores são tipicamente obtidos com a função GetMethodID,
+ que recebe como parâmetros a classe (instância de 
+\family typewriter 
+jclass
+\family default 
+) e duas strings, uma com o nome do método e outra que descreve a assinatura
+ do método.
+ A sintaxe que descreve assinaturas de método é similar à de descritores
+ de campos discutida na Seção 
+\begin_inset LatexCommand \ref{sub:Dados-Java}
+
+\end_inset 
+
+.
+ Parâmetros são listados entre parênteses, seguidos do tipo de retorno.
+ Por exemplo, 
+\family typewriter 
+"([Ljava/lang/String;II)V"
+\family default 
+ indica uma função com parâmetros 
+\family typewriter 
+String[], int, int
+\family default 
+ e retorno 
+\family typewriter 
+void
+\family default 
+.
+ Alternativamente, a partir de Java 1.2 é possível obter um 
+\family typewriter 
+jmethodID
+\family default 
+ correspondente a um objeto Java do tipo 
+\family typewriter 
+Method
+\family default 
+ -- isto é, um método reificado através da API de reflexão de Java -- usando
+ a função 
+\family typewriter 
+FromReflectedMethod
+\family default 
+.
+\layout Standard
+
+Uma vez obtido o 
+\family typewriter 
+jmethodID
+\family default 
+, um método pode ser invocado através de alguma das 90 funções da família
+ 
+\family typewriter 
+Call
+\family default 
+*
+\family typewriter 
+Method
+\family default 
+*.
+ Os nomes das funções seguem a forma
+\layout LyX-Code
+
+Call
+\family roman 
+\emph on 
+<tipo><retorno>
+\family default 
+\emph default 
+Method
+\family roman 
+\emph on 
+<argumentos>
+\layout Standard
+
+O 
+\emph on 
+<tipo>
+\emph default 
+ pode ser 
+\family typewriter 
+Static
+\family default 
+ para funções estáticas, recebendo na chamada uma 
+\family typewriter 
+jclass
+\family default 
+ como parâmetro; 
+\family typewriter 
+Nonvirtual
+\family default 
+ para invocar implementações de um método em uma classe específica sobre
+ um determinado objeto, passando uma 
+\family typewriter 
+jclass
+\family default 
+ e um 
+\family typewriter 
+jobject
+\family default 
+ como parâmetros; ou omitido para métodos de instância, passando o 
+\family typewriter 
+jobject
+\family default 
+ sobre o qual o método será aplicado.
+ O tipo de retorno é indicado em 
+\emph on 
+<retorno>
+\emph default 
+: 
+\family typewriter 
+Void
+\family default 
+ para funções sem retorno; 
+\family typewriter 
+Object
+\family default 
+ para funções que retornam tipos de referência (objetos, strings e arrays);
+ ou nomes como 
+\family typewriter 
+Int
+\family default 
+ e 
+\family typewriter 
+Float
+\family default 
+ indicando funções que retornam tipos primitivos.
+ Para os argumentos passados para o método, pode-se utilizar três formas:
+ passando-os como 
+\emph on 
+varargs
+\emph default 
+, indicada omitindo a parte 
+\emph on 
+<argumentos>
+\emph default 
+ do nome da função; como um array de 
+\family typewriter 
+jvalue
+\family default 
+s, usando 
+\family typewriter 
+A
+\family default 
+ em 
+\emph on 
+<argumentos>
+\emph default 
+; ou propagando uma 
+\family typewriter 
+va_list
+\family default 
+ recebida com 
+\family typewriter 
+V
+\family default 
+ em 
+\emph on 
+<argumentos>
+\emph default 
+.
+ Por exemplo, na forma mais simples, um método de instância sem retorno
+ e sem parâmetros é invocado com 
+\family typewriter 
+CallVoidMethod
+\family default 
+.
+ Já 
+\family typewriter 
+CallStaticIntMethodA
+\family default 
+ chama um método estático que retorna um 
+\family typewriter 
+jint
+\family default 
+ com a lista de parâmetros passada em um array de 
+\family typewriter 
+jvalue
+\family default 
+s.
+\layout Standard
+
+É importante notar que, ao obter identificadores de métodos e campos fazendo
+ a resolução a partir do 
+\family typewriter 
+jobject
+\family default 
+ recebido na variável 
+\family typewriter 
+this
+\family default 
+ e do nome do método ou campo, com 
+\family typewriter 
+GetObjectClass
+\family default 
+ e 
+\family typewriter 
+GetFieldID
+\family default 
+, se está efetivamente resolvendo variáveis através de escopo dinâmico.
+ Isso implica que, por exemplo, caso um método 
+\family typewriter 
+Pai.metodo
+\family default 
+ implementado em C acesse um atributo privado 
+\family typewriter 
+umAtributo
+\family default 
+ e uma subclasse 
+\family typewriter 
+Filho
+\family default 
+ também defina um atributo privado 
+\family typewriter 
+umAtributo
+\family default 
+, a chamada a esse método em uma instância 
+\family typewriter 
+f
+\family default 
+ de 
+\family typewriter 
+Filho
+\family default 
+ acabaria por acessar 
+\family typewriter 
+Filho.umAtributo
+\family default 
+ e não 
+\family typewriter 
+Pai.umAtributo
+\family default 
+.
+ Este comportamento é diferente do que ocorreria se 
+\family typewriter 
+Pai.metodo
+\family default 
+ fosse implementado em Java, onde o 
+\emph on 
+binding
+\emph default 
+ dos métodos e atributos privados é definido lexicamente.
+ Para garantir à implementação em C de 
+\family typewriter 
+Pai.metodo
+\family default 
+ que o atributo 
+\family typewriter 
+umAtributo
+\family default 
+ acessado é realmente 
+\family typewriter 
+Pai.umAtributo
+\family default 
+, deve-se armazenar no espaço de C o identificador do campo obtido a partir
+ da 
+\family typewriter 
+jclass
+\family default 
+ de 
+\family typewriter 
+Pai
+\family default 
+ -- obtida, por exemplo, em uma função 
+\family typewriter 
+static native
+\family default 
+.
+ 
+\layout Subsection
+
+Lua
+\layout Standard
+
+Tanto em funções C disparadas por Lua como em chamadas de funções Lua realizadas
+ a partir de código C, os parâmetros de entrada e saída são passados através
+ da pilha virtual apresentada na Seção 
+\begin_inset LatexCommand \ref{sub:Lua-dados}
+
+\end_inset 
+
+.
+ Ao início da função C, o primeiro elemento na pilha de Lua é o primeiro
+ argumento, e assim por diante.
+ O valor de retorno passado pela função C indicará quantos argumentos devem
+ ser retornados a Lua; o elemento no topo da pilha conterá o último valor
+ de retorno, o seguinte o penúltimo e assim sucessivamente (em outras palavras,
+ os valores de retorno devem ser empilhados em ordem).
+\layout Standard
+
+Uma função é invocada em Lua empilhando-se a 
+\family typewriter 
+function
+\family default 
+ e os seus parâmetros e em seguida invocando 
+\family typewriter 
+lua_call
+\family default 
+ ou 
+\family typewriter 
+lua_pcall
+\family default 
+.
+ A diferença entre as duas funções está no tratamento de erros: 
+\family typewriter 
+lua_call
+\family default 
+ propaga os erros sinalizados, usando 
+\family typewriter 
+longjmp
+\family default 
+; 
+\family typewriter 
+lua_pcall
+\family default 
+ os captura os erros, retornando um código de 
+\emph on 
+status
+\emph default 
+ e a mensagem de erro na pilha.
+ No caso de execução sem erros, a pilha conterá os valores de retorno da
+ função chamada.
+ O número de valores de retorno pode ser explicitamente requisitado na chamada
+ da função ou definido em tempo de execução, requisitando o valor especial
+ 
+\family typewriter 
+LUA_MULTRET
+\family default 
+.
+ A função 
+\family typewriter 
+lua_cpcall
+\family default 
+ permite chamar funções C do tipo 
+\family typewriter 
+lua_CFunction
+\family default 
+ realizando captura de erros de forma similar a 
+\family typewriter 
+lua_pcall
+\family default 
+ sem precisar produzir um valor do tipo 
+\family typewriter 
+function
+\family default 
+ na pilha de Lua.
+\layout Subsection
+
+Perl
+\begin_inset LatexCommand \label{sub:Perl-call}
+
+\end_inset 
+
+
+\layout Standard
+
+A chamada de funções Perl a partir de C se dá através de uma disciplina
+ de pilha, como em Lua.
+ Parâmetros de entrada são especificados através de operações de empilhamento
+ e valores de retorno são obtidos na pilha após a chamada da função.
+ As funções 
+\family typewriter 
+call_sv
+\family default 
+, 
+\family typewriter 
+call_pv
+\family default 
+ e 
+\family typewriter 
+call_method
+\family default 
+ variam apenas na forma como a função a ser chamada é especificada: através
+ de um SV, de uma string C ou de uma string C descrevendo o nome de um método
+ de um objeto ou classe previamente inserido na pilha.
+ A função 
+\family typewriter 
+call_argv
+\family default 
+, como conveniência, recebe como um argumento adicional um array C contendo
+ strings C representando parâmetros a serem empilhados.
+ Todas retornam o número de valores de retorno disponíveis na pilha.
+\layout Standard
+
+As funções 
+\family typewriter 
+call_
+\family default 
+* possuem um argumento indicando flags a serem passadas que indicam a forma
+ que a função deve ser chamada e como tratar os argumentos e valores de
+ retorno.
+ 
+\family typewriter 
+G_VOID
+\family default 
+, 
+\family typewriter 
+G_SCALAR
+\family default 
+ e 
+\family typewriter 
+G_ARRAY
+\family default 
+ especificam um contexto como a função deve ser chamada.
+ Em contextos escalares, por exemplo, somente um escalar é retornado na
+ pilha; se a função chamada retornar uma lista, somente o último elemento
+ desta estará disponível na pilha.
+ 
+\family typewriter 
+G_DISCARD
+\family default 
+ indica que os valores de retorno devem ser automaticamente descartados;
+ 
+\family typewriter 
+G_NOARGS
+\family default 
+ indica que o array padrão de parâmetros 
+\family typewriter 
+@_
+\family default 
+ não deve ser construído
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Isto tem o efeito colateral de que a função chamada herda o valor de 
+\family typewriter 
+@_
+\family default 
+ da função chamadora.
+\end_inset 
+
+.
+ 
+\family typewriter 
+G_EVAL
+\family default 
+ encapsula a chamada em um bloco 
+\family typewriter 
+eval
+\family default 
+, capturando erros.
+ A ocorrência de erros pode ser verificada através da macro 
+\family typewriter 
+ERRSV
+\family default 
+, que se refere a um escalar contendo a mensagem de erro.
+ Acrescentando a flag 
+\family typewriter 
+G_KEEPERR
+\family default 
+, o valor da variável de retorno contendo a mensagem de erro não é zerado,
+ acumulando seqüências de erros em níveis de chamada diferentes.
+\layout Standard
+
+
+\begin_inset Float figure
+wide false
+collapsed false
+
+\layout LyX-Code
+
+
+\size footnotesize 
+int foo_perl(int a, int b) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   int result;
+\layout LyX-Code
+
+
+\size footnotesize 
+   dSP;
+\layout LyX-Code
+
+
+\size footnotesize 
+   ENTER;
+\layout LyX-Code
+
+
+\size footnotesize 
+   SAVETMPS;
+\layout LyX-Code
+
+
+\size footnotesize 
+   PUSHMARK(SP);
+\layout LyX-Code
+
+
+\size footnotesize 
+   XPUSHs(sv_2mortal(newSViv(a)));
+\layout LyX-Code
+
+
+\size footnotesize 
+   XPUSHs(sv_2mortal(newSViv(b)));
+\layout LyX-Code
+
+
+\size footnotesize 
+   PUTBACK;
+\layout LyX-Code
+
+
+\size footnotesize 
+   call_pv("foo", G_SCALAR);
+\layout LyX-Code
+
+
+\size footnotesize 
+   SPAGAIN;
+\layout LyX-Code
+
+
+\size footnotesize 
+   result = POPi;
+\layout LyX-Code
+
+
+\size footnotesize 
+   PUTBACK;
+\layout LyX-Code
+
+
+\size footnotesize 
+   FREETMPS;
+\layout LyX-Code
+
+
+\size footnotesize 
+   LEAVE;
+\layout LyX-Code
+
+
+\size footnotesize 
+   return result;
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Caption
+
+
+\begin_inset LatexCommand \label{cap:Perl-call-foo}
+
+\end_inset 
+
+Chamada de uma função Perl a partir de C.
+\end_inset 
+
+
+\layout Standard
+
+Uma série de macros descrevem um protocolo para a chamada de funções e a
+ manipulação de parâmetros de entrada e saída.
+ A Figura 
+\begin_inset LatexCommand \ref{cap:Perl-call-foo}
+
+\end_inset 
+
+ descreve a seqüência de uma chamada de função.
+ Inicialmente 
+\family typewriter 
+dSP
+\family default 
+ declara uma cópia local do ponteiro da pilha de Perl.
+ Em seguida, 
+\family typewriter 
+ENTER
+\family default 
+ e 
+\family typewriter 
+SAVETMPS
+\family default 
+ criam um escopo para valores mortais.
+ 
+\family typewriter 
+PUSHMARK
+\family default 
+ inicia a contagem de parâmetros a serem passados para a função.
+ Estes parâmetros são então empilhados com 
+\family typewriter 
+XPUSHs
+\family default 
+.
+ Os valores criados com 
+\family typewriter 
+newSViv
+\family default 
+ são convertidos para valores mortais com 
+\family typewriter 
+sv_2mortal
+\family default 
+, para que não tenham que ter sua contagem de referências decrementada explicita
+mente após a chamada da função.
+ 
+\family typewriter 
+PUTBACK
+\family default 
+ encerra a contagem de parâmetros.
+ É feita então a chamada da função Perl 
+\family typewriter 
+foo
+\family default 
+, em contexto escalar, com 
+\family typewriter 
+call_pv
+\family default 
+.
+\layout Standard
+
+Após o retorno desta função, a memória da pilha de Perl pode ter sido realocada,
+ mudando o endereço do ponteiro de pilha obtido inicialmente com 
+\family typewriter 
+dSP
+\family default 
+.
+ Para certificar-se que o seu valor está correto, deve-se chamar 
+\family typewriter 
+SPAGAIN
+\family default 
+ após funções 
+\family typewriter 
+call_
+\family default 
+*.
+ A função 
+\family typewriter 
+POPi
+\family default 
+ desempilha um valor e o converte para 
+\family typewriter 
+int
+\family default 
+.
+ Há funções análogas 
+\family typewriter 
+POPs
+\family default 
+ para 
+\family typewriter 
+SV
+\family default 
+s, 
+\family typewriter 
+POPp
+\family default 
+ para strings, 
+\family typewriter 
+POPn
+\family default 
+ e 
+\family typewriter 
+POPl
+\family default 
+ para 
+\family typewriter 
+double
+\family default 
+s e 
+\family typewriter 
+long
+\family default 
+s.
+ Estas operações desempilham valores atualizando a cópia local do ponteiro
+ de pilha.
+ Assim, 
+\family typewriter 
+PUTBACK
+\family default 
+ deve ser chamado novamente para atualizar o ponteiro global.
+ Finalmente, 
+\family typewriter 
+FREETMPS
+\family default 
+ e 
+\family typewriter 
+LEAVE
+\family default 
+ decrementam a contagem de referências dos valores mortais.
+ 
+\layout Section
+
+Registro de funções C
+\layout Standard
+
+Para permitir a invocação de funções C a partir de código executado na máquina
+ virtual, a FLI deve fornecer uma forma de registrar estas funções no ambiente
+ de execução.
+ Em linguagens de tipagem estática como Java, para que seja possível chamar
  funções externas usando uma sintaxe igual à de funções nativas, o conjunto
  de funções externas deve ser declarado 
 \emph on 
@@ -4803,12 +5769,6 @@ a priori
  em algum momento da execução antes de sua chamada.
  Assim, pode-se declarar as funções externas em tempo de execução através
  de código C usando a API da máquina virtual.
- Para o caso de funções implementadas na linguagem externa a serem chamadas
- a partir de C, tem-se que a FLI da linguagem externa deve normalmente permitir
- a definição de chamadas em tempo de execução.
- Assim, devido à tipagem estática de C, não é possível usar uma sintaxe
- transparente, havendo então chamadas na FLI para realizar invocação de
- funções.
 \layout Subsection
 
 Python
@@ -4956,175 +5916,9 @@ PyObject* lista = Py_BuildValue("[id{si}]", 123, 12.30, "foo", 1234);
 Esta função é útil tanto para para construir tuplas em funções C que desejem
  passar múltiplos valores de retorno de volta a Python, como para construir
  a tupla de parâmetros ao chamar funções Python a partir de C.
-\layout Standard
-
-Para chamar uma função Python a partir de C, deve-se inicialmente obter
- um ponteiro para o 
-\family typewriter 
-PyObject
-\family default 
- correspondente à função, como visto na Seção 
-\begin_inset LatexCommand \ref{sub:Dados-Python}
-
-\end_inset 
-
-.
- Além de funções implementadas em Python e funções C registradas a partir
- da API, qualquer tipo de dado que implemente o método 
-\family typewriter 
-__call__
-\family default 
- (ou declare uma função no campo 
-\family typewriter 
-tp_call
-\family default 
- de sua estrutura 
-\family typewriter 
-PyTypeObject
-\family default 
-) pode ser chamado como uma função, e retornará 1 em 
-\family typewriter 
-PyCallable_Check
-\family default 
-.
-\layout Standard
-
-A API de Python oferece diversas funções para realização de chamadas a partir
- de C.
- A chamada mais geral, 
-\family typewriter 
-PyObject_Call
-\family default 
-, recebe como parâmetros o objeto a ser chamado, uma tupla de parâmetros
- e um dicionário de argumentos 
-\emph on 
-keyword
-\emph default 
-.
- Como conveniência, outras funções permitem passar os argumentos de outras
- formas.
- 
-\family typewriter 
-PyObject_CallFunction
-\family default 
- encapsula a chamada a 
-\family typewriter 
-Py_BuildValue
-\family default 
-, aceitando diretamente a string de formato desta e os valores a serem convertid
-os diretamente.
- 
-\family typewriter 
-PyObject_CallFunctionObjArgs
-\family default 
- é outra função 
-\emph on 
-vararg
-\emph default 
- que aceita um objeto chamável qualquer seguido de uma seqüência terminada
- por 
-\family typewriter 
-NULL
-\family default 
- de ponteiros para 
-\family typewriter 
-PyObject
-\family default 
-s.
- 
-\family typewriter 
-PyObject_CallMethod
-\family default 
- e 
-\family typewriter 
-PyObject_CallMethodObjArgs
-\family default 
- são funções análogas que recebem ao invés de um objeto chamável como primeiro
- parâmetro, um objeto qualquer e uma string contendo o nome de um atributo
- deste objeto que corresponda a um objeto chamável, poupando uma chamada
- a 
-\family typewriter 
-PyObject_GetItem
-\family default 
-.
 \layout Subsection
 
 Ruby
-\layout Standard
-
-Para a chamada de métodos Ruby em C, a API oferece a função 
-\family typewriter 
-rb_funcall
-\family default 
- e algumas variantes.
- Todas recebem como parâmetro o 
-\family typewriter 
-VALUE
-\family default 
- referente ao objeto sobre o qual o método se refere, um 
-\family typewriter 
-ID
-\family default 
- referente à string internalizada contendo o nome do método e um inteiro
- indicando o número de argumentos.
- Funções globais em Ruby são definidas como métodos do módulo 
-\family typewriter 
-Kernel
-\family default 
-, que é incluído pela classe 
-\family typewriter 
-Object
-\family default 
- e são, assim, acessíveis a partir de qualquer objeto, incluindo 
-\family typewriter 
-nil
-\family default 
-.
- como atalho pode-se invocar funções globais passando a constante C 
-\family typewriter 
-Qnil
-\family default 
- como o objeto alvo do método.
-\layout Standard
-
-A função 
-\family typewriter 
-rb_funcall
-\family default 
- recebe os argumentos na forma de varargs C; 
-\family typewriter 
-VALUE
-\family default 
-s passados como parâmetros adicionais; 
-\family typewriter 
-rb_funcall2
-\family default 
- recebe um array C de 
-\family typewriter 
-VALUE
-\family default 
-s (
-\family typewriter 
-rb_funcall3
-\family default 
- é idêntica a 
-\family typewriter 
-rb_funcall2
-\family default 
-, mas não chama métodos privados); 
-\family typewriter 
-rb_apply
-\family default 
- recebe um 
-\family typewriter 
-VALUE
-\family default 
- que deve ser um array Ruby contendo os parâmetros.
- Todas retornam um 
-\family typewriter 
-VALUE
-\family default 
- como parâmetro.
 \layout Standard
 
 Para que funções C possam ser chamadas a partir de Ruby, elas devem ser
@@ -5638,281 +6432,6 @@ longjmp
 Java
 \layout Standard
 
-De forma similar ao acesso a atributos, na chamada de métodos deve-se inicialmen
-te obter um identificador para o método, do tipo 
-\family typewriter 
-jmethodID
-\family default 
-.
- Estes identificadores são tipicamente obtidos com a função GetMethodID,
- que recebe como parâmetros a classe (instância de 
-\family typewriter 
-jclass
-\family default 
-) e duas strings, uma com o nome do método e outra que descreve a assinatura
- do método.
- A sintaxe que descreve assinaturas de método é similar à de descritores
- de campos discutida na Seção 
-\begin_inset LatexCommand \ref{sub:Dados-Java}
-
-\end_inset 
-
-.
- Parâmetros são listados entre parênteses, seguidos do tipo de retorno.
- Por exemplo, 
-\family typewriter 
-"([Ljava/lang/String;II)V"
-\family default 
- indica uma função com parâmetros 
-\family typewriter 
-String[], int, int
-\family default 
- e retorno 
-\family typewriter 
-void
-\family default 
-.
- Alternativamente, a partir de Java 1.2 é possível obter um 
-\family typewriter 
-jmethodID
-\family default 
- correspondente a um objeto Java do tipo 
-\family typewriter 
-Method
-\family default 
- -- isto é, um método reificado através da API de reflexão de Java -- usando
- a função 
-\family typewriter 
-FromReflectedMethod
-\family default 
-.
-\layout Standard
-
-Uma vez obtido o 
-\family typewriter 
-jmethodID
-\family default 
-, um método pode ser invocado através de alguma das 90 funções da família
- 
-\family typewriter 
-Call
-\family default 
-*
-\family typewriter 
-Method
-\family default 
-*.
- Os nomes das funções seguem a forma
-\layout LyX-Code
-
-Call
-\family roman 
-\emph on 
-<tipo><retorno>
-\family default 
-\emph default 
-Method
-\family roman 
-\emph on 
-<argumentos>
-\layout Standard
-
-O 
-\emph on 
-<tipo>
-\emph default 
- pode ser 
-\family typewriter 
-Static
-\family default 
- para funções estáticas, recebendo na chamada uma 
-\family typewriter 
-jclass
-\family default 
- como parâmetro; 
-\family typewriter 
-Nonvirtual
-\family default 
- para invocar implementações de um método em uma classe específica sobre
- um determinado objeto, passando uma 
-\family typewriter 
-jclass
-\family default 
- e um 
-\family typewriter 
-jobject
-\family default 
- como parâmetros; ou omitido para métodos de instância, passando o 
-\family typewriter 
-jobject
-\family default 
- sobre o qual o método será aplicado.
- O tipo de retorno é indicado em 
-\emph on 
-<retorno>
-\emph default 
-: 
-\family typewriter 
-Void
-\family default 
- para funções sem retorno; 
-\family typewriter 
-Object
-\family default 
- para funções que retornam tipos de referência (objetos, strings e arrays);
- ou nomes como 
-\family typewriter 
-Int
-\family default 
- e 
-\family typewriter 
-Float
-\family default 
- indicando funções que retornam tipos primitivos.
- Para os argumentos passados para o método, pode-se utilizar três formas:
- passando-os como 
-\emph on 
-varargs
-\emph default 
-, indicada omitindo a parte 
-\emph on 
-<argumentos>
-\emph default 
- do nome da função; como um array de 
-\family typewriter 
-jvalue
-\family default 
-s, usando 
-\family typewriter 
-A
-\family default 
- em 
-\emph on 
-<argumentos>
-\emph default 
-; ou propagando uma 
-\family typewriter 
-va_list
-\family default 
- recebida com 
-\family typewriter 
-V
-\family default 
- em 
-\emph on 
-<argumentos>
-\emph default 
-.
- Por exemplo, na forma mais simples, um método de instância sem retorno
- e sem parâmetros é invocado com 
-\family typewriter 
-CallVoidMethod
-\family default 
-.
- Já 
-\family typewriter 
-CallStaticIntMethodA
-\family default 
- chama um método estático que retorna um 
-\family typewriter 
-jint
-\family default 
- com a lista de parâmetros passada em um array de 
-\family typewriter 
-jvalue
-\family default 
-s.
-\layout Standard
-
-É importante notar que, ao obter identificadores de métodos e campos fazendo
- a resolução a partir do 
-\family typewriter 
-jobject
-\family default 
- recebido na variável 
-\family typewriter 
-this
-\family default 
- e do nome do método ou campo, com 
-\family typewriter 
-GetObjectClass
-\family default 
- e 
-\family typewriter 
-GetFieldID
-\family default 
-, se está efetivamente resolvendo variáveis através de escopo dinâmico.
- Isso implica que, por exemplo, caso um método 
-\family typewriter 
-Pai.metodo
-\family default 
- implementado em C acesse um atributo privado 
-\family typewriter 
-umAtributo
-\family default 
- e uma subclasse 
-\family typewriter 
-Filho
-\family default 
- também defina um atributo privado 
-\family typewriter 
-umAtributo
-\family default 
-, a chamada a esse método em uma instância 
-\family typewriter 
-f
-\family default 
- de 
-\family typewriter 
-Filho
-\family default 
- acabaria por acessar 
-\family typewriter 
-Filho.umAtributo
-\family default 
- e não 
-\family typewriter 
-Pai.umAtributo
-\family default 
-.
- Este comportamento é diferente do que ocorreria se 
-\family typewriter 
-Pai.metodo
-\family default 
- fosse implementado em Java, onde o 
-\emph on 
-binding
-\emph default 
- dos métodos e atributos privados é definido lexicamente.
- Para garantir à implementação em C de 
-\family typewriter 
-Pai.metodo
-\family default 
- que o atributo 
-\family typewriter 
-umAtributo
-\family default 
- acessado é realmente 
-\family typewriter 
-Pai.umAtributo
-\family default 
-, deve-se armazenar no espaço de C o identificador do campo obtido a partir
- da 
-\family typewriter 
-jclass
-\family default 
- de 
-\family typewriter 
-Pai
-\family default 
- -- obtida, por exemplo, em uma função 
-\family typewriter 
-static native
-\family default 
-.
- 
-\layout Standard
-
 Métodos não implementados em Java devem ser declarados através de um protótipo
  incluindo o modificador 
 \family typewriter 
@@ -5984,22 +6503,6 @@ core
 lua_State
 \family default 
  como primeiro parâmetro.
-\layout Standard
-
-Tanto em funções C disparadas por Lua como em chamadas de funções Lua realizadas
- a partir de código C, os parâmetros de entrada e saída são passados através
- da pilha virtual apresentada na Seção 
-\begin_inset LatexCommand \ref{sub:Lua-dados}
-
-\end_inset 
-
-.
- Ao início da função C, o primeiro elemento na pilha de Lua é o primeiro
- argumento, e assim por diante.
- O valor de retorno passado pela função C indicará quantos argumentos devem
- ser retornados a Lua; o elemento no topo da pilha conterá o último valor
- de retorno, o seguinte o penúltimo e assim sucessivamente (em outras palavras,
- os valores de retorno devem ser empilhados em ordem).
 \layout Standard
 
 Como em funções Lua, não há verificação sobre o número de argumentos passados
@@ -6116,77 +6619,9 @@ luaL_register
 luaL_Reg
 \family default 
 , contendo nomes e ponteiros de função.
-\layout Standard
-
-Uma função é invocada em lua empilhando-se a 
-\family typewriter 
-function
-\family default 
- e os seus parâmetros e em seguida invocando 
-\family typewriter 
-lua_call
-\family default 
- ou 
-\family typewriter 
-lua_pcall
-\family default 
-.
- A diferença entre as duas funções está no tratamento de erros: lua_call
- propaga os erros sinalizados, usando 
-\family typewriter 
-longjmp
-\family default 
-; 
-\family typewriter 
-lua_pcall
-\family default 
- os captura os erros, retornando um código de 
-\emph on 
-status
-\emph default 
- e a mensagem de erro na pilha.
- No caso de execução sem erros, a pilha conterá os valores de retorno da
- função chamada.
- O número de valores de retorno pode ser explicitamente requisitado na chamada
- da função ou definido em tempo de execução, requisitando o valor especial
- 
-\family typewriter 
-LUA_MULTRET
-\family default 
-.
- A função 
-\family typewriter 
-lua_cpcall
-\family default 
- permite chamar funções C do tipo 
-\family typewriter 
-lua_CFunction
-\family default 
- realizando captura de erros de forma similar a 
-\family typewriter 
-lua_pcall
-\family default 
- sem precisar produzir um valor do tipo 
-\family typewriter 
-function
-\family default 
- na pilha de Lua.
 \layout Subsection
 
 Perl
-\begin_inset LatexCommand \label{sub:Perl-call}
-
-\end_inset 
-
-
-\layout Standard
-
-\layout Standard
-
-
-\emph on 
-\color red
-como chamar uma função L em C
 \layout Standard
 
 
