@@ -1547,57 +1547,342 @@ s têm como objetivo principal permitir a passagem de dados em C de um módulo
 .
 \layout Standard
 
-A outra forma consiste em declarar novos tipos Python através de estruturas
- em C.
- Para isso, declara-se uma instância da estrutura 
-\family typewriter 
-PyTypeObject
-\family default 
-.
+
+\begin_inset Float figure
+wide false
+collapsed false
+
+\layout LyX-Code
+
+
+\size footnotesize 
+typedef struct {
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyObject_HEAD
+\layout LyX-Code
+
+
+\size footnotesize 
+   int x, y; 
+\layout LyX-Code
+
+
+\size footnotesize 
+} point;
+\layout LyX-Code
+
  
-\layout Standard
+\layout LyX-Code
 
 
-\color red
-Para isto, deve-se definir uma 
+\size footnotesize 
+PyObject* point_distance(point* p) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyObject* d = PyFloat_FromDouble( sqrt(pow(p->x,2)+pow(p->y,2)) );
+\layout LyX-Code
+
+
+\size footnotesize 
+   return d; 
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout LyX-Code
+
+ 
+\layout LyX-Code
+
+
+\size footnotesize 
+static PyMethodDef point_methods[] = {
+\layout LyX-Code
+
+
+\size footnotesize 
+   { "distance", (PyCFunction) point_distance, METH_NOARGS }, { 0 }
+\layout LyX-Code
+
+
+\size footnotesize 
+};
+\layout LyX-Code
+
+ 
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject* point_getattr(PyObject* self, char* name) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   if (strcmp(name, "x") == 0)
+\layout LyX-Code
+
+
+\size footnotesize 
+      return PyInt_FromLong(((point*)self)->x);
+\layout LyX-Code
+
+
+\size footnotesize 
+   else if (strcmp(name, "y") == 0)
+\layout LyX-Code
+
+
+\size footnotesize 
+      return PyInt_FromLong(((point*)self)->y);
+\layout LyX-Code
+
+
+\size footnotesize 
+   else
+\layout LyX-Code
+
+
+\size footnotesize 
+      return Py_FindMethod(point_methods, self, name); 
+\layout LyX-Code
+
+
+\size footnotesize 
+} 
+\layout LyX-Code
+
+ 
+\layout LyX-Code
+
+
+\size footnotesize 
+static PyTypeObject point_type = {
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyObject_HEAD_INIT(NULL)
+\layout LyX-Code
+
+
+\size footnotesize 
+   .tp_name = "point",          .tp_basicsize = sizeof(point),
+\layout LyX-Code
+
+
+\size footnotesize 
+   .tp_getattr = point_getattr, .tp_flags = Py_TPFLAGS_DEFAULT
+\layout LyX-Code
+
+
+\size footnotesize 
+}; 
+\layout LyX-Code
+
+ 
+\layout LyX-Code
+
+
+\size footnotesize 
+void test_point() {
+\layout LyX-Code
+
+
+\size footnotesize 
+   
 \emph on 
-struct
-\emph default 
- C com um cabeçalho definido pela macro 
-\family typewriter 
-PyObject_HEAD
-\family default 
-, seguido de atributos definidos pelo usuário 
-\begin_inset LatexCommand \cite{vanrossum-extpy}
+/* Inicializa o tipo */
+\layout LyX-Code
+
+
+\size footnotesize 
+   point_type.tp_new = PyType_GenericNew;
+\layout LyX-Code
+
+
+\size footnotesize 
+   if (PyType_Ready(&point_type) < 0) return;
+\layout LyX-Code
+
+
+\size footnotesize 
+   
+\emph on 
+/* Cria uma instância deste */
+\layout LyX-Code
+
+
+\size footnotesize 
+   point* a_point = PyObject_New(point, &point_type);
+\layout LyX-Code
+
+
+\size footnotesize 
+   a_point->x = 100; a_point->y = 200;
+\layout LyX-Code
+
+
+\size footnotesize 
+  
+\emph on 
+ /* Armazena a instância na global Python 'P' */
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyObject* globals = PyModule_GetDict(PyImport_AddModule("__main__"));
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyDict_SetItemString(globals, "P", (PyObject*) a_point);
+\layout LyX-Code
+
+
+\size footnotesize 
+   
+\emph on 
+/* Código Python usando o valor */
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyRun_SimpleString( "print 'P.x = ' + str(P.x) 
+\backslash 
+n"
+\layout LyX-Code
+
+
+\size footnotesize 
+                       "print 'P.y = ' + str(P.y) 
+\backslash 
+n"
+\layout LyX-Code
+
+
+\size footnotesize 
+                       "print 'd   = ' + str(P.distance()) 
+\backslash 
+n" );
+\layout LyX-Code
+
+
+\size footnotesize 
+} 
+\layout Caption
+
+
+\begin_inset LatexCommand \label{cap:Tipo-Python-em-C}
 
 \end_inset 
 
-, que será usada para alocar instâncias do novo tipo.
- Em seguida, define-se uma instância de 
+Definição de um tipo Python a partir de C
+\end_inset 
+
+
+\layout Standard
+
+A outra forma consiste em declarar novos tipos Python através de estruturas
+ em C.
+ Em C, um tipo Python é composto de duas partes: um tipo 
+\emph on 
+struct
+\emph default 
+ a partir do qual instâncias do tipo serão produzidas; e uma instância da
+ struct 
 \family typewriter 
 PyTypeObject
 \family default 
-, onde podem-se passar ponteiros para as funções C a serem usadas pelo ambiente
- de execução Python como metamétodos, para operações como 
+, que descreverá o tipo.
+\layout Standard
+
+A 
+\emph on 
+struct
+\emph default 
+ deve possuir equivalência estrutural com 
 \family typewriter 
-__call__
+PyObject
 \family default 
- e 
+, além de quaisquer atributos definidos pelo usuário.
+ Quando funções retornarem o objeto ao código C como um 
+\family typewriter 
+PyObject*
+\family default 
+, este pode ser convertido para o tipo struct específico via cast, dando
+ assim acesso aos atributos adicionais.
+ A menos que o programador implemente métodos para acesso, estes atributos
+ não são visíveis a partir de código Python.
+ 
+\layout Standard
+
+Embora a representação em memória de objetos Python do tipo definido pelo
+ usuário sejam instâncias desta struct, para criar um novo objeto não basta
+ alocar uma instância da struct e convertê-la para 
+\family typewriter 
+PyObject
+\family default 
+ via cast, pois esta não estará registrada no mecanismo de coleta de lixo,
+ nem terá os campos de seu cabeçalho 
+\family typewriter 
+PyObject
+\family default 
+ devidamente inicializados.
+ A alocação em C de novos objetos de um tipo definido pelo usuário deve
+ ser feita através da macro 
+\family typewriter 
+PyObject_New
+\family default 
+, que recebe como parâmetros o tipo da struct a ser alocada e o 
+\family typewriter 
+PyTypeObject
+\family default 
+ correspondente ao tipo.
+\layout Standard
+
+O tipo 
+\family typewriter 
+PyTypeObject
+\family default 
+ contém uma série de campos que permitem descrever o comportamento do tipo
+ declarado.
+ Por exemplo, é possível implementar uma função C para tratar acesso a atributos
+ definindo-a no campo 
+\family typewriter 
+tp_getattr
+\family default 
+, equivalente ao método 
 \family typewriter 
 __getattr__
 \family default 
-.
- Funções C podem ser associadas ao novo tipo como métodos, declarando-os
- em um array de estruturas 
+ de uma classe Python.
+ Desta forma, podemos expor ao ambiente Python atributos armazenados na
+ struct C.
+ A busca de métodos também é feita através de 
 \family typewriter 
-PyMethodDef
+tp_getattr
 \family default 
- no campo 
+: a implementação padrão procura métodos no array 
 \family typewriter 
 tp_methods
 \family default 
 .
- 
+ Caso 
+\family typewriter 
+tp_getattr
+\family default 
+ seja redefinida, a busca de métodos deve ser implementada usando 
+\family typewriter 
+Py_FindMethod
+\family default 
+.
 \layout Subsection
 
 Ruby
