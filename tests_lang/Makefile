@@ -1,16 +1,18 @@
 
-PYTHON_CPPFLAGS = -I/Programs/Python/2.4/include/python2.4
+PYTHON_CPPFLAGS = -I/Programs/Python/Current/include/python2.4
 PYTHON_EXTRA_LDFLAGS = -Xlinker -export-dynamic
 PYTHON_EXTRA_LIBS =  -lpthread -ldl  -lutil
-PYTHON_LDFLAGS = -L/Programs/Python/2.4/lib/python2.4 -lpython2.4
+PYTHON_LDFLAGS = -L/Programs/Python/Current/lib/python2.4 -lpython2.4
 PYTHON_FLAGS = $(PYTHON_CPPFLAGS) $(PYTHON_EXTRA_LDFLAGS) $(PYTHON_EXTRA_LIBS) $(PYTHON_LDFLAGS)
-PYTHON_PROGS = pythonstring pythonconvert pythonbuiltins
+PYTHON_PROGS = pythonstring pythonconvert pythonbuiltins pythontype
 
 JAVA_CFLAGS = -g -shared -I/Programs/JDK/Current/include/linux/
 JAVA = java -Djava.library.path=.
 JAVA_PROGS = libjavatestjni.so javatestjni.h javatestjni.class
 
-RUBY_CFLAGS = -I/Programs/Ruby/1.8.4/lib/ruby/1.8/i686-linux
+RUBY_PROC = $(shell proc=$$(uname -m);[ "$$proc" = "ppc" ] && echo powerpc || echo $$proc)
+
+RUBY_CFLAGS = -I/Programs/Ruby/Current/lib/ruby/1.8/$(RUBY_PROC)-linux
 RUBY_LDFLAGS = -rdynamic -Wl,-export-dynamic
 RUBY_LIBS = -lruby-static -ldl -lcrypt -lm 
 RUBY_FLAGS = $(RUBY_CFLAGS) $(RUBY_LDFLAGS) $(RUBY_LIBS)
@@ -30,6 +32,7 @@ run_python: $(PYTHON_PROGS)
 	./pythonstring
 	./pythonconvert
 	./pythonbuiltins
+	./pythontype
 
 pythonstring: pythonstring.c
 	gcc -o pythonstring pythonstring.c $(PYTHON_FLAGS)
@@ -39,6 +42,9 @@ pythonconvert: pythonconvert.c
 
 pythonbuiltins: pythonbuiltins.c
 	gcc -o pythonbuiltins pythonbuiltins.c $(PYTHON_FLAGS)
+
+pythontype: pythontype.c
+	gcc -o pythontype pythontype.c $(PYTHON_FLAGS)
 
 run_java: $(JAVA_PROGS)
 	$(JAVA) javatestjni
