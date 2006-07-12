@@ -1163,6 +1163,11 @@ PyTypeObject
 \family typewriter 
 PyObject
 \family default 
+ 
+\begin_inset LatexCommand \cite{vanrossum-extpy}
+
+\end_inset 
+
 .
  Cada tipo Python possui um PyObject definido na API, como 
 \family typewriter 
@@ -1504,7 +1509,6 @@ built-ins
 \emph default 
 , o programador deve tipicamente recorrer a armazená-los em ponteiros globais
  em C.
- 
 \layout Standard
 
 O armazenamento de dados de C no espaço de objetos de Python pode ser feito
@@ -1543,11 +1547,14 @@ s têm como objetivo principal permitir a passagem de dados em C de um módulo
 .
 \layout Standard
 
-
-\color red
 A outra forma consiste em declarar novos tipos Python através de estruturas
  em C.
- Para isso, define-se um tipo........................
+ Para isso, declara-se uma instância da estrutura 
+\family typewriter 
+PyTypeObject
+\family default 
+.
+ 
 \layout Standard
 
 
