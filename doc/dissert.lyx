@@ -1801,36 +1801,69 @@ struct
 PyTypeObject
 \family default 
 , que descreverá o tipo.
+ A Figura 
+\begin_inset LatexCommand \ref{cap:Tipo-Python-em-C}
+
+\end_inset 
+
+ demonstra a criação de um tipo Python em C.
+ No exemplo, 
+\family typewriter 
+point
+\family default 
+ será o tipo C das instâncias dos objetos, e 
+\family typewriter 
+point_type
+\family default 
+ será o 
+\family typewriter 
+PyTypeObject
+\family default 
+ que descreve o tipo Python relativo a eles.
 \layout Standard
 
-A 
-\emph on 
-struct
-\emph default 
- deve possuir equivalência estrutural com 
+A estrutura 
+\family typewriter 
+point
+\family default 
+ possui equivalência estrutural com 
 \family typewriter 
 PyObject
 \family default 
-, além de quaisquer atributos definidos pelo usuário.
+.
  Quando funções retornarem o objeto ao código C como um 
 \family typewriter 
 PyObject*
 \family default 
-, este pode ser convertido para o tipo struct específico via cast, dando
- assim acesso aos atributos adicionais.
- A menos que o programador implemente métodos para acesso, estes atributos
- não são visíveis a partir de código Python.
- 
+, este pode ser convertido para de volta para 
+\family typewriter 
+point
+\family default 
+ via cast, dando assim acesso aos atributos 
+\family typewriter 
+x
+\family default 
+ e 
+\family typewriter 
+y
+\family default 
+.
+ Todavia, para que estes atributos sejam visíveis a partir de Python, é
+ preciso implementar rotinas de acesso.
+\layout Standard
+
+PAREI AQUI
 \layout Standard
 
 Embora a representação em memória de objetos Python do tipo definido pelo
- usuário sejam instâncias desta struct, para criar um novo objeto não basta
- alocar uma instância da struct e convertê-la para 
+ usuário sejam instâncias desta estrutura, para criar um novo objeto não
+ basta alocar uma instância da struct e usá-la como 
 \family typewriter 
 PyObject
 \family default 
- via cast, pois esta não estará registrada no mecanismo de coleta de lixo,
- nem terá os campos de seu cabeçalho 
+ via cast.
+ É preciso inicializar o objeto para que este seja registrado no mecanismo
+ de coleta de lixo e tenha os campos de seu cabeçalho 
 \family typewriter 
 PyObject
 \family default 
