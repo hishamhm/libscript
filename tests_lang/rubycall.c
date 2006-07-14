@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
    "   def a_ruby_function() \n"
    "      print(\"\\na_ruby_function will yield.\\n\") \n"
    "      yield \n"
-   "      print(\"a_ruby_function is done.\n\") \n"
+   "      print(\"a_ruby_function is done.\\n\") \n"
    "      return 42 \n"
    "   end \n"
    );
