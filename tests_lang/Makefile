@@ -4,7 +4,7 @@ PYTHON_EXTRA_LDFLAGS = -Xlinker -export-dynamic
 PYTHON_EXTRA_LIBS =  -lpthread -ldl  -lutil
 PYTHON_LDFLAGS = -L/Programs/Python/Current/lib/python2.4 -lpython2.4
 PYTHON_FLAGS = $(PYTHON_CPPFLAGS) $(PYTHON_EXTRA_LDFLAGS) $(PYTHON_EXTRA_LIBS) $(PYTHON_LDFLAGS)
-PYTHON_PROGS = pythonstring pythonconvert pythonbuiltins pythontype
+PYTHON_PROGS = pythonstring pythonconvert pythonbuiltins pythontype pythoncall
 
 JAVA_CFLAGS = -g -shared -I/Programs/JDK/Current/include/linux/
 JAVA = java -Djava.library.path=.
@@ -16,7 +16,7 @@ RUBY_CFLAGS = -I/Programs/Ruby/Current/lib/ruby/1.8/$(RUBY_PROC)-linux
 RUBY_LDFLAGS = -rdynamic -Wl,-export-dynamic
 RUBY_LIBS = -lruby-static -ldl -lcrypt -lm 
 RUBY_FLAGS = $(RUBY_CFLAGS) $(RUBY_LDFLAGS) $(RUBY_LIBS)
-RUBY_PROGS = rubygc rubycall
+RUBY_PROGS = rubygc rubycall rubyintern
 
 LUA_LDFLAGS = -llua -ldl -lm
 LUA_FLAGS = $(LUA_LDFLAGS)
@@ -33,6 +33,7 @@ run_python: $(PYTHON_PROGS)
 	./pythonconvert
 	./pythonbuiltins
 	./pythontype
+	./pythoncall
 
 pythonstring: pythonstring.c
 	gcc -o pythonstring pythonstring.c $(PYTHON_FLAGS)
@@ -45,6 +46,9 @@ pythonbuiltins: pythonbuiltins.c
 
 pythontype: pythontype.c
 	gcc -o pythontype pythontype.c $(PYTHON_FLAGS)
+
+pythoncall: pythoncall.c
+	gcc -o pythoncall pythoncall.c $(PYTHON_FLAGS)
 
 run_java: $(JAVA_PROGS)
 	$(JAVA) javatestjni
@@ -67,6 +71,9 @@ rubygc: rubygc.c
 
 rubycall: rubycall.c
 	gcc -o rubycall rubycall.c $(RUBY_FLAGS)
+
+rubyintern: rubyintern.c
+	gcc -o rubyintern rubyintern.c $(RUBY_FLAGS)
 
 run_lua: $(LUA_PROGS)
 	./luafnmt
