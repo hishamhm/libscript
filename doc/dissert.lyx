@@ -94,6 +94,12 @@ Introdução
 
 \emph on 
 \color red
+[questões gerais: como padronizar o uso de itálicos?]
+\layout Standard
+
+
+\emph on 
+\color red
 [TODO: tem pouco aqui além do texto da proposta.
  estender a intro como um todo]
 \layout Standard
@@ -3868,6 +3874,11 @@ ores, o programador deve levar em consideração as diferenças entre os modelos
 \layout Subsection
 
 Python
+\begin_inset LatexCommand \label{sub:Python-GC}
+
+\end_inset 
+
+
 \layout Standard
 
 A máquina virtual de Python possui um coletor de lixo baseado em contagem
@@ -5622,7 +5633,7 @@ tp_call
 \family typewriter 
 PyTypeObject
 \family default 
-) pode ser chamado como uma função, e retornará 1 em 
+) pode ser chamado como uma função, e retornará sucesso em 
 \family typewriter 
 PyCallable_Check
 \family default 
@@ -5642,16 +5653,7 @@ PyObject_Call
 keyword
 \emph default 
 .
- O valor de retorno é um ponteiro para 
-\family typewriter 
-PyObject
-\family default 
-.
- Quando funções Python retornam múltiplos valores, estes são encapsulados
- em uma tupla.
-\layout Standard
-
-Como conveniência, outras funções permitem passar os argumentos de outras
+ Como conveniência, outras funções permitem passar os argumentos de outras
  formas.
  Por exemplo, 
 \family typewriter 
@@ -5661,8 +5663,13 @@ PyObject_CallFunction
 \family typewriter 
 Py_BuildValue
 \family default 
-, aceitando diretamente a string de formato desta e os valores a serem convertid
-os diretamente.
+ (vista na Seção 
+\begin_inset LatexCommand \ref{sub:Dados-Python}
+
+\end_inset 
+
+), aceitando diretamente a string de formato desta e os valores a serem
+ convertidos diretamente.
  
 \family typewriter 
 PyObject_CallFunctionObjArgs
@@ -5676,6 +5683,29 @@ vararg
 PyObject
 \family default 
 s.
+\layout Standard
+
+O valor de retorno em todas as funções de chamada é um ponteiro para 
+\family typewriter 
+PyObject
+\family default 
+.
+ Assim como ocorre em código Python, quando funções Python retornam múltiplos
+ valores, estes são encapsulados em uma tupla.
+ Para funções que não retornam valor, as funções de chamada retornam 
+\family typewriter 
+Py_None
+\family default 
+.
+ Em caso de erro na chamada, as funções retornam 
+\family typewriter 
+NULL
+\family default 
+ e a exceção pode ser verificada com 
+\family typewriter 
+PyErr_Occurred
+\family default 
+.
 \layout Subsection
 
 Ruby
@@ -5696,7 +5726,7 @@ ID
 \family default 
  referente à string internalizada contendo o nome do método e um inteiro
  indicando o número de argumentos.
- A função 
+ Por exemplo, a função 
 \family typewriter 
 rb_funcall
 \family default 
@@ -5721,7 +5751,7 @@ rb_apply
 VALUE
 \family default 
  que deve ser um array Ruby contendo os parâmetros.
- Todas retornam um 
+ Todas elas retornam um 
 \family typewriter 
 VALUE
 \family default 
@@ -5729,7 +5759,9 @@ VALUE
  Múltiplos valores de retorno são representados como um array Ruby.
 \layout Standard
 
-Funções globais em Ruby são definidas como métodos do módulo 
+Todas as rotinas de chamada de função na API se referem a métodos, precisando
+ assim especificar um objeto sobre o qual o método deve ser aplicado.
+ Funções globais em Ruby são definidas como métodos do módulo 
 \family typewriter 
 Kernel
 \family default 
@@ -5742,7 +5774,7 @@ Object
 nil
 \family default 
 .
- Como atalho pode-se invocar funções globais passando a constante C 
+ Desta forma, pode-se invocar funções globais passando a constante C 
 \family typewriter 
 Qnil
 \family default 
@@ -5978,7 +6010,7 @@ s para funções que aceitam blocos (Fig.
 (c)).
 \layout Standard
 
-As únicas formas de invocar uma método passando um bloco de código são através
+As únicas formas de invocar um método passando um bloco de código são através
  de 
 \family typewriter 
 rb_eval_string
@@ -6125,9 +6157,7 @@ rb_each
 rb_iterate
 \family default 
 .
-\layout Standard
-
-Funções C executando como bloco de código podem quebrar o fluxo de execução
+ Funções C executando como bloco de código podem quebrar o fluxo de execução
  com 
 \family typewriter 
 rb_iter_break
@@ -6147,6 +6177,33 @@ setjmp
 longjmp
 \family default 
 .
+\layout Standard
+
+Para o correto tratamento de erros, funções C que realizam chamadas a funções
+ Ruby devem ser encapsuladas em uma chamada 
+\family typewriter 
+rb_protect
+\family default 
+ ou em uma de suas variantes, 
+\family typewriter 
+rb_ensure
+\family default 
+ e 
+\family typewriter 
+rb_rescue
+\family default 
+.
+ Esta função captura exceções disparadas por código Ruby (ou código C usando
+ 
+\family typewriter 
+rb_raise
+\family default 
+).
+ Caso o programa não use 
+\family typewriter 
+rb_protect
+\family default 
+, exceções em Ruby resultarão em erros fatais.
 \layout Subsection
 
 Java
@@ -6158,8 +6215,11 @@ te obter um identificador para o método, do tipo
 jmethodID
 \family default 
 .
- Estes identificadores são tipicamente obtidos com a função GetMethodID,
- que recebe como parâmetros a classe (instância de 
+ Estes identificadores são tipicamente obtidos com a função 
+\family typewriter 
+GetMethodID
+\family default 
+, que recebe como parâmetros a classe (instância de 
 \family typewriter 
 jclass
 \family default 
@@ -6277,7 +6337,18 @@ Void
 Int
 \family default 
 , etc.
- Os argumentos do método podem ser passados de três formas: como 
+ Em funções que retornam valores não-primitivos, como 
+\family typewriter 
+jarray
+\family default 
+ ou 
+\family typewriter 
+jobject
+\family default 
+, o tipo de referência retornada é local.
+\layout Standard
+
+Os argumentos do método podem ser passados de três formas: como 
 \emph on 
 varargs
 \emph default 
@@ -6398,6 +6469,22 @@ static native
 \family default 
 .
  
+\layout Standard
+
+O código C pode verificar a ocorrência de exceções através de 
+\family typewriter 
+ExceptionCheck
+\family default 
+ e optar por tratá-la, obtendo uma referência local da exceção com 
+\family typewriter 
+ExceptionOccurred
+\family default 
+ e posteriormente zerando-a com 
+\family typewriter 
+ExceptionClear
+\family default 
+, ou então mantê-la ativa de modo que seja propagada ao código Java.
+ 
 \layout Subsection
 
 Lua
@@ -6411,14 +6498,19 @@ Tanto em funções C disparadas por Lua como em chamadas de funções Lua realizadas
 \end_inset 
 
 .
- 
 \layout Standard
 
-Uma função é invocada em Lua empilhando-se a 
+Para chamar uma função Lua a partir de C, devemos inicalmente empilhar o
+ objeto Lua referente a ela: para funções globais, obtendo-a com 
 \family typewriter 
-function
+lua_getglobal
 \family default 
- e os seus parâmetros e em seguida invocando 
+, para funções armazenadas em tabelas, com 
+\family typewriter 
+lua_gettable
+\family default 
+.
+ A seguir, empilhamos os seus parâmetros e então invocamos 
 \family typewriter 
 lua_call
 \family default 
@@ -6527,8 +6619,12 @@ call_pv
 call_method
 \family default 
  variam apenas na forma como a função a ser chamada é especificada: através
- de um SV, de uma string C ou de uma string C descrevendo o nome de um método
- de um objeto ou classe previamente inserido na pilha.
+ de um 
+\family typewriter 
+SV
+\family default 
+, de uma string C ou de uma string C descrevendo o nome de um método de
+ algum objeto ou classe inserido na pilha.
  A função 
 \family typewriter 
 call_argv
@@ -6871,40 +6967,74 @@ Python
 
 \layout Standard
 
-Funções C são registradas em um módulo Python passando-se um array de estruturas
- 
-\family typewriter 
-PyMethodDef
-\family default 
- para a função 
-\family typewriter 
-Py_InitModule
-\family default 
-.
- Como visto na Seção 
-\begin_inset LatexCommand \ref{sub:Dados-Python}
+Como visto na Seção 
+\begin_inset LatexCommand \ref{sub:Python-Chamada}
 
 \end_inset 
 
-, um array de 
+, instâncias de classes Python podem ser tornadas 
+\begin_inset Quotes eld
+\end_inset 
+
+chamáveis
+\begin_inset Quotes erd
+\end_inset 
+
+ implementando 
 \family typewriter 
-PyMethodDef
+__call__
 \family default 
-s pode ser passado durante a declaração de um novo tipo.
- Uma vez registradas, as funções podem ser chamadas de forma igual a funções
- implementadas nativamente em Python.
+ em Python ou 
+\family typewriter 
+tp_call
+\family default 
+ no seu 
+\family typewriter 
+PyTypeObject
+\family default 
+ em C.
+ Assim, Python não possui um tipo 
+\begin_inset Quotes eld
+\end_inset 
+
+função
+\begin_inset Quotes erd
+\end_inset 
+
+ propriamente dito.
+ Métodos de classes, no entanto, possuem um tipo específico 
+\emph on 
+método
+\emph default 
+, que pode ser verificado com 
+\family typewriter 
+PyMethod_Check
+\family default 
+.
+ Um objeto do tipo método pode ser criado explicitamente a partir de C com
+ 
+\family typewriter 
+PyMethod_New
+\family default 
+, passando como parâmetro um objeto Python 
+\begin_inset Quotes eld
+\end_inset 
+
+chamável
+\begin_inset Quotes erd
+\end_inset 
+
+ e o objeto ou classe a que ele deve se referir.
 \layout Standard
 
-Estruturas 
+Tipicamente, entretanto, funções C são registradas passando-se um array
+ de estruturas 
 \family typewriter 
 PyMethodDef
 \family default 
- possuem quatro campos: o nome da função, o ponteiro da função C, uma string
- de documentação (acessível através do atributo 
-\family typewriter 
-__doc__
-\family default 
-) e um vetor de flags.
+.
+ Estas estruturas são compostas do nome da função, o ponteiro da função
+ C, uma string de documentação e um vetor de flags.
  Estas flags são usadas para indicar a convenção adotada para os parâmetros
  de entrada na função C.
  Por exemplo, a flag 
@@ -6928,13 +7058,56 @@ keywords
 .
 \layout Standard
 
-* PyMethod_New
+De posse destas informações, funções da API que operam sobre arrays de 
+\family typewriter 
+PyMethodDef
+\family default 
+ podem criar e associar objetos do tipo método no espaço de Python.
+ 
+\family typewriter 
+Py_InitModule
+\family default 
+, por exemplo, inicializa um módulo com funções de um array de 
+\family typewriter 
+PyMethodDef
+\family default 
+.
+ Similarmente, os métodos de uma classe implementada em C podem ser dados
+ no campo 
+\family typewriter 
+tp_methods
+\family default 
+.
 \layout Standard
 
-* diferença entre function objects e method objects
-\layout Standard
+Funções C registradas em Python devem retornar um ponteiro para 
+\family typewriter 
+PyObject
+\family default 
+, ou 
+\family typewriter 
+NULL
+\family default 
+ em caso de erro (opcionalmente declarando uma exceção com 
+\family typewriter 
+PyErr_SetString
+\family default 
+ ou 
+\family typewriter 
+PyErr_SetObject
+\family default 
+).
+ Funções que não retornam valores devem retornar o objeto pré-definido 
+\family typewriter 
+Py_None
+\family default 
+, lembrando das questões de contagem de referência de valores retornados
+ discutidas na Seção 
+\begin_inset LatexCommand \ref{sub:Python-GC}
 
-* retornando valores
+\end_inset 
+
+.
 \layout Subsection
 
 Ruby
@@ -7038,7 +7211,17 @@ rb_scan_args
  em declarações de funções Ruby.
 \layout Standard
 
-* retornando valores
+Funções C implementado métodos Ruby devem sempre retornar um 
+\family typewriter 
+VALUE
+\family default 
+ (
+\family typewriter 
+Qnil
+\family default 
+ quando não há retorno).
+ Funções que retornam múltiplos valores devem fazê-lo através de um array
+ Ruby.
 \layout Subsection
 
 Java
@@ -7091,6 +7274,17 @@ javah
 \layout Standard
 
 * retornando valores
+\layout Standard
+
+Funções C podem também gerar exceções com 
+\family typewriter 
+Throw
+\family default 
+ e 
+\family typewriter 
+ThrowNew
+\family default 
+.
 \layout Subsection
 
 Lua
@@ -7118,8 +7312,8 @@ lua_State
 \family typewriter 
 lua_State
 \family default 
- encapsula todo o estado da máquina virtual de Lua, tornando-a assim reentrante;
- múltiplos estados Lua podem ser mantidos em paralelo.
+ encapsula todo o estado da máquina virtual de Lua; múltiplos estados Lua
+ podem ser mantidos em paralelo.
  Todas as funções da API 
 \emph on 
 core

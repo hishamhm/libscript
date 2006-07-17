@@ -115,6 +115,7 @@ static PyObject* script_python_getattro(PyObject* self, PyObject *attr_name) {
    }
    
    name = PyString_AS_STRING(attr_name);
+   /* TODO: create new entry here only if some plugin has the function */
    obj = PyObject_New(script_python_object, &script_python_object_type);
    obj->fn_name = strdup(name);
    PyDict_SetItem(script_python_dict, attr_name, (PyObject*)obj);
