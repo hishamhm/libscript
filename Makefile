@@ -59,12 +59,18 @@ test1: $(TESTSDIR)/test1.c
 testcall: $(TESTSDIR)/testcall.c
 	gcc -o $(TESTSDIR)/testcall $(TESTSDIR)/testcall.c -lscript $(LDFLAGS) $(CPPFLAGS)
 
-tests: test1 testcall
+testexc: $(TESTSDIR)/testexc.c
+	gcc -o $(TESTSDIR)/testexc $(TESTSDIR)/testexc.c -lscript $(LDFLAGS) $(CPPFLAGS)
+
+tests: test1 testcall testexc
 	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test1 $(TESTSDIR)/test1.lua
 	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test1 $(TESTSDIR)/test1.py
 	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test1 $(TESTSDIR)/test1.rb
 	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test1 $(TESTSDIR)/test1.pl
 	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/testcall
+	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/testexc $(TESTSDIR)/testexc.rb
+	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/testexc $(TESTSDIR)/testexc.lua
+	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/testexc $(TESTSDIR)/testexc.py
 
 clean:
 	rm -rf build
