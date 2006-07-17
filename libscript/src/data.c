@@ -53,8 +53,11 @@ static script_data* script_out_data(script_env* env, script_type type) {
  */
 char* script_in_string(script_env* env) {
    script_data* data = script_in_data(env, SCRIPT_STRING);
+   char* result;
    if (!data) return NULL;
-   return data->u.string_value;
+   result = data->u.string_value;
+   data->u.string_value = NULL;
+   return result;
 }
 
 double script_in_double(script_env* env) {

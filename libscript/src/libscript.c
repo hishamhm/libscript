@@ -167,6 +167,7 @@ script_err script_done(script_env* env) {
    free(env->namespace);
    ht_delete(env->plugins);
    ht_delete(env->functions);
+   free(env->params);
    free(env);
    dlerr = lt_dlexit();
    if (dlerr)

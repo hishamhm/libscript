@@ -92,7 +92,6 @@ INLINE static VALUE script_ruby_params_to_value(script_env* env) {
    VALUE* rets;
    VALUE ret;
    int nargs;
-
    nargs = script_param_count(env);
    if (nargs > 0) {
       rets = script_ruby_put_params(env, nargs);
@@ -115,13 +114,11 @@ static VALUE script_ruby_call(VALUE self, VALUE fn_value, VALUE args) {
    return script_ruby_params_to_value(script_ruby_env);
 }
 
-static VALUE script_ruby_method_missing(int argc, VALUE* argv, VALUE obj) {
+static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
    char* name;
    script_fn fn;
-
    name = rb_id2name(SYM2ID(argv[0]));
    fn = script_get_function(script_ruby_env, name);
-   
    if (fn) {
       char fn_code[1024];
       VALUE args;
@@ -129,10 +126,11 @@ static VALUE script_ruby_method_missing(int argc, VALUE* argv, VALUE obj) {
          script_ruby_namespace, name, script_ruby_namespace, (long int) fn);
       rb_eval_string(fn_code);
       args = rb_ary_new4(argc - 1, argv+1);
-      return script_ruby_call(obj, rb_int_new((long int) fn), args);
+      return script_ruby_call(self, rb_int_new((long int) fn), args);
    } else {
       script_err err;
       int i;
+      script_start_params(script_ruby_env);
       for (i = 0; i < argc; i++)
          script_ruby_get_param(script_ruby_env, argv[i]);
       err = script_call(script_ruby_env, name);
@@ -174,22 +172,24 @@ int script_plugin_call_ruby(script_plugin_state state, char* fn) {
    VALUE method;
    ID fn_id;
    VALUE fn_value;
-   int params;
+   int n_args;
    VALUE* args;
    VALUE ret;
-
    fn_value = rb_str_new2(fn);
    method = rb_funcall(script_ruby_class, method_id, 1, fn_value);
    if (method == Qnil)
       return SCRIPT_ERRFNUNDEF;
    fn_id = rb_intern(fn);
-   params = script_param_count(script_ruby_env);
-   args = script_ruby_put_params(script_ruby_env, params); 
-   ret = rb_funcall2(script_ruby_class, fn_id, params, args);
+   n_args = script_param_count(script_ruby_env);
+   args = script_ruby_put_params(script_ruby_env, n_args); 
+
+   ret = rb_funcall2(script_ruby_class, fn_id, n_args, args);
+
+   script_start_params(script_ruby_env);
    script_ruby_get_param(script_ruby_env, ret);
    return SCRIPT_OK;
 }
 
 void script_plugin_done_ruby(script_plugin_state state) {
-   /* TODO: at least reset the environment, if possible */
+   ruby_finalize();
 }
