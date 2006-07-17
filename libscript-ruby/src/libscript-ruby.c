@@ -88,18 +88,21 @@ INLINE static VALUE* script_ruby_put_params(script_env* env, int params) {
    return args;
 }
 
-INLINE static VALUE script_ruby_params_to_value(script_env* env) {
+INLINE static VALUE script_ruby_params_to_array(int nargs, script_env* env) {
+   VALUE ret;
    VALUE* rets;
+   rets = script_ruby_put_params(env, nargs);
+   ret = rb_ary_new4(nargs, rets);
+   free(rets);
+   return ret;
+}
+
+INLINE static VALUE script_ruby_params_to_value(script_env* env) {
    VALUE ret;
    int nargs;
    nargs = script_param_count(env);
    if (nargs > 0) {
-      rets = script_ruby_put_params(env, nargs);
-      if (nargs == 1)
-         ret = rets[0];
-      else
-         ret = rb_ary_new4(nargs, rets);
-      free(rets);
+      return script_ruby_params_to_array(nargs, env);
    } else
       ret = Qnil;
    return ret;
@@ -168,26 +171,34 @@ int script_plugin_run_ruby(script_plugin_state state, char* programtext) {
    return SCRIPT_OK;
 }
 
+INLINE static VALUE script_ruby_pcall(VALUE args) {
+   ID fn_id = SYM2ID(rb_ary_pop(args));
+   return rb_apply(script_ruby_class, fn_id, args);
+}
+
 int script_plugin_call_ruby(script_plugin_state state, char* fn) {
    VALUE method;
-   ID fn_id;
    VALUE fn_value;
-   int n_args;
-   VALUE* args;
+   VALUE args;
+   int error;
+   script_env* env = script_ruby_env;
+   
    VALUE ret;
    fn_value = rb_str_new2(fn);
    method = rb_funcall(script_ruby_class, method_id, 1, fn_value);
    if (method == Qnil)
       return SCRIPT_ERRFNUNDEF;
-   fn_id = rb_intern(fn);
-   n_args = script_param_count(script_ruby_env);
-   args = script_ruby_put_params(script_ruby_env, n_args); 
-
-   ret = rb_funcall2(script_ruby_class, fn_id, n_args, args);
-
+   args = script_ruby_params_to_array(script_param_count(env), env);
+   rb_ary_push(args, ID2SYM(rb_intern(fn)));
+   ret = rb_protect(script_ruby_pcall, args, &error);
    script_start_params(script_ruby_env);
    script_ruby_get_param(script_ruby_env, ret);
-   return SCRIPT_OK;
+   if (error) {
+      script_set_error_message(env, StringValuePtr(ruby_errinfo));
+      ruby_errinfo = Qnil;
+      return SCRIPT_ERRLANGRUN;
+   } else
+      return SCRIPT_OK;
 }
 
 void script_plugin_done_ruby(script_plugin_state state) {
