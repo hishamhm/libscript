@@ -78,6 +78,7 @@ static PyObject* script_python_call(script_python_object *obj, PyObject *args, P
    script_python_get_params(script_python_env, args);
    err = script_call(script_python_env, obj->fn_name);
    if (err != SCRIPT_OK) {
+      script_start_params(script_python_env);
       PyErr_SetString(PyExc_RuntimeError, "No such function");
       Py_RETURN_NONE;
    }
@@ -168,10 +169,13 @@ int script_plugin_call_python(script_plugin_state state, char* fn) {
    obj = PyDict_GetItemString(script_python_dict, fn);
    if (!(obj && PyFunction_Check(obj)))
       return SCRIPT_ERRFNUNDEF;
+
    args = script_python_put_params(env);
    ret = PyEval_CallObject(obj, args);
    if (!ret) {
-      /* TODO: trap error message */
+      PyObject* message = PyObject_Str(PyErr_Occurred());
+      script_set_error_message(env, PyString_AS_STRING(message));
+      Py_DECREF(message);
       return SCRIPT_ERRLANGRUN;
    }
    if (!PyTuple_Check(ret)) {
@@ -184,6 +188,6 @@ int script_plugin_call_python(script_plugin_state state, char* fn) {
 }
 
 void script_plugin_done_python(script_plugin_state state) {
-   Py_DECREF(script_python_dict);
-   Py_Finalize();
+   /* FIXME: Getting strange gc-related errors. */
+   /* Py_Finalize(); */
 }
