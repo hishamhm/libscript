@@ -4,6 +4,13 @@ public class javatestjni {
    private Double[] numbers = { 1.0, 2.0, 1.2, 2.12, 12.212, 2121.2212 };
    private native void myNativeMethod();
    private native String concatArray(Object[] nums);
+   
+   private static int teste(String s, int i) {
+      System.out.println(s);
+      System.out.println(i);
+      return 42;
+   }
+   
    public static void main(String[] args) {
       javatestjni j = new javatestjni();
       j.myNativeMethod();

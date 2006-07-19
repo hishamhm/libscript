@@ -8,7 +8,8 @@ PYTHON_PROGS = pythonstring pythonconvert pythonbuiltins pythontype pythoncall
 
 JAVA_CFLAGS = -g -shared -I/Programs/JDK/Current/include/linux/
 JAVA = java -Djava.library.path=.
-JAVA_PROGS = libjavatestjni.so javatestjni.h javatestjni.class
+JAVA_PROGS = libjavatestjni.so javatestjni.h javatestjni.class \
+             libjavapoly.so javapoly.h javapoly.class
 
 RUBY_PROC = $(shell proc=$$(uname -m);[ "$$proc" = "ppc" ] && echo powerpc || echo $$proc)
 
@@ -20,7 +21,7 @@ RUBY_PROGS = rubygc rubycall rubyintern
 
 LUA_LDFLAGS = -llua -ldl -lm
 LUA_FLAGS = $(LUA_LDFLAGS)
-LUA_PROGS = luafnmt luauserdata
+LUA_PROGS = luafnmt luacall luauserdata
 
 PROGS = $(PYTHON_PROGS) $(JAVA_PROGS) $(RUBY_PROGS) $(LUA_PROGS)
 
@@ -52,6 +53,7 @@ pythoncall: pythoncall.c
 
 run_java: $(JAVA_PROGS)
 	$(JAVA) javatestjni
+	$(JAVA) javapoly
 
 javatestjni.class: javatestjni.java
 	javac javatestjni.java
@@ -61,6 +63,15 @@ javatestjni.h: javatestjni.class
 
 libjavatestjni.so: javatestjni.c javatestjni.h
 	gcc $(JAVA_CFLAGS) -o libjavatestjni.so javatestjni.c
+
+javapoly.class: javapoly.java
+	javac javapoly.java
+
+javapoly.h: javapoly.class
+	javah -jni javapoly
+
+libjavapoly.so: javapoly.c javapoly.h
+	gcc $(JAVA_CFLAGS) -o libjavapoly.so javapoly.c
 
 run_ruby: $(RUBY_PROGS)
 	./rubygc
@@ -77,9 +88,14 @@ rubyintern: rubyintern.c
 
 run_lua: $(LUA_PROGS)
 	./luafnmt
+	./luacall
+	./luauserdata
 
 luafnmt: luafnmt.c
 	gcc -o luafnmt luafnmt.c $(LUA_FLAGS)
+
+luacall: luacall.c
+	gcc -o luacall luacall.c $(LUA_FLAGS)
 
 luauserdata: luauserdata.c
 	gcc -o luauserdata luauserdata.c $(LUA_FLAGS)

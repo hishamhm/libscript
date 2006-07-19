@@ -16,6 +16,18 @@ int main(int argc, char** argv) {
    VALUE result;
 
    ruby_init();
+
+
+   rb_eval_string(
+   "   def teste(a, b) \n"
+   "      print(a, b) \n"
+   "      return 42 \n"
+   "   end \n"
+   );
+   ID teste = rb_intern("teste");
+   VALUE val_result = rb_funcall(Qnil, teste, 2, rb_str_new2("entrada"), INT2NUM(2));
+   long res = NUM2LONG(val_result);
+   printf("teste returned %ld \n", res);
    
    a_ruby_function_ID = rb_intern("a_ruby_function");
    

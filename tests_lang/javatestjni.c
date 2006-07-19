@@ -24,6 +24,13 @@ JNIEXPORT jstring JNICALL Java_javatestjni_concatArray(JNIEnv *J, jobject this, 
       toString = (*J)->GetMethodID(J, cls, "toString",
          "()Ljava/lang/String;");
    }
+   
+   jclass exemplo = (*J)->FindClass(J, "javatestjni");
+   jmethodID teste = (*J)->GetStaticMethodID(J, exemplo, "teste", "(Ljava/lang/String;I)I");
+   jstring arg1 = (*J)->NewStringUTF(J, "entrada");
+   long result = (*J)->CallStaticIntMethod(J, exemplo, teste, arg1, (jint)2 );
+   printf("teste returned %ld \n", result);
+   
    jstring s = (*J)->NewString(J, NULL, 0);
    s = (*J)->NewGlobalRef(J, (jobject) s);
    int len = (*J)->GetArrayLength(J, t);
