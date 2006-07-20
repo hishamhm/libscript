@@ -105,7 +105,7 @@ void script_out_bool(script_env* env, int value) {
    data->u.bool_value = value;
 }
 
-void script_start_params(script_env* env) {
+void script_params(script_env* env) {
    env->param_size = 0;
    env->param_ins = 0;
    env->param_outs = 0;

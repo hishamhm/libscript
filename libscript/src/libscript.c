@@ -187,6 +187,10 @@ script_err script_error(script_env* env) {
    return err;
 }
 
+/**
+ * Obtain the name of the namespace, as given to script_init.
+ * @return The namespace, in a buffer owned by script_env.
+ */
 const char* script_get_namespace(script_env* env) {
    return env->namespace;
 }

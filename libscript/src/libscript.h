@@ -73,7 +73,7 @@ void script_out_string(script_env* env, const char* value);
 void script_out_double(script_env* env, double value);
 void script_out_int(script_env* env, int value);
 void script_out_bool(script_env* env, int value);
-void script_start_params(script_env* env);
+void script_params(script_env* env);
 #define SCRIPT_CHECK_INPUTS(env) do { script_err err = script_error(env); if (err) return err; } while (0)
 
 #endif
