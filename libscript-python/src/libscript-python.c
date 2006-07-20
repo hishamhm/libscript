@@ -12,7 +12,7 @@ static PyObject* script_python_dict;
 INLINE static void script_python_get_params(script_env* env, PyObject* args) {
    int i;
    int nargs = PyTuple_GET_SIZE(args);
-   script_start_params(env);
+   script_params(env);
    for (i = 0; i < nargs; i++) {
       PyObject* arg = PyTuple_GET_ITEM(args, i);
       if (PyString_Check(arg)) {
@@ -78,7 +78,7 @@ static PyObject* script_python_call(script_python_object *obj, PyObject *args, P
    script_python_get_params(script_python_env, args);
    err = script_call(script_python_env, obj->fn_name);
    if (err != SCRIPT_OK) {
-      script_start_params(script_python_env);
+      script_params(script_python_env);
       PyErr_SetString(PyExc_RuntimeError, "No such function");
       Py_RETURN_NONE;
    }
