@@ -2249,8 +2249,8 @@ Qfalse
 \family typewriter 
 Qnil
 \family default 
- são definidas como valores imediatos, permitindo a comparação destas usando
- 
+ são definidas como valores imediatos, permitindo a comparação destas em
+ C usando 
 \family typewriter 
 ==
 \family default 
@@ -2322,6 +2322,31 @@ to_s
 TypeError
 \family default 
  caso a conversão não seja possível).
+\layout Standard
+
+Para a verificação de tipos, Ruby disponibiliza as macros 
+\family typewriter 
+TYPE
+\family default 
+ e 
+\family typewriter 
+Check_Type
+\family default 
+, que permitem obter e comparar constantes representando alguns tipos básicos
+ de Ruby como 
+\family typewriter 
+T_OBJECT
+\family default 
+, 
+\family typewriter 
+T_STRING
+\family default 
+, etc.
+ Para a verificação da classe de um objeto, devemos usar 
+\family typewriter 
+rb_class_of
+\family default 
+.
 \layout Standard
 
 Sob a justificativa de aumentar o desempenho no acesso, alguns outros tipos
@@ -3466,6 +3491,11 @@ LUA_ENVIRONINDEX
 \layout Subsection
 
 Perl
+\begin_inset LatexCommand \label{sub:Perl-Dados}
+
+\end_inset 
+
+
 \layout Standard
 
 Os processos de estender e embutir Perl são bastante distintos.
@@ -5736,7 +5766,7 @@ flags
 Chamada de funções a partir de C
 \layout Standard
 
-A FLI deve prover uma forma de invocar a partir de C funções a serem executadas
+A API deve prover uma forma de invocar a partir de C funções a serem executadas
  na máquina virtual.
  Isto envolve a passagem de dados entre estes dois 
 \begin_inset Quotes eld
@@ -7401,13 +7431,23 @@ a priori
 \layout Standard
 
 Também nesta seção, a apresentação de cada linguagem encerrará com um exemplo.
- Em cada um deles, será apresentada uma função C 
+ Em cada dos exemplos será apresentada uma função C declarada com a assinatura
+ de formato esperado pela máquina virtual.
+ Esta função obtém os valores de entrada e retorna um valor na saída.
+ Será apresentada também, para cada linguagem, a forma de registrar a função
+ como a global
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+ou no caso de Java, método estático
+\end_inset 
+
+ 
 \family typewriter 
 teste
 \family default 
- declarada com a assinatura de formato esperado pela máquina virtual, que
- obtém os valores de entrada e retorna um valor na saída.
- Será apresentada também, para cada linguagem, a forma de registrar a função
  de modo que ela possa ser invocada diretamente a partir da linguagem ou
  através da API do modo descrito na seção anterior.
 \layout Subsection
@@ -7593,7 +7633,7 @@ PyObject* teste_py(PyObject* self, PyObject* args) {
 
 
 \size footnotesize 
-   printf("Received: %s and %ld 
+   printf("Recebi: %s e %ld 
 \backslash 
 n", entrada, n);
 \layout LyX-Code
@@ -7626,7 +7666,7 @@ PyObject
 \family typewriter 
 PyInt_FromLong
 \family default 
-, que gera uma nova referência.
+, gerando uma nova referência.
 \layout Standard
 
 A API de Python é projetada primariamente para o desenvolvimento de módulos
@@ -7830,6 +7870,99 @@ Qnil
  quando não há retorno).
  Funções que retornam múltiplos valores devem fazê-lo através de um array
  Ruby.
+\layout Standard
+
+Dando continuidade à série de exemplos, a função global Ruby 
+\family typewriter 
+teste
+\family default 
+ pode ser implementada da seguinte forma em C:
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE teste_rb(VALUE self, VALUE val_entrada, VALUE val_n) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   char* entrada = StringValuePtr(val_entrada);
+\layout LyX-Code
+
+
+\size footnotesize 
+   long n = NUM2INT(val_n);
+\layout LyX-Code
+
+
+\size footnotesize 
+   printf("Recebi: %s e %ld 
+\backslash 
+n", entrada, n);
+\layout LyX-Code
+
+
+\size footnotesize 
+   return INT2NUM(42);
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+A conversão dos 
+\family typewriter 
+VALUE
+\family default 
+s de entrada é feita com as macros 
+\family typewriter 
+StringValuePtr
+\family default 
+ e 
+\family typewriter 
+NUM2INT
+\family default 
+.
+ Não há código explícito para tratamento de erros na conversão pois estas
+ macros disparam exceções que saem da função via 
+\family typewriter 
+longjmp
+\family default 
+ caso a conversão não seja possível.
+ Para a saída, é produzido um 
+\family typewriter 
+VALUE
+\family default 
+ com a macro 
+\family typewriter 
+INT2NUM
+\family default 
+.
+ O primeiro parâmetro de entrada é necessário segundo a convenção de assinaturas
+ de função da API, mas para funções globais ele deve ser ignorado.
+\layout Standard
+
+Como Ruby oferece uma função na API para a definição de funções globais,
+ o registro de 
+\family typewriter 
+teste
+\family default 
+ é bastante simples:
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_define_global_function("teste", teste_rb, 2); 
+\layout Standard
+
+É indicado o nome da função no espaço de Ruby, a função C correspondente
+ e o número de parâmetros a serem passados para ela (não incluindo o parâmetro
+ 
+\family typewriter 
+self
+\family default 
+).
 \layout Subsection
 
 Java
@@ -7966,6 +8099,176 @@ ThrowNew
  e retornar imediatamente.
  O valor de retorno será ignorado quando a exceção for capturada no código
  Java.
+\layout Standard
+
+Como o modo de expor à máquina virtual de Java funções implementadas em
+ C é diferente do empregado nas linguagens vistas anteriormente, não iniciaremos
+ pelo exemplo mostrando a implementação de 
+\family typewriter 
+teste
+\family default 
+ em C, mas pela forma de declarar a função para o espaço de Java.
+ Na declaração da classe em Java, é declarado um método 
+\family typewriter 
+native
+\family default 
+:
+\layout LyX-Code
+
+
+\size footnotesize 
+public class Exemplo {
+\layout LyX-Code
+
+
+\size footnotesize 
+   static native int teste(String entrada, int n);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   // ...demais membros da classe
+\layout LyX-Code
+
+
+\size footnotesize 
+   static {
+\layout LyX-Code
+
+
+\size footnotesize 
+      System.loadLibrary("Exemplo");
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Passando esta classe para o comando javah, um arquivo de cabeçalho C será
+ gerado, descrevendo o nome e assinatura da função C que deve existir na
+ biblioteca que será carregada por 
+\family typewriter 
+System.loadLibrary
+\family default 
+
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+O parâmetro passado no código Java é usado como base na construção de um
+ nome dependente de plataforma.
+ Em sistemas Unix, por exemplo, o comando 
+\family typewriter 
+System.loadLibrary("Exemplo")
+\family default 
+ carrega o arquivo 
+\family typewriter 
+libExemplo.so
+\family default 
+.
+\end_inset 
+
+.
+ Abaixo, é dada uma implementação possível para esta função:
+\layout LyX-Code
+
+
+\size footnotesize 
+JNIEXPORT jint JNICALL
+\layout LyX-Code
+
+
+\size footnotesize 
+Java_Exemplo_teste(JNIEnv *J, jclass c, jstring obj_entrada, jint n) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   const char* entrada = (*J)->GetStringUTFChars(J, obj_entrada, NULL);
+\layout LyX-Code
+
+
+\size footnotesize 
+   printf("Recebi %s e %ld 
+\backslash 
+n", entrada, n);
+\layout LyX-Code
+
+
+\size footnotesize 
+   (*J)->ReleaseStringUTFChars(J, obj_entrada, entrada);
+\layout LyX-Code
+
+
+\size footnotesize 
+   return 42;
+\layout LyX-Code
+
+
+\size footnotesize 
+} 
+\layout Standard
+
+
+\family typewriter 
+JNIEXPORT
+\family default 
+ e 
+\family typewriter 
+JNICALL
+\family default 
+ são macros definidas em 
+\family typewriter 
+jni.h
+\family default 
+ para dar maior portabilidade ao código C gerado.
+ Como a função foi declarada como 
+\family typewriter 
+static
+\family default 
+, uma referência para a classe é passada como parâmetro.
+ Os demais parâmetros correspondem aos parâmetros do método Java, e são
+ dados nos tipos equivalentes da JNI.
+ Conforme discutido na Seção 
+\begin_inset LatexCommand \ref{sub:Dados-Java}
+
+\end_inset 
+
+, a JNI dá tratamentos diferentes para tipos de referência e tipos imediatos.
+ Desta forma, somente o parâmetro 
+\family typewriter 
+obj_entrada
+\family default 
+ precisa ser convertido para C; tanto 
+\family typewriter 
+n
+\family default 
+ como o valor de retorno podem ser usados diretamente como tipos básicos
+ de C.
+\layout Standard
+
+A string obtida com 
+\family typewriter 
+GetStringUTFChars
+\family default 
+ é convertida para UTF-8 a partir da representação Unicode interna de Java.
+ O mesmo ponteiro pode ser retornado pela JVM a diferentes threads que solicitem
+ a mesma string.
+ Deste modo, o código C deve notificar a sua liberação explicitamente com
+ 
+\family typewriter 
+ReleaseStringUTFChars
+\family default 
+.
+ 
 \layout Subsection
 
 Lua
@@ -8117,15 +8420,322 @@ luaL_register
 luaL_Reg
 \family default 
 , contendo nomes e ponteiros de função.
+\layout Standard
+
+A função C implementando a função de exemplo 
+\family typewriter 
+teste
+\family default 
+ é dada a seguir:
+\layout LyX-Code
+
+
+\size footnotesize 
+int teste_lua(lua_State* L) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   const char* entrada = luaL_checkstring(L, 1);
+\layout LyX-Code
+
+
+\size footnotesize 
+   long n = luaL_checkinteger(L, 2);
+\layout LyX-Code
+
+
+\size footnotesize 
+   printf("Recebi %s e %ld 
+\backslash 
+n", entrada, n);
+\layout LyX-Code
+
+
+\size footnotesize 
+   lua_pushinteger(L, 42);
+\layout LyX-Code
+
+
+\size footnotesize 
+   return 1;
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+A função tem assinatura compatível com 
+\family typewriter 
+lua_CFunction
+\family default 
+, recebendo apenas o 
+\family typewriter 
+lua_State
+\family default 
+ e retornando um inteiro.
+ Os parâmetros de entrada são obtidos da pilha e os seus tipos são verificados
+ usando as funções da biblioteca auxiliar 
+\family typewriter 
+luaL_checkstring
+\family default 
+ e 
+\family typewriter 
+luaL_checkinteger
+\family default 
+.
+ Estas funções sinalizam erro em caso de falha na conversão, causando um
+ 
+\family typewriter 
+longjmp
+\family default 
+ como em Ruby.
+\layout Standard
+
+Assim como em Java, o tipo da string obtida é 
+\family typewriter 
+const char*
+\family default 
+ pois ela aponta um bloco de memória gerenciado pela máquina virtual.
+ Em Lua, no entanto, não é preciso notificar a liberação da string explicitament
+e, pois esta permanece válida enquanto o valor estiver na pilha.
+ Como as funções 
+\family typewriter 
+luaL_check
+\family default 
+* não desempilham os parâmetros e a pilha é esvaziada implicitamente ao
+ final da função C, as string C obtida permanecerá válida ao longo da função.
+ Ao fim da função, o valor de retorno para Lua é empilhado e 
+\family typewriter 
+return 1
+\family default 
+ indica à máquina virtual que há um único valor de saída.
+\layout Standard
+
+A função é registrada em Lua criando um objeto Lua do tipo 
+\family typewriter 
+function
+\family default 
+ a partir da função C e armazenando este objeto em uma variável global.
+ Isto poderia ser feito com 
+\family typewriter 
+lua_pushcclosure
+\family default 
+ e 
+\family typewriter 
+lua_setglobal
+\family default 
+, mas a biblioteca auxiliar possui uma macro que encapsula estas duas chamadas.
+ Assim, a função pode ser registrada simplesmente com:
+\layout LyX-Code
+
+
+\size footnotesize 
+luaL_register(L, "teste", teste_lua);
 \layout Subsection
 
 Perl
 \layout Standard
 
+Como discutido na Seção 
+\begin_inset LatexCommand \label{sub:Perl-Dados}
 
+\end_inset 
+
+, a interface entre Perl e C foi projetada tendo em mente que a ligação
+ entre as funções C e a máquina virtual Perl é feita através de código gerado
+ a partir de uma descrição feita em uma linguagem de mais alto nível, XS.
+ Código XS consiste de declarações de assinaturas de função com uma sintaxe
+ especial, indicando regras para conversão dos parâmetros de entrada e saída,
+ e código C descrevendo a implementação das funções.
+ XS é projetada para o desenvolvimento de extensões Perl incluindo funções
+ implementadas em C: o resultado final da compilação do código gerado pelas
+ ferramentas XS (
+\family typewriter 
+h2xs
+\family default 
+, 
+\family typewriter 
+xsubpp
+\family default 
+) são código C e Perl que juntos descrevem um pacote Perl (um conjunto de
+ variáveis e funções armazenados sob um 
 \emph on 
-\color red
-como chamar uma função C em L
+namespace
+\emph default 
+ comum).
+\layout Standard
+
+Existe uma API pública para manipulação de dados Perl no código C, mas esta
+ consiste basicamente das estruturas internas da implementação da máquina
+ virtual expostas para uso pelo pré-processador XS, acrescida de macros
+ para maior conveniência do programador.
+ De fato, Perl não expõe uma API documentada para o registro de funções.
+ Assim, não é prático para uma aplicação embutir uma máquina virtual Perl
+ e expor a ela um conjunto de funções C usando apenas código C.
+ A saída é criar uma extensão Perl usando XS que expõe funções da aplicação
+ e importar o pacote resultante na máquina virtual embutida.
+ O emprego desta abordagem foi observada nos plugins para 
+\emph on 
+scripting
+\emph default 
+ Perl de diversas aplicações 
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Vim (
+\begin_inset LatexCommand \url{http://www.vim.org}
+
+\end_inset 
+
+), Gimp (
+\begin_inset LatexCommand \url{http://search.cpan.org/search?mode=dist&query=gimp}
+
+\end_inset 
+
+) e Gaim (
+\begin_inset LatexCommand \url{http://gaim.sourceforge.net}
+
+\end_inset 
+
+) são algumas aplicações que implementam plugins Perl através de extensões
+ XS.
+ No plugin de Xchat (
+\begin_inset LatexCommand \url{http://www.xchat.org}
+
+\end_inset 
+
+), não há arquivos 
+\family typewriter 
+.xs
+\family default 
+, mas os fontes 
+\family typewriter 
+.c
+\family default 
+ incluem funções declaradas com a API não documentada e o código Perl equivalent
+e ao arquivo 
+\family typewriter 
+.pm
+\family default 
+ gerado por 
+\family typewriter 
+xsubpp
+\family default 
+ declarado como uma string C avaliada com 
+\family typewriter 
+eval_pv
+\family default 
+, dando a entender que o plugin foi implementado como uma extensão usando
+ XS e depois convertido para um único arquivo-fonte C.
+\end_inset 
+
+.
+\layout Standard
+
+O utilitário 
+\family typewriter 
+h2xs
+\family default 
+ gera um diretório contendo o esqueleto de um módulo Perl: um script gerador
+ de Makefiles, arquivos 
+\family typewriter 
+.xs
+\family default 
+ e 
+\family typewriter 
+.pm
+\family default 
+ a serem acrescidos de código XS e Perl, além de arquivos auxiliares.
+ Retomando o exemplo da função teste, ela seria declarada da seguinte forma
+ em XS:
+\layout LyX-Code
+
+
+\size footnotesize 
+long teste(entrada, n)
+\layout LyX-Code
+
+
+\size footnotesize 
+        char* entrada
+\layout LyX-Code
+
+
+\size footnotesize 
+        int n
+\layout LyX-Code
+
+
+\size footnotesize 
+        CODE:
+\layout LyX-Code
+
+
+\size footnotesize 
+                printf("Recebi %s e %ld 
+\backslash 
+n", entrada, n);
+\layout LyX-Code
+
+
+\size footnotesize 
+                RETVAL = 42;
+\layout LyX-Code
+
+
+\size footnotesize 
+        OUTPUT:
+\layout LyX-Code
+
+
+\size footnotesize 
+                RETVAL 
+\layout Standard
+
+O arquivo 
+\family typewriter 
+.xs
+\family default 
+ é convertido para 
+\family typewriter 
+.c
+\family default 
+ com 
+\family typewriter 
+xsubpp
+\family default 
+.
+ Uma vez compilada a extensão usando os Makefiles gerados por 
+\family typewriter 
+h2xs
+\family default 
+, a extensão pode ser carregada e usada a partir de Perl:
+\layout LyX-Code
+
+
+\size footnotesize 
+use Teste;
+\layout LyX-Code
+
+
+\size footnotesize 
+$ret = Teste::teste("entrada", 2);
+\layout LyX-Code
+
+
+\size footnotesize 
+print $ret .
+ "
+\backslash 
+n"; 
+\layout Comment
+
+Em uma aplicação C embutindo o interpretador Perl, pode-se ligar o código
+ C gerado...
 \layout Chapter
 
 
@@ -9809,7 +10419,7 @@ http://www.rubycentral.com/book/ext_ruby.html
 \layout Bibliography
 \bibitem {perlembed}
 
-http://www.perl.com/doc/manual/html/pod/perlembed.html
+PERLEMBED
 \layout Bibliography
 \bibitem {tcl}
 
@@ -9834,4 +10444,16 @@ OKAMOTO, J.
  PERLGUTS(1).
  Man-page da documentação de Perl 5.8.8.
  Janeiro 2006.
+\layout Bibliography
+\bibitem {key-2}
+
+PERLAPI
+\layout Bibliography
+\bibitem {key-4}
+
+PERLXS
+\layout Bibliography
+\bibitem {key-5}
+
+PERLCALL
 \the_end
