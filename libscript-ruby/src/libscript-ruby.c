@@ -51,7 +51,7 @@ INLINE static void script_ruby_get_param(script_env* env, VALUE arg) {
 INLINE static void script_ruby_get_params(script_env* env, VALUE args) {
    VALUE arg;
 
-   script_start_params(env);
+   script_params(env);
    while ( (arg = rb_ary_shift(args)) != Qnil ) {
       script_ruby_get_param(env, arg);
    }
@@ -133,7 +133,7 @@ static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
    } else {
       script_err err;
       int i;
-      script_start_params(script_ruby_env);
+      script_params(script_ruby_env);
       for (i = 0; i < argc; i++)
          script_ruby_get_param(script_ruby_env, argv[i]);
       err = script_call(script_ruby_env, name);
@@ -191,7 +191,7 @@ int script_plugin_call_ruby(script_plugin_state state, char* fn) {
    args = script_ruby_params_to_array(script_param_count(env), env);
    rb_ary_push(args, ID2SYM(rb_intern(fn)));
    ret = rb_protect(script_ruby_pcall, args, &error);
-   script_start_params(script_ruby_env);
+   script_params(script_ruby_env);
    script_ruby_get_param(script_ruby_env, ret);
    if (error) {
       script_set_error_message(env, StringValuePtr(ruby_errinfo));
