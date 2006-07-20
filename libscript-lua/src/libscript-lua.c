@@ -21,7 +21,7 @@ INLINE static script_env* script_lua_get_env(lua_State *L) {
 INLINE static void script_lua_get_params(script_env* env, lua_State *L) {
    int nargs;
    int i;
-   script_start_params(env);
+   script_params(env);
    nargs = lua_gettop(L);
    for (i = 1; i <= nargs; i++) {
       switch(lua_type(L, i)) {
