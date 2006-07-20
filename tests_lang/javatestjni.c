@@ -3,6 +3,13 @@
 #include <stdio.h>
 #include "javatestjni.h"
 
+JNIEXPORT jint JNICALL Java_javatestjni_teste(JNIEnv * J, jclass c, jstring obj_entrada, jint n) {
+   const char* entrada = (*J)->GetStringUTFChars(J, obj_entrada, NULL);
+   printf("Recebi:: %s e %ld \n", entrada, n);
+   (*J)->ReleaseStringUTFChars(J, obj_entrada, entrada);
+   return 42;
+}
+
 JNIEXPORT void JNICALL Java_javatestjni_myNativeMethod(JNIEnv *J, jobject this) {
    jclass klass = (*J)->GetObjectClass(J, this);
    jfieldID wordsID = (*J)->GetFieldID(J, klass, "words", "[Ljava/lang/String;");

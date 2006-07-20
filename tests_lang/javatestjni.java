@@ -5,11 +5,7 @@ public class javatestjni {
    private native void myNativeMethod();
    private native String concatArray(Object[] nums);
    
-   private static int teste(String s, int i) {
-      System.out.println(s);
-      System.out.println(i);
-      return 42;
-   }
+   static native int teste(String s, int i);
    
    public static void main(String[] args) {
       javatestjni j = new javatestjni();

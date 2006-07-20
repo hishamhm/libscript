@@ -3,6 +3,13 @@
 
 ID a_ruby_function_ID;
 
+VALUE teste_rb(VALUE self, VALUE val_entrada, VALUE val_n) {
+   char* entrada = StringValuePtr(val_entrada);
+   long n = NUM2INT(val_n);
+   printf("Recebi: %s e %ld \n", entrada, n);
+   return INT2NUM(42);
+}
+
 VALUE a_C_block() {
    fprintf(stderr, "a_C_block is running.\n");
 }
@@ -17,14 +24,12 @@ int main(int argc, char** argv) {
 
    ruby_init();
 
+   rb_define_global_function("teste", teste_rb, 2);
 
-   rb_eval_string(
-   "   def teste(a, b) \n"
-   "      print(a, b) \n"
-   "      return 42 \n"
-   "   end \n"
-   );
    ID teste = rb_intern("teste");
+   
+   rb_eval_string(" teste('blabla', 123) \n" );
+   
    VALUE val_result = rb_funcall(Qnil, teste, 2, rb_str_new2("entrada"), INT2NUM(2));
    long res = NUM2LONG(val_result);
    printf("teste returned %ld \n", res);
