@@ -1,5 +1,5 @@
 
-PYTHON_CPPFLAGS = -I/Programs/Python/Current/include/python2.4
+PYTHON_CPPFLAGS = -g -I/Programs/Python/Current/include/python2.4
 PYTHON_EXTRA_LDFLAGS = -Xlinker -export-dynamic
 PYTHON_EXTRA_LIBS =  -lpthread -ldl  -lutil
 PYTHON_LDFLAGS = -L/Programs/Python/Current/lib/python2.4 -lpython2.4

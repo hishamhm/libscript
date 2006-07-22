@@ -52,5 +52,19 @@ int main() {
    Py_DECREF(ret);
    Py_DECREF(noargs);
    Py_DECREF(globals);
+
+   PyObject* s = PyString_FromString("hello world");
+
+   PyObject* split = PyObject_GetAttrString(s, "split");
+   ret = PyObject_CallFunction(split, "s", " ");
+   /*
+   ret = PyObject_CallMethod(s, "split", "s", " ");
+   */
+   int i;
+   for (i = 0; i < PyList_GET_SIZE(ret); i++) {
+      PyObject* item = PyList_GetItem(ret, i);
+      printf("%d: '%s'\n", i, PyString_AsString(item));
+   }
+
    Py_Finalize();
 }

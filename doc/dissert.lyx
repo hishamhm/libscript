@@ -3,7 +3,7 @@
 \textclass book
 \language brazil
 \inputencoding auto
-\fontscheme default
+\fontscheme times
 \graphics default
 \paperfontsize 12
 \spacing single 
@@ -89,13 +89,13 @@ Hisham H.
 \layout Chapter
 
 Introdução
-\layout Standard
+\layout Comment
 
 
 \emph on 
 \color red
 [questões gerais: como padronizar o uso de itálicos?]
-\layout Standard
+\layout Comment
 
 
 \emph on 
@@ -217,7 +217,7 @@ amente, Python, Perl
  biblioteca de reflexão, que oferece recursos de intercessão como carga
  de classes em tempo de execução e invocação dinâmica de métodos, é possível
  encará-la, para os fins de interação com código C, como uma linguagem dinâmica.
-\layout Standard
+\layout Comment
 
 
 \emph on 
@@ -5817,6 +5817,9 @@ Python
 \end_inset 
 
 
+\layout Comment
+
+Como obter/referenciar uma função
 \layout Standard
 
 Para chamar uma função Python a partir de C, deve-se inicialmente obter
@@ -5848,6 +5851,12 @@ PyTypeObject
 PyCallable_Check
 \family default 
 .
+\layout Comment
+
+Funções para chamar funções
+\layout Comment
+
+Passando argumentos
 \layout Standard
 
 A API de Python oferece diversas funções para realização de chamadas a partir
@@ -5893,6 +5902,75 @@ vararg
 PyObject
 \family default 
 s.
+\layout Comment
+
+Função vs.
+ método
+\layout Standard
+
+Existem também funções de conveniência para a invocação de métodos.
+ 
+\family typewriter 
+PyObject_CallMethod
+\family default 
+ é uma variante de 
+\family typewriter 
+PyObject_CallFunction
+\family default 
+ que recebe como parâmetros um 
+\family typewriter 
+PyObject
+\family default 
+ e uma string C contendo o nome do método.
+ Assim, a chamada:
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject* ret = PyObject_CallMethod(s, "split
+\begin_inset Quotes erd
+\end_inset 
+
+, "s
+\begin_inset Quotes erd
+\end_inset 
+
+, " ");
+\layout Standard
+
+é equivalente a:
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject* split = PyObject_GetAttrString(s, "split");
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject* ret = PyObject_CallFunction(split, "s
+\begin_inset Quotes erd
+\end_inset 
+
+, " ");
+\layout Standard
+
+É interessante notar que mesmo quando um método é chamado como função, o
+ argumento 
+\family typewriter 
+self
+\family default 
+ não é passado explicitamente.
+ 
+\layout Comment
+
+Valor de retorno
+\layout Comment
+
+Múltiplos valores de retorno
+\layout Comment
+
+Verificação da ocorrência de erros
 \layout Standard
 
 O valor de retorno em todas as funções de chamada é um ponteiro para 
@@ -5902,7 +5980,7 @@ PyObject
 .
  Assim como ocorre em código Python, quando funções Python retornam múltiplos
  valores, estes são encapsulados em uma tupla.
- Para funções que não retornam valor, as funções de chamada retornam 
+ Para funções que não retornam valor, as funções retornam 
 \family typewriter 
 Py_None
 \family default 
@@ -5911,11 +5989,15 @@ Py_None
 \family typewriter 
 NULL
 \family default 
- e a exceção pode ser verificada com 
+.
+ A ocorrência de exceções pode então ser verificada com 
 \family typewriter 
 PyErr_Occurred
 \family default 
 .
+\layout Comment
+
+Exemplo de chamada de função
 \layout Standard
 
 Uma forma típica para chamar uma função Python 
@@ -5949,6 +6031,9 @@ long result = PyInt_AsLong(obj_result);
 
 \size footnotesize 
 Py_DECREF(obj_result);
+\layout Comment
+
+Controle das referências no exemplo
 \layout Standard
 
 Uma função global é obtida através do dicionário do módulo 
@@ -5986,6 +6071,12 @@ PyDict_GetItemString
 \layout Subsection
 
 Ruby
+\layout Comment
+
+Como obter/referenciar uma função
+\layout Comment
+
+Funções para chamar funções
 \layout Standard
 
 Para a chamada de métodos Ruby em C, a API oferece a função 
@@ -6003,6 +6094,25 @@ ID
 \family default 
  referente à string internalizada contendo o nome do método e um inteiro
  indicando o número de argumentos.
+ Como métodos não são valores de primeira classe em Ruby, eles não são represent
+ados como 
+\family typewriter 
+VALUE
+\family default 
+s na sua API de C.
+\layout Comment
+
+Passando argumentos
+\layout Comment
+
+Valor de retorno
+\layout Comment
+
+Múltiplos valores de retorno
+\layout Standard
+
+As funções da API para invocação de métodos diferem na forma como os argumentos
+ são passados.
  Por exemplo, a função 
 \family typewriter 
 rb_funcall
@@ -6034,6 +6144,10 @@ VALUE
 \family default 
  como parâmetro.
  Múltiplos valores de retorno são representados como um array Ruby.
+\layout Comment
+
+Função vs.
+ método
 \layout Standard
 
 Todas as rotinas de chamada de função na API se referem a métodos, precisando
@@ -6239,6 +6353,9 @@ Invocação de métodos Ruby passando blocos de código a partir de C
 \end_inset 
 
 
+\layout Comment
+
+Questões específicas da linguagem: blocos Ruby
 \layout Standard
 
 O status especial dos blocos de código complica a sua manipulação a partir
@@ -6454,6 +6571,9 @@ setjmp
 longjmp
 \family default 
 .
+\layout Comment
+
+Verificação da ocorrência de erros.
 \layout Standard
 
 Para o correto tratamento de erros, funções C que realizam chamadas a funções
@@ -6481,6 +6601,9 @@ rb_raise
 rb_protect
 \family default 
 , exceções em Ruby resultarão em erros fatais.
+\layout Comment
+
+Exemplo de chamada de função
 \layout Standard
 
 A seguir, é apresentada a forma típica para chamar uma função global Ruby
@@ -6519,8 +6642,26 @@ Qnil
 \family default 
 , indicando uma função global).
  A conversão dos dados de entrada de C para Ruby é feita através da função
- rb_str_new2 e da macro INT2NUM, que criam VALUEs.
- Conforme discutido na Seção 
+ 
+\family typewriter 
+rb_str_new2
+\family default 
+ e da macro 
+\family typewriter 
+INT2NUM
+\family default 
+, que criam 
+\family typewriter 
+VALUE
+\family default 
+s.
+\layout Comment
+
+Controle das refs.
+ no exemplo
+\layout Standard
+
+Conforme discutido na Seção 
 \begin_inset LatexCommand \ref{sub:Ruby-GC}
 
 \end_inset 
@@ -6565,6 +6706,9 @@ Java
 \end_inset 
 
 
+\layout Comment
+
+Como obter/referenciar uma função
 \layout Standard
 
 De forma similar ao acesso a atributos, na chamada de métodos deve-se inicialmen
@@ -6617,6 +6761,9 @@ Method
 FromReflectedMethod
 \family default 
 .
+\layout Comment
+
+Funções da API para invocar funções
 \layout Standard
 
 Uma vez obtido o 
@@ -6646,6 +6793,9 @@ Method
 \family roman 
 \emph on 
 <argumentos>
+\layout Comment
+
+Valor de retorno
 \layout Standard
 
 O 
@@ -6704,6 +6854,9 @@ jarray
 jobject
 \family default 
 , o tipo de referência retornada é local.
+\layout Comment
+
+Passando argumentos
 \layout Standard
 
 Os argumentos do método podem ser passados de três formas: como 
@@ -6738,6 +6891,10 @@ jint
 jvalue
 \family default 
 s.
+\layout Comment
+
+Questões específicas da linguagem: escopo léxico vs.
+ dinâmico
 \layout Standard
 
 É importante notar que, ao obter identificadores de métodos e campos fazendo
@@ -6827,6 +6984,9 @@ static native
 \family default 
 .
  
+\layout Comment
+
+Verificação da ocorrência de erros
 \layout Standard
 
 O código C pode verificar a ocorrência de exceções através de 
@@ -6842,6 +7002,13 @@ ExceptionOccurred
 ExceptionClear
 \family default 
 , ou então mantê-la ativa de modo que seja propagada ao código Java.
+\layout Comment
+
+Exemplo de chamada de função
+\layout Comment
+
+Função vs.
+ método
 \layout Standard
 
 Para realizar o exemplo da função 
@@ -6893,6 +7060,9 @@ jstring entrada = (*J)->NewStringUTF(J, "entrada");
 
 \size footnotesize 
 long result = (*J)->CallStaticIntMethod(J, exemplo, teste, entrada, (jint)2);
+\layout Comment
+
+Controle das referências no exemplo
 \layout Standard
 
 Inicialmente, é obtida uma referência à classe 
@@ -6932,6 +7102,18 @@ Tanto em funções C disparadas por Lua como em chamadas de funções Lua realizadas
 \end_inset 
 
 .
+\layout Comment
+
+Como obter/referenciar uma função
+\layout Comment
+
+Funções da API para invocar funções
+\layout Comment
+
+Verificação da ocorrência de erros
+\layout Comment
+
+Passando argumentos
 \layout Standard
 
 Para chamar uma função Lua a partir de C, devemos inicalmente empilhar o
@@ -6970,6 +7152,12 @@ lua_pcall
 status
 \emph default 
  e a mensagem de erro na pilha.
+\layout Comment
+
+Valores de retorno
+\layout Comment
+
+Múltiplos valores de retorno
 \layout Standard
 
 No caso de execução sem erros, a pilha conterá os valores de retorno da
@@ -7029,6 +7217,34 @@ lua_pcall
 rb_protect
 \family default 
 .
+\layout Comment
+
+Função vs.
+ método
+\layout Standard
+
+Lua não possui distinção entre funções e métodos, mas possui açúcar sintático
+ que permite invocar funções armazenadas em tabelas com uma sintaxe de chamada
+ de métodos: 
+\family typewriter 
+t:m(x)
+\family default 
+ significa 
+\family typewriter 
+t.m(t,x)
+\family default 
+.
+ Todavia, não há na API de C uma chamada específica para replicar esta abreviaçã
+o.
+ Para funções armazenadas em tabela, a função deve ser obtida com 
+\family typewriter 
+lua_gettable
+\family default 
+ e a tabela deve ser empilhada explicitamente juntamente com os demais parametro
+s.
+\layout Comment
+
+Exemplo de chamada de função
 \layout Standard
 
 O exemplo da chamada da função 
@@ -7081,6 +7297,9 @@ long result = lua_tointeger(L, -1);
 
 \size footnotesize 
 lua_pop(L, 1); 
+\layout Comment
+
+Controle das refs no exemplo
 \layout Standard
 
 Com 
@@ -7120,6 +7339,16 @@ Perl
 \end_inset 
 
 
+\layout Comment
+
+Como obter/referenciar uma função
+\layout Comment
+
+Funções da API para invocar funções
+\layout Comment
+
+Funções vs.
+ métodos
 \layout Standard
 
 A chamada de funções Perl a partir de C se dá através de uma disciplina
@@ -7152,6 +7381,9 @@ call_argv
 , como conveniência, recebe como um argumento adicional um array C contendo
  strings C representando parâmetros a serem empilhados.
  Todas retornam o número de valores de retorno disponíveis na pilha.
+\layout Comment
+
+Questões específicas da linguagem: contextos Perl
 \layout Standard
 
 As funções 
@@ -7204,7 +7436,19 @@ Isto tem o efeito colateral de que a função chamada herda o valor de
 \end_inset 
 
 .
- 
+\layout Comment
+
+Verificação da ocorrência de erros.
+\layout Standard
+
+O precedimento para verificação de erros depende do contexto e das flags
+ passadas, que afetam como situações de erro são reportadas no valor de
+ retorno das funções 
+\family typewriter 
+call_
+\family default 
+* e nos valores retornados na pilha.
+ A flag 
 \family typewriter 
 G_EVAL
 \family default 
@@ -7224,6 +7468,10 @@ G_KEEPERR
 \family default 
 , o valor da variável de retorno contendo a mensagem de erro não é zerado,
  acumulando seqüências de erros em níveis de chamada diferentes.
+ 
+\layout Comment
+
+Exemplo de chamada de função
 \layout Standard
 
 Uma série de macros descrevem um protocolo para a chamada de funções e a
@@ -7299,6 +7547,12 @@ FREETMPS;
 
 \size footnotesize 
 LEAVE;
+\layout Comment
+
+Passando argumentos
+\layout Comment
+
+Controle de referências no exemplo
 \layout Standard
 
 Inicialmente 
@@ -7353,6 +7607,9 @@ teste
 call_pv
 \family default 
 .
+\layout Comment
+
+Valores de retorno
 \layout Standard
 
 Após o retorno desta função, a memória da pilha de Perl pode ter sido realocada,
@@ -7458,6 +7715,9 @@ Python
 \end_inset 
 
 
+\layout Comment
+
+O que são funções na linguagem
 \layout Standard
 
 Como visto na Seção 
@@ -7473,19 +7733,19 @@ chamáveis
 \begin_inset Quotes erd
 \end_inset 
 
- implementando 
+ implementando um método 
 \family typewriter 
 __call__
 \family default 
- em Python ou 
+ em Python ou associando uma função C ao campo 
 \family typewriter 
 tp_call
 \family default 
- no seu 
+ do seu 
 \family typewriter 
 PyTypeObject
 \family default 
- em C.
+ correspondente.
  Assim, Python não possui um tipo 
 \begin_inset Quotes eld
 \end_inset 
@@ -7495,11 +7755,8 @@ função
 \end_inset 
 
  propriamente dito.
- Métodos de classes, no entanto, possuem um tipo específico 
-\emph on 
-método
-\emph default 
-, que pode ser verificado com 
+ Métodos de classes, no entanto, possuem um tipo específico, que pode ser
+ verificado com 
 \family typewriter 
 PyMethod_Check
 \family default 
@@ -7518,6 +7775,9 @@ chamável
 \end_inset 
 
  e o objeto ou classe a que ele deve se referir.
+\layout Comment
+
+Parâmetros de entrada
 \layout Standard
 
 Tipicamente, entretanto, funções C são registradas passando-se um array
@@ -7534,21 +7794,24 @@ PyMethodDef
 \family typewriter 
 METH_NOARGS
 \family default 
- é usada funções que não recebem parâmetros, 
+ é usada para funções que não recebem parâmetros; 
 \family typewriter 
 METH_VARARGS
 \family default 
- para funções que recebem um número variável de parâmetros como uma tupla
- Python passada à função C e 
+ para funções que recebem um número variável de parâmetros passados para
+ C como uma tupla Python; 
 \family typewriter 
 METH_KEYWORDS
 \family default 
- para indicar que a função recebe um parâmetro adicional contendo um dicionário
- contendo os parâmetros passados à função como 
+ para indicar que a função recebe como parâmetro adicional um dicionário
+ contendo os argumentos 
 \emph on 
 keywords
 \emph default 
-.
+ passados à função.
+\layout Comment
+
+API para registrar funções
 \layout Standard
 
 De posse destas informações, funções da API que operam sobre arrays de 
@@ -7571,6 +7834,9 @@ PyMethodDef
 tp_methods
 \family default 
 .
+\layout Comment
+
+Valores de retorno
 \layout Standard
 
 Funções C registradas em Python devem retornar um ponteiro para 
@@ -7601,6 +7867,9 @@ Py_None
 \end_inset 
 
 .
+\layout Comment
+
+Exemplo
 \layout Standard
 
 Uma implementação simples de uma função C que pode ser registrada em Python
@@ -7646,6 +7915,9 @@ n", entrada, n);
 
 \size footnotesize 
 }
+\layout Comment
+
+Verificar valores de entrada
 \layout Standard
 
 A assinatura de função empregada corresponde à flag 
@@ -7667,13 +7939,16 @@ PyObject
 PyInt_FromLong
 \family default 
 , gerando uma nova referência.
+\layout Comment
+
+Exemplo de registro de global
 \layout Standard
 
 A API de Python é projetada primariamente para o desenvolvimento de módulos
  de extensão para a linguagem.
- Enquanto existem diversas funções para registrar métodos em classes e inicializ
-ar módulos com listas de funções, não há uma forma direta para declarar
- funções globais.
+ Embora existam diversas funções para registrar métodos em classes e inicializar
+ módulos com listas de funções, não há uma forma direta para registrar funções
+ globais na máquina virtual.
  Uma maneira possível é usando a rotina utilitária para lookup de métodos
  
 \family typewriter 
@@ -7713,7 +7988,7 @@ PyObject* teste_obj = Py_FindMethod(teste_def, NULL, "teste");
 
 
 \size footnotesize 
-PyDict_SetItemString(globals, "teste", teste_obj); 
+PyDict_SetItemString(globals, "teste", teste_obj);
 \layout Standard
 
 Note que foi passado 
@@ -7759,6 +8034,12 @@ PyMethodDef
 \layout Subsection
 
 Ruby
+\layout Comment
+
+API para registrar funções
+\layout Comment
+
+Convenção para parâmetros de entrada
 \layout Standard
 
 Para que funções C possam ser chamadas a partir de Ruby, elas devem ser
@@ -7790,7 +8071,7 @@ rb_define_singleton_method
 \family typewriter 
 VALUE
 \family default 
-s ou de um 
+s ou na forma de um 
 \family typewriter 
 VALUE
 \family default 
@@ -7807,6 +8088,8 @@ PyArg_ParseTuple
 rb_scan_args
 \family default 
 .
+ Esta função pode ser usada quando os parâmetros de entrada são recebidos
+ em um array Ruby.
  Como 
 \family typewriter 
 PyArg_ParseTuple
@@ -7816,6 +8099,9 @@ PyArg_ParseTuple
  Por outro lado, ela não realiza verificação de tipo dos argumentos.
  A string de formato permite indicar o número mínimo e máximo de parâmetros
  aceitos e se os parâmetros excedentes devem ser coletados em um array Ruby.
+\layout Comment
+
+Questões específicas: blocos
 \layout Standard
 
 Uma vez declarada no espaço de objetos de Ruby, uma função C pode ser chamada
@@ -7857,6 +8143,9 @@ rb_scan_args
 &
 \family default 
  em declarações de funções Ruby.
+\layout Comment
+
+Valores de retorno
 \layout Standard
 
 Funções C implementado métodos Ruby devem sempre retornar um 
@@ -7870,6 +8159,9 @@ Qnil
  quando não há retorno).
  Funções que retornam múltiplos valores devem fazê-lo através de um array
  Ruby.
+\layout Comment
+
+Exemplo de função
 \layout Standard
 
 Dando continuidade à série de exemplos, a função global Ruby 
@@ -7909,6 +8201,9 @@ n", entrada, n);
 
 \size footnotesize 
 }
+\layout Comment
+
+Verificar valores de entrada
 \layout Standard
 
 A conversão dos 
@@ -7941,6 +8236,9 @@ INT2NUM
 .
  O primeiro parâmetro de entrada é necessário segundo a convenção de assinaturas
  de função da API, mas para funções globais ele deve ser ignorado.
+\layout Comment
+
+Exemplo de registro de fn global
 \layout Standard
 
 Como Ruby oferece uma função na API para a definição de funções globais,
@@ -7971,6 +8269,9 @@ Java
 \end_inset 
 
 
+\layout Comment
+
+Questões específicas: métodos native
 \layout Standard
 
 Métodos não implementados em Java devem ser declarados através de um protótipo
@@ -8099,6 +8400,12 @@ ThrowNew
  e retornar imediatamente.
  O valor de retorno será ignorado quando a exceção for capturada no código
  Java.
+\layout Comment
+
+Exemplo de registro de função global
+\layout Comment
+
+Funções da API para registrar funções (não há)
 \layout Standard
 
 Como o modo de expor à máquina virtual de Java funções implementadas em
@@ -8108,7 +8415,7 @@ Como o modo de expor à máquina virtual de Java funções implementadas em
 teste
 \family default 
  em C, mas pela forma de declarar a função para o espaço de Java.
- Na declaração da classe em Java, é declarado um método 
+ Na classe em Java, declaramos um método 
 \family typewriter 
 native
 \family default 
@@ -8149,11 +8456,18 @@ public class Exemplo {
 
 \size footnotesize 
 }
+\layout Comment
+
+Exemplo de função
 \layout Standard
 
-Passando esta classe para o comando javah, um arquivo de cabeçalho C será
- gerado, descrevendo o nome e assinatura da função C que deve existir na
- biblioteca que será carregada por 
+Após compilar esta classe podemos passá-la para o comando 
+\family typewriter 
+javah
+\family default 
+, que gerará um arquivo de cabeçalho C.
+ Este arquivo conterá o nome e assinatura da função C que a JVM irá procurar
+ na biblioteca que será carregada por 
 \family typewriter 
 System.loadLibrary
 \family default 
@@ -8215,6 +8529,12 @@ n", entrada, n);
 
 \size footnotesize 
 } 
+\layout Comment
+
+Parâmetros de entrada
+\layout Comment
+
+Verificar valores de entrada
 \layout Standard
 
 
@@ -8253,6 +8573,8 @@ n
 \family default 
  como o valor de retorno podem ser usados diretamente como tipos básicos
  de C.
+ Como Java é uma linguagem tipada estaticamente, não é preciso verificar
+ os tipos dos parâmetros de entrada na função C.
 \layout Standard
 
 A string obtida com 
@@ -8268,7 +8590,14 @@ GetStringUTFChars
 ReleaseStringUTFChars
 \family default 
 .
- 
+\layout Comment
+
+Valor de retorno
+\layout Standard
+
+Neste exemplo, a função retorna um valor imediato.
+ Valores representados com tipos de referência podem ser retornados tanto
+ com referências locais como globais.
 \layout Subsection
 
 Lua
@@ -8315,6 +8644,9 @@ lua_newstate
 lua_State
 \family default 
  novo.
+\layout Comment
+
+Convenções p/ parâmetros de entrada
 \layout Standard
 
 Ao início da função C, os argumentos passados a ela encontram-se inseridos
@@ -8323,6 +8655,9 @@ Ao início da função C, os argumentos passados a ela encontram-se inseridos
  para uma função C invocada a partir de Lua ou através da API.
  O código C pode verificar o número de argumentos passados inspecionando
  o tamanho da pilha recebida.
+\layout Comment
+
+Verificar valores de entrada
 \layout Standard
 
 A biblioteca auxiliar provê ainda funções para verificar de forma mais convenien
@@ -8352,6 +8687,9 @@ nil
 \family default 
 .
  
+\layout Comment
+
+Valores de retorno
 \layout Standard
 
 Valores de retorno também são passados pela função C de volta para Lua através
@@ -8359,6 +8697,9 @@ Valores de retorno também são passados pela função C de volta para Lua através
  O valor inteiro retornado da função C indica quantos elementos da pilha
  devem ser retornados ao à função chamadora.
  Os demais valores da pilha são descartados.
+\layout Comment
+
+Funções da API p/ registrar funções
 \layout Standard
 
 Uma função C do tipo 
@@ -8420,6 +8761,9 @@ luaL_register
 luaL_Reg
 \family default 
 , contendo nomes e ponteiros de função.
+\layout Comment
+
+Exemplo de função
 \layout Standard
 
 A função C implementando a função de exemplo 
@@ -8511,6 +8855,9 @@ luaL_check
 return 1
 \family default 
  indica à máquina virtual que há um único valor de saída.
+\layout Comment
+
+Exemplo de registro
 \layout Standard
 
 A função é registrada em Lua criando um objeto Lua do tipo 
@@ -8536,6 +8883,9 @@ luaL_register(L, "teste", teste_lua);
 \layout Subsection
 
 Perl
+\layout Comment
+
+Questões específicas
 \layout Standard
 
 Como discutido na Seção 
@@ -8565,13 +8915,22 @@ xsubpp
 namespace
 \emph default 
  comum).
+\layout Comment
+
+API para registrar funções (não tem)
 \layout Standard
 
 Existe uma API pública para manipulação de dados Perl no código C, mas esta
  consiste basicamente das estruturas internas da implementação da máquina
  virtual expostas para uso pelo pré-processador XS, acrescida de macros
  para maior conveniência do programador.
- De fato, Perl não expõe uma API documentada para o registro de funções.
+ De fato, Perl não expõe uma API documentada para o registro de funções
+ 
+\begin_inset LatexCommand \cite{perlapi}
+
+\end_inset 
+
+.
  Assim, não é prático para uma aplicação embutir uma máquina virtual Perl
  e expor a ela um conjunto de funções C usando apenas código C.
  A saída é criar uma extensão Perl usando XS que expõe funções da aplicação
@@ -8694,6 +9053,9 @@ n", entrada, n);
 
 \size footnotesize 
                 RETVAL 
+\layout Comment
+
+Parâmetros de entrada
 \layout Standard
 
 O arquivo 
@@ -8709,7 +9071,20 @@ O arquivo
 xsubpp
 \family default 
 .
- Uma vez compilada a extensão usando os Makefiles gerados por 
+ O código C conversão dos parâmetros de entrada e saída é gerado automaticamente.
+ Em alguns casos, entretanto, precisamos manipular os valores da pilha de
+ Perl explicitamente, como descrito na Seção 
+\begin_inset LatexCommand \ref{sub:Perl-Dados}
+
+\end_inset 
+
+.
+ Em funções vararg, por exemplo, os argumentos adicionais devem ser acessados
+ diretamente na pilha.
+ O código para registrar as funções do módulo também é gerado automaticamente.
+\layout Standard
+
+Uma vez compilada a extensão usando os Makefiles gerados por 
 \family typewriter 
 h2xs
 \family default 
@@ -8731,11 +9106,14 @@ $ret = Teste::teste("entrada", 2);
 print $ret .
  "
 \backslash 
-n"; 
+n";
 \layout Comment
 
 Em uma aplicação C embutindo o interpretador Perl, pode-se ligar o código
  C gerado...
+\layout Comment
+
+Contextos para valor de retorno (GIMME_V), etc.
 \layout Chapter
 
 
@@ -8744,7 +9122,7 @@ Em uma aplicação C embutindo o interpretador Perl, pode-se ligar o código
 \end_inset 
 
 Estudo de Caso: LibScript
-\layout Standard
+\layout Comment
 
 
 \emph on 
@@ -8793,7 +9171,7 @@ libscript-lua
 , etc.) para rodar o código.
  Desta forma, a aplicação permite ao usuário utilizar qualquer uma destas
  linguagens para scripting sem adicionar todas elas como suas dependências.
-\layout Standard
+\layout Comment
 
 
 \emph on 
@@ -8805,10 +9183,11 @@ libscript-lua
 Uma FLI age como uma ponte de dois sentidos: ela deve expor os tipos de
  dados e permitir chamada de código de C à linguagem, e expor os tipos de
  dados e permitir chamada de código da linguagem a C.
+\layout Comment
 
-\color red
- 
+
 \emph on 
+\color red
 [Serão esses os 
 \begin_inset Quotes eld
 \end_inset 
@@ -8819,15 +9198,14 @@ quatro objetivos
 
  principais de uma FLI? Mapear APIs das linguagens estudadas dentro desses
  2 grandes grupos (cada um com 2 sub-grupos)?]
-\layout Standard
+\layout Comment
 
 
 \emph on 
 \color red
 [TODO: deixar o texto apresentável :) ]
-\color default
- 
-\emph default 
+\layout Standard
+
 O objetivo geral de LibScript é tornar aplicações 
 \begin_inset Quotes eld
 \end_inset 
@@ -8862,7 +9240,7 @@ O primeiro objetivo implementa um dos sentidos da comunicação realizada
  tipos opacos, já que os conjuntos de funcionalidades a ser exposta ao mapear
  os tipos de dados específicos de cada linguagem variam muito entre si.
  
-\layout Standard
+\layout Comment
 
 
 \emph on 
@@ -8905,7 +9283,7 @@ handles
 \layout Section
 
 A Camada Independente de Linguagem
-\layout Standard
+\layout Comment
 
 
 \emph on 
@@ -9032,7 +9410,7 @@ embedded
 \layout Section
 
 API de LibScript
-\layout Standard
+\layout Comment
 
 
 \emph on 
@@ -9265,12 +9643,6 @@ script_out_*
 script_in_*
 \family default 
 .
- 
-\emph on 
-\color red
-[Na implementação atual,]
-\emph default 
-\color default
  Inicialmente, a tabela de funções C é consultada.
  Não havendo uma função definida em C, os plugins são consultados na seqüência
  em que foram inicializados implicitamente via 
@@ -9498,7 +9870,7 @@ Responsável pelo encerramento do ambiente.
 \layout Section
 
 Múltiplos estados independentes
-\layout Standard
+\layout Comment
 
 
 \emph on 
@@ -9542,7 +9914,10 @@ Py_NewInterpreter()
 \family default 
 , mas isto pode causar problemas quando módulos de extensão escritos em
  C utilizam variáveis globais estáticas ou quando módulos manipulam o seu
- próprio dicionário, que é compartilhado entre estados 
+ próprio dicionário, que é compartilhado entre estados
+\layout Comment
+
+
 \emph on 
 \color red
 [a documentação diz 
@@ -9562,7 +9937,7 @@ This is a hard-to-fix bug that will be addressed in a future release
 \emph default 
 \color default
 .
-\layout Standard
+\layout Comment
 
 
 \emph on 
@@ -9617,15 +9992,14 @@ stubs
 \layout Subsection
 
 Lua
-\layout Standard
+\layout Comment
 
 
 \emph on 
 \color red
 [Parágrafo carregado de jargão Lua...]
-\color default
- 
-\emph default 
+\layout Standard
+
 Durante a inicialização do plugin, é criada uma tabela armazenada em uma
  variável global, com o nome do 
 \emph on 
@@ -9731,7 +10105,9 @@ namespace
 
 \family default 
 .
- 
+\layout Comment
+
+
 \emph on 
 \color red
 [Parece não ser possível importar um módulo de outra forma pela API Python/C;
@@ -9792,7 +10168,7 @@ script_py_object_call
 \layout Subsection
 
 Ruby
-\layout Standard
+\layout Comment
 
 
 \emph on 
@@ -9923,7 +10299,7 @@ Manipulação do estado de nomes
 Para que o ambiente descreva um espaço de nomes consistente entre todos
  os plugins, é necessário contemplar o caso onde os plugins adicionam funções
  a ele, possivelmente sobrescrevendo funções previamente definidas.
-\layout Standard
+\layout Comment
 
 
 \emph on 
@@ -9961,7 +10337,7 @@ inexistente
 \end_inset 
 
 Considerações Finais
-\layout Standard
+\layout Comment
 
 
 \emph on 
@@ -10445,7 +10821,7 @@ OKAMOTO, J.
  Man-page da documentação de Perl 5.8.8.
  Janeiro 2006.
 \layout Bibliography
-\bibitem {key-2}
+\bibitem {perlapi}
 
 PERLAPI
 \layout Bibliography
