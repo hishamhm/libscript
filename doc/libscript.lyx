@@ -1471,6 +1471,9 @@ aTHX_
 \emph on 
 \color red
 Material: perlxs, perlembed, perlguts, perlapi, perlcall.]
+\layout Standard
+
+Perl -> 
 \layout Subsection*
 
 Random jot #5: Strings
@@ -1483,6 +1486,29 @@ Random jot #8: Tainted Objects em Ruby
 \layout Standard
 
 http://www.rubycentral.com/book/taint.html
+\layout Subsection*
+
+Random jot #9: Java
+\layout Standard
+
+No caso de Java, uma vez que o compilador e a máquina virtual não são combinados
+, não há uma primitiva deste tipo, embora seja possível carregar dinamicamente
+ arquivos pré-compilados para execução através da classe 
+\family typewriter 
+ClassLoader
+\family default 
+.
+ Alternativamente, scripting em Java pode ser oferecido adicionando-se um
+ compilador Java 
+\emph on 
+embedded
+\emph default 
+ como o Janino 
+\begin_inset LatexCommand \cite{janino}
+
+\end_inset 
+
+.
 \layout Bibliography
 \bibitem {ltn004}
 
