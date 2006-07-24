@@ -153,8 +153,8 @@ pagebreak
 Abstract
 \layout Standard
 
-There are many situations where it is useful or necessary to have programs
- written in different languages to interact.
+There are many situations in which it is useful or necessary to have interaction
+ between programs written in different languages.
  A common scenario involves applications written in more than one programming
  language in order to optimize parts where performance is critical or to
  obtain extensibility through user-written scripts.
@@ -9546,6 +9546,332 @@ LibScript adota esta abordagem mais minimalista para sua API: não são oferecidas
 Implementação dos plugins
 \layout Subsection
 
+Múltiplos estados independentes
+\layout Standard
+
+O design de LibScript permite que plugins mantenham múltiplos estados independen
+tes.
+ Idealmente estes estados seriam totalmente isolados entre si, oferecendo
+ maior segurança ao ambiente de execução dos scripts.
+ As linguagens, entretanto, oferecem diferentes graus de isolamento entre
+ estados independentes.
+ Lua e Perl são linguagens que permitem múltiplas instâncias isoladas do
+ ambiente de execução de forma simples, uma vez que as chamadas à API incluem
+ um identificador de estado
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+O recurso de múltiplos estados independentes é opcional em Perl, selecionado
+ durante a compilação da biblioteca do interpretador.
+\end_inset 
+
+.
+ Já linguagens que mantêm estado da máquina virtual de forma estática, como
+ Python e Ruby, não permitem trabalhar com múltiplos estados isolados facilmente.
+ O modelo de threads de Python oferece uma forma de alternar entre estados
+ na máquina virtual obtendo objetos 
+\family typewriter 
+PyThreadState
+\family default 
+ através da chamada 
+\family typewriter 
+Py_NewInterpreter
+\family default 
+, mas isto pode causar problemas quando módulos de extensão escritos em
+ C utilizam variáveis globais estáticas ou quando módulos manipulam o seu
+ próprio dicionário, que é compartilhado entre estados
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+A documentação diz que 
+\begin_inset Quotes eld
+\end_inset 
+
+este é um bug difícil de ser resolvido que será tratado em uma versão futura
+\begin_inset Quotes erd
+\end_inset 
+
+ 
+\begin_inset LatexCommand \cite{py-hardtofix}
+
+\end_inset 
+
+.
+\end_inset 
+
+.
+\layout Standard
+
+A função 
+\family typewriter 
+script_init
+\family default 
+ de LibScript recebe uma string como parâmetro, que será o nome do ambiente
+ retornado.
+ Um ambiente representa um conjunto de funções C nele registradas e os estados
+ correspondentes nos plugins carregados.
+ Ambientes são representados como um ponteiros opacos do tipo 
+\family typewriter 
+script_env
+\family default 
+, e são passados como primeiro parâmetro para todas as demais funções da
+ API de LibScript.
+\layout Standard
+
+Na inicialização de um plugin, a biblioteca passa à função 
+\family typewriter 
+script_plugin_init_
+\emph on 
+linguagem
+\family default 
+\emph default 
+ um 
+\family typewriter 
+script_env
+\family default 
+ e recebe um 
+\family typewriter 
+script_plugin_state
+\family default 
+, que é um tipo opaco que é sempre retornado ao plugin nas demais chamadas.
+ Cada plugin define a sua representação interna para 
+\family typewriter 
+script_plugin_state
+\family default 
+, de modo a descrever de forma apropriada para a linguagem um espaço de
+ nomes.
+\layout Standard
+
+No plugin Lua, estados são implementados como 
+\family typewriter 
+lua_State
+\family default 
+s (Seção 
+\begin_inset LatexCommand \ref{sub:Lua-Registro}
+
+\end_inset 
+
+).
+ Desta forma, scripts executados em um ambiente são plenamente isolados
+ dos demais ambientes.
+ Por exemplo, a alteração do valor de uma variável global em um ambiente
+ não afeta os demais.
+ De fato, o 
+\family typewriter 
+script_plugin_state
+\family default 
+ retornado pelo plugin Lua é simplesmente o 
+\family typewriter 
+lua_State
+\family default 
+ convertido via cast.
+ O ponteiro para o ambiente LibScript é armazenado em Lua no registro, usando
+ o endereço do 
+\family typewriter 
+lua_State
+\family default 
+ como chave.
+\layout Standard
+
+O plugin cria neste 
+\family typewriter 
+lua_State
+\family default 
+ uma tabela com o nome do ambiente.
+ Funções registradas via LibScript estarão disponíveis como elementos desta
+ tabela.
+ O exemplo a seguir registra uma função C chamada 
+\family typewriter 
+hello
+\family default 
+ e a invoca a partir de código Lua:
+\layout LyX-Code
+
+
+\size footnotesize 
+env = script_init("exemplo");
+\layout LyX-Code
+
+
+\size footnotesize 
+script_new_function(env, hello, "hello");
+\layout LyX-Code
+
+
+\size footnotesize 
+script_run(env, "lua", "exemplo.hello()");
+\layout Standard
+
+Um plugin é carregado automaticamente quando uma determinada linguagem é
+ requisitada pela primeira vez, seja através do segundo parâmetro de 
+\family typewriter 
+script_run
+\family default 
+ como neste exemplo ou em 
+\family typewriter 
+script_run_file
+\family default 
+ através da extensão do arquivo ou da linha de identificação 
+\begin_inset Quotes eld
+\end_inset 
+
+
+\family typewriter 
+#!
+\family default 
+
+\begin_inset Quotes erd
+\end_inset 
+
+
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+A API é descrita por completo no Apêndice 
+\begin_inset LatexCommand \ref{cha:API-de-LibScript}
+
+\end_inset 
+
+.
+\end_inset 
+
+.
+ A forma como a função é inserida na tabela Lua será discutida na Seção
+ 
+\begin_inset LatexCommand \ref{sub:Resolução-de-funções}
+
+\end_inset 
+
+.
+\layout Standard
+
+Em 
+\family typewriter 
+libscript-perl
+\family default 
+ os estados são igualmente isolados.
+ Cada estado criado inicializa uma nova instância de 
+\family typewriter 
+PerlInterpreter
+\family default 
+.
+ Neste interpretador, é criado um pacote representando o ambiente.
+ O estado é descrito com a seguinte estrutura:
+\layout LyX-Code
+
+
+\size footnotesize 
+typedef struct {
+\layout LyX-Code
+
+
+\size footnotesize 
+   PerlInterpreter* P;
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_env* env;
+\layout LyX-Code
+
+
+\size footnotesize 
+   char* package;
+\layout LyX-Code
+
+
+\size footnotesize 
+} script_perl_state; 
+\layout Standard
+
+Em 
+\family typewriter 
+script_perl_state
+\family default 
+ são armazenadas referências para o interpretador e para o ambiente LibScript,
+ bem como o nome do pacote (que é o nome do ambiente com a inicial em maiúscula,
+ seguindo a convenção de pacotes de Perl).
+\layout Standard
+
+Como Python não dispõe de facilidades para disparar múltiplas máquinas virtuais
+ plenamente isoladas, o plugin Python implementa estados apenas como módulos
+ separados, compartilhando um mesmo estado global.
+ Durante a inicialização de um estado, é criado um módulo Python com o nome
+ do ambiente.
+ A representação no plugin do estado consiste num ponteiro para o ambiente
+ e para o dicionário de elementos do módulo:
+\layout LyX-Code
+
+
+\size footnotesize 
+typedef struct {
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyObject* dict;
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_env* env;
+\layout LyX-Code
+
+
+\size footnotesize 
+} script_python_state;
+\layout Standard
+
+De forma similar, estados em Ruby são implementados como classes que compartilha
+m um mesmo estado global, já que Ruby também não permite múltiplos ambientes
+ de execução isolados.
+ Um estado é representado em Ruby da seguinte forma:
+\layout LyX-Code
+
+
+\size footnotesize 
+typedef struct {
+\layout LyX-Code
+
+
+\size footnotesize 
+   VALUE klass;
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_env* env;
+\layout LyX-Code
+
+
+\size footnotesize 
+   char* name;
+\layout LyX-Code
+
+
+\size footnotesize 
+} script_ruby_state;
+\layout Standard
+
+O campo 
+\family typewriter 
+name
+\family default 
+ armazena o nome da classe seguindo a convenção de capitalização de Ruby,
+ como ocorre em Perl.
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{sub:Resolução-de-funções}
+
+\end_inset 
+
 Resolução de funções sob demanda
 \layout Standard
 
@@ -9720,68 +10046,6 @@ script_ruby_call
  irá então converter os parâmetros e invocar a função.
 \layout Subsection
 
-Múltiplos estados independentes
-\layout Standard
-
-O 
-\emph on 
-design
-\emph default 
- atual da API oferece suporte a múltiplos estados independentes, ao permitir
- a manipulação de diversos ambientes, cada um possivelmente contendo um
- estado diferente de um dado plugin.
- Isto pode trazer problemas para linguagens que não dão suporte a múltiplos
- estados.
- Todavia, nem todos os plugins Lua e Perl são linguagens que permitem múltiplos
- estados de forma simples, uma vez que as chamadas à API incluem um identificado
-r de estado
-\begin_inset Foot
-collapsed true
-
-\layout Standard
-
-Perl precisa ser compilado com -DMULTIPLICITY para permitir múltiplos estados.
-\end_inset 
-
-.
- Já linguagens que mantêm estado da máquina virtual de forma estática, como
- Python e Ruby, não permitem trabalhar com múltiplos estados facilmente.
- O modelo de threads de Python oferece uma forma de alternar entre estados
- na máquina virtual obtendo objetos 
-\family typewriter 
-PyThreadState
-\family default 
- através da chamada 
-\family typewriter 
-Py_NewInterpreter
-\family default 
-, mas isto pode causar problemas quando módulos de extensão escritos em
- C utilizam variáveis globais estáticas ou quando módulos manipulam o seu
- próprio dicionário, que é compartilhado entre estados
-\begin_inset Foot
-collapsed true
-
-\layout Standard
-
-A documentação diz que 
-\begin_inset Quotes eld
-\end_inset 
-
-este é um bug difícil de ser resolvido que será tratado em uma versão futura
-\begin_inset Quotes erd
-\end_inset 
-
- 
-\begin_inset LatexCommand \cite{py-hardtofix}
-
-\end_inset 
-
-.
-\end_inset 
-
-.
-\layout Subsection
-
 Múltiplos valores de retorno
 \layout Standard
 
@@ -9828,6 +10092,11 @@ conversores: aí a gente está falando de outro problema altogether, que é
  trabalho futuro, possibly.
 \layout Chapter
 \start_of_appendix 
+
+\begin_inset LatexCommand \label{cha:API-de-LibScript}
+
+\end_inset 
+
 API de LibScript
 \layout Comment
 
