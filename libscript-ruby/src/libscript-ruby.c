@@ -18,13 +18,11 @@
 
 #include <ruby.h>
 
-
 #include "libscript-ruby.h"
 
-static VALUE script_ruby_class;
-static script_env* script_ruby_env;
-static char* script_ruby_namespace;
 static ID method_id;
+
+static int script_ruby_state_count = 0;
 
 INLINE static void script_ruby_get_param(script_env* env, VALUE arg) {
    if (arg == Qtrue) {
@@ -108,62 +106,72 @@ INLINE static VALUE script_ruby_params_to_value(script_env* env) {
    return ret;
 }
 
-static VALUE script_ruby_call(VALUE self, VALUE fn_value, VALUE args) {
-   script_fn fn;
+INLINE static script_ruby_state* script_ruby_get_state_from_class(VALUE klass) {
+   /* assumes a void* fits in long */
+   return (script_ruby_state*) NUM2LONG(rb_cv_get(klass, "@@_state"));
+}
 
-   fn = (script_fn) NUM2LONG(fn_value);
-   script_ruby_get_params(script_ruby_env, args);
-   fn(script_ruby_env);
-   return script_ruby_params_to_value(script_ruby_env);
+static VALUE script_ruby_call(VALUE self, VALUE fn_value, VALUE args) {
+   script_ruby_state* state = script_ruby_get_state_from_class(self);
+   script_fn fn = (script_fn) NUM2LONG(fn_value);
+   script_ruby_get_params(state->env, args);
+   fn(state->env);
+   return script_ruby_params_to_value(state->env);
 }
 
 static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
-   char* name;
-   script_fn fn;
-   name = rb_id2name(SYM2ID(argv[0]));
-   fn = script_get_function(script_ruby_env, name);
+   script_ruby_state* state = script_ruby_get_state_from_class(self);
+   char *name = rb_id2name(SYM2ID(argv[0]));
+   script_fn fn = script_get_function(state->env, name);
    if (fn) {
       char fn_code[1024];
       VALUE args;
       snprintf(fn_code, 1023, "def %s.%s(*args); %s.call(%ld, args); end;",
-         script_ruby_namespace, name, script_ruby_namespace, (long int) fn);
+         state->namespace, name, state->namespace, (long int) fn);
       rb_eval_string(fn_code);
       args = rb_ary_new4(argc - 1, argv+1);
       return script_ruby_call(self, rb_int_new((long int) fn), args);
    } else {
       script_err err;
       int i;
-      script_params(script_ruby_env);
+      script_params(state->env);
       for (i = 0; i < argc; i++)
-         script_ruby_get_param(script_ruby_env, argv[i]);
-      err = script_call(script_ruby_env, name);
+         script_ruby_get_param(state->env, argv[i]);
+      err = script_call(state->env, name);
       if (err != SCRIPT_OK) {
          /* FIXME: I'm getting a Ruby segfault when Ruby raises exceptions. */
          rb_raise(rb_eRuntimeError, "No such function: '%s'.", name);
          return Qnil;
       }
-      return script_ruby_params_to_value(script_ruby_env);
+      return script_ruby_params_to_value(state->env);
    }
    return Qnil;
 }
 
 script_plugin_state script_plugin_init_ruby(script_env* env) {
+   script_ruby_state* state;
    const char* namespace;
    int namespace_size;
 
    namespace = script_get_namespace(env);
-   ruby_init();
-   ruby_script(namespace);
+   if (script_ruby_state_count == 0) {
+      ruby_init();
+      ruby_script("libscript");
+   }
+   script_ruby_state_count++;
+   state = malloc(sizeof(script_ruby_state));
    namespace_size = strlen(namespace) + 1;
-   script_ruby_namespace = malloc(namespace_size);
-   strncpy(script_ruby_namespace, namespace, namespace_size);
-   script_ruby_env = env;
-   script_ruby_namespace[0] = toupper(script_ruby_namespace[0]);
-   script_ruby_class = rb_define_class(script_ruby_namespace, rb_cObject);
+   state->namespace = malloc(namespace_size);
+   strncpy(state->namespace, namespace, namespace_size);
+   state->env = env;
+   state->namespace[0] = toupper(state->namespace[0]);
+   state->klass = rb_define_class(state->namespace, rb_cObject);
+   /* assuming a void* fits in a long */
+   rb_cv_set(state->klass, "@@_state", INT2NUM((long int)state));
    method_id = rb_intern("method");
-   rb_define_singleton_method(script_ruby_class, "method_missing", script_ruby_method_missing, -1);
-   rb_define_singleton_method(script_ruby_class, "call", script_ruby_call, 2);
-   return SCRIPT_GLOBAL_STATE;
+   rb_define_singleton_method(state->klass, "method_missing", script_ruby_method_missing, -1);
+   rb_define_singleton_method(state->klass, "call", script_ruby_call, 2);
+   return state;
 }
 
 int script_plugin_run_ruby(script_plugin_state state, char* programtext) {
@@ -173,26 +181,25 @@ int script_plugin_run_ruby(script_plugin_state state, char* programtext) {
 
 INLINE static VALUE script_ruby_pcall(VALUE args) {
    ID fn_id = SYM2ID(rb_ary_pop(args));
-   return rb_apply(script_ruby_class, fn_id, args);
+   VALUE klass = rb_ary_pop(args);
+   return rb_apply(klass, fn_id, args);
 }
 
-int script_plugin_call_ruby(script_plugin_state state, char* fn) {
-   VALUE method;
-   VALUE fn_value;
+int script_plugin_call_ruby(script_ruby_state* state, char* fn) {
+   script_env* env = state->env;
    VALUE args;
    int error;
-   script_env* env = script_ruby_env;
-   
    VALUE ret;
-   fn_value = rb_str_new2(fn);
-   method = rb_funcall(script_ruby_class, method_id, 1, fn_value);
+   VALUE fn_value = rb_str_new2(fn);
+   VALUE method = rb_funcall(state->klass, method_id, 1, fn_value);
    if (method == Qnil)
       return SCRIPT_ERRFNUNDEF;
    args = script_ruby_params_to_array(script_param_count(env), env);
+   rb_ary_push(args, state->klass);
    rb_ary_push(args, ID2SYM(rb_intern(fn)));
    ret = rb_protect(script_ruby_pcall, args, &error);
-   script_params(script_ruby_env);
-   script_ruby_get_param(script_ruby_env, ret);
+   script_params(state->env);
+   script_ruby_get_param(state->env, ret);
    if (error) {
       script_set_error_message(env, StringValuePtr(ruby_errinfo));
       ruby_errinfo = Qnil;
@@ -201,6 +208,11 @@ int script_plugin_call_ruby(script_plugin_state state, char* fn) {
       return SCRIPT_OK;
 }
 
-void script_plugin_done_ruby(script_plugin_state state) {
-   ruby_finalize();
+void script_plugin_done_ruby(script_ruby_state* state) {
+   script_ruby_state_count--;
+   free(state->namespace);
+   free(state);
+   if (script_ruby_state_count == 0) {
+      ruby_finalize();
+   }
 }
