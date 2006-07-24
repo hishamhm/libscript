@@ -127,7 +127,7 @@ static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
       char fn_code[1024];
       VALUE args;
       snprintf(fn_code, 1023, "def %s.%s(*args); %s.call(%ld, args); end;",
-         state->namespace, name, state->namespace, (long int) fn);
+         state->name, name, state->name, (long int) fn);
       rb_eval_string(fn_code);
       args = rb_ary_new4(argc - 1, argv+1);
       return script_ruby_call(self, rb_int_new((long int) fn), args);
@@ -150,22 +150,22 @@ static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
 
 script_plugin_state script_plugin_init_ruby(script_env* env) {
    script_ruby_state* state;
-   const char* namespace;
-   int namespace_size;
+   const char* name;
+   int name_size;
 
-   namespace = script_get_namespace(env);
+   name = script_get_namespace(env);
    if (script_ruby_state_count == 0) {
       ruby_init();
       ruby_script("libscript");
    }
    script_ruby_state_count++;
    state = malloc(sizeof(script_ruby_state));
-   namespace_size = strlen(namespace) + 1;
-   state->namespace = malloc(namespace_size);
-   strncpy(state->namespace, namespace, namespace_size);
+   name_size = strlen(name) + 1;
+   state->name = malloc(name_size);
+   strncpy(state->name, name, name_size);
    state->env = env;
-   state->namespace[0] = toupper(state->namespace[0]);
-   state->klass = rb_define_class(state->namespace, rb_cObject);
+   state->name[0] = toupper(state->name[0]);
+   state->klass = rb_define_class(state->name, rb_cObject);
    /* assuming a void* fits in a long */
    rb_cv_set(state->klass, "@@_state", INT2NUM((long int)state));
    method_id = rb_intern("method");
@@ -210,7 +210,7 @@ int script_plugin_call_ruby(script_ruby_state* state, char* fn) {
 
 void script_plugin_done_ruby(script_ruby_state* state) {
    script_ruby_state_count--;
-   free(state->namespace);
+   free(state->name);
    free(state);
    if (script_ruby_state_count == 0) {
       ruby_finalize();
