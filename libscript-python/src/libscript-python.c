@@ -5,7 +5,7 @@
 
 #include "libscript-python.h"
 
-static int script_python_state_counter = 0;
+static int script_python_state_count = 0;
 
 INLINE static void script_python_get_params(script_env* env, PyObject* args) {
    int i;
@@ -133,10 +133,10 @@ script_plugin_state script_plugin_init_python(script_env* env) {
    char import_namespace[201];
    script_python_state* state;
    
-   if (script_python_state_counter == 0) {
+   if (script_python_state_count == 0) {
       Py_Initialize();
    }
-   script_python_state_counter++;
+   script_python_state_count++;
    
    state = malloc(sizeof(script_python_state));
    state->env = env;
@@ -194,7 +194,12 @@ int script_plugin_call_python(script_python_state* state, char* fn) {
    return SCRIPT_OK;
 }
 
-void script_plugin_done_python(script_plugin_state state) {
-   /* FIXME: Getting strange gc-related errors. */
-   /* Py_Finalize(); */
+void script_plugin_done_python(script_python_state* state) {
+   Py_DECREF(state->dict);
+   free(state);
+   script_python_state_count--;
+   if (script_python_state_count == 0) {
+      /* FIXME: Getting strange gc-related errors. */
+      /* Py_Finalize(); */
+   }
 }

@@ -25,6 +25,6 @@ typedef struct {
 script_plugin_state script_plugin_init_python(script_env* env);
 int script_plugin_run_python(script_plugin_state state, char* programtext);
 int script_plugin_call_python(script_python_state* state, char* fn);
-void script_plugin_done_python(script_plugin_state state);
+void script_plugin_done_python(script_python_state* state);
 
 #endif
