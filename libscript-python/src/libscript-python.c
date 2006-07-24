@@ -117,7 +117,7 @@ static PyObject* script_python_getattro(PyObject* self, PyObject *attr_name) {
    /* TODO: create new entry here only if some plugin has the function */
    obj = PyObject_New(script_python_object, &script_python_object_type);
    obj->fn_name = strdup(name);
-   obj->state = PyCObject_AsVoidPtr(PyDict_GetItemString(dict, "_state"));
+   obj->state = PyCObject_AsVoidPtr(PyDict_GetItemString(dict, "__state"));
    PyDict_SetItem(dict, attr_name, (PyObject*)obj);
    return (PyObject*)obj;
 }
@@ -146,7 +146,7 @@ script_plugin_state script_plugin_init_python(script_env* env) {
    state->dict = PyModule_GetDict(module);
    Py_INCREF(state->dict);
    module->ob_type->tp_getattro = script_python_getattro;
-   PyDict_SetItemString(state->dict, "_state", PyCObject_FromVoidPtr(state, NULL));
+   PyDict_SetItemString(state->dict, "__state", PyCObject_FromVoidPtr(state, NULL));
 
    script_python_object_type.tp_new = PyType_GenericNew;
    if (PyType_Ready(&script_python_object_type) < 0)
