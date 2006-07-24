@@ -5,9 +5,7 @@
 
 #include "libscript-python.h"
 
-static script_env* script_python_env;
-
-static PyObject* script_python_dict;
+static int script_python_state_counter = 0;
 
 INLINE static void script_python_get_params(script_env* env, PyObject* args) {
    int i;
@@ -75,17 +73,17 @@ static void script_python_destructor(PyObject* o) {
 
 static PyObject* script_python_call(script_python_object *obj, PyObject *args, PyObject *kwds) {
    script_err err;
-   script_python_get_params(script_python_env, args);
-   err = script_call(script_python_env, obj->fn_name);
+   script_python_get_params(obj->state->env, args);
+   err = script_call(obj->state->env, obj->fn_name);
    if (err != SCRIPT_OK) {
-      script_params(script_python_env);
+      script_params(obj->state->env);
       PyErr_SetString(PyExc_RuntimeError, "No such function");
       Py_RETURN_NONE;
    }
-   if (script_param_count(script_python_env) == 0) {
+   if (script_param_count(obj->state->env) == 0) {
       Py_RETURN_NONE;
    } else {
-      PyObject* ret = script_python_put_params(script_python_env);
+      PyObject* ret = script_python_put_params(obj->state->env);
       if (PyTuple_GET_SIZE(ret) > 1) {
          return ret;
       } else {
@@ -109,7 +107,8 @@ static PyObject* script_python_getattro(PyObject* self, PyObject *attr_name) {
    char* name;
    script_python_object* obj;
 
-   if ((obj = (script_python_object*)PyDict_GetItem(script_python_dict, attr_name))) {
+   PyObject* dict = PyModule_GetDict(self);
+   if ((obj = (script_python_object*)PyDict_GetItem(dict, attr_name))) {
       Py_INCREF(obj);
       return (PyObject*)obj;
    }
@@ -118,7 +117,8 @@ static PyObject* script_python_getattro(PyObject* self, PyObject *attr_name) {
    /* TODO: create new entry here only if some plugin has the function */
    obj = PyObject_New(script_python_object, &script_python_object_type);
    obj->fn_name = strdup(name);
-   PyDict_SetItem(script_python_dict, attr_name, (PyObject*)obj);
+   obj->state = PyCObject_AsVoidPtr(PyDict_GetItemString(dict, "_state"));
+   PyDict_SetItem(dict, attr_name, (PyObject*)obj);
    return (PyObject*)obj;
 }
 
@@ -131,16 +131,22 @@ script_plugin_state script_plugin_init_python(script_env* env) {
    PyObject* module;
    char* namespace;
    char import_namespace[201];
-
-   Py_Initialize();
+   script_python_state* state;
    
-   script_python_env = env;
-   namespace = (char*) script_get_namespace(env);
+   if (script_python_state_counter == 0) {
+      Py_Initialize();
+   }
+   script_python_state_counter++;
+   
+   state = malloc(sizeof(script_python_state));
+   state->env = env;
 
+   namespace = (char*) script_get_namespace(env);
    module = Py_InitModule3(namespace, script_python_methods, namespace);
-   script_python_dict = PyModule_GetDict(module);
-   Py_INCREF(script_python_dict);
+   state->dict = PyModule_GetDict(module);
+   Py_INCREF(state->dict);
    module->ob_type->tp_getattro = script_python_getattro;
+   PyDict_SetItemString(state->dict, "_state", PyCObject_FromVoidPtr(state, NULL));
 
    script_python_object_type.tp_new = PyType_GenericNew;
    if (PyType_Ready(&script_python_object_type) < 0)
@@ -149,7 +155,7 @@ script_plugin_state script_plugin_init_python(script_env* env) {
    snprintf(import_namespace, 200, "import %s\n", namespace);
    PyRun_SimpleString(import_namespace);
 
-   return SCRIPT_GLOBAL_STATE;
+   return state;
 }
 
 int script_plugin_run_python(script_plugin_state state, char* programtext) {
@@ -159,15 +165,15 @@ int script_plugin_run_python(script_plugin_state state, char* programtext) {
       return SCRIPT_ERRLANGRUN;
 }
 
-int script_plugin_call_python(script_plugin_state state, char* fn) {
+int script_plugin_call_python(script_python_state* state, char* fn) {
    PyObject *obj, *args, *ret;
    script_env* env;
    const char* namespace;
 
-   env = script_python_env;
+   env = state->env;
    namespace = script_get_namespace(env);
 
-   obj = PyDict_GetItemString(script_python_dict, fn);
+   obj = PyDict_GetItemString(state->dict, fn);
    if (!(obj && PyFunction_Check(obj)))
       return SCRIPT_ERRFNUNDEF;
 
