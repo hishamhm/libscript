@@ -135,6 +135,9 @@ script_plugin_state script_plugin_init_python(script_env* env) {
    
    if (script_python_state_count == 0) {
       Py_Initialize();
+      script_python_object_type.tp_new = PyType_GenericNew;
+      if (PyType_Ready(&script_python_object_type) < 0)
+         return NULL;
    }
    script_python_state_count++;
    
@@ -148,9 +151,6 @@ script_plugin_state script_plugin_init_python(script_env* env) {
    module->ob_type->tp_getattro = script_python_getattro;
    PyDict_SetItemString(state->dict, "__state", PyCObject_FromVoidPtr(state, NULL));
 
-   script_python_object_type.tp_new = PyType_GenericNew;
-   if (PyType_Ready(&script_python_object_type) < 0)
-      return NULL;
 
    snprintf(import_namespace, 200, "import %s\n", namespace);
    PyRun_SimpleString(import_namespace);
