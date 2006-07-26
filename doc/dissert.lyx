@@ -81,7 +81,7 @@ programa{Informática}
 centro{Centro Técnico Científico} 
 \layout Title
 
-Estudo sobre APIs de linguagens para scripting
+Estudo sobre APIs de linguagens de script
 \layout Author
 
 Hisham H.
@@ -91,11 +91,9 @@ Hisham H.
 Resumo
 \layout Standard
 
-Existem muitas situações onde é necessário ou interessante que haja interação
- entre programas escritos em diferentes linguagens.
- Um cenário comum atualmente é o de aplicações desenvolvidas usando mais
- de uma linguagem de programação a fim de otimizar partes onde o desempenho
- é crítico ou permitir extensibilidade através de 
+Um cenário comum atualmente é o de aplicações desenvolvidas usando duas
+ linguagens de programação a fim de otimizar partes onde o desempenho é
+ crítico e permitir extensibilidade através de 
 \emph on 
 scripts
 \emph default 
@@ -107,31 +105,27 @@ foreign language interface
 \emph default 
 , FLI) que permita ao programador receber e enviar tanto chamadas como dados
  para outra linguagem.
- Em função da popularidade da linguagem C e do suporte oferecido a ela pelos
- sistemas operacionais mais utilizados, grande parte das implementações
- de interfaces de acesso externo são, na prática, APIs para integração com
- C.
+ 
 \layout Standard
 
 Este trabalho discute as principais questões envolvendo o projeto de APIs
  para integração de ambientes de execução de linguagens em aplicações C.
  Apresentamos os principais problemas enfrentados na interação entre código
  executando em um ambiente com características inerentemente dinâmicas como
- o de uma máquina virtual com código C.
- Comparamos aqui as abordagens empregadas por cinco linguagens -- Python,
- Perl, Ruby, Lua e Java -- na tratamento da comunicação entre os espaços
- de dados de C e da máquina virtual (como expor e manipular dados da máquina
- virtual em C e vice-versa) e as conseqüências destas abordagens no gerenciament
-o de memória, bem como no compartilhamento de código entre a aplicação C
- e a máquina virtual (execução de código na máquina virtual a partir de
- C e o registro de funções C para uso pela outra linguagem).
+ o de uma linguagem de script com código C.
+ Comparamos aqui as abordagens empregadas por cinco linguagens no tratamento
+ da comunicação entre os espaços de dados de C e do ambiente de execução
+ embutido e as conseqüências destas abordagens no gerenciamento de memória,
+ bem como no compartilhamento de código entre a aplicação C e o da linguagem
+ de script.
  
 \layout Standard
 
 Ilustramos as diferenças das APIs destas linguagens e o impacto destas no
  código resultante de uma aplicação C através de um estudo de caso.
- Diferentes máquinas virtuais são embutidas como plugins de uma mesma biblioteca
-, que por sua vez expõe a aplicações clientes uma API genérica de scripting.
+ Diferentes linguagens de script são embutidas como plugins de uma mesma
+ biblioteca, que por sua vez expõe a aplicações clientes uma API genérica
+ de scripting.
  Assim, o código de cada plugin permite observar de forma clara e isolada
  os procedimentos adotados em cada linguagem para chamada de funções, registro
  de funções C e conversão de dados entre os ambientes.
@@ -150,41 +144,41 @@ pagebreak
 
 \layout Standard
 \added_space_top bigskip \added_space_bottom bigskip \align center 
+
+\lang english
 Abstract
 \layout Standard
 
-There are many situations in which it is useful or necessary to have interaction
- between programs written in different languages.
- A common scenario involves applications written in more than one programming
- language in order to optimize parts where performance is critical or to
- obtain extensibility through user-written scripts.
+
+\lang english
+Applications written in two programming languages, in order to optimize
+ parts where performance is critical or to obtain extensibility through
+ user-written scripts, are commonplace nowadays.
  There are several ways to obtain this kind of interoperability; ideally,
  however, a language should provide a foreign language interface (FLI),
  allowing the programmer to send and receive both data and function calls
  to the external language.
- Because of the popularity of the C programming language and the support
- it enjoys in mainstream operating systems, most of the implementations
- of foreign language interfaces are, in practice, APIs for integration with
- C.
+ 
 \layout Standard
 
+
+\lang english
 This work discusses the main issues involving the design of APIs for the
  integration of language environments within C applications.
  We present the main problems faced in the interaction between code executed
- in an environment with inherently dynamic characteristics such as a virtual
- machine and C code.
- We compare the approaches employed by five languages -- Python, Perl, Ruby,
- Lua and Java -- when handling communication between the data spaces of
- C and the virtual machine (how to expose and manipulate data from the virtual
- machine in C and vice-versa) and the consequences of these approaches in
- memory management, as well as sharing of code between the C application
- and the virtual machine (invocation of code in the virtual machine from
- C and registration of C functions to be used by the other language).
+ in an environment with inherently dynamic characteristics such as a scripting
+ language and C code.
+ We compare the approaches employed by five languages when handling communicatio
+n between the data spaces of C and the embedded runtime environment and
+ the consequences of these approaches in memory management, as well as sharing
+ of code between the C application and that from the scripting language.
 \layout Standard
 
+
+\lang english
 We illustrate the differences of the APIs of those languages and their impact
  in the resulting code of a C application through a case study.
- Different virtual machines were embedded as plugins for a library, which
+ Different scripting languages were embedded as plugins for a library, which
  on its turn exposes to client applications a generic scripting API.
  This way, the code of each plugin allows us to observe in a clear and isolated
  way the procedures adopted by each language for function calls, registration
@@ -10055,7 +10049,7 @@ A API para implementação de funções em C a serem expostas às máquinas virtuais
  no plugin que mais de um valor foi retornado, construir um tipo de dado
  agregado (tupla em Python, array em Ruby, etc.) e armazenar nele os valores,
  retornando à máquina virtual um valor de retorno único.
-\layout Chapter
+\layout Comment
 
 
 \begin_inset LatexCommand \label{cha:Considerações-Finais}
@@ -10964,12 +10958,7 @@ WALL, L.; CHRISTIANSEN, T.; ORWANT, J.
 \layout Bibliography
 \bibitem {ltn004}
 
-
-\color red
-[TODO - Pegar as referências de verdade; essas aqui são só para o meu controle
- interno.]
-\color default
- http://www.lua.org/notes/ltn004.html
+http://www.lua.org/notes/ltn004.html
 \layout Bibliography
 \bibitem {pyvhll_ext}
 
@@ -10989,7 +10978,35 @@ http://www.rubycentral.com/book/ext_ruby.html
 \layout Bibliography
 \bibitem {perlembed}
 
-PERLEMBED
+ORWANT, J., MacEACHERN, D.
+ et al.
+ PERLEMBED(1).
+ Man-page da documentação de Perl 5.8.8.
+ Janeiro 2006.
+\layout Bibliography
+\bibitem {perlguts}
+
+OKAMOTO, J.
+ et al.
+ PERLGUTS(1).
+ Man-page da documentação de Perl 5.8.8.
+ Janeiro 2006.
+\layout Bibliography
+\bibitem {perlapi}
+
+OKAMOTO, J., ROEHRICH, D.
+ et al.
+ PERLAPI(1).
+ Man-page da documentação de Perl 5.8.8.
+ Janeiro 2006.
+\layout Bibliography
+\bibitem {key-4}
+
+ROEHRICH, D.
+ et al.
+ PERLXS(1).
+ Man-page da documentação de Perl 5.8.8.
+ Janeiro 2006.
 \layout Bibliography
 \bibitem {janino}
 
@@ -11003,23 +11020,10 @@ http://www.python.org/doc/api/initialization.html
 
 http://java.sun.com/j2se/1.5.0/docs/guide/jni/spec/functions.html#weak
 \layout Bibliography
-\bibitem {perlguts}
-
-OKAMOTO, J.
- et al.
- PERLGUTS(1).
- Man-page da documentação de Perl 5.8.8.
- Janeiro 2006.
-\layout Bibliography
-\bibitem {perlapi}
-
-PERLAPI
-\layout Bibliography
-\bibitem {key-4}
-
-PERLXS
-\layout Bibliography
 \bibitem {key-5}
 
-PERLCALL
+MARQUESS, P.
+ PERLCALL(1).
+ Man-page da documentação de Perl 5.8.8.
+ Janeiro 2006.
 \the_end
