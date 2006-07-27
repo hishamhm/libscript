@@ -1095,7 +1095,7 @@ O principal complicador na interação entre linguagens de programação não
 \layout Standard
 
 Freqüentemente, o formato como estes dados são representados difere.
- Em casos como este, há três possibilidades.
+ Nestes casos, há três possibilidades.
  A mais simples é expor o dado à linguagem de destino como uma entidade
  opaca.
  A linguagem de destino recebe apenas algum tipo de 
@@ -1106,15 +1106,15 @@ handle
 nte.
  Esta abordagem é útil, por exemplo, se uma linguagem está apenas armazenando
  os dados para a outra, a fim de aproveitar estruturas de dados de mais
- alto nível que esta ofereça.
+ alto nível que a linguagem ofereça.
  
 \layout Standard
 
 Outra abordagem envolve realizar algum tipo de conversão dos dados do sistema
  de tipos de uma linguagem para o da outra.
  A duplicação que ocorre na conversão limita a aplicabilidade deste método,
- restringindo o seu uso tipicamente para tipos com volume pequeno de dados,
- como tipos numéricos e, em menor grau, strings.
+ restringindo o seu uso tipicamente para tipos numéricos e, em menor grau,
+ strings.
  Finalmente, a linguagem de origem pode explicitamente oferecer facilidades
  na linguagem de destino para a manipulação destes dados, ou seja, uma linguagem
  oferecer uma API para a outra.
@@ -1130,7 +1130,7 @@ application binary interfaces
 \emph default 
 , ABIs).
  Assim, mesmo em casos onde é possível li\SpecialChar \-
-gar a código C diretamente utilizando
+gar código C diretamente utilizando
  tipos básicos compatíveis e convenções de chamada apropriadas (como em
  Free Pascal ou em diversos compiladores Fortran), uma biblioteca de 
 \emph on 
@@ -1157,26 +1157,21 @@ bignums
 ).
  Em Ruby, particularmente, os inteiros primitivos têm 1 bit a menos de precisão
  do que o tamanho de palavra da máquina.
- Máquinas virtuais com representação de 
-\emph on 
-bytecodes
-\emph default 
- independentes de arquitetura, como Java, precisam ainda lidar com conversão
- de 
+ Pode haver ainda a necessidade de conversão de 
 \emph on 
 endianness
 \emph default 
  e formato de números de ponto flutuante.
 \layout Standard
 
-Tipos que envolvem uma quantidade maior de dados, como strings, trazem ainda
- preocupações com desempenho.
+Para tipos como strings, o tamanho dos valores traz ainda preocupações com
+ desempenho.
  Em diversos casos a representação interna usada para strings é a mesma
  que a usada em C, então uma opção é simplesmente passar ao código C um
  ponteiro para o endereço onde a string está armazenada, o que evita a cópia
  de dados, sob risco de permitir ao programa C modificar o conteúdo da string.
  Isto é uma possível fonte de erros, especialmente em linguagens como Lua,
- onde strings de conteúdo igual compartilham o mesmo espaço de memória.
+ onde strings são internalizadas.
  Expor ao código C ponteiros para endereços de memória dentro do ambiente
  de execução da outra linguagem pode trazer ainda problemas de concorrência,
  caso o ambiente em questão utilize múltiplas 
@@ -1190,7 +1185,7 @@ Ao expor ao código C dados de tipos estruturados, a conversão para um tipo
  de dado nativo de C, em muitos casos, não é uma opção.
  Além da questão da quantidade de dados, tipos estruturados em C são definidos
  estaticamente, não servindo assim para representar convenientemente dados
- de estrutura dinâmica, como objetos que podem ganhar ou perder atributos
+ de estruturas dinâmicas, como objetos que podem ganhar ou perder atributos
  e até mesmo mudar de classe em tempo de execução.
  Mesmo em linguagens com tipos estáticos, como Java, a cópia de objetos
  não costuma ser uma opção interessante em função do volume de dados.
@@ -1199,8 +1194,8 @@ Ao expor ao código C dados de tipos estruturados, a conversão para um tipo
 \layout Standard
 
 A alternativa para permitir que código C opere sobre dados estruturados,
- então, é fornecer uma a ele uma API que exponha, em forma de funções, as
- operações definidas sobre os tipos em questão.
+ então, é fornecer a ele uma API que exponha, em forma de funções, as operações
+ definidas sobre os tipos em questão.
  Isto evita também a necessidade de controlar a consistência entre duas
  cópias de uma mesma estrutura.
  Problemas de consistência, entretanto, podem ocorrer caso a API permita
@@ -1258,11 +1253,12 @@ cast
 PyObject*
 \family default 
  como tipo sempre que se referem a objetos Python, mesmo quando são projetadas
- para atuar sobre tipos mais específicos, como por exemplo 
+ para atuar sobre valores Python de tipos mais específicos, como por exemplo
+ 
 \family typewriter 
 PyString_Size
 \family default 
-.
+, que retorna o tamanho de uma string.
  Cada tipo específico possui uma função de verificação na API, como 
 \family typewriter 
 PyNumber_Check
@@ -1272,15 +1268,6 @@ PyNumber_Check
 PyDict_Check
 \family default 
 .
- Há ainda funções genéricas 
-\family typewriter 
-PyObject_IsInstance
-\family default 
- e 
-\family typewriter 
-PyObject_IsSubclass
-\family default 
-, que comparam um objeto Python a um objeto Python que representa uma classe.
 \layout Standard
 
 Python é uma linguagem fortemente tipada: cada objeto é amarrado a um tipo.
@@ -1298,7 +1285,11 @@ PyObject
 \end_inset 
 
 .
- Cada tipo Python possui um PyObject definido na API, como 
+ Cada tipo Python possui um 
+\family typewriter 
+PyObject
+\family default 
+ pré-definido na API, como 
 \family typewriter 
 PyString_Type
 \family default 
@@ -1323,7 +1314,7 @@ PyTypeObject
 \layout Standard
 
 Para a conversão de dados de C para Python, a linguagem oferece uma série
- de funções que recebem variáveis de tipos primitivos de C como parâmetro,
+ de funções que recebem valores de tipos primitivos de C como parâmetro,
  como 
 \family typewriter 
 PyString_FromString\SpecialChar \-
@@ -1341,7 +1332,33 @@ PyObject
 \family default 
 .
  Strings passadas são copiadas por Python.
- 
+ O exemplo a seguir ilustra a criação de objetos Python através da conversão
+ de objetos C e a verificação de tipo:
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject* s = PyString_FromString("hello");
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* As duas linhas abaixo são equivalentes: */
+\layout LyX-Code
+
+
+\size footnotesize 
+if (PyString_Check(s)) printf("Sim.
+\backslash 
+n");
+\layout LyX-Code
+
+
+\size footnotesize 
+if (PyObject_TypeCheck(s, PyString_Type)) printf("Sim.
+\backslash 
+n");
 \layout Standard
 
 Para o retorno de dados de Python para C, um conjunto complementar de funções
@@ -1375,7 +1392,7 @@ AsStringAndSize
 ções de saída as strings
  retornadas são ponteiros para a área armazenada internamente por Python.
  A documentação recomenda não modificar o conteúdo da string exceto no caso
- de esta área de memória haver sido recém alocada por uma chamada a 
+ de esta área de memória haver sido retornada por uma chamada a 
 \family typewriter 
 PyString_\SpecialChar \-
 FromStringAndSize(NULL, 
@@ -1388,9 +1405,86 @@ tamanho
 \family default 
 .
  Desta forma, é possível alocar uma string para armazenamento em Python
- e preenchê-la posteriormente através de código C, possivelmente através
- de uma seqüência de comandos.
- 
+ e preenchê-la posteriormente através de código C, como no exemplo a seguir:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* alocando uma string não-inicializada em Python */
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject *obj = PyString_FromStringAndSize(NULL, 51);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* como sabemos que obj é uma string, podemos usar a versão macro da
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   função PyString_AsString, que não realiza verificação de tipo */
+\layout LyX-Code
+
+
+\size footnotesize 
+char *s = PyString_AS_STRING(obj);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Agora, podemos preencher a string em C.
+ Um exemplo qualquer: */
+\layout LyX-Code
+
+
+\size footnotesize 
+for (int i = 0; i < 5; i++, s+=10)
+\layout LyX-Code
+
+
+\size footnotesize 
+   snprintf(s, 11, "[%-8d]", random());
+\layout Standard
+
+Desta forma, evitamos a criação de uma string temporária em C que seria
+ copiada ao ser passada para Python.
+\layout LyX-Code
+
+
+\size footnotesize 
+char *t = malloc(51);
+\layout LyX-Code
+
+
+\size footnotesize 
+for (int i = 0, char *s = t; i < 5; i++, s+=10)
+\layout LyX-Code
+
+
+\size footnotesize 
+   snprintf(s, 11, "[%-8d]", random());
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject* obj = PyString_FromStringAndSize(t, 51);
+\layout LyX-Code
+
+
+\size footnotesize 
+char* s = PyString_AS_STRING(obj);
+\layout LyX-Code
+
+
+\size footnotesize 
+free(t);
 \layout Standard
 
 Para alguns de seus tipos básicos que não possuem correspondente direto
@@ -1403,39 +1497,14 @@ Py_UNICODE
 Py_complex
 \family default 
 .
- Estes tipos foram adicionados com o objetivo de aumentar o desempenho de
- módulos Python para manipulação numérica ou de texto Unicode implementados
- em C, evitando conversões freqüentes de e para 
+ Estes tipos foram adicionados com o objetivo de expor a representação interna
+ dos dados usada por Python aos módulos para manipulação numérica ou de
+ texto Unicode implementados em C, evitando conversões freqüentes de e para
+ 
 \family typewriter 
 PyObject
 \family default 
 .
- Em plataformas onde 
-\family typewriter 
-wchar_t
-\family default 
-, o tipo padrão ANSI C para 
-\begin_inset Quotes eld
-\end_inset 
-
-wide strings
-\begin_inset Quotes erd
-\end_inset 
-
- introduzido em 1995, está disponível, 
-\family typewriter 
-Py_UNICODE
-\family default 
- é um 
-\emph on 
-typedef
-\emph default 
- para este; nas demais, corresponde a um tipo numérico de 16 ou 32 bits,
- dependendo das 
-\emph on 
-flags
-\emph default 
- de compilação de Python.
  
 \layout Standard
 
@@ -1512,76 +1581,11 @@ PyObject_Str
 str
 \family default 
 .
- A Figura 
-\begin_inset LatexCommand \ref{cap:PyObject_Str}
-
-\end_inset 
-
- demonstra a equivalência entre estas, implementando uma função em C que
- obtém através da API o valor global 
-\family typewriter 
-str
-\family default 
- de Python e realiza uma chamada a ele.
+ 
 \layout Standard
 
-
-\begin_inset Float figure
-wide false
-collapsed false
-
-\layout LyX-Code
-
-
-\size footnotesize 
-PyObject* my_PyObject_Str(PyObject* o) {
-\layout LyX-Code
-
-
-\size footnotesize 
-   PyObject *builtins_module, *builtins, *str;
-\layout LyX-Code
-
-
-\size footnotesize 
-   builtins_module = PyImport_AddModule("__builtin__");
-\layout LyX-Code
-
-
-\size footnotesize 
-   builtins = PyModule_GetDict(builtins_module);
-\layout LyX-Code
-
-
-\size footnotesize 
-   str = PyDict_GetItemString(builtins, "str");
-\layout LyX-Code
-
-
-\size footnotesize 
-   return PyObject_CallFunctionObjArgs(str, o, NULL);
-\layout LyX-Code
-
-
-\size footnotesize 
-}
-\layout Caption
-
-
-\begin_inset LatexCommand \label{cap:PyObject_Str}
-
-\end_inset 
-
-A implementação de uma função equivalente a 
-\family typewriter 
-PyObject_Str
-\end_inset 
-
-
-\layout Standard
-
-Para referenciar-se a objetos Python a partir de código C, é preciso obter
- uma referência a um objeto onde ele esteja contido.
+Objetos Python são armazenados como atributos de outros objetos, ou em módulos,
+ que são espaços de nomes declarados globalmente.
  Variáveis são armazenadas em um 
 \emph on 
 ambiente
@@ -1607,16 +1611,16 @@ built-in
 \family typewriter 
 __builtin__
 \family default 
-, como pode também ser observado na Figura 
-\begin_inset LatexCommand \ref{cap:PyObject_Str}
-
-\end_inset 
-
- ao obter-se uma referência para 
+.
+ Por exemplo, para obter o objeto 
 \family typewriter 
 str
 \family default 
-: obtêm-se uma referência ao módulo com 
+, obtemos inicialmente uma referência ao módulo 
+\family typewriter 
+__builtin__
+\family default 
+ com 
 \family typewriter 
 PyImport_AddModule
 \family default 
@@ -1625,18 +1629,59 @@ PyImport_AddModule
 PyModule_GetDict
 \family default 
 .
- Funções C chamadas a partir de Python não recebem referências ao ambiente
+ 
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject *builtins_module = PyImport_AddModule("__builtin__");
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject *builtins = PyModule_GetDict(builtins_module);
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject *str = PyDict_GetItemString(builtins, "str");
+\layout Standard
+
+Em Python, 
+\family typewriter 
+str
+\family default 
+ é um objeto chamável, que atua como a função de conversão para strings.
+ Assim, uma vez que obtivemos uma referência para o 
+\family typewriter 
+PyObject
+\family default 
+ correspondente a 
+\family typewriter 
+str
+\family default 
+, a chamada seguinte equivale a chamar 
+\family typewriter 
+PyObject_Str
+\family default 
+: sobre um objeto Python qualquer 
+\family typewriter 
+obj
+\family default 
+:
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject *result = PyObject_CallFunctionObjArgs(str, obj, NULL);
+\layout Standard
+
+Funções C chamadas a partir de Python não recebem referências ao ambiente
  além dos parâmetros da chamada da função (que podem incluir o objeto 
 \family typewriter 
 self
 \family default 
 ).
- Para evitar a busca dos dicionários de globais e 
-\emph on 
-built-ins
-\emph default 
-, o programador deve tipicamente recorrer a armazená-los em ponteiros globais
- em C.
 \layout Standard
 
 O armazenamento de dados de C no espaço de objetos de Python pode ser feito
@@ -1675,11 +1720,24 @@ s têm como objetivo principal permitir a passagem de dados em C de um módulo
 .
 \layout Standard
 
-
-\begin_inset Float figure
-wide false
-collapsed false
-
+A outra forma consiste em declarar novos tipos Python através de estruturas
+ em C.
+ Em C, um tipo Python é composto de duas partes: um tipo 
+\emph on 
+struct
+\emph default 
+ a partir do qual instâncias do tipo serão produzidas; e uma instância da
+ struct 
+\family typewriter 
+PyTypeObject
+\family default 
+, que descreverá o tipo.
+ O exemplo a seguir ilustra a criação de um novo tipo Python em C.
+ Inicialmente, temos 
+\family typewriter 
+point
+\family default 
+, que será o tipo C das instâncias dos objetos:
 \layout LyX-Code
 
 
@@ -1701,20 +1759,46 @@ typedef struct {
 \size footnotesize 
 } point;
 \layout Standard
-\align center 
 
-\size footnotesize 
-
-\begin_inset ERT
-status Collapsed
-
+A macro 
+\family typewriter 
+PyObject_HEAD
+\family default 
+ garante equivalência estrutural com 
+\family typewriter 
+PyObject
+\family default 
+.
+ Quando funções retornarem o objeto ao código C como um 
+\family typewriter 
+PyObject*
+\family default 
+, este pode ser convertido para de volta para 
+\family typewriter 
+point
+\family default 
+ via cast, dando assim acesso aos atributos 
+\family typewriter 
+x
+\family default 
+ e 
+\family typewriter 
+y
+\family default 
+.
+ Todavia, para que estes atributos sejam visíveis a partir de Python, precisarem
+os implementar rotinas de acesso.
 \layout Standard
 
-\backslash 
-vspace{-13pt}
-\end_inset 
-
-(a) Definição da representação do tipo em C
+Em seguida, definiremos 
+\family typewriter 
+point_type
+\family default 
+, que será o 
+\family typewriter 
+PyTypeObject
+\family default 
+ que descreve o tipo Python relativo a eles:
 \layout LyX-Code
 
 
@@ -1724,43 +1808,69 @@ static PyTypeObject point_type = {
 
 
 \size footnotesize 
-   PyObject_HEAD_INIT(NULL)        .tp_name = "point",          
+   PyObject_HEAD_INIT(NULL)
 \layout LyX-Code
 
 
 \size footnotesize 
-   .tp_basicsize = sizeof(point),  .tp_methods = point_methods, 
+   .tp_name = "point",          
 \layout LyX-Code
 
 
 \size footnotesize 
-   .tp_getattr = point_getattr,    .tp_flags = Py_TPFLAGS_DEFAULT
+   .tp_basicsize = sizeof(point),
+\layout LyX-Code
+
+
+\size footnotesize 
+   .tp_methods = point_methods, 
+\layout LyX-Code
+
+
+\size footnotesize 
+   .tp_getattr = point_getattr,
+\layout LyX-Code
+
+
+\size footnotesize 
+   .tp_flags = Py_TPFLAGS_DEFAULT
 \layout LyX-Code
 
 
 \size footnotesize 
 }; 
 \layout Standard
-\align center 
 
-\size footnotesize 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-vspace{-13pt}
-\end_inset 
-
-(b) Definição do tipo Python 
-\family typewriter 
-point
-\family default 
- através de estrutura 
+Novamente, uma macro foi usada no início da definição do tipo para garantir
+ equivalência entrutural.
+ 
 \family typewriter 
 PyTypeObject
+\family default 
+ possui vários outros campos, mas os manteremos como 
+\family typewriter 
+NULL
+\family default 
+ de modo que sejam preenchidos com valores default quando da construção
+ do tipo em tempo de execução.
+ Na definição de point_type, referenciamos 
+\family typewriter 
+point_methods
+\family default 
+ e 
+\family typewriter 
+point_getattr
+\family default 
+, que devem ter sido declarados anteriormente.
+ O campo 
+\family typewriter 
+tp_methods
+\family default 
+ aponta para um array de 
+\family typewriter 
+PyMethodDef
+\family default 
+s, que armazenará os métodos do tipo:
 \layout LyX-Code
 
 
@@ -1770,29 +1880,39 @@ static PyMethodDef point_methods[] = {
 
 
 \size footnotesize 
-   { "distance", (PyCFunction) point_distance, METH_NOARGS }, { 0 }
+   { "distance", (PyCFunction) point_distance, METH_NOARGS },
+\layout LyX-Code
+
+
+\size footnotesize 
+   { NULL }
 \layout LyX-Code
 
 
 \size footnotesize 
 };
 \layout Standard
-\align center 
 
-\size footnotesize 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-vspace{-13pt}
-\end_inset 
-
-(c) Declaração dos métodos do tipo 
+O tipo 
 \family typewriter 
-point
+PyTypeObject
+\family default 
+ contém uma série de campos que permitem descrever o comportamento do tipo
+ declarado.
+ No exemplo, o array 
+\family typewriter 
+point_methods
+\family default 
+ indica que a função C 
+\family typewriter 
+point_distance
+\family default 
+ implementa o método 
+\family typewriter 
+distance
+\family default 
+.
+ A função é dada a seguir:
 \layout LyX-Code
 
 
@@ -1802,34 +1922,27 @@ PyObject* point_distance(point* p) {
 
 
 \size footnotesize 
-    PyObject* d = PyFloat_FromDouble( sqrt(pow(p->x,2)+pow(p->y,2)) );
-\layout LyX-Code
-
-
-\size footnotesize 
-    return d; 
+    return PyFloat_FromDouble( sqrt(pow(p->x,2)+pow(p->y,2)) );
 \layout LyX-Code
 
 
 \size footnotesize 
 }
 \layout Standard
-\align center 
 
-\size footnotesize 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-vspace{-13pt}
-\end_inset 
-
-(d) Implementação em C de 
+Já no campo 
 \family typewriter 
-point.distance
+tp_getattr
+\family default 
+ de 
+\family typewriter 
+point_type
+\family default 
+, é especificada uma função C para tratar acesso a atributos, 
+\family typewriter 
+point_getattr
+\family default 
+:
 \layout LyX-Code
 
 
@@ -1871,221 +1984,52 @@ PyObject* point_getattr(PyObject* self, char* name) {
 \size footnotesize 
 } 
 \layout Standard
-\align center 
 
-\size footnotesize 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-vspace{-13pt}
-\end_inset 
-
-(e) Tratador do acesso a atributos de 
+Através desta função, podemos expor ao ambiente Python atributos armazenados
+ na struct C.
+ A busca de métodos também é feita através de 
 \family typewriter 
-point
-\layout LyX-Code
-
-
-\size footnotesize 
-void test_point() {
-\layout LyX-Code
-
-
-\size footnotesize 
-   
-\emph on 
-/* Inicializa o tipo */
-\layout LyX-Code
-
-
-\size footnotesize 
-   point_type.tp_new = PyType_GenericNew;
-\layout LyX-Code
-
-
-\size footnotesize 
-   if (PyType_Ready(&point_type) < 0) return;
-\layout LyX-Code
-
-
-\size footnotesize 
-   
-\emph on 
-/* Cria uma instância deste */
-\layout LyX-Code
-
-
-\size footnotesize 
-   point* a_point = PyObject_New(point, &point_type);
-\layout LyX-Code
-
-
-\size footnotesize 
-   a_point->x = 100; a_point->y = 200;
-\layout LyX-Code
-
-
-\size footnotesize 
-  
-\emph on 
- /* Armazena a instância na global Python 'P' */
-\layout LyX-Code
-
-
-\size footnotesize 
-   PyObject* globals = PyModule_GetDict(PyImport_AddModule("__main__"));
-\layout LyX-Code
-
-
-\size footnotesize 
-   PyDict_SetItemString(globals, "P", (PyObject*) a_point);
-\layout LyX-Code
-
-
-\size footnotesize 
-   
-\emph on 
-/* Código Python usando o valor */
-\layout LyX-Code
-
-
-\size footnotesize 
-   PyRun_SimpleString( "print 'P.x = ' + str(P.x) 
-\backslash 
-n"
-\layout LyX-Code
-
-
-\size footnotesize 
-                       "print 'P.y = ' + str(P.y) 
-\backslash 
-n"
-\layout LyX-Code
-
-
-\size footnotesize 
-                       "print 'd   = ' + str(P.distance()) 
-\backslash 
-n" );
-\layout LyX-Code
-
-
-\size footnotesize 
-} 
-\layout Standard
-\align center 
-
-\size footnotesize 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-vspace{-13pt}
-\end_inset 
-
-(f) Exemplo de inicialização e uso do tipo 
-\family typewriter 
-point
-\family default 
- através da API de C
-\layout Caption
-
-
-\begin_inset LatexCommand \label{cap:Tipo-Python-em-C}
-
-\end_inset 
-
-Definição de um tipo Python a partir de C
-\end_inset 
-
-
-\layout Standard
-
-A outra forma consiste em declarar novos tipos Python através de estruturas
- em C.
- Em C, um tipo Python é composto de duas partes: um tipo 
-\emph on 
-struct
-\emph default 
- a partir do qual instâncias do tipo serão produzidas; e uma instância da
- struct 
-\family typewriter 
-PyTypeObject
-\family default 
-, que descreverá o tipo.
- A Figura 
-\begin_inset LatexCommand \ref{cap:Tipo-Python-em-C}
-
-\end_inset 
-
- demonstra a criação de um tipo Python em C.
- No exemplo, 
-\family typewriter 
-point
-\family default 
- é o tipo C das instâncias dos objetos (Fig.
- 
-\begin_inset LatexCommand \ref{cap:Tipo-Python-em-C}
-
-\end_inset 
-
-(a)), e 
-\family typewriter 
-point_type
-\family default 
- é o 
-\family typewriter 
-PyTypeObject
-\family default 
- que descreve o tipo Python relativo a eles (Fig.
- 
-\begin_inset LatexCommand \ref{cap:Tipo-Python-em-C}
-
-\end_inset 
-
-(b)).
-\layout Standard
-
-A estrutura 
-\family typewriter 
-point
-\family default 
- possui equivalência estrutural com 
-\family typewriter 
-PyObject
+tp_getattr
 \family default 
 .
- Quando funções retornarem o objeto ao código C como um 
+ A implementação padrão quando 
 \family typewriter 
-PyObject*
+tp_getattr
 \family default 
-, este pode ser convertido para de volta para 
+ é 
 \family typewriter 
-point
+NULL
 \family default 
- via cast, dando assim acesso aos atributos 
+ procura métodos no array 
 \family typewriter 
-x
-\family default 
- e 
-\family typewriter 
-y
+tp_methods
 \family default 
 .
- Todavia, para que estes atributos sejam visíveis a partir de Python, é
- preciso implementar rotinas de acesso.
+ Como redefinimos 
+\family typewriter 
+tp_getattr
+\family default 
+, a busca de métodos é implementada em 
+\family typewriter 
+point_getattr
+\family default 
+ usando 
+\family typewriter 
+Py_FindMethod
+\family default 
+.
 \layout Standard
 
 Embora a representação em memória de objetos Python do tipo definido pelo
- usuário sejam instâncias desta estrutura, para criar um novo objeto não
- basta alocar uma instância da struct e usá-la como 
+ usuário sejam instâncias de 
+\family typewriter 
+point
+\family default 
+, para criar um novo objeto não basta alocar uma instância da struct 
+\family typewriter 
+point
+\family default 
+ e usá-la como 
 \family typewriter 
 PyObject
 \family default 
@@ -2106,104 +2050,97 @@ PyObject_New
 PyTypeObject
 \family default 
  correspondente ao tipo.
-\layout Standard
-
-O tipo 
-\family typewriter 
-PyTypeObject
-\family default 
- contém uma série de campos que permitem descrever o comportamento do tipo
- declarado.
- Métodos são definidos através de um array de 
-\family typewriter 
-PyMethodDef
-\family default 
-s, armazenado no campo 
-\family typewriter 
-tp_methods
-\family default 
-.
- No exemplo, o array 
-\family typewriter 
-point_methods
-\family default 
- (Fig.
- 
-\begin_inset LatexCommand \ref{cap:Tipo-Python-em-C}
-
-\end_inset 
-
-(c)) indica que a função C 
-\family typewriter 
-point_distance
-\family default 
- implementa o método 
-\family typewriter 
-distance
-\family default 
- (Fig.
- 
-\begin_inset LatexCommand \ref{cap:Tipo-Python-em-C}
-
-\end_inset 
-
-(d)).
- No campo 
-\family typewriter 
-tp_getattr
-\family default 
+ Antes de alocar objetos do tipo em C, deve-se completar a inicialização
  de 
 \family typewriter 
 point_type
 \family default 
-, é especificada uma função C para tratar acesso a atributos, 
-\family typewriter 
-point_getattr
-\family default 
- (Fig.
- 
-\begin_inset LatexCommand \ref{cap:Tipo-Python-em-C}
+ em tempo de execução:
+\layout LyX-Code
 
-\end_inset 
 
-(e)).
- Desta forma, podemos expor ao ambiente Python atributos armazenados na
- struct C.
- A busca de métodos também é feita através de 
-\family typewriter 
-tp_getattr
-\family default 
-.
- A implementação padrão especificada por 
+\size footnotesize 
+point_type.tp_new = PyType_GenericNew;
+\layout LyX-Code
+
+
+\size footnotesize 
+if (PyType_Ready(&point_type) < 0) return;
+\layout Standard
+
+A partir daí, instâncias podom ser criadas com 
 \family typewriter 
 PyObject_New
 \family default 
- quando procura métodos no array 
-\family typewriter 
-tp_methods
-\family default 
-.
- Como redefinimos 
-\family typewriter 
-tp_getattr
-\family default 
-, a busca de métodos foi ser implementada em 
-\family typewriter 
-point_getattr
-\family default 
- usando 
-\family typewriter 
-Py_FindMethod
-\family default 
-.
- Finalmente, a Fig.
- 
-\begin_inset LatexCommand \ref{cap:Tipo-Python-em-C}
+, como no exemplo abaixo:
+\layout LyX-Code
 
-\end_inset 
 
-(f) exemplifica a inicialização do tipo através da API e o uso do tipo em
- Python.
+\size footnotesize 
+\emph on 
+/* Cria uma instância */
+\layout LyX-Code
+
+
+\size footnotesize 
+point* a_point = PyObject_New(point, &point_type);
+\layout LyX-Code
+
+
+\size footnotesize 
+a_point->x = 100; a_point->y = 200;
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Armazena a instância na global Python 
+\emph default 
+P
+\emph on 
+,
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   assume que o dicionário de globais já foi armazenado em 
+\emph default 
+globals
+\emph on 
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+PyDict_SetItemString(globals, "P", (PyObject*) a_point);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Código Python usando o valor */
+\layout LyX-Code
+
+
+\size footnotesize 
+PyRun_SimpleString( "print 'P.x = ' + str(P.x) 
+\backslash 
+n"
+\layout LyX-Code
+
+
+\size footnotesize 
+                    "print 'P.y = ' + str(P.y) 
+\backslash 
+n"
+\layout LyX-Code
+
+
+\size footnotesize 
+                    "print 'd   = ' + str(P.distance()) 
+\backslash 
+n" );
 \layout Standard
 
 A API possui um grande número de funções para manipulação de tipos pré-definidos
@@ -2275,7 +2212,7 @@ char**
 \family typewriter 
 int*
 \family default 
-.
+, que irão retornar o ponteiro para a string e o seu tamanho.
  Em um exemplo mais elaborado, 
 \family typewriter 
 "iiO!|(dd)"
@@ -2308,7 +2245,7 @@ PyTypeObject
 \family typewriter 
 double
 \family default 
- passados via Python através de uma tupla (
+ passados via Python através de uma outra tupla (
 \family typewriter 
 "(dd)"
 \family default 
@@ -2373,7 +2310,7 @@ Qfalse
 Qnil
 \family default 
  são definidas como valores imediatos, permitindo a comparação destas em
- C usando 
+ C usando o operador 
 \family typewriter 
 ==
 \family default 
@@ -2392,6 +2329,41 @@ rb_float_new
 VALUE
 \family default 
 s.
+\layout Standard
+
+Para a verificação de tipos, Ruby disponibiliza as macros 
+\family typewriter 
+Check_Type
+\family default 
+ e 
+\family typewriter 
+TYPE
+\family default 
+.
+ 
+\family typewriter 
+Check_Type
+\family default 
+ que permite comparar valores a constantes representando alguns tipos básicos
+ de Ruby como 
+\family typewriter 
+T_OBJECT
+\family default 
+ e 
+\family typewriter 
+T_STRING
+\family default 
+.
+ 
+\family typewriter 
+TYPE
+\family default 
+ retorna a constante relativa ao tipo de um valor passado.
+ Para a verificação da classe de um objeto, devemos usar 
+\family typewriter 
+rb_class_of
+\family default 
+.
 \layout Standard
 
 Para a passagem de strings para Ruby a partir de C, são oferecidas as funções
@@ -2440,36 +2412,76 @@ String
 \family typewriter 
 to_s
 \family default 
- aplicado ao objeto passado (ou ainda causar uma exceção 
+ aplicado ao objeto passado (ou ainda causa uma exceção 
 \family typewriter 
 TypeError
 \family default 
  caso a conversão não seja possível).
-\layout Standard
+\layout LyX-Code
 
-Para a verificação de tipos, Ruby disponibiliza as macros 
-\family typewriter 
-TYPE
-\family default 
- e 
-\family typewriter 
-Check_Type
-\family default 
-, que permitem obter e comparar constantes representando alguns tipos básicos
- de Ruby como 
-\family typewriter 
-T_OBJECT
-\family default 
-, 
-\family typewriter 
-T_STRING
-\family default 
-, etc.
- Para a verificação da classe de um objeto, devemos usar 
-\family typewriter 
-rb_class_of
-\family default 
-.
+
+\size footnotesize 
+void mostra_valor(VALUE obj) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   const char* s;
+\layout LyX-Code
+
+
+\size footnotesize 
+   if (TYPE(obj) == T_STRING) {
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      /* Faria um acesso ilegal se TYPE(obj) != T_STRING */
+\layout LyX-Code
+
+
+\size footnotesize 
+      s = RSTRING(obj)->ptr;
+\layout LyX-Code
+
+
+\size footnotesize 
+   } else {
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      /* Funciona para qualquer tipo que aceite obj.to_s,
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+         dispara uma exceção em caso contrário */
+\layout LyX-Code
+
+
+\size footnotesize 
+      s = StringValue(obj);
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+   printf("Valor: %s
+\backslash 
+n", s);
+\layout LyX-Code
+
+
+\size footnotesize 
+}
 \layout Standard
 
 Sob a justificativa de aumentar o desempenho no acesso, alguns outros tipos
@@ -2497,7 +2509,103 @@ RARRAY(um_array)->len
  dos objetos inconsistente.
 \layout Standard
 
-A API permite criar classes a partir de C através da função 
+Para o armazenamento de dados de C no espaço de objetos de Ruby, a API oferece
+ uma macro, 
+\family typewriter 
+Data_Wrap_Struct
+\family default 
+, que recebe um ponteiro C e cria um objeto Ruby que encapsula este ponteiro.
+ O ponteiro pode ser acessado a partir de código C usando 
+\family typewriter 
+Data_Get_Struct
+\family default 
+, mas não a partir de Ruby.
+ Em 
+\family typewriter 
+Data_Wrap_Struct
+\family default 
+ é passada também uma função C a ser executada quando o objeto for coletado.
+ Por exemplo, criemos uma classe 
+\family typewriter 
+Point
+\family default 
+, similar ao tipo definido em Python na seção anterior.
+ Inicialmente definiremos um tipo C:
+\layout LyX-Code
+
+
+\size footnotesize 
+typedef struct {
+\layout LyX-Code
+
+
+\size footnotesize 
+   int x, y;
+\layout LyX-Code
+
+
+\size footnotesize 
+} point;
+\layout Standard
+
+Funções de alocação (
+\family typewriter 
+point_alloc
+\family default 
+) e desalocação (
+\family typewriter 
+point_free
+\family default 
+) para a classe 
+\family typewriter 
+Point
+\family default 
+ são dadas a seguir:
+\layout LyX-Code
+
+
+\size footnotesize 
+void point_free(void* p) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   free(p);
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout LyX-Code
+
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE point_alloc(VALUE point_class) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   point* p = malloc(sizeof(point));
+\layout LyX-Code
+
+
+\size footnotesize 
+   return Data_Wrap_Struct(point_class, 0, point_free, p);
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Note que 
+\family typewriter 
+Data_Wrap_Struct
+\family default 
+ faz uso de um VALUE que representa a classe Point em Ruby.
+ Classes são criadas em C com a função 
 \family typewriter 
 rb_define_class
 \family default 
@@ -2514,28 +2622,261 @@ rb_cObject
 \family typewriter 
 Object
 \family default 
-) e retorna um novo 
+) e retorna um 
 \family typewriter 
 VALUE
 \family default 
  representando a nova classe.
- Esta nova referência pode então ser usada como parâmetro em chamadas de
- de 
+ Para classes como 
 \family typewriter 
-rb_define_method
+Point
 \family default 
-, que adiciona um método à classe recebendo um ponteiro para função C como
- parâmetro, e 
+, cujas instâncias irão conter dados de C, é possível registrar uma função
+ C responsável por realizar a alocação de memória das instâncias usando
+ a função 
 \family typewriter 
-rb_class_new_instance
+rb_define_alloc_func
 \family default 
-, que produz novos objetos Ruby que são instâncias da classe.
- Como em código Ruby, a declaração de atributos de objetos é feita no método
+.
+ A criação da classe e o registro da função de alocação, então, se dão da
+ seguinte forma:
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE point_class = rb_define_class("Point", rb_cObject);
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_define_alloc_func(point_class, point_alloc);
+\layout Standard
+
+Como em código Ruby, a declaração de atributos de objetos é feita no método
  
 \family typewriter 
 initialize
 \family default 
-, que pode ser implementado em C.
+, que pode ser implementado em C:
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE point_initialize(VALUE self, VALUE x, VALUE y) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   point* p;
+\layout LyX-Code
+
+
+\size footnotesize 
+   Data_Get_Struct(self, point, p);
+\layout LyX-Code
+
+
+\size footnotesize 
+   p->x = NUM2INT(x);
+\layout LyX-Code
+
+
+\size footnotesize 
+   p->y = NUM2INT(y);
+\layout LyX-Code
+
+
+\size footnotesize 
+   return self;
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Para que a cópia de objetos através dos métodos Ruby 
+\family typewriter 
+dup
+\family default 
+ e 
+\family typewriter 
+clone
+\family default 
+ trate corretamente os dados armazenados via C, é preciso ainda registrar
+ o método 
+\family typewriter 
+initialize_copy
+\family default 
+.
+ Uma possível implementação em C é dada abaixo:
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE point_initialize_copy(VALUE copy, VALUE orig) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   point *p_copy, *p_orig;
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Ruby pode chamar esta função com o mesmo objeto nos dois parâmetros;
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      nesse caso, ignore a chamada e retorne o objeto */
+\layout LyX-Code
+
+
+\size footnotesize 
+   if (copy == orig) return copy;
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Obter os ponteiros armazenados nos objetos */
+\layout LyX-Code
+
+
+\size footnotesize 
+   Data_Get_Struct(orig, point, p_orig);
+\layout LyX-Code
+
+
+\size footnotesize 
+   Data_Get_Struct(copy, point, p_copy);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Cópia da 
+\begin_inset Quotes eld
+\end_inset 
+
+parte C
+\begin_inset Quotes erd
+\end_inset 
+
+ do objeto */
+\layout LyX-Code
+
+
+\size footnotesize 
+   p_copy->x = p_orig->x;
+\layout LyX-Code
+
+
+\size footnotesize 
+   p_copy->y = p_orig->y;
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Retorna a cópia */
+\layout LyX-Code
+
+
+\size footnotesize 
+   return copy;
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Completemos o exemplo implementando uma função C implementando o método
+ 
+\family typewriter 
+distance
+\family default 
+ como feito na seção anterior para Python:
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE point_distance(VALUE self) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   point *p;
+\layout LyX-Code
+
+
+\size footnotesize 
+   Data_Get_Struct(self, point, p);
+\layout LyX-Code
+
+
+\size footnotesize 
+   return rb_float_new( sqrt(pow(p->x,2)+pow(p->y,2)) ); 
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+De posse do 
+\family typewriter 
+VALUE
+\family default 
+ referente à classe, podemos inserir funções C que seguem as convenções
+ esperadas por Ruby como métodos com 
+\family typewriter 
+rb_define_method
+\family default 
+, da forma descrita abaixo (o registro de funções C em Ruby será discutido
+ em detalhe na Seção 
+\begin_inset LatexCommand \ref{sub:Ruby-Registro}
+
+\end_inset 
+
+).
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_define_method(point_class, "initialize", point_initialize, 2);
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_define_method(point_class, "initialize_copy", point_initialize_copy,
+ 1);
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_define_method(point_class, "distance", point_distance, 0);
+\layout Standard
+
+A função 
+\family typewriter 
+rb_class_new_instance
+\family default 
+ produz novos objetos Ruby que são instâncias da classe, recebendo um array
+ de 
+\family typewriter 
+VALUE
+\family default 
+s a ser passados na inicialização e o 
+\family typewriter 
+VALUE
+\family default 
+ da classe.
+ 
 \layout Standard
 
 O acesso a variáveis Ruby se dá através da família de funções 
@@ -2609,12 +2950,6 @@ s correspondem ao tipo
 símbolo
 \emph default 
  de Ruby, que na prática são strings imutáveis.
- Um mesmo 
-\family typewriter 
-ID
-\family default 
- pode ser usado para referenciar-se a atributos de objetos de classes diferentes
- que tenham o mesmo nome.
  
 \layout Standard
 
@@ -2639,98 +2974,6 @@ ruby_finalize
 \family default 
  cercando cada execução de script, pode ter o seu consumo de memória aumentado
  indefinidamente à medida que os scripts criam símbolos.
-\layout Standard
-
-Outro tipo de dados que possui um tratamento um tanto irregular na linguagem
- é o de blocos de código.
- A sintaxe em Ruby para a declaração de blocos é especial: blocos só podem
- ser definidos como o último argumento de uma chamada de método.
- Assim, eles não são valores de primeira classe, não podendo ser, por exemplo,
- declarados em uma atribuição a variável.
- Eles podem, no entanto, ser 
-\begin_inset Quotes eld
-\end_inset 
-
-promovidos
-\begin_inset Quotes erd
-\end_inset 
-
- a valores de primeira classe, na forma de objetos da classe 
-\family typewriter 
-Proc
-\family default 
-.
- Isto pode ser feito de duas formas: explicitamente, passando um bloco para
- o método 
-\family typewriter 
-Proc.new
-\family default 
-, ou implicitamente, declarando em um método um último parâmetro formal
- precedido de 
-\family typewriter 
-&
-\family default 
-.
- Esta variável conterá o bloco convertido para um 
-\family typewriter 
-Proc
-\family default 
-.
- Na chamada de funções que esperam blocos, 
-\family typewriter 
-&
-\family default 
- converte o 
-\family typewriter 
-Proc
-\family default 
- para um bloco.
- Objetos 
-\family typewriter 
-Proc
-\family default 
- podem ser manipulados através da API de C como qualquer outro objeto Ruby,
- mas não há correspondente na API de C para a funcionalidade do operador
- 
-\family typewriter 
-&
-\family default 
- em chamadas de função.
-\layout Standard
-
-Para o armazenamento de dados de C no espaço de objetos de Ruby, a API oferece
- uma macro, 
-\family typewriter 
-Data_Wrap_Struct
-\family default 
-, que recebe um ponteiro C e cria um objeto Ruby que armazena este ponteiro.
- O ponteiro pode ser acessado a partir de código C usando 
-\family typewriter 
-Data_Get_Struct
-\family default 
-, mas não a partir de Ruby.
- Para classes cujas instâncias irão conter dados de C, é possível associar
- a uma classe uma função C responsável por realizar a alocação de memória
- das instâncias usando a função 
-\family typewriter 
-rb_define_alloc_func
-\family default 
-.
- Definindo uma função de alocação desta forma e implementando um método
- 
-\family typewriter 
-initialize_copy
-\family default 
-, torna-se possível implementar classes Ruby em C compatíveis com as rotinas
- de cópia de objetos 
-\family typewriter 
-dup
-\family default 
- e 
-\family typewriter 
-clone
-\family default 
-.
 \layout Subsection
 
 Java
@@ -3174,12 +3417,12 @@ Java_ExemploJNI_segundoElemento(JNIEnv *J, jobject this) {
 
 
 \size footnotesize 
-   jclass classe = (*J)->GetObjectClass(env, this);
+   jclass classe = (*J)->GetObjectClass(J, this);
 \layout LyX-Code
 
 
 \size footnotesize 
-   jfieldID elemsID = (*J)->GetFieldID(env, classe,
+   jfieldID elemsID = (*J)->GetFieldID(J, classe,
 \layout LyX-Code
 
 
@@ -3189,17 +3432,17 @@ Java_ExemploJNI_segundoElemento(JNIEnv *J, jobject this) {
 
 
 \size footnotesize 
-   jarray elems = (*J)->GetObjectField(env, this, elemsID);
+   jarray elems = (*J)->GetObjectField(J, this, elemsID);
 \layout LyX-Code
 
 
 \size footnotesize 
-   jstring elems_1 = (*J)->GetObjectArrayElement(env, elems, 1);
+   jstring elems_1 = (*J)->GetObjectArrayElement(J, elems, 1);
 \layout LyX-Code
 
 
 \size footnotesize 
-   const char* elems_1_c = (*J)->GetStringUTFChars(env, elems_1, NULL);
+   const char* elems_1_c = (*J)->GetStringUTFChars(J, elems_1, NULL);
 \layout LyX-Code
 
 
@@ -3211,7 +3454,7 @@ n", elems_1_c);
 
 
 \size footnotesize 
-   (*J)->ReleaseStringUTFChars(env, elems_1, elems_1_c);
+   (*J)->ReleaseStringUTFChars(J, elems_1, elems_1_c);
 \layout LyX-Code
 
 
@@ -6199,6 +6442,11 @@ PyDict_GetItemString
 \layout Subsection
 
 Ruby
+\begin_inset LatexCommand \label{sub:Ruby-Chamada}
+
+\end_inset 
+
+
 \layout Comment
 
 Como obter/referenciar uma função
@@ -6484,6 +6732,63 @@ Invocação de métodos Ruby passando blocos de código a partir de C
 \layout Comment
 
 Questões específicas da linguagem: blocos Ruby
+\layout Standard
+
+Um tipo de dados que possui um tratamento um tanto irregular em Ruby é o
+ de blocos de código.
+ A sintaxe em Ruby para a declaração de blocos é especial: blocos só podem
+ ser definidos como o último argumento de uma chamada de método.
+ Assim, eles não são valores de primeira classe, não podendo ser, por exemplo,
+ declarados em uma atribuição a variável.
+ Eles podem, no entanto, ser 
+\begin_inset Quotes eld
+\end_inset 
+
+promovidos
+\begin_inset Quotes erd
+\end_inset 
+
+ a valores de primeira classe, na forma de objetos da classe 
+\family typewriter 
+Proc
+\family default 
+.
+ Isto pode ser feito de duas formas: explicitamente, passando um bloco para
+ o método 
+\family typewriter 
+Proc.new
+\family default 
+, ou implicitamente, declarando em um método um último parâmetro formal
+ precedido de 
+\family typewriter 
+&
+\family default 
+.
+ Esta variável conterá o bloco convertido para um 
+\family typewriter 
+Proc
+\family default 
+.
+ Na chamada de funções que esperam blocos, 
+\family typewriter 
+&
+\family default 
+ converte o 
+\family typewriter 
+Proc
+\family default 
+ para um bloco.
+ Objetos 
+\family typewriter 
+Proc
+\family default 
+ podem ser manipulados através da API de C como qualquer outro objeto Ruby,
+ mas não há correspondente na API de C para a funcionalidade do operador
+ 
+\family typewriter 
+&
+\family default 
+ em chamadas de função.
 \layout Standard
 
 O status especial dos blocos de código complica a sua manipulação a partir
@@ -8162,6 +8467,11 @@ PyMethodDef
 \layout Subsection
 
 Ruby
+\begin_inset LatexCommand \label{sub:Ruby-Registro}
+
+\end_inset 
+
+
 \layout Comment
 
 API para registrar funções
