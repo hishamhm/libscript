@@ -37,8 +37,6 @@ Hisham Muhammad
 Introdução
 \layout Standard
 
-
-\color red
 Existem muitas situações onde é necessário ou interessante que haja interação
  entre programas escritos em diferentes linguagens.
  Um caso típico é o emprego de bibliotecas externas, como 
@@ -56,8 +54,6 @@ scripts
  escritos pelo usuário.
 \layout Standard
 
-
-\color red
 Independentemente da finalidade, a comunicação entre programas escritos
  em linguagens diferentes traz consigo uma série de questões de projeto,
  não apenas no desenvolvimento das aplicações, mas das linguagens em si.
@@ -85,8 +81,6 @@ foreign language interface
  de execução, o desempenho e a simplicidade da API resultante.
 \layout Standard
 
-
-\color red
 Pode-se observar nas implementações existentes de FLIs um número de abordagens
  para estes problemas.
  De fato, FLIs de diferentes linguagens (ou mesmo de diferentes revisões
@@ -108,8 +102,6 @@ ponte
  na interação entre FLIs.
 \layout Standard
 
-
-\color red
 Este trabalho procura traçar um panorama dos recursos e técnicas de interoperabi
 lidade entre linguagens de programação.
  Partindo de uma análise das abordagens gerais para interação entre linguagens,
@@ -124,8 +116,6 @@ lidade entre linguagens de programação.
 Abordagens para interação entre linguagens
 \layout Standard
 
-
-\color red
 O principal complicador na interação entre linguagens de programação não
  é a diferença de sintaxe ou semântica das construções de fluxo de controle,
  mas a representação dos dados.
@@ -167,8 +157,6 @@ nte.
 .
 \layout Standard
 
-
-\color red
 As abordagens aplicadas na interação entre diferentes linguagens de programação
  variam bastante entre si, mas é possível identificar algumas técnicas tipicamen
 te utilizadas: tradução de linguagens, seja de uma para outra ou de ambas
@@ -177,13 +165,9 @@ te utilizadas: tradução de linguagens, seja de uma para outra ou de ambas
  ou através de convenção de chamadas.
 \layout Subsection
 
-
-\color red
 Tradução de código
 \layout Standard
 
-
-\color red
 Permitir o uso de duas linguagens diferentes em um programa traduzindo o
  código de uma delas para a outra minimiza o problema de comunicação entre
  as partes do programa escritas em linguagens diferentes, uma vez que o
@@ -194,8 +178,6 @@ Permitir o uso de duas linguagens diferentes em um programa traduzindo o
  de origem, simulá-las pode ser custoso.
 \layout Standard
 
-
-\color red
 Um exemplo típico é a complexidade adicionada pela simulação de funções
  de alta ordem e recursão final ao traduzir-se o código de linguagens funcionais
  para outra que não possui estes recursos.
@@ -227,8 +209,6 @@ aplainadas
  assim ser representados em Ada.
 \layout Standard
 
-
-\color red
 Além de problemas como este, diferenças na representação dos dados ainda
  é algo a ser tratado no processo de tradução de uma linguagem para outra.
  No caso particular de C, as facilidades de baixo nível para manipulação
@@ -262,13 +242,9 @@ lingua franca
 .
 \layout Subsection
 
-
-\color red
 Máquinas virtuais comuns
 \layout Standard
 
-
-\color red
 Outra abordagem envolve o uso de um ambiente de execução comum, como uma
  máquina virtual.
  O código das diferentes linguagens é compilado de modo a produzir representaçõe
@@ -313,8 +289,6 @@ arrays
  com semântica diferente menos eficientes.
 \layout Standard
 
-
-\color red
 O .NET Framework 
 \begin_inset LatexCommand \cite{box-net}
 
@@ -351,8 +325,6 @@ O .NET Framework
 .
 \layout Standard
 
-
-\color red
 Outra implementação de uma máquina virtual para múltiplas linguagens vem
  sendo feita pelo projeto Parrot 
 \begin_inset LatexCommand \cite{randal-perl6}
@@ -369,8 +341,6 @@ back-end
  6.
 \layout Standard
 
-
-\color red
 Um tipo de comunicação que pode ser considerada ainda uma forma de ambiente
  de execução comum é a comunicação entre executáveis e bibliotecas nativos
  através de convenções de chamada: regras para a passagem de parâmetros
@@ -418,8 +388,6 @@ status Collapsed
 \layout Subsection
 
 
-\color red
-
 \begin_inset LatexCommand \label{sub:Linguagens-intermediárias}
 
 \end_inset 
@@ -427,8 +395,6 @@ status Collapsed
 C como linguagem intermediária
 \layout Standard
 
-
-\color red
 O desejo de uma linguagem intermediária universal é antigo no mundo da computaçã
 o.
  Diversas propostas surgiram ao longo dos anos, desde o projeto UNCOL 
@@ -466,8 +432,6 @@ médio nível
  Não por acaso, estas são tipicamente implementadas em C.
 \layout Standard
 
-
-\color red
 A disponibilidade de APIs para C oferecidas pelas diferentes linguagens
  faz com que C seja bastante usada também como 
 \begin_inset Quotes eld
@@ -496,8 +460,6 @@ ponte
  em C.
 \layout Standard
 
-
-\color red
 Todavia, linguagens intermediárias genéricas continuam a ser propostas como
  alternativas a C.
  C-- 
@@ -527,8 +489,6 @@ front-ends
 \layout Subsection
 
 
-\color red
-
 \begin_inset LatexCommand \label{sub:Modelos-de-objetos}
 
 \end_inset 
@@ -536,8 +496,6 @@ front-ends
 Modelos de objetos independentes de linguagem
 \layout Standard
 
-
-\color red
 Adotar um modelo de tipos independente de linguagem é uma outra forma de
  tratar as questões de interoperabilidade de dados entre linguagens.
  Assim, na definição dos dados de uma aplicação, as suas interfaces são
@@ -562,8 +520,6 @@ mento de aplicações distribuídas em ambientes heterogêneos; a heterogeneidade
  de linguagens foi um dos aspectos levados em consideração.
 \layout Standard
 
-
-\color red
 Os desafios existentes ao projetar um modelo de dados ou objetos 
 \begin_inset Quotes eld
 \end_inset 
@@ -589,8 +545,6 @@ Object Request Broker
  
 \layout Standard
 
-
-\color red
 Se por um lado a tarefa pode ser facilitada pelo fato de o modelo ter sido
  projetado visando interação com outras linguagens (diferentemente, por
  exemplo, do sistema de tipos de C), por outro espera-se usualmente um grau
@@ -622,8 +576,6 @@ bindings
  Já em linguagens como C++ o controle das referências é explícito.
 \layout Standard
 
-
-\color red
 Outras abordagens de mais alto nível têm sido propostas para a integração
  de aplicações desenvolvidas em múltiplas linguagens.
  Linguagens de coordenação como Linda 
@@ -640,13 +592,9 @@ Outras abordagens de mais alto nível têm sido propostas para a integração
 s para indicar o fluxo destas entre agentes implementados em outras linguagens.
 \layout Section
 
-
-\color red
 Interfaces com C
 \layout Standard
 
-
-\color red
 A linguagem C tem, na atualidade, um papel especial no mundo das linguagens
  de programação.
  Além de ser bastante utilizada na implementação de compiladores, interpretadore
@@ -667,8 +615,6 @@ s e máquinas virtuais (as principais implementações de Perl, Python, Ruby,
  Isto faz com que a API para C seja um formato conveniente para uma FLI.
 \layout Standard
 
-
-\color red
 Para permitir invocar funções C, a FLI deve fornecer uma forma de registrar
  estas funções no ambiente de execução, idealmente permitindo ao programa
  chamá-las de forma igual a funções nativas.
@@ -705,8 +651,6 @@ rb_define_method
 .
 \layout Standard
 
-
-\color red
 Na grande maioria dos casos, a representação interna de código produzida
  por compiladores de outras linguagens não é compatível com C, seja por
  diferenças em convenções de chamadas ou de nomes, ou por produzirem código
@@ -722,8 +666,6 @@ a.
  C para APIs C++.
 \layout Standard
 
-
-\color red
 Para linguagens não imperativas, há ainda o problema de código C potencialmente
  gerar efeitos colaterais.
  Algum recurso para isolamento das chamadas deve ser oferecido.
@@ -743,8 +685,6 @@ collapsed true
 
 \layout Standard
 
-
-\color red
 Uma série de convenções de chamada são definidas (
 \family typewriter 
 stdcall
@@ -772,8 +712,6 @@ ccall
 \layout Subsection
 
 
-\color red
-
 \begin_inset LatexCommand \label{sub:Sistemas-de-tipos}
 
 \end_inset 
@@ -781,8 +719,6 @@ ccall
 Sistemas de tipos
 \layout Standard
 
-
-\color red
 O principal obstáculo na comunicação entre duas linguagens é a diferença
  entre os sistemas de tipos.
  C, por ser orientada à manipulação de ponteiros e estruturas, possui um
@@ -805,8 +741,6 @@ bindings
  mais complexos.
 \layout Standard
 
-
-\color red
 Até nos tipos numéricos fundamentais, há vários cuidados que devem ser tomados.
  Algumas linguagens, como Smalltalk e Ruby, realizam conversão automática
  de inteiros para 
@@ -836,8 +770,6 @@ endianness
  e formato de números de ponto flutuante.
 \layout Standard
 
-
-\color red
 Tipos que envolvem uma quantidade maior de dados, como strings, trazem ainda
  preocupações com desempenho.
  Em diversos casos a representação interna usada para strings é a mesma
@@ -855,8 +787,6 @@ threads
 .
 \layout Standard
 
-
-\color red
 Ao expor ao código C dados de tipos estruturados, a conversão para um tipo
  de dado nativo de C, em muitos casos, não é uma opção.
  Além da questão da quantidade de dados, tipos estruturados em C são definidos
@@ -869,8 +799,6 @@ Ao expor ao código C dados de tipos estruturados, a conversão para um tipo
  como manipulação de arrays de elementos primitivos.
 \layout Standard
 
-
-\color red
 A alternativa para permitir que código C opere sobre dados estruturados,
  então, é fornecer uma a ele uma API que exponha, em forma de funções, as
  operações definidas sobre os tipos em questão.
@@ -889,8 +817,6 @@ A alternativa para permitir que código C opere sobre dados estruturados,
  discute esta questão em mais detalhe.
 \layout Standard
 
-
-\color red
 As abordagens empregadas em diferentes FLIs para expor estruturas C às suas
  linguagens de origem possuem diversas variações.
  Python permite a definição de novos tipos de objetos a partir de uma 
@@ -936,8 +862,6 @@ Data_Wrap_Struct
 , que recebe o tipo da estrutura como parâmetro.
 \layout Standard
 
-
-\color red
 Lua define tipos primitivos 
 \emph on 
 function
@@ -974,8 +898,6 @@ collapsed true
 
 \layout Standard
 
-
-\color red
 Estas funções são usadas, por exemplo, para permitir ao programador liberar
  recursos quando o objeto é coletado (função 
 \family typewriter 
@@ -1003,8 +925,6 @@ PyTypeObject
 \layout Subsection
 
 
-\color red
-
 \begin_inset LatexCommand \label{sub:Coletores-de-lixo}
 
 \end_inset 
@@ -1012,8 +932,6 @@ PyTypeObject
 Coletores de lixo
 \layout Standard
 
-
-\color red
 A partir do momento em que código C ganha acesso a referências a dados armazenad
 os no espaço de armazenamento de outra linguagem, sejam ponteiros ou identificad
 ores, o programador deve levar em consideração as diferenças entre os modelos
@@ -1032,8 +950,6 @@ ores, o programador deve levar em consideração as diferenças entre os modelos
  que o coletor de lixo não gerencia os ponteiros do código C.
 \layout Standard
 
-
-\color red
 É preciso, então, indicar a partir do código C que os dados que continuam
  acessíveis por ele não devem ser coletados.
  De forma complementar, ao transferir o controle de objetos C para o domínio
@@ -1046,8 +962,6 @@ ores, o programador deve levar em consideração as diferenças entre os modelos
  pela implementação da linguagem.
 \layout Standard
 
-
-\color red
 A API de Python retorna ao código C ponteiros para os objetos alocados pela
  máquina virtual.
  Como esta utiliza um coletor de lixo baseado em contagem de referências,
@@ -1092,8 +1006,6 @@ rb_gc_mark
  aos objetos internos da instância.
 \layout Standard
 
-
-\color red
 Para reduzir a necessidade de controle explícito de referências, Java faz
  uma distinção entre referências globais e locais.
  Referências globais são explicitamente criadas com 
@@ -1121,8 +1033,6 @@ DeleteLocalRef
 .
 \layout Standard
 
-
-\color red
 A abordagem adotada por Lua evita o problema de gerência de referências
  ao não expor ponteiros para os seus objetos ao código C e adotar uma API
  de pilha.
@@ -1139,13 +1049,9 @@ luaL_unref
 , de forma análoga às referências globais em Java.
 \layout Subsection
 
-
-\color red
 Modelos de concorrência
 \layout Standard
 
-
-\color red
 Outra possível fonte de incompatibilidade entre linguagens que deve ser
  tratada quando estas interagem é a diferença entre modelos de concorrência.
  C, em particular, não define construções de concorrência, sendo estas implement
@@ -1156,8 +1062,6 @@ idade de mecanismos de concorrência em C compatíveis com os modelos que
  elas utilizam.
 \layout Standard
 
-
-\color red
 Por exemplo, APIs entre C e Java devem levar em conta o modelo de 
 \emph on 
 multithreading
@@ -1180,8 +1084,6 @@ hados entre C e Java.
 nto.
 \layout Standard
 
-
-\color red
 Outra situação em que o modelo de concorrência da linguagem demanda cuidados
  por parte do programador na integração com C ocorre no uso de co-rotinas
  em Lua.
@@ -1202,13 +1104,9 @@ yield
  
 \layout Subsection
 
-
-\color red
 Módulos externos
 \layout Standard
 
-
-\color red
 Uma das motivações mais freqüentes para integração com código C é o uso
  de bibliotecas externas.
  Expor uma biblioteca C através da FLI para acesso em uma linguagem pode
@@ -1229,8 +1127,6 @@ bindings
  com a FLI.
 \layout Standard
 
-
-\color red
 Os padrões que ocorrem na produção de bindings são tão comuns que deram
  origem a programas visam automatizar o processo.
  Estes geradores de 
@@ -1275,8 +1171,6 @@ stubs
 Plano de trabalho
 \layout Standard
 
-
-\color red
 Este trabalho pretende, a partir da pesquisa de implementações de FLIs,
  propor uma base para o estudo e comparação de interfaces entre diferentes
  linguagens de programação.
@@ -1296,8 +1190,6 @@ Este trabalho pretende, a partir da pesquisa de implementações de FLIs,
  causada tratamento de entrada e saída que todas elas enfrentam.
 \layout Standard
 
-
-\color red
 Pretendemos embasar o estudo na análise em profundidade de um conjunto de
  FLIs; atualmente, considera-se utilizar as interfaces de Python, Perl,
  Ruby, Lua e Java.
@@ -1319,8 +1211,6 @@ No estágio atual, realizamos o levantamento da bibliografia relacionada
 Metodologia
 \layout Standard
 
-
-\color red
 Inicialmente, pretendemos identificar o conjunto de problemas tratados por
  uma FLI implementada como uma API para C.
  Além de apontar classes gerais de problemas como coleta de lixo e passagem
@@ -1331,8 +1221,6 @@ Inicialmente, pretendemos identificar o conjunto de problemas tratados por
  subtipos envolvendo tipos declarados em ambas as linguagens.
 \layout Standard
 
-
-\color red
 A partir destes requisitos, pretende-se então classificar as facilidades
  oferecidas pelas APIs---suas funções, macros, estruturas---em função destes
  problemas.
@@ -1343,8 +1231,6 @@ A partir destes requisitos, pretende-se então classificar as facilidades
  nativo que não é possível ou não é prático via API.
 \layout Standard
 
-
-\color red
 Com base nesta classificação, o passo seguinte será identificar, para cada
  problema, as abordagens gerais empregadas por cada API e assim expor com
  mais clareza as semelhanças e diferenças das APIs de diferentes linguagens.
@@ -1399,7 +1285,6 @@ plug-ins
 
 
 \size footnotesize 
-\color red
 FINNE, S.; LEIJEN, D.; MEIJER, E.; PEYTON JONES, S.
  
 \series bold 
@@ -1415,7 +1300,6 @@ H/Direct: a Binary Foreign Language Interface for Haskell
 
 
 \size footnotesize 
-\color red
 ANSI/ISO/IEC-8652:1995; 
 \series bold 
 Ada 95 Reference Manual
@@ -1432,7 +1316,6 @@ Lecture Notes in Computer Science
 
 
 \size footnotesize 
-\color red
 TARDITI, D.; LEE, P.; ACHARYA, A.
  
 \series bold 
@@ -1448,7 +1331,6 @@ No Assembly Required: Compiling Standard ML to C
 
 
 \size footnotesize 
-\color red
 TOLMACH, A.; OLIVA, D.
  
 \series bold 
@@ -1462,7 +1344,6 @@ From ML to Ada: Strongly-typed Language Interoperability via Source Translation
 
 
 \size footnotesize 
-\color red
 PEYTON JONES, S.; HALL, C.; HAMMOND, K.; PARTAIN, W.; WADLER, P.
  
 \series bold 
@@ -1476,7 +1357,6 @@ The Glasgow Haskell compiler: a technical overview
 
 
 \size footnotesize 
-\color red
 GOSLING, J.; JOY, B.; STEELE, G.
  
 \series bold 
@@ -1491,7 +1371,6 @@ The Java Language Specification
 
 
 \size footnotesize 
-\color red
 HUGUNIN, J.
  
 \series bold 
@@ -1505,7 +1384,6 @@ Java and Python: the Best of Both Worlds
 
 
 \size footnotesize 
-\color red
 LUTZ, M.
  
 \series bold 
@@ -1521,7 +1399,6 @@ Programming Python
 
 
 \size footnotesize 
-\color red
 Kepler Project.
 
 \series bold 
@@ -1539,7 +1416,6 @@ Kepler Project.
 
 
 \size footnotesize 
-\color red
 IERUSALIMSCHY, R.; FIGUEIREDO, L.H.; CELES, W.; 
 \series bold 
 Lua -- an Extensible Extension Language
@@ -1552,7 +1428,6 @@ Lua -- an Extensible Extension Language
 
 
 \size footnotesize 
-\color red
 BENTON, N.; KENNEDY, A.
  
 \series bold 
@@ -1567,7 +1442,6 @@ Interlanguage Working Without Tears: Blending SML with Java
 
 
 \size footnotesize 
-\color red
 BOX, D.; SELLS, C.
  
 \series bold 
@@ -1582,7 +1456,6 @@ Essential .NET, Volume I: The Common Language Runtime
 
 
 \size footnotesize 
-\color red
 HEJLSBERG, A.; WILTAMUTH, S.
  
 \series bold 
@@ -1595,7 +1468,6 @@ C# Language Specification
 
 
 \size footnotesize 
-\color red
 Microsoft Corporation.
  
 \series bold 
@@ -1613,7 +1485,6 @@ Managed Extensions for C++ Specification
 
 
 \size footnotesize 
-\color red
 SYME, D.; MARGETSON, J.; MARLOW, S.
 
 \series bold 
@@ -1632,7 +1503,6 @@ SYME, D.; MARGETSON, J.; MARLOW, S.
 
 
 \size footnotesize 
-\color red
 RANDAL, A.; SUGALSKI, D.; TOETSCH, L.
  
 \series bold 
@@ -1648,7 +1518,6 @@ Perl 6 and Parrot Essentials
 
 
 \size footnotesize 
-\color red
 CONWAY, M.
  
 \series bold 
@@ -1664,7 +1533,6 @@ Proposal for an UNCOL
 
 
 \size footnotesize 
-\color red
 METZNER, J.
  
 \series bold 
@@ -1681,7 +1549,6 @@ A Graded Bibliography on Macro Systems and Extensible Languages
 
 
 \size footnotesize 
-\color red
 PETERSON, P.; MARTINS, J.R.R.A; ALONSO, J.J.; 
 \series bold 
 Fortran to Python Interface Generator with an Application to Aerospace Engineeri
@@ -1695,7 +1562,6 @@ ng
 
 
 \size footnotesize 
-\color red
 NIEMEYER, G.
  
 \series bold 
@@ -1713,7 +1579,6 @@ Lunatic Python
 
 
 \size footnotesize 
-\color red
 PEYTON JONES, S.; RAMSEY, N.; REIG, F.
  
 \series bold 
@@ -1727,7 +1592,6 @@ C--: a Portable Assembly Language that Supports Garbage Collection
 
 
 \size footnotesize 
-\color red
 DVORAK, Z.
  
 \series bold 
@@ -1744,7 +1608,6 @@ Em: GCC DEVELOPERS' SUMMIT, PROCEEDINGS.
 
 
 \size footnotesize 
-\color red
 Object Management Group, Inc.
  
 \series bold 
@@ -1756,7 +1619,6 @@ The Common Object Request Broker: Architecture and Specification
 
 
 \size footnotesize 
-\color red
 GELERNTER, D.
  
 \series bold 
@@ -1774,7 +1636,6 @@ Generative communication in Linda
 
 
 \size footnotesize 
-\color red
 CHAPMAN, B.; HAINES, M.; MEHROTRA, P.; ZIMA, H.; VAN ROSENDALE, J.
  
 \series bold 
@@ -1789,7 +1650,6 @@ Opus: A Coordination Language for Multidisciplinary Applications
 
 
 \size footnotesize 
-\color red
 COLLIN, S.; COLNET, D.; ZENDRA, O.
  
 \series bold 
@@ -1810,7 +1670,6 @@ Lecture Notes in Computer Science
 
 
 \size footnotesize 
-\color red
 THOMAS, D.; FOWLER, C.; HUNT, A.
  
 \series bold 
@@ -1825,7 +1684,6 @@ Programming Ruby: The Pragmatic Programmer's Guide
 
 
 \size footnotesize 
-\color red
 VAN ROSSUM, G.
  
 \series bold 
@@ -1839,7 +1697,6 @@ Extending and Embedding the Python Interpreter
 
 
 \size footnotesize 
-\color red
 WILSON, P.
  
 \series bold 
@@ -1855,7 +1712,6 @@ Uniprocessor Garbage Collection Techniques
 
 
 \size footnotesize 
-\color red
 LIANG, S.
  
 \series bold 
@@ -1869,7 +1725,6 @@ Java Native Interface: Programmer's Guide and Specification
 
 
 \size footnotesize 
-\color red
 MOURA, A.L.; RODRIGUEZ, N.; IERUSALIMSCHY, R.
  
 \series bold 
@@ -1884,7 +1739,6 @@ Coroutines in Lua
 
 
 \size footnotesize 
-\color red
 BEAZLEY, D.; 
 \series bold 
 SWIG and Automated C/C++ Scripting Extensions
@@ -1897,7 +1751,6 @@ SWIG and Automated C/C++ Scripting Extensions
 
 
 \size footnotesize 
-\color red
 EWING, G.; 
 \series bold 
 Pyrex - a Language for Writing Python Extension Modules
