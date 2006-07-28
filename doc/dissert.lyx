@@ -2068,7 +2068,7 @@ point_type.tp_new = PyType_GenericNew;
 if (PyType_Ready(&point_type) < 0) return;
 \layout Standard
 
-A partir daí, instâncias podom ser criadas com 
+A partir daí, instâncias podem ser criadas com 
 \family typewriter 
 PyObject_New
 \family default 
@@ -3328,7 +3328,6 @@ s contêm informação de tipo e são específicos para o campo de uma determinada
 
 
 \begin_inset Float figure
-placement tb
 wide false
 collapsed false
 
@@ -3345,13 +3344,35 @@ public class ExemploJNI {
 \layout LyX-Code
 
 
+\size tiny 
+ 
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Declaração do método implementado externamente */
+\layout LyX-Code
+
+
 \size footnotesize 
    private native void segundoElemento();
 \layout LyX-Code
 
 
+\size tiny 
+  
+\layout LyX-Code
+
+
 \size footnotesize 
    public static void main(String[] args) {
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      /* Cria uma instância e invoca o método nativo */
 \layout LyX-Code
 
 
@@ -3365,8 +3386,25 @@ public class ExemploJNI {
 \layout LyX-Code
 
 
+\size tiny 
+ 
+\layout LyX-Code
+
+
 \size footnotesize 
    static {
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      /* Carrega o código externo na JVM que
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+         implementará o método segundoElemento */
 \layout LyX-Code
 
 
@@ -3382,12 +3420,25 @@ public class ExemploJNI {
 
 \size footnotesize 
 }
-\layout LyX-Code
-\align center 
+\layout Caption
 
-\family roman 
-\size footnotesize 
-(a) ExemploJNI.java
+
+\begin_inset LatexCommand \label{cap:Classe-Java}
+
+\end_inset 
+
+Classe Java contendo um método implementado externamente
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Float figure
+placement tb
+wide false
+collapsed false
+
 \layout LyX-Code
 
 
@@ -3406,6 +3457,11 @@ public class ExemploJNI {
 \layout LyX-Code
 
 
+\size tiny 
+ 
+\layout LyX-Code
+
+
 \size footnotesize 
 JNIEXPORT void JNICALL
 \layout LyX-Code
@@ -3417,7 +3473,19 @@ Java_ExemploJNI_segundoElemento(JNIEnv *J, jobject this) {
 
 
 \size footnotesize 
+\emph on 
+   /* Obter a classe ExemploJNI (this) */
+\layout LyX-Code
+
+
+\size footnotesize 
    jclass classe = (*J)->GetObjectClass(J, this);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Obter o campo ExemploJNI.elementos, de tipo String[] */
 \layout LyX-Code
 
 
@@ -3432,7 +3500,19 @@ Java_ExemploJNI_segundoElemento(JNIEnv *J, jobject this) {
 
 
 \size footnotesize 
+\emph on 
+   /* Obter o conteúdo do campo ExemploJNI.elementos */
+\layout LyX-Code
+
+
+\size footnotesize 
    jarray elems = (*J)->GetObjectField(J, this, elemsID);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* elems_1 = elementos[1] */
 \layout LyX-Code
 
 
@@ -3442,7 +3522,19 @@ Java_ExemploJNI_segundoElemento(JNIEnv *J, jobject this) {
 
 
 \size footnotesize 
+\emph on 
+   /* obter representação de elems_1 como uma string C */
+\layout LyX-Code
+
+
+\size footnotesize 
    const char* elems_1_c = (*J)->GetStringUTFChars(J, elems_1, NULL);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* exibir a string */
 \layout LyX-Code
 
 
@@ -3454,18 +3546,18 @@ n", elems_1_c);
 
 
 \size footnotesize 
+\emph on 
+   /* liberar memória da string */
+\layout LyX-Code
+
+
+\size footnotesize 
    (*J)->ReleaseStringUTFChars(J, elems_1, elems_1_c);
 \layout LyX-Code
 
 
 \size footnotesize 
-} 
-\layout LyX-Code
-\align center 
-
-\family roman 
-\size footnotesize 
-(b) ExemploJNI.c
+}
 \layout Caption
 
 
@@ -3473,39 +3565,46 @@ n", elems_1_c);
 
 \end_inset 
 
-Acesso a atributos Java em C via JNI
+Código C implementando um método Java
 \end_inset 
 
 
 \layout Standard
 
-A Figura 
-\begin_inset LatexCommand \ref{cap:Acesso-JNI}
+O acesso a atributos Java em código C é ilustrado através do seguinte exemplo.
+ Inicialmente, na Figura 
+\begin_inset LatexCommand \ref{cap:Classe-Java}
 
 \end_inset 
 
- mostra o acesso de um atributo Java a partir de C.
- Inicialmente, na Fig.
- 
-\begin_inset LatexCommand \ref{cap:Acesso-JNI}
-
-\end_inset 
-
-(a), é implementada uma classe Java que possui um atributo privado, o array
+, é implementada uma classe Java que possui um atributo privado, o array
  
 \family typewriter 
 elementos
 \family default 
-, e define uma função 
-\family typewriter 
-native
-\family default 
-, 
+, e define uma função, 
 \family typewriter 
 segundoElemento
 \family default 
-, a ser implementada em C.
- A implementação de 
+, a ser implementada em C
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Os detalhes sobre a declaração e registro de funções implementadas em C
+ serão discutidos na Seção 
+\begin_inset LatexCommand \ref{sub:Java-Registro}
+
+\end_inset 
+
+.
+\end_inset 
+
+.
+\layout Standard
+
+A implementação de 
 \family typewriter 
 segundoElemento
 \family default 
@@ -3515,36 +3614,37 @@ segundoElemento
 
 \end_inset 
 
-(b), ilustrando a seqüência de chamadas até obter em C o elemento do array
- Java.
+, mostrando a seqüência de chamadas até obter em C o elemento do array Java.
  Para acessar o atributo 
 \family typewriter 
 elementos
 \family default 
 , a função deve obter o identificador do campo.
- Isso é feito com 
-\family typewriter 
-GetFieldID
-\family default 
-, que precisa de uma referência da classe a que o campo se refere.
- A referência da classe é obtida com 
+ Para tal, devemos inicialmente obter uma referência da classe atual com
+ 
 \family typewriter 
 GetObjectClass
 \family default 
-, a partir da referência ao objeto (
+ a partir da referência ao objeto (
 \family typewriter 
 this
 \family default 
-) retornada à função.
- De posse do identificador (
+) passada como parâmetro à função.
+ De posse da referência da classe (
 \family typewriter 
-elemsID
+classe
 \family default 
-), a referência ao array apontado pelo atributo é obtida com 
+), obtemos o identificador do campo com 
+\family typewriter 
+GetFieldID
+\family default 
+.
+ O conteúdo do campo é então obtido com 
 \family typewriter 
 GetObjectField
 \family default 
- e, com esta, o elemento do array com 
+: uma referência para o array.
+ Com este, o elemento do array é obtido com 
 \family typewriter 
 GetObjectArrayElement
 \family default 
@@ -3554,6 +3654,38 @@ GetObjectArrayElement
 \family typewriter 
 GetStringUTFChars
 \family default 
+.
+ Como discutido anteriormente, após o uso, a string deve ser liberada com
+ 
+\family typewriter 
+ReleaseStringUTFChars
+\family default 
+.
+\layout Standard
+
+É interessante ainda notar que as chamadas à JNI têm o formato 
+\family typewriter 
+(*J)->
+\family default 
+\emph on 
+função
+\family typewriter 
+\emph default 
+(J, ...)
+\family default 
+: funções da JNI são acessadas através de ponteiros para função armazenados
+ em uma tabela apontada pela estrutura 
+\family typewriter 
+JNIEnv
+\family default 
+, que por sua vez é propagada nas chamadas.
+ O objetivo destes dois níveis de indireção é desacoplar a ligação das chamadas
+ no código C e a biblioteca que implementa a JNI, permitindo ligar o código
+ em tempo de execução a diferentes implementações da JVM 
+\begin_inset LatexCommand \cite{stepanian-jni}
+
+\end_inset 
+
 .
 \layout Standard
 
@@ -3721,8 +3853,8 @@ luaL_addvalue
 luaL_pushresult
 \family default 
 .
- Assim, evita-se a internalização de strings representando os estágios intermedi
-ários da construção da string final.
+ Assim, evitam-se consecutivas operações de concatenação de string através
+ da API de Lua.
 \layout Standard
 
 Lua define dois tipos de dados específicos para o armazenamento de dados
@@ -3757,7 +3889,6 @@ lua_pushlightuserdata
 \family default 
 , permitem armazenar ponteiros de C em Lua; a alocação e gerência do bloco
  de memória ficam a cargo do código C.
- 
 \layout Standard
 
 A área de armazenamento da pilha não se ajusta dinamicamente e as funções
@@ -4548,6 +4679,7 @@ PyList_SetItem
 
 
 \begin_inset Float figure
+placement tb
 wide false
 collapsed false
 
@@ -4721,7 +4853,6 @@ item
 PyList_GetItem
 \family default 
  retorna uma referência emprestada.
- 
 \layout Standard
 
 Ao implementar funções em C que retornam referências a 
@@ -11336,4 +11467,11 @@ MARQUESS, P.
  PERLCALL(1).
  Man-page da documentação de Perl 5.8.8.
  Janeiro 2006.
+\layout Bibliography
+\bibitem {stepanian-jni}
+
+STEPANIAN, L.
+ Inlining Java Native Calls at Runtime.
+ Tese de mestrado, Graduate Department of Computer Science, University of
+ Toronto.
 \the_end
