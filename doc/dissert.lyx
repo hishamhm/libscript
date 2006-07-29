@@ -3797,10 +3797,48 @@ lua_pushlstring
 \family typewriter 
 lua_setglobal
 \family default 
+
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+O parâmetro 
+\family typewriter 
+L
+\family default 
+ será explicado mais adiante, na Seção 
+\begin_inset LatexCommand \ref{sub:Lua-Registro}
+
+\end_inset 
+
 .
- A maioria das funções de consulta, entretanto, permitem especificar um
- índice qualquer da pilha (com valores positivos para indexação a partir
- da base e negativos para índices a partir do topo).
+\end_inset 
+
+:
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_pushinteger(L, 123);       
+\emph on 
+/* Insere o número 123 na pilha */
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_setglobal(L, "foo");       
+\emph on 
+/* Atribui o número 123 na global 
+\emph default 
+foo
+\emph on 
+ */
+\layout Standard
+
+A maioria das funções de consulta, entretanto, permitem especificar um índice
+ qualquer da pilha (com valores positivos para indexação a partir da base
+ e negativos para índices a partir do topo).
 \layout Standard
 
 A conversão de dados de Lua para C é feita através de funções como 
@@ -3889,6 +3927,265 @@ lua_pushlightuserdata
 \family default 
 , permitem armazenar ponteiros de C em Lua; a alocação e gerência do bloco
  de memória ficam a cargo do código C.
+ O seguinte exemplo ilustra as diferenças entre full e light userdata.
+ Comparemos a criação de dois objetos, assumindo a mesma struct 
+\family typewriter 
+point
+\family default 
+ definida na seção anterior.
+ Primeiro, a criação de um full userdata:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Cria o full userdata e o insere na pilha e retorna
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   o ponteiro para C.
+ A memória é alocada por Lua.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+point* full_p = (point*) lua_newuserdata(L, sizeof(point));
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Utilizamos então o ponteiro em C...
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+full_p->x = 100; full_p->y = 200;
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Atribui o objeto à variável global Lua 
+\emph default 
+PontoFull
+\emph on 
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_setglobal(L, "PontoFull");
+\layout Standard
+
+
+\family roman 
+E, em seguida, de um light userdata:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Aloca um 
+\emph default 
+point
+\emph on 
+ a ser referenciado via light userdata.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+point* light_p = (point*) malloc(sizeof(point));
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Armazena o ponteiro na pilha de Lua.
+ O bloco de memória
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   para que ele aponta ainda é responsabilidade do código C.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_pushlightuserdata(L, light_p);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Utilizamos então o ponteiro em C...
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+light_p->x = 100; light_p->y = 200;
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Atribui o objeto à variável global 
+\emph default 
+PontoLight
+\emph on 
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_setglobal(L, "PontoLight");
+\layout Standard
+
+
+\family roman 
+O acesso a ambos é 
+\family default 
+feito de forma 
+\family roman 
+igual:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Empilha as globais 
+\emph default 
+PontoFull
+\emph on 
+ e 
+\emph default 
+PontoLight
+\emph on 
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_getglobal(L, "PontoFull");
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_getglobal(L, "PontoLight");
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Obtém o ponteiro C do userdata no topo da pilha (posição -1),
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   e o do userdata logo abaixo dele (posição -2) */
+\layout LyX-Code
+
+
+\size footnotesize 
+point* pl = (point*) lua_touserdata(L, -1);
+\layout LyX-Code
+
+
+\size footnotesize 
+point* pf = (point*) lua_touserdata(L, -2);
+\layout LyX-Code
+
+
+\size footnotesize 
+printf("(%d,%d), (%d,%d)
+\backslash 
+n", pl->x, pl->y, pf->x, pf->y);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Restaura a pilha à posição original, removendo os 2 itens.
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   Eles não serão coletados pois estão associados às variáveis globais.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_pop(L, 2);
+\layout Standard
+
+A desalocação dos objetos, entretanto, ocorre de forma diferente, já que
+ um bloco de memória é gerenciado por Lua e outro por C.
+ Assumindo que a global 
+\family typewriter 
+PontoFull
+\family default 
+ é a única referência para este bloco, para liberá-lo basta sobrescrevermos
+ 
+\family typewriter 
+PontoFull
+\family default 
+, por exemplo, com 
+\family typewriter 
+nil
+\family default 
+; a memória do full userdata poderá então ser liberada pelo coletor de lixo,
+ como a de qualquer valor Lua sem referências.
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_pushnil(L);
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_setglobal(L, "PontoFull");
+\layout Standard
+
+Para light userdata, devemos obter o ponteiro e liberar a memória manualmente,
+ em C.
+ Como usaremos 
+\family typewriter 
+free
+\family default 
+ de forma explícita,
+\emph on 
+ 
+\emph default 
+a memória é liberada instantaneamente.
+ Entretanto, se houverem outros light userdata apontando para este bloco,
+ eles passarão a conter ponteiros inválidos.
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_getglobal(L, "PontoLight");
+\layout LyX-Code
+
+
+\size footnotesize 
+point* p = (point*) lua_touserdata(L, -1);
+\layout LyX-Code
+
+
+\size footnotesize 
+free(p);
 \layout Standard
 
 A área de armazenamento da pilha não se ajusta dinamicamente e as funções
@@ -3963,6 +4260,51 @@ lua_next
 next
 \family default 
 , que permite percorrer os elementos de uma tabela.
+ Um exemplo de manipulação de tabelas é dado a seguir:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* tabela["chave"] = 12345, em C: */
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_getglobal(L, "tabela");
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_pushstring(L, "chave");
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_pushinteger(L, 12345);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* lua_settable insere na tabela especificada como argumento
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   o item localizado no topo da pilha,
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   usando como chave o elemento logo abaixo do topo: */
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_settable(L, -3);
 \layout Standard
 
 Diversos conceitos de Lua são representados através de tabelas -- ambiente
@@ -3984,7 +4326,36 @@ LUA_ENVIRONINDEX
 \family default 
 , para isolar dados a serem compartilhados internamente em funções de módulos
  escritos em C.
- 
+ Neste exemplo, mostramos como o ambiente global pode ser manipulado como
+ uma tabela:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Isto...
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_getglobal(L, "PontoLight");
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* ...equivale a: */
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_pushstring(L, "PontoLight");
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_gettable(L, LUA_GLOBALSINDEX);
 \layout Subsection
 
 Perl
@@ -4028,15 +4399,7 @@ Para embutir a máquina virtual de Perl em uma aplicação, a biblioteca que
  passados para o interpretador de forma equivalente às opções do interpretador
  Perl de linha de comando, inclusive usando a opção 
 \family typewriter 
-
-\begin_inset Quotes eld
-\end_inset 
-
--e
-\begin_inset Quotes erd
-\end_inset 
-
-
+"-e"
 \family default 
  para executar trechos de código.
 \layout Standard
@@ -6429,15 +6792,20 @@ PyObject
 
 
 \size footnotesize 
-PyObject* ret = PyObject_CallMethod(s, "split
-\begin_inset Quotes erd
-\end_inset 
+\emph on 
+/* Equivalente C a: ret = uma_string.split(" ")
+\layout LyX-Code
 
-, "s
-\begin_inset Quotes erd
-\end_inset 
 
-, " ");
+\size footnotesize 
+\emph on 
+   "s" indica que o parâmetro seguinte é do tipo string.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject* ret = PyObject_CallMethod(uma_string, "split", "s", " ");
 \layout Standard
 
 é equivalente a:
@@ -6445,16 +6813,12 @@ PyObject* ret = PyObject_CallMethod(s, "split
 
 
 \size footnotesize 
-PyObject* split = PyObject_GetAttrString(s, "split");
+PyObject* split = PyObject_GetAttrString(uma_string, "split");
 \layout LyX-Code
 
 
 \size footnotesize 
-PyObject* ret = PyObject_CallFunction(split, "s
-\begin_inset Quotes erd
-\end_inset 
-
-, " ");
+PyObject* ret = PyObject_CallFunction(split, "s", " ");
 \layout Standard
 
 É interessante notar que mesmo quando um método é chamado como função, o
@@ -6522,12 +6886,37 @@ PyObject *teste = PyDict_GetItemString(globals, "teste");
 
 
 \size footnotesize 
+\emph on 
+/* Equivalente C a: obj_result = teste("entrada", 2)
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   "si" indica que seguem parâmetros string e inteiro */
+\layout LyX-Code
+
+
+\size footnotesize 
 PyObject *obj_result = PyObject_CallFunction(teste, "si", "entrada", 2);
 \layout LyX-Code
 
 
 \size footnotesize 
+\emph on 
+/* Converte o valor para C */
+\layout LyX-Code
+
+
+\size footnotesize 
 long result = PyInt_AsLong(obj_result);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Libera o PyObject temporário retornado.
+ */
 \layout LyX-Code
 
 
@@ -6677,494 +7066,6 @@ nil
 Qnil
 \family default 
  como o objeto alvo do método.
-\layout Standard
-
-
-\begin_inset Float figure
-wide false
-collapsed false
-
-\layout LyX-Code
-
-
-\size footnotesize 
-def a_ruby_function()
-\layout LyX-Code
-
-
-\size footnotesize 
-   print("a_ruby_function will yield.
-\backslash 
-n")
-\layout LyX-Code
-
-
-\size footnotesize 
-   yield
-\layout LyX-Code
-
-
-\size footnotesize 
-   print("a_ruby_function is done.
-\backslash 
-n")
-\layout LyX-Code
-
-
-\size footnotesize 
-   return 42
-\layout LyX-Code
-
-
-\size footnotesize 
-end
-\layout Standard
-\align center 
-
-\size footnotesize 
-(a) Uma função Ruby que espera um bloco de código
-\layout LyX-Code
-
-
-\size footnotesize 
-VALUE a_C_block() {
-\layout LyX-Code
-
-
-\size footnotesize 
-   fprintf(stderr, "a_C_block is running.
-\backslash 
-n");
-\layout LyX-Code
-
-
-\size footnotesize 
-} 
-\layout Standard
-\align center 
-
-\size footnotesize 
-(b) Uma função C que atuará como bloco de código
-\layout LyX-Code
-
-
-\size footnotesize 
-a_proc = rb_proc_new(a_C_block, Qnil);
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-/* Não funciona! Um Proc não é um bloco de código.
- */
-\layout LyX-Code
-
-
-\size footnotesize 
-result = rb_funcall(Qnil, a_ruby_function_ID, 1, a_proc);
-\layout Standard
-\align center 
-
-\size footnotesize 
-(c) Uma chamada de função com bloco inválida a partir de C
-\layout LyX-Code
-
-
-\size footnotesize 
-rb_define_global_function("a_C_block", a_C_block, 0);
-\layout LyX-Code
-
-
-\size footnotesize 
-rb_eval_string("$result = a_ruby_function { a_C_block }");
-\layout LyX-Code
-
-
-\size footnotesize 
-result = rb_gv_get("$result");
-\layout Standard
-\align center 
-
-\size footnotesize 
-(d) Passando código C em um bloco declarado via 
-\family typewriter 
-rb_eval_string
-\layout LyX-Code
-
-
-\size footnotesize 
-a_proc = rb_proc_new(a_C_block, Qnil);
-\layout LyX-Code
-
-
-\size footnotesize 
-rb_gv_set("$a_proc", a_proc);
-\layout LyX-Code
-
-
-\size footnotesize 
-rb_eval_string("$result = a_ruby_function(&$a_proc)"); 
-\newline 
-result = rb_gv_get("$result");
-\layout Standard
-\align center 
-
-\size footnotesize 
-(e) Passando código C encapsulado como 
-\family typewriter 
-Proc
-\family default 
- como um bloco via 
-\family typewriter 
-rb_eval_string
-\layout LyX-Code
-
-
-\size footnotesize 
-VALUE call_a_ruby_function() {
-\layout LyX-Code
-
-
-\size footnotesize 
-   return rb_funcall(Qnil, a_ruby_function_ID, 0);
-\layout LyX-Code
-
-
-\size footnotesize 
-} 
-\layout LyX-Code
-
-
-\size footnotesize 
-...
-\layout LyX-Code
-
-
-\size footnotesize 
-result = rb_iterate(call_a_ruby_function, Qnil, a_C_block, Qnil);
-\layout Standard
-\align center 
-
-\size footnotesize 
-(f) Passando um bloco de código via 
-\family typewriter 
-rb_iterate
-\layout Caption
-
-
-\begin_inset LatexCommand \label{cap:Blocos-Ruby}
-
-\end_inset 
-
-Invocação de métodos Ruby passando blocos de código a partir de C
-\end_inset 
-
-
-\layout Comment
-
-Questões específicas da linguagem: blocos Ruby
-\layout Standard
-
-Um tipo de dados que possui um tratamento um tanto irregular em Ruby é o
- de blocos de código.
- A sintaxe em Ruby para a declaração de blocos é especial: blocos só podem
- ser definidos como o último argumento de uma chamada de método.
- Assim, eles não são valores de primeira classe, não podendo ser, por exemplo,
- declarados em uma atribuição a variável.
- Eles podem, no entanto, ser 
-\begin_inset Quotes eld
-\end_inset 
-
-promovidos
-\begin_inset Quotes erd
-\end_inset 
-
- a valores de primeira classe, na forma de objetos da classe 
-\family typewriter 
-Proc
-\family default 
-.
- Isto pode ser feito de duas formas: explicitamente, passando um bloco para
- o método 
-\family typewriter 
-Proc.new
-\family default 
-, ou implicitamente, declarando em um método um último parâmetro formal
- precedido de 
-\family typewriter 
-&
-\family default 
-.
- Esta variável conterá o bloco convertido para um 
-\family typewriter 
-Proc
-\family default 
-.
- Na chamada de funções que esperam blocos, 
-\family typewriter 
-&
-\family default 
- converte o 
-\family typewriter 
-Proc
-\family default 
- para um bloco.
- Objetos 
-\family typewriter 
-Proc
-\family default 
- podem ser manipulados através da API de C como qualquer outro objeto Ruby,
- mas não há correspondente na API de C para a funcionalidade do operador
- 
-\family typewriter 
-&
-\family default 
- em chamadas de função.
-\layout Standard
-
-O status especial dos blocos de código complica a sua manipulação a partir
- de código C, e em particular a invocação de métodos que os esperam como
- parâmetro.
- A Figura 
-\begin_inset LatexCommand \ref{cap:Blocos-Ruby}
-
-\end_inset 
-
- exemplifica isto ao apresentar formas de invocar um método Ruby (Fig.
- 
-\begin_inset LatexCommand \ref{cap:Blocos-Ruby}
-
-\end_inset 
-
-(a)) passando como bloco de código uma função C (Fig.
- 
-\begin_inset LatexCommand \ref{cap:Blocos-Ruby}
-
-\end_inset 
-
-(b)).
- Como a equivalência de blocos com objetos 
-\family typewriter 
-Proc
-\family default 
- proporcionada pelo operador 
-\family typewriter 
-&
-\family default 
- não é oferecida na API C, as funções para chamada de métodos como 
-\family typewriter 
-rb_funcall
-\family default 
- não são capazes de realizar tal conversão e passar 
-\family typewriter 
-Proc
-\family default 
-s para funções que aceitam blocos (Fig.
- 
-\begin_inset LatexCommand \ref{cap:Blocos-Ruby}
-
-\end_inset 
-
-(c)).
-\layout Standard
-
-As únicas formas de invocar um método Ruby passando um bloco de código são
- através de 
-\family typewriter 
-rb_eval_string
-\family default 
- e 
-\family typewriter 
-rb_iterate
-\family default 
-.
- A primeira abordagem, além do custo de desempenho causado pelo 
-\emph on 
-parsing
-\emph default 
- da string de código, tem a inconveniência de exigir o uso de variáveis
- temporárias para que se possa obter os valores de retorno de volta ao espaço
- de C.
- No modelo usando 
-\family typewriter 
-rb_eval_string
-\family default 
-, a função C que atuará como bloco deve ser declarada no espaço de Ruby.
- Há duas alternativas de como fazer isto: registrando o método em Ruby e
- invocando-o em um bloco 
-\emph on 
-wrapper
-\emph default 
- declarado no texto da string Ruby (Fig.
- 
-\begin_inset LatexCommand \ref{cap:Blocos-Ruby}
-
-\end_inset 
-
-(d)), ou encapsulando a função em um objeto 
-\family typewriter 
-Proc
-\family default 
- a partir de C com 
-\family typewriter 
-rb_proc_new
-\family default 
- e então usando a notação 
-\family typewriter 
-&
-\family default 
- na string de código Ruby avaliada (Fig.
- 
-\begin_inset LatexCommand \ref{cap:Blocos-Ruby}
-
-\end_inset 
-
-(e)).
-\layout Standard
-
-A segunda abordagem explora o fato de que a única função da API de C capaz
- de produzir blocos de código diretamente é 
-\family typewriter 
-rb_iterate
-\family default 
-.
- Esta função recebe dois ponteiros de função, um para a função a ser invocada
- e outro para a função que atuará como o bloco de código; chamadas a 
-\family typewriter 
-yield
-\family default 
- dentro da primeira função invocarão a segunda.
- O bloco pode quebrar o fluxo de execução com 
-\family typewriter 
-rb_iter_break
-\family default 
-.
- Passando como 
-\begin_inset Quotes eld
-\end_inset 
-
-função de iteração
-\begin_inset Quotes erd
-\end_inset 
-
- para 
-\family typewriter 
-rb_iterate
-\family default 
- uma função 
-\emph on 
-wrapper
-\emph default 
- que simplesmente chama o método Ruby desejado com 
-\family typewriter 
-rb_funcall
-\family default 
-, é possível simular uma chamada a 
-\family typewriter 
-rb_funcall
-\family default 
- que recebe uma função C como bloco de código (Fig.
- 
-\begin_inset LatexCommand \ref{cap:Blocos-Ruby}
-
-\end_inset 
-
-(f)).
- Note que nenhum argumento é passado em 
-\family typewriter 
-rb_funcall
-\family default 
- -- a função 
-\family typewriter 
-rb_iterate
-\family default 
- define 
-\family typewriter 
-a_C_block
-\family default 
- como sendo o 
-\begin_inset Quotes eld
-\end_inset 
-
-bloco de código atual
-\begin_inset Quotes erd
-\end_inset 
-
- e esta definição é herdada implicitamente por 
-\family typewriter 
-rb_funcall
-\family default 
-.
-\layout Standard
-
-Para o caso comum de realizar iterações sobre o método 
-\family typewriter 
-each
-\family default 
- de coleções, Ruby oferece uma função 
-\emph on 
-wrapper
-\emph default 
- 
-\family typewriter 
-rb_each
-\family default 
-.
- Esta função foi projetada para ser passada como primeiro argumento de 
-\family typewriter 
-rb_iterate
-\family default 
-.
- Funções C executando como bloco de código podem quebrar o fluxo de execução
- com 
-\family typewriter 
-rb_iter_break
-\family default 
-.
- O mecanismo de 
-\emph on 
-yield
-\emph default 
-, tanto para código C quanto para chamadas nativas em Ruby, é implementado
- usando as funções C 
-\family typewriter 
-setjmp
-\family default 
- e 
-\family typewriter 
-longjmp
-\family default 
-.
-\layout Comment
-
-Verificação da ocorrência de erros.
-\layout Standard
-
-Para o correto tratamento de erros, funções C que realizam chamadas a funções
- Ruby devem ser encapsuladas em uma chamada 
-\family typewriter 
-rb_protect
-\family default 
- ou em uma de suas variantes, 
-\family typewriter 
-rb_ensure
-\family default 
- e 
-\family typewriter 
-rb_rescue
-\family default 
-.
- Esta função captura exceções disparadas por código Ruby (ou código C usando
- 
-\family typewriter 
-rb_raise
-\family default 
-).
- Caso o programa não use 
-\family typewriter 
-rb_protect
-\family default 
-, exceções em Ruby resultarão em erros fatais.
 \layout Comment
 
 Exemplo de chamada de função
@@ -7262,6 +7163,428 @@ rb_intern
 rb_funcall
 \family default 
 , tendo sido separadas apenas para maior legibilidade.
+\layout Comment
+
+Questões específicas da linguagem: blocos Ruby
+\layout Standard
+
+Um tipo de dados que possui um tratamento um tanto irregular em Ruby é o
+ de blocos de código.
+ A sintaxe em Ruby para a declaração de blocos é especial: blocos só podem
+ ser definidos como o último argumento de uma chamada de método.
+ Assim, eles não são valores de primeira classe, não podendo ser, por exemplo,
+ declarados em uma atribuição a variável.
+ Eles podem, no entanto, ser 
+\begin_inset Quotes eld
+\end_inset 
+
+promovidos
+\begin_inset Quotes erd
+\end_inset 
+
+ a valores de primeira classe, na forma de objetos da classe 
+\family typewriter 
+Proc
+\family default 
+.
+ Isto pode ser feito de duas formas: explicitamente, passando um bloco para
+ o método 
+\family typewriter 
+Proc.new
+\family default 
+, ou implicitamente, declarando em um método um último parâmetro formal
+ precedido de 
+\family typewriter 
+&
+\family default 
+.
+ Esta variável conterá o bloco convertido para um 
+\family typewriter 
+Proc
+\family default 
+.
+ Na chamada de funções que esperam blocos, 
+\family typewriter 
+&
+\family default 
+ converte o 
+\family typewriter 
+Proc
+\family default 
+ para um bloco.
+ Objetos 
+\family typewriter 
+Proc
+\family default 
+ podem ser manipulados através da API de C como qualquer outro objeto Ruby,
+ mas não há correspondente na API de C para a funcionalidade do operador
+ 
+\family typewriter 
+&
+\family default 
+ em chamadas de função.
+\layout Standard
+
+O status especial dos blocos de código complica a sua manipulação a partir
+ de código C, e em particular a invocação de métodos que os esperam como
+ parâmetro.
+ Digamos que queremos invocar o seguinte método Ruby a partir de C:
+\layout LyX-Code
+
+
+\size footnotesize 
+def uma_funcao_ruby()
+\layout LyX-Code
+
+
+\size footnotesize 
+   print("uma_funcao_ruby vai invocar o bloco.
+\backslash 
+n")
+\layout LyX-Code
+
+
+\size footnotesize 
+   yield
+\layout LyX-Code
+
+
+\size footnotesize 
+   print("uma_funcao_ruby encerrou.
+\backslash 
+n")
+\layout LyX-Code
+
+
+\size footnotesize 
+   return 42
+\layout LyX-Code
+
+
+\size footnotesize 
+end
+\layout Standard
+
+A função espera que um bloco de código seja passado para que seja invocado
+ via o comando 
+\family typewriter 
+yield
+\family default 
+.
+ Como vamos invocar a função a partir de C, queremos também passar código
+ C como um bloco, representado na seguinte função: 
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE um_bloco_C() {
+\layout LyX-Code
+
+
+\size footnotesize 
+   fprintf(stderr, "um_bloco_C está rodando.
+\backslash 
+n");
+\layout LyX-Code
+
+
+\size footnotesize 
+} 
+\layout Standard
+
+A conversão objetos 
+\family typewriter 
+Proc
+\family default 
+ para blocos proporcionada pelo operador 
+\family typewriter 
+&
+\family default 
+ em Ruby não possui equivalente na API C.
+ Assim, 
+\family typewriter 
+rb_funcall
+\family default 
+ não é capaz de passar 
+\family typewriter 
+Proc
+\family default 
+s para funções que aceitam blocos.
+ A forma intuitiva de fazer a chamada de funções Ruby a partir de C, neste
+ caso, então, não funciona:
+\layout LyX-Code
+
+
+\size footnotesize 
+ID uma_funcao_ruby = rb_intern("uma_funcao_ruby");
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE um_proc = rb_proc_new(a_C_block, Qnil);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Não funciona! Um Proc não é um bloco de código.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE resultado = rb_funcall(Qnil, uma_funcao_ruby, 1, um_proc);
+\layout Standard
+
+As únicas formas de invocar um método Ruby passando um bloco de código são
+ através de 
+\family typewriter 
+rb_eval_string
+\family default 
+ e 
+\family typewriter 
+rb_iterate
+\family default 
+.
+ A primeira abordagem, além do custo de desempenho causado pelo 
+\emph on 
+parsing
+\emph default 
+ da string de código, tem a inconveniência de exigir o uso de variáveis
+ temporárias para que se possa obter os valores de retorno de volta ao espaço
+ de C.
+ No modelo usando 
+\family typewriter 
+rb_eval_string
+\family default 
+, a função C que atuará como bloco deve ser declarada no espaço de Ruby.
+ Há duas alternativas de como fazer isto: registrando o método em Ruby e
+ invocando-o em um bloco 
+\emph on 
+wrapper
+\emph default 
+ declarado no texto da string Ruby:
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_define_global_function("um_bloco_C", um_bloco_C, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_eval_string("$resultado = uma_funcao_ruby { um_bloco_C }");
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE resultado = rb_gv_get("$resultado");
+\layout Standard
+
+Ou encapsulando a função em um objeto 
+\family typewriter 
+Proc
+\family default 
+ a partir de C com 
+\family typewriter 
+rb_proc_new
+\family default 
+ e então usando a notação 
+\family typewriter 
+&
+\family default 
+ na string de código Ruby avaliada:
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE um_proc = rb_proc_new(um_bloco_C, Qnil);
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_gv_set("$um_proc", um_proc);
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_eval_string("$resultado = uma_funcao_ruby(&$um_proc)");
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE resultado = rb_gv_get("$resultado");
+\layout Standard
+
+A segunda abordagem explora o fato de que a única função da API de C capaz
+ de produzir blocos de código diretamente é 
+\family typewriter 
+rb_iterate
+\family default 
+.
+ Esta função recebe dois ponteiros de função, um para a função a ser invocada
+ e outro para a função que atuará como o bloco de código; chamadas a 
+\family typewriter 
+yield
+\family default 
+ dentro da primeira função invocarão a segunda.
+ O bloco pode quebrar o fluxo de execução com 
+\family typewriter 
+rb_iter_break
+\family default 
+.
+ Passando como 
+\begin_inset Quotes eld
+\end_inset 
+
+função de iteração
+\begin_inset Quotes erd
+\end_inset 
+
+ para 
+\family typewriter 
+rb_iterate
+\family default 
+ uma função 
+\emph on 
+wrapper
+\emph default 
+ que simplesmente chama o método Ruby desejado com 
+\family typewriter 
+rb_funcall
+\family default 
+, é possível simular uma chamada a 
+\family typewriter 
+rb_funcall
+\family default 
+ que recebe uma função C como bloco de código.
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE chama_uma_funcao_ruby() {
+\layout LyX-Code
+
+
+\size footnotesize 
+   ID uma_funcao_ruby = rb_intern("uma_funcao_ruby");
+\layout LyX-Code
+
+
+\size footnotesize 
+   return rb_funcall(Qnil, uma_funcao_ruby, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
+} 
+\layout LyX-Code
+
+
+\size footnotesize 
+...
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE resultado = rb_iterate(chama_uma_funcao_ruby, Qnil, um_bloco_C, Qnil);
+\layout Standard
+
+Note que nenhum argumento é passado em 
+\family typewriter 
+rb_funcall
+\family default 
+ -- a função 
+\family typewriter 
+rb_iterate
+\family default 
+ define 
+\family typewriter 
+um_bloco_C
+\family default 
+ como sendo o 
+\begin_inset Quotes eld
+\end_inset 
+
+bloco de código atual
+\begin_inset Quotes erd
+\end_inset 
+
+ e esta definição é herdada implicitamente por 
+\family typewriter 
+rb_funcall
+\family default 
+.
+\layout Standard
+
+Para o caso comum de realizar iterações sobre o método 
+\family typewriter 
+each
+\family default 
+ de coleções, Ruby oferece uma função 
+\emph on 
+wrapper
+\emph default 
+ 
+\family typewriter 
+rb_each
+\family default 
+.
+ Esta função foi projetada para ser passada como primeiro argumento de 
+\family typewriter 
+rb_iterate
+\family default 
+.
+ Funções C executando como bloco de código podem quebrar o fluxo de execução
+ com 
+\family typewriter 
+rb_iter_break
+\family default 
+.
+ O mecanismo de 
+\emph on 
+yield
+\emph default 
+, tanto para código C quanto para chamadas nativas em Ruby, é implementado
+ usando as funções C 
+\family typewriter 
+setjmp
+\family default 
+ e 
+\family typewriter 
+longjmp
+\family default 
+.
+\layout Comment
+
+Verificação da ocorrência de erros.
+\layout Standard
+
+Para o correto tratamento de erros, funções C que realizam chamadas a funções
+ Ruby devem ser encapsuladas em uma chamada 
+\family typewriter 
+rb_protect
+\family default 
+ ou em uma de suas variantes, 
+\family typewriter 
+rb_ensure
+\family default 
+ e 
+\family typewriter 
+rb_rescue
+\family default 
+.
+ Esta função captura exceções disparadas por código Ruby (ou código C usando
+ 
+\family typewriter 
+rb_raise
+\family default 
+).
+ Caso o programa não use 
+\family typewriter 
+rb_protect
+\family default 
+, exceções em Ruby resultarão em erros fatais.
 \layout Subsection
 
 Java
@@ -7347,6 +7670,8 @@ Method
  Os nomes das funções seguem a forma
 \layout LyX-Code
 
+
+\size footnotesize 
 Call
 \family roman 
 \emph on 
