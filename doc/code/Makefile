@@ -23,11 +23,14 @@ LUA_LDFLAGS = -llua -ldl -lm
 LUA_FLAGS = $(LUA_LDFLAGS)
 LUA_PROGS = luafnmt luacall luauserdata
 
-PROGS = $(PYTHON_PROGS) $(JAVA_PROGS) $(RUBY_PROGS) $(LUA_PROGS)
+PERL_FLAGS = $(shell perl -MExtUtils::Embed -e ccopts -e ldopts)
+PERL_PROGS = perlmini perleval
+
+PROGS = $(PYTHON_PROGS) $(JAVA_PROGS) $(RUBY_PROGS) $(LUA_PROGS) $(PERL_PROGS)
 
 all: $(PROGS)
 
-run: run_python run_java run_ruby run_lua
+run: run_python run_java run_ruby run_lua run_perl
 
 run_python: $(PYTHON_PROGS)
 	./pythonstring
@@ -99,6 +102,16 @@ luacall: luacall.c
 
 luauserdata: luauserdata.c
 	gcc -o luauserdata luauserdata.c $(LUA_FLAGS)
+
+run_perl: $(PERL_PROGS)
+	echo 'print "Hello, Perl!\n";' | ./perlmini
+	./perleval
+
+perlmini: perlmini.c
+	gcc -o perlmini perlmini.c $(PERL_FLAGS)
+
+perleval: perleval.c
+	gcc -o perleval perleval.c $(PERL_FLAGS)
 
 clean:
 	rm -f $(PROGS)
