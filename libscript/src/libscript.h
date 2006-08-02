@@ -63,16 +63,16 @@ const char* script_get_namespace(script_env* env);
 const char* script_fn_name(script_env* env);
 
 /* data.c */
-script_type script_in_type(script_env* env);
+script_type script_get_type(script_env* env);
 int script_param_count(script_env* env);
-char* script_in_string(script_env* env);
-double script_in_double(script_env* env);
-int script_in_int(script_env* env);
-int script_in_bool(script_env* env);
-void script_out_string(script_env* env, const char* value);
-void script_out_double(script_env* env, double value);
-void script_out_int(script_env* env, int value);
-void script_out_bool(script_env* env, int value);
+char* script_get_string(script_env* env);
+double script_get_double(script_env* env);
+int script_get_int(script_env* env);
+int script_get_bool(script_env* env);
+void script_put_string(script_env* env, const char* value);
+void script_put_double(script_env* env, double value);
+void script_put_int(script_env* env, int value);
+void script_put_bool(script_env* env, int value);
 void script_params(script_env* env);
 #define SCRIPT_CHECK_INPUTS(env) do { script_err err = script_error(env); if (err) return err; } while (0)
 
