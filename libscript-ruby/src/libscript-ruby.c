@@ -26,20 +26,20 @@ static int script_ruby_state_count = 0;
 
 INLINE static void script_ruby_get_param(script_env* env, VALUE arg) {
    if (arg == Qtrue) {
-      script_out_bool(env, 1);
+      script_put_bool(env, 1);
       return;
    } else if (arg == Qfalse) {
-      script_out_bool(env, 0);
+      script_put_bool(env, 0);
       return;
    }
    switch (TYPE(arg)) {
    case T_FLOAT:
    case T_FIXNUM:
    case T_BIGNUM:
-      script_out_double(env, NUM2DBL(arg));
+      script_put_double(env, NUM2DBL(arg));
       break;
    case T_STRING:
-      script_out_string(env, StringValuePtr(arg));
+      script_put_string(env, StringValuePtr(arg));
       break;
    default:;
       /* TODO: other types */
@@ -60,18 +60,18 @@ INLINE static VALUE* script_ruby_put_params(script_env* env, int params) {
    VALUE* args = malloc(sizeof(VALUE) * params);
    for (i = 0; i < params; i++) {
       VALUE arg = (VALUE) NULL;
-      switch (script_in_type(env)) {
+      switch (script_get_type(env)) {
       case SCRIPT_DOUBLE:
-         arg = rb_float_new(script_in_double(env)); 
+         arg = rb_float_new(script_get_double(env)); 
          break;
       case SCRIPT_STRING: {
-         char* param = script_in_string(env);
+         char* param = script_get_string(env);
          arg = rb_str_new2(param); 
          free(param);
          break;
       }
       case SCRIPT_BOOL:
-         if (script_in_bool(env))
+         if (script_get_bool(env))
             arg = Qtrue; 
          else
             arg = Qfalse;

@@ -14,18 +14,18 @@ INLINE static void script_python_get_params(script_env* env, PyObject* args) {
    for (i = 0; i < nargs; i++) {
       PyObject* arg = PyTuple_GET_ITEM(args, i);
       if (PyString_Check(arg)) {
-         script_out_string(env, PyString_AS_STRING(arg));
+         script_put_string(env, PyString_AS_STRING(arg));
       } else if (PyInt_Check(arg)) {
-         script_out_int(env, PyInt_AS_LONG(arg));
+         script_put_int(env, PyInt_AS_LONG(arg));
       } else if (PyLong_Check(arg)) {
-         script_out_double(env, PyLong_AsDouble(arg));
+         script_put_double(env, PyLong_AsDouble(arg));
       } else if (PyFloat_Check(arg)) {
-         script_out_double(env, PyFloat_AS_DOUBLE(arg));
+         script_put_double(env, PyFloat_AS_DOUBLE(arg));
       } else if (PyBool_Check(arg)) {
          if (arg == Py_True)
-            script_out_bool(env, 1);
+            script_put_bool(env, 1);
          else
-            script_out_bool(env, 0);
+            script_put_bool(env, 0);
       } else {
          /* TODO: other types */
       }
@@ -41,18 +41,18 @@ INLINE static PyObject* script_python_put_params(script_env* env) {
    args = PyTuple_New(nargs);
    for(i = 0; i < nargs; i++) {
       PyObject* arg = NULL;
-      switch (script_in_type(env)) {
+      switch (script_get_type(env)) {
       case SCRIPT_DOUBLE:
-         arg = PyFloat_FromDouble(script_in_double(env)); 
+         arg = PyFloat_FromDouble(script_get_double(env)); 
          break;
       case SCRIPT_STRING: {
-         char* param = script_in_string(env);
+         char* param = script_get_string(env);
          arg = PyString_FromString(param); 
          free(param);
          break;
       }
       case SCRIPT_BOOL:
-         arg = PyBool_FromLong(script_in_bool(env));
+         arg = PyBool_FromLong(script_get_bool(env));
          break;
       default:
          /* pacify gcc warnings */

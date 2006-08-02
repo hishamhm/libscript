@@ -25,9 +25,9 @@ INLINE static void script_lua_get_params(script_env* env, lua_State *L) {
    nargs = lua_gettop(L);
    for (i = 1; i <= nargs; i++) {
       switch(lua_type(L, i)) {
-      case LUA_TNUMBER: script_out_double(env, lua_tonumber(L, i)); break;
-      case LUA_TSTRING: script_out_string(env, lua_tostring(L, i)); break; /* TODO: zero-term */
-      case LUA_TBOOLEAN: script_out_bool(env, lua_toboolean(L, i)); break;
+      case LUA_TNUMBER: script_put_double(env, lua_tonumber(L, i)); break;
+      case LUA_TSTRING: script_put_string(env, lua_tostring(L, i)); break; /* TODO: zero-term */
+      case LUA_TBOOLEAN: script_put_bool(env, lua_toboolean(L, i)); break;
       /* TODO: other types */
       }
    }
@@ -37,17 +37,17 @@ INLINE static int script_lua_put_params(script_env* env, lua_State *L) {
    script_type type;
    int nargs;
    nargs = 0;
-   while ( (type = script_in_type(env)) != SCRIPT_NONE ) {
+   while ( (type = script_get_type(env)) != SCRIPT_NONE ) {
       nargs++;
       switch (type) {
-      case SCRIPT_DOUBLE: lua_pushnumber(L, script_in_double(env)); break;
+      case SCRIPT_DOUBLE: lua_pushnumber(L, script_get_double(env)); break;
       case SCRIPT_STRING: {
-         char* param = script_in_string(env);
+         char* param = script_get_string(env);
          lua_pushstring(L, param);
          free(param);
          break;
       }
-      case SCRIPT_BOOL: lua_pushboolean(L, script_in_bool(env)); break;
+      case SCRIPT_BOOL: lua_pushboolean(L, script_get_bool(env)); break;
       case SCRIPT_NONE: /* pacify gcc warning */ break;
       /* TODO: other types */
       }

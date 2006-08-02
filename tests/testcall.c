@@ -33,19 +33,19 @@ int main(int argc, char** argv) {
    ON_ERR("Could not run Ruby code");
 
    printf("Calling Lua from C...\n");
-   script_out_string(env, "C");
+   script_put_string(env, "C");
    err = script_call(env, "lua_fn");
    ON_ERR("Could not call Lua function");
    printf("\n");
 
    printf("Calling Python from C...\n");
-   script_out_string(env, "C");
+   script_put_string(env, "C");
    err = script_call(env, "python_fn");
    ON_ERR("Could not call Python function");
    printf("\n");
 
    printf("Calling Ruby from C...\n");
-   script_out_string(env, "C");
+   script_put_string(env, "C");
    err = script_call(env, "ruby_fn");
    ON_ERR("Could not call Ruby function");
    printf("\n");

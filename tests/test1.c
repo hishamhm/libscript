@@ -4,9 +4,9 @@
 #include <stdlib.h>
 
 script_err hello_wrap(script_env* env) {
-   char* name = script_in_string(env);
-   int year = script_in_int(env);
-   char* excl = script_in_string(env);
+   char* name = script_get_string(env);
+   int year = script_get_int(env);
+   char* excl = script_get_string(env);
    int ret;
    SCRIPT_CHECK_INPUTS(env);
 
@@ -14,7 +14,7 @@ script_err hello_wrap(script_env* env) {
 
    free(name);
    free(excl);
-   script_out_int(env, ret);
+   script_put_int(env, ret);
    return SCRIPT_OK;
 }
 
