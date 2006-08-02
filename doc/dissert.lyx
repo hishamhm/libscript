@@ -28,7 +28,7 @@
 
 
 \backslash 
-titulo{Estudo sobre APIs para Máquinas Virtuais}
+titulo{Estudo sobre APIs de linguagens de script}
 \layout Comment
 
 
@@ -273,12 +273,12 @@ Este trabalho realiza, a partir da pesquisa de implementações de FLIs, um
  estudo e comparação de interfaces entre diferentes linguagens de programação.
  Partindo de uma análise das abordagens gerais para interação entre linguagens,
  o estudo é baseado na análise de um conjunto de interfaces com C providas
- por linguagens imperativas baseadas em máquina virtual.
+ por linguagens de script.
  Além de se tratar da classe de linguagens mais popular atualmente para
- desenvolvimento multi-linguagem, características típicas de máquinas virtuais
- como coleta de lixo e tipagem dinâmica, por não estarem presentes em C,
- ilustram bem os problemas envolvendo a comunicação de dados entre diferentes
- ambientes de programação.
+ desenvolvimento multi-linguagem, características típicas de linguagens
+ de script como coleta de lixo e tipagem dinâmica, por não estarem presentes
+ em C, ilustram bem os problemas envolvendo a comunicação de dados entre
+ diferentes ambientes de programação.
  Linguagens com tipagem estática podem apresentar necessidades de conversão
  de tipos semelhantes, mas o problema tende a ser simplificado pela definição
  de tipos equivalentes na API e inferência em tempo de compilação (vide
@@ -355,7 +355,8 @@ O trabalho está organizado da seguinte forma.
 
 \end_inset 
 
- são apresentadas em detalhe APIs para C de um conjunto de máquinas virtuais.
+ são apresentadas em detalhe APIs para C de um conjunto de linguagens de
+ script.
  Ao discutir estas interfaces, as diferentes soluções empregadas para os
  problemas levantados no capítulo anterior são comparadas.
  O Capítulo 
@@ -365,7 +366,7 @@ O trabalho está organizado da seguinte forma.
 
  exercita estas diferentes APIs através de um estudo de caso: uma biblioteca
  baseada em plugins que oferece uma interface uniforme simplificada entre
- máquinas virtuais e C.
+ linguagens de script e C.
  Ao examinar a implementação de cada plugin, podemos comparar as APIs de
  cada linguagem realizando operações equivalentes.
  Finalmente, no Capítulo 
@@ -832,8 +833,8 @@ A linguagem C tem, na atualidade, um papel especial no mundo das linguagens
  de programação.
  Além de ser bastante utilizada na implementação de compiladores, interpretadore
 s e máquinas virtuais (as principais implementações de Perl, Python, Ruby,
- Tcl/Tk e Lua são apenas alguns exemplos), é tambem usada em compiladores
- como formato de saída na geração de código portável (dois exemplos notáveis
+ Tcl e Lua são apenas alguns exemplos), é tambem usada em compiladores como
+ formato de saída na geração de código portável (dois exemplos notáveis
  são os compiladores GHC 
 \begin_inset LatexCommand \cite{jones93glasgow}
 
@@ -1050,10 +1051,11 @@ o swig é o cara mais porrada nesse aspecto, porque segundo reza a lenda
 
 \end_inset 
 
-APIs de Máquinas Virtuais
+APIs de Linguagens de Script
 \layout Standard
 
-FLIs providas por máquinas virtuais são usualmente compreendidas como 
+FLIs providas por linguagens de script são usualmente compreendidas como
+ 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -1061,20 +1063,21 @@ APIs de extensão
 \begin_inset Quotes erd
 \end_inset 
 
-: elas servem ou para estender a máquina virtual com recursos não oferecidos
- por esta, ou para estender uma aplicação externa com os recursos oferecidos
- pela máquina virtual, embarcando-a nesta aplicação.
+: elas servem ou para estender a máquina virtual ou interpretador com recursos
+ não oferecidos por esta, ou para estender uma aplicação externa com os
+ recursos oferecidos pelo ambiente de execução da linguagem, embutindo-o
+ nesta aplicação.
  O primeiro cenário é o utilizado no modelo de programação onde a coordenação
  de alto nível é realizada em uma linguagem interpretada e módulos compilados
  em linguagens como C e C++ são usados para acesso a bibliotecas externas
  ou implementação de partes onde o desempenho é crítico.
  O segundo cenário, via de regra, irá englobar também o primeiro, ao expor
- à máquina virtual embarcada extensões que a permitam comunicar-se com a
- aplicação hospedeira.
+ à máquina virtual ou interpetador embutido extensões que a permitam comunicar-s
+e com a aplicação hospedeira.
 \layout Standard
 
 As seções seguintes discutem as principais questões envolvidas na comunicação
- entre código C e máquinas virtuais, e apresenta as abordagens empregadas
+ entre código C e de linguagens de script, e apresenta as abordagens empregadas
  pelas APIs de Python, Ruby, Java, Lua e Perl no tratamento destas questões.
 \layout Section
 
@@ -4388,13 +4391,13 @@ wrapper
 xsubpp
 \family default 
 , que geram então o código usando a API oferecida pela biblioteca de Perl.
- Esta biblioteca oferece acesso de baixo nível ao funcionamento da máquina
- virtual, permitindo, por exemplo, manipular o ponteiro da sua pilha interna.
+ Esta biblioteca oferece acesso de baixo nível ao funcionamento do interpretador
+, permitindo, por exemplo, manipular o ponteiro da sua pilha interna.
  O objetivo de XS é ocultar ao desenvolvedor de extensões estes detalhes.
 \layout Standard
 
-Para embutir a máquina virtual de Perl em uma aplicação, a biblioteca que
- a implementa oferece algumas funções que permitem disparar um interpretador.
+Para embutir o interpretador Perl em uma aplicação, a biblioteca que a implement
+a oferece algumas funções que permitem disparar um interpretador.
  Na API de mais alto nível, pode-se construir um array de parâmetros a serem
  passados para o interpretador de forma equivalente às opções do interpretador
  Perl de linha de comando, inclusive usando a opção 
@@ -4404,15 +4407,11 @@ Para embutir a máquina virtual de Perl em uma aplicação, a biblioteca que
  para executar trechos de código.
 \layout Standard
 
-Os tipos fundamentais de Perl são mapeados para 
-\emph on 
-typedefs
-\emph default 
- em C: 
+Os tipos de variáveis Perl são mapeados para structs em C: 
 \family typewriter 
 SV
 \family default 
- para valores escalares, 
+ para escalares, 
 \family typewriter 
 AV
 \family default 
@@ -4421,7 +4420,22 @@ AV
 HV
 \family default 
  para hashes.
- Os 
+ Estes valores C são melhor entendidos como 
+\emph on 
+containers
+\emph default 
+ para valores Perl: uma variável escalar em Perl tem um 
+\family typewriter 
+SV
+\family default 
+ associado a si; todavia, pode-se criar em C um 
+\family typewriter 
+SV
+\family default 
+ que não esteja associado a nenhum nome de variável Perl.
+\layout Standard
+
+Os 
 \emph on 
 typedefs
 \emph default 
@@ -4441,13 +4455,15 @@ NV
 \family typewriter 
 PV
 \family default 
- correspondem, respectivamente, a inteiros com e sem sinal, valores de ponto
- flutuante e strings, e podem ser copiados para 
+ representam valores C correspondentes aos tipos primitivos de Perl, e correspon
+dem, respectivamente, a inteiros com e sem sinal, valores de ponto flutuante
+ e strings.
+ Estes valores podem ser copiados para 
 \family typewriter 
 SV
 \family default 
 s.
- Referências em Perl são representados como 
+ Referências Perl são representadas como 
 \family typewriter 
 RV
 \family default 
@@ -4463,7 +4479,103 @@ GV
 , capaz de referenciar qualquer tipo representável em uma variável Perl.
 \layout Standard
 
-Valores escalares são criados com as funções 
+Variáveis do espaço de Perl são acessadas com 
+\family typewriter 
+get_sv
+\family default 
+, 
+\family typewriter 
+get_av
+\family default 
+ e 
+\family typewriter 
+get_hv
+\family default 
+.
+ Estas funções recebem uma string C com o nome da variável (possivelmente
+ qualificado da forma 
+\family typewriter 
+"pacote::variavel"
+\family default 
+).
+ O conteúdo de valores escalares é convertido de volta para um tipo C com
+ as macros 
+\family typewriter 
+Sv
+\family default 
+*: 
+\family typewriter 
+SvIV
+\family default 
+ retorna um inteiro, 
+\family typewriter 
+SvPV
+\family default 
+ retorna um 
+\family typewriter 
+char*
+\family default 
+ e o comprimento da string no segundo parâmetro, etc.
+ O seguinte código C exibe o conteúdo da variável Perl 
+\family typewriter 
+$a
+\family default 
+, assumindo que ela contenha um valor inteiro:
+\layout LyX-Code
+
+
+\size footnotesize 
+printf("a = %d
+\backslash 
+n", SvIV(get_sv("a", FALSE)));
+\layout Standard
+
+A flag passada como segundo parâmetro de 
+\family typewriter 
+get_sv
+\family default 
+/
+\family typewriter 
+av
+\family default 
+/
+\family typewriter 
+hv
+\family default 
+ Passando um nome de variável inexistente e usando 
+\family typewriter 
+TRUE
+\family default 
+ no segundo parâmetro de , criamos uma nova variável acessível no espaço
+ de C já realizando o 
+\emph on 
+binding
+\emph default 
+ do nome no espaço de Perl.
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Cria uma variável do tipo array,
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   acessível em Perl como a global @arr e em C como o AV* arr */
+\layout LyX-Code
+
+
+\size footnotesize 
+AV* arr = get_av("arr", TRUE);
+\layout Standard
+
+Um 
+\family typewriter 
+SV
+\family default 
+ pode ser criado em C com as funções 
 \family typewriter 
 newSV
 \family default 
@@ -4471,11 +4583,11 @@ newSV
 \family typewriter 
 newSViv
 \family default 
- gera um 
+ gera um novo 
 \family typewriter 
 SV
 \family default 
- a partir de um inteiro com sinal; 
+ armazenando um inteiro com sinal; 
 \family typewriter 
 newSVpv
 \family default 
@@ -4494,7 +4606,72 @@ SvPVX
 \family default 
 , permitindo assim criar escalares com valores arbitrários gerenciados por
  código C.
- Valores são atribuídos a SVs usando as funções 
+ Usando o mesmo exemplo da struct 
+\family typewriter 
+point
+\family default 
+ das seções anteriores, podemos armazenar um objeto C em um valor Perl da
+ seguinte forma:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Aloca um SV não inicializado do tamanho de um 
+\emph default 
+point
+\emph on 
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+SV* v = newSV(sizeof(point));
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Obtém o ponteiro para a área de memória do 
+\emph default 
+SV
+\emph on 
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+point* p = (point*) SvPVX(v);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Manipula o 
+\emph default 
+point
+\emph on 
+ em C.
+ Quando v for retornado para Perl,
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+ele será uma variável opaca (seu conteúdo não será acessível via Perl).
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+p->x = 100; p->y = 200;
+\layout Standard
+
+Valores são atribuídos a 
+\family typewriter 
+SV
+\family default 
+s usando as funções 
 \family typewriter 
 sv_set
 \family default 
@@ -4531,7 +4708,50 @@ sv_set
 \family default 
 * mas concatenam o valor dado ao conteúdo atual da string ao invés de substituí-
 lo.
- O tipo dos dados armazenados em 
+ A função 
+\family typewriter 
+sv_setsv
+\family default 
+ copia o valor de um 
+\family typewriter 
+SV
+\family default 
+ para outro.
+ O 
+\family typewriter 
+SV
+\family default 
+ criado no exemplo anterior pode ser atribuído para uma variável global
+ da seguinte forma:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Obtém o SV da variável global 
+\emph default 
+$ponto
+\emph on 
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+SV* ponto = get_sv("ponto", TRUE);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Atribui o valor de v para ponto */
+\layout LyX-Code
+
+
+\size footnotesize 
+sv_setsv(ponto, v);
+\layout Standard
+
+O tipo dos dados armazenados em 
 \family typewriter 
 SV
 \family default 
@@ -4561,7 +4781,11 @@ SvNOKp
 \family typewriter 
 SvPOKp
 \family default 
- verificam se o valor armazenado é realmente do tipo.
+ verificam se o valor armazenado no 
+\family typewriter 
+SV
+\family default 
+ é realmente do tipo.
 \layout Standard
 
 Arrays e hashes são criados com 
@@ -4573,11 +4797,11 @@ newAV
 newHV
 \family default 
 .
- Arrays podem ser populados com 
+ Arrays podem ser populados com um array C de ponteiros para 
 \family typewriter 
 SV
 \family default 
-s através de 
+ através de 
 \family typewriter 
 av_make
 \family default 
@@ -4604,25 +4828,135 @@ hv_exists
 SV
 \family default 
 .
- A API original de hashes utilizava chaves declaradas como strings C; esta
- foi estendida a partir de Perl 5.004 com funções como 
+ No exemplo a seguir, criaremos um array Perl contendo os 10 primeiros elementos
+ da série de Fibonacci:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Cria um novo array.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+AV* a = newAV();
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Armazena dois valores, 0 e 1, nas primeiras posições do array.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+av_push(a, newSViv(0));
+\layout LyX-Code
+
+
+\size footnotesize 
+av_push(a, newSViv(1));
+\layout LyX-Code
+
+
+\size footnotesize 
+for (int i = 2; i < 10; i++) {
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Obviamente seria mais eficiente armazenar os valores em variáveis
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      temporárias em C, mas obtenhamos os dois últimos valores da
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      seqüência de volta do array Perl para fins de ilustração: */
+\layout LyX-Code
+
+
+\size footnotesize 
+   SV** penultimo_sv = av_fetch(a, i-2, FALSE);
+\layout LyX-Code
+
+
+\size footnotesize 
+   SV** ultimo_sv = av_fetch(a, i-1, FALSE);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Obtém os inteiros armazenados nos SVs */
+\layout LyX-Code
+
+
+\size footnotesize 
+   int penultimo = SvIV(*penultimo_sv);
+\layout LyX-Code
+
+
+\size footnotesize 
+   int ultimo = SvIV(*ultimo_sv);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Cria um novo SV e o insere no final do array */
+\layout LyX-Code
+
+
+\size footnotesize 
+   av_push(a, newSViv( penultimo + ultimo ) );
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Uma vez criado este 
 \family typewriter 
-hv_fetch_ent
+AV
 \family default 
- que permitem usar 
+, entretanto, não há uma forma de associá-lo a uma variável Perl.
+ Seu conteúdo deve ser copiado item a item.
+ Para que este seja acessível a partir de Perl, deveríamos tê-lo criado
+ com 
 \family typewriter 
-SV
+get_av
 \family default 
-s como strings.
- As funções novas expõem os pares chave/valor como ponteiros 
+, e não 
+\family typewriter 
+newAV
+\family default 
+.
+ A utilidede de 
+\family typewriter 
+AV
+\family default 
+s não associados a variáveis está na passagem de parâmetros na chamada de
+ funções e como valores de retorno.
+\layout Standard
+
+Algumas funções para manipulação de hashes expõem os pares chave/valor como
+ ponteiros 
 \family typewriter 
 HE
 \family default 
-, anteriormente retornado apenas em funções de iteração como 
-\family typewriter 
-hv_iternext
-\family default 
-; as macros 
+.
+ As macros 
 \family typewriter 
 HeSVKEY
 \family default 
@@ -4635,7 +4969,81 @@ HeVAL
 HE
 \family default 
 .
- Cuidados especiais devem ser tomados ao utilizar os valores 
+ A seguinte função exibe em C os elementos de uma hash Perl:
+\layout LyX-Code
+
+
+\size footnotesize 
+void imprime_hash(HV* hash) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   HE* item;
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Cada HV mantém o seu controle interno de iteração */
+\layout LyX-Code
+
+
+\size footnotesize 
+   hv_iterinit(hash);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Obtém o próximo par chave/valor da iteração */
+\layout LyX-Code
+
+
+\size footnotesize 
+   while ( (item = hv_iternext(hash)) ) {
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      /* Obtém a representação string dos escalares
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+         representando chave e valor do item */
+\layout LyX-Code
+
+
+\size footnotesize 
+      char* chave = SvPV_nolen(HeSVKEY(item));
+\layout LyX-Code
+
+
+\size footnotesize 
+      char* valor = SvPV_nolen(HeVAL(item));
+\layout LyX-Code
+
+
+\size footnotesize 
+      printf("%s => %s
+\backslash 
+n", chave, valor);
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Cuidados especiais devem ser tomados ao utilizar os valores 
 \family typewriter 
 undef
 \family default 
@@ -4660,11 +5068,11 @@ PL_sv_true
 PL_sv_false
 \family default 
 ).
- 
+ A constante 
 \family typewriter 
 PL_sv_undef
 \family default 
- é usado internamente na implementação de 
+ é usada internamente na implementação de 
 \family typewriter 
 AV
 \family default 
@@ -4751,7 +5159,10 @@ AV
 SvTYPE
 \family default 
 .
- Diversas funções da API têm tipo de parâmetros ou retorno declarados como
+ 
+\layout Standard
+
+Diversas funções da API têm tipo de parâmetros ou retorno declarados como
  
 \family typewriter 
 SV
@@ -4793,74 +5204,6 @@ G_SCALAR
 G_ARRAY
 \family default 
 .
-\layout Standard
-
-Valores são obtidos a partir do espaço de Perl com 
-\family typewriter 
-get_sv
-\family default 
-, 
-\family typewriter 
-get_av
-\family default 
- e 
-\family typewriter 
-get_hv
-\family default 
-.
- Estas funções recebem uma string C com o nome da variável (possivelmente
- qualificado da forma 
-\family typewriter 
-"pacote::variavel"
-\family default 
-) e uma flag indicando se o valor deve ser criado se inexistente.
- O conteúdo de valores escalares é convertido de volta para um tipo C com
- as macros 
-\family typewriter 
-Sv
-\family default 
-*: 
-\family typewriter 
-SvIV
-\family default 
- retorna um inteiro, 
-\family typewriter 
-SvPV
-\family default 
- retorna um 
-\family typewriter 
-char*
-\family default 
- e o comprimento da string no segundo parâmetro, etc.
- O seguinte código C exibe o conteúdo da variável Perl 
-\family typewriter 
-$a
-\family default 
-, assumindo que ela contenha um valor inteiro:
-\layout LyX-Code
-
-
-\size footnotesize 
-printf("a = %d
-\backslash 
-n", SvIV(get_sv("a", FALSE)));
-\layout Standard
-
-Usar 
-\family typewriter 
-TRUE
-\family default 
- no segundo parâmetro de 
-\family typewriter 
-get_sv
-\family default 
- é uma forma conveniente de alocar uma nova variável acessível no espaço
- de C já realizando o 
-\emph on 
-binding
-\emph default 
- do nome no espaço de Perl.
- 
 \layout Section
 
 Coleta de lixo
@@ -6614,7 +6957,7 @@ sv_report_used
 \family typewriter 
 SV
 \family default 
-s da máquina virtual.
+s do interpretador.
  O módulo 
 \family typewriter 
 Devel::Peek
@@ -6632,7 +6975,7 @@ Chamada de funções a partir de C
 \layout Standard
 
 A API deve prover uma forma de invocar a partir de C funções a serem executadas
- na máquina virtual.
+ pela linguagem de script.
  Isto envolve a passagem de dados entre estes dois 
 \begin_inset Quotes eld
 \end_inset 
@@ -6655,19 +6998,19 @@ espaços
 .
  Devido à tipagem estática de C, não é possível usar uma sintaxe transparente
  para chamada de funções registradas em tempo de execução.
- É necessário então que a API defina funções para realizar chamadas na máquina
- virtual.
+ É necessário então que a API defina funções para realizar chamadas na linguagem
+ de script.
 \layout Standard
 
 Nesta seção serão discutidas as facilidades oferecidas por cada API para
- a invocação de funções para execução na máquina virtual.
+ a invocação de funções para execução na máquina virtual ou interpretador.
  As principais questões envolvidas são como referenciar a função a ser chamada,
  como passar argumentos a ela e como obter o valor de retorno, incluindo
  formas de notificação no caso de erros.
  Para fins de ilustração, será apresentado em cada linguagem um exemplo
  de chamada de uma função simples.
- Assume-se que tenha sido definida no espaço de cada máquina virtual uma
- função 
+ Assume-se que tenha sido definida no espaço de cada linguagem de script
+ uma função 
 \family typewriter 
 teste
 \family default 
@@ -7077,7 +7420,7 @@ A seguir, é apresentada a forma típica para chamar uma função global Ruby
 teste
 \family default 
 , novamente incluindo a conversão dos valores de entrada e saída entre C
- e a máquina virtual.
+ e o interpretador.
 \layout LyX-Code
 
 
@@ -8160,32 +8503,50 @@ lua_State
 
 
 \size footnotesize 
-lua_getglobal(L, "teste");
+lua_getglobal(L, "teste");           
+\emph on 
+/* Empilha a função teste */
 \layout LyX-Code
 
 
 \size footnotesize 
-lua_pushstring(L, "entrada");
+lua_pushstring(L, "entrada");        
+\emph on 
+/* Empilha a string "entrada" */
 \layout LyX-Code
 
 
 \size footnotesize 
-lua_pushinteger(L, 2);
+lua_pushinteger(L, 2);               
+\emph on 
+/* Empilha o número 2 */
 \layout LyX-Code
 
 
 \size footnotesize 
-lua_call(L, 2, 1);
+lua_call(L, 2, 1);                   
+\emph on 
+/* Chama a função com 2 parâmetros,
 \layout LyX-Code
 
 
 \size footnotesize 
-long result = lua_tointeger(L, -1);
+\emph on 
+                                        e espera 1 como retorno */
 \layout LyX-Code
 
 
 \size footnotesize 
-lua_pop(L, 1); 
+long result = lua_tointeger(L, -1);  
+\emph on 
+/* Obtém o resultado no topo da pilha (-1) */
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_pop(L, 1);                       
+\emph on 
+/* Remove-o da pilha */
 \layout Comment
 
 Controle das refs no exemplo
@@ -8559,8 +8920,8 @@ LEAVE
 Registro de funções C
 \layout Standard
 
-Para permitir a invocação de funções C a partir de código executado na máquina
- virtual, a FLI deve fornecer uma forma de registrar estas funções no ambiente
+Para permitir a invocação de funções C a partir de código da linguagem de
+ script, a FLI deve fornecer uma forma de registrar estas funções no ambiente
  de execução.
  Em linguagens de tipagem estática como Java, para que seja possível chamar
  funções externas usando uma sintaxe igual à de funções nativas, o conjunto
@@ -8573,12 +8934,12 @@ a priori
  e Perl, as funções podem ser usadas diretamente, bastando que sejam definidas
  em algum momento da execução antes de sua chamada.
  Assim, pode-se declarar as funções externas em tempo de execução através
- de código C usando a API da máquina virtual.
+ de código C usando a API da linguagem de script.
 \layout Standard
 
 Também nesta seção, a apresentação de cada linguagem encerrará com um exemplo.
  Em cada dos exemplos será apresentada uma função C declarada com a assinatura
- de formato esperado pela máquina virtual.
+ de formato esperado pela máquina virtual ou interpretador.
  Esta função obtém os valores de entrada e retorna um valor na saída.
  Será apresentada também, para cada linguagem, a forma de registrar a função
  como a global
@@ -8862,7 +9223,12 @@ static PyMethodDef teste_def[] = {
 
 
 \size footnotesize 
-   { "teste", (PyCFunction) teste_py, METH_VARARGS, NULL }
+   { "teste", (PyCFunction) teste_py, METH_VARARGS, NULL },
+\layout LyX-Code
+
+
+\size footnotesize 
+   { NULL }
 \layout LyX-Code
 
 
@@ -9789,7 +10155,7 @@ Como discutido na Seção
 \end_inset 
 
 , a interface entre Perl e C foi projetada tendo em mente que a ligação
- entre as funções C e a máquina virtual Perl é feita através de código gerado
+ entre as funções C e o interpretador Perl é feita através de código gerado
  a partir de uma descrição feita em uma linguagem de mais alto nível, XS.
  Código XS consiste de declarações de assinaturas de função com uma sintaxe
  especial, indicando regras para conversão dos parâmetros de entrada e saída,
@@ -9816,9 +10182,9 @@ API para registrar funções (não tem)
 \layout Standard
 
 Existe uma API pública para manipulação de dados Perl no código C, mas esta
- consiste basicamente das estruturas internas da implementação da máquina
- virtual expostas para uso pelo pré-processador XS, acrescida de macros
- para maior conveniência do programador.
+ consiste basicamente das estruturas internas da implementação do interpretador
+ expostas para uso pelo pré-processador XS, acrescida de macros para maior
+ conveniência do programador.
  De fato, Perl não expõe uma API documentada para o registro de funções
  
 \begin_inset LatexCommand \cite{perlapi}
@@ -9826,10 +10192,10 @@ Existe uma API pública para manipulação de dados Perl no código C, mas esta
 \end_inset 
 
 .
- Assim, não é prático para uma aplicação embutir uma máquina virtual Perl
- e expor a ela um conjunto de funções C usando apenas código C.
+ Assim, não é prático para uma aplicação embutir um interpretador Perl e
+ expor a ele um conjunto de funções C usando apenas código C.
  A saída é criar uma extensão Perl usando XS que expõe funções da aplicação
- e importar o pacote resultante na máquina virtual embutida.
+ e importar o pacote resultante no interpretador embutido.
  O emprego desta abordagem foi observada nos plugins para 
 \emph on 
 scripting
@@ -10114,8 +10480,8 @@ No capítulo anterior, foram discutidas as principais questões envolvendo
  exemplo concreto, de modo a colocar implementações em cada uma das linguagens
  lado a lado.
  O exemplo consiste em uma biblioteca genérica para scripting, chamada LibScript
-, e uma série de plugins que realizam a interface com as diferentes máquinas
- virtuais.
+, e uma série de plugins que realizam a interface com as diferentes linguagens
+ de script.
 \layout Section
 
 LibScript
@@ -10131,7 +10497,7 @@ scripting
 \emph on 
 s
 \emph default 
-, de modo a desacoplar a aplicação das máquinas virtuais providas pelas
+, de modo a desacoplar a aplicação dos ambientes de execução providos pelas
  diversas linguagens.
  A biblioteca principal, 
 \family typewriter 
@@ -10175,9 +10541,9 @@ s
  discute a biblioteca principal em maior detalhe.
 \layout Standard
 
-Cada plugin, além de embutir a máquina virtual, registra nela uma estrutura
- de dados específica da linguagem (classe, módulo, tabela) que agirá como
- o espaço de nomes para funções registradas através de LibScript.
+Cada plugin, além de embutir um ambiente de execução, registra nele uma
+ estrutura de dados específica da linguagem (classe, módulo, tabela) que
+ agirá como o espaço de nomes para funções registradas através de LibScript.
  Implementamos plugins para as linguagens Python, Ruby, Lua e Perl.
  Os plugins serão discutidos na Seção 
 \begin_inset LatexCommand \ref{sec:Plug-ins}
@@ -10328,8 +10694,8 @@ O recurso de múltiplos estados independentes é opcional em Perl, selecionado
 \end_inset 
 
 .
- Já linguagens que mantêm estado da máquina virtual de forma estática, como
- Python e Ruby, não permitem trabalhar com múltiplos estados isolados facilmente.
+ Já linguagens que mantêm estado de forma estática, como Python e Ruby,
+ não permitem trabalhar com múltiplos estados isolados facilmente.
  O modelo de threads de Python oferece uma forma de alternar entre estados
  na máquina virtual obtendo objetos 
 \family typewriter 
@@ -10642,7 +11008,8 @@ stub
 \emph default 
  nativa só é realizada no momento em que esta é chamada.
  O objetivo aqui, além de otimizar o tempo de inicialização e consumo de
- memória da máquina virtual (ao evitar a criação de 
+ memória no ambiente de execução da linguagem de script (ao evitar a criação
+ de 
 \emph on 
 stubs
 \emph default 
@@ -10809,13 +11176,13 @@ script_ruby_call
 Múltiplos valores de retorno
 \layout Standard
 
-A API para implementação de funções em C a serem expostas às máquinas virtuais
+A API para implementação de funções em C a serem registradas em LibScript
  permite declarar funções com múltiplos valores de retorno.
  Muitas linguagens não possuem este recurso, mas é possível, ao detectar
  no plugin que mais de um valor foi retornado, construir um tipo de dado
  agregado (tupla em Python, array em Ruby, etc.) e armazenar nele os valores,
- retornando à máquina virtual um valor de retorno único.
-\layout Comment
+ retornando então um valor de retorno único.
+\layout Chapter
 
 
 \begin_inset LatexCommand \label{cha:Considerações-Finais}
