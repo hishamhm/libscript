@@ -7,52 +7,53 @@
 
 static int script_python_state_count = 0;
 
-INLINE static void script_python_get_params(script_env* env, PyObject* args) {
+INLINE static void script_python_tuple_to_params(script_env* env, PyObject* args) {
    int i;
    int nargs = PyTuple_GET_SIZE(args);
-   script_params(env);
    for (i = 0; i < nargs; i++) {
       PyObject* arg = PyTuple_GET_ITEM(args, i);
       if (PyString_Check(arg)) {
-         script_put_string(env, PyString_AS_STRING(arg));
+         script_put_string(env, i, PyString_AS_STRING(arg));
       } else if (PyInt_Check(arg)) {
-         script_put_int(env, PyInt_AS_LONG(arg));
+         script_put_int(env, i, PyInt_AS_LONG(arg));
       } else if (PyLong_Check(arg)) {
-         script_put_double(env, PyLong_AsDouble(arg));
+         script_put_double(env, i, PyLong_AsDouble(arg));
       } else if (PyFloat_Check(arg)) {
-         script_put_double(env, PyFloat_AS_DOUBLE(arg));
+         script_put_double(env, i, PyFloat_AS_DOUBLE(arg));
       } else if (PyBool_Check(arg)) {
          if (arg == Py_True)
-            script_put_bool(env, 1);
+            script_put_bool(env, i, 1);
          else
-            script_put_bool(env, 0);
+            script_put_bool(env, i, 0);
       } else {
          /* TODO: other types */
       }
    }
 }
 
-INLINE static PyObject* script_python_put_params(script_env* env) {
+INLINE static PyObject* script_python_params_to_tuple(script_env* env) {
    PyObject* args;
    int nargs;
    int i;
 
    nargs = script_param_count(env);
+fprintf(stderr, "%d\n", nargs);
    args = PyTuple_New(nargs);
    for(i = 0; i < nargs; i++) {
       PyObject* arg = NULL;
-      switch (script_get_type(env)) {
+      switch (script_get_type(env, i)) {
       case SCRIPT_DOUBLE:
-         arg = PyFloat_FromDouble(script_get_double(env)); 
+         arg = PyFloat_FromDouble(script_get_double(env, i)); 
          break;
       case SCRIPT_STRING: {
-         char* param = script_get_string(env);
+         char* param = script_get_string(env, i);
+fprintf(stderr, "%d => %p\n", i, param);
          arg = PyString_FromString(param); 
          free(param);
          break;
       }
       case SCRIPT_BOOL:
-         arg = PyBool_FromLong(script_get_bool(env));
+         arg = PyBool_FromLong(script_get_bool(env, i));
          break;
       default:
          /* pacify gcc warnings */
@@ -73,17 +74,19 @@ static void script_python_destructor(PyObject* o) {
 
 static PyObject* script_python_call(script_python_object *obj, PyObject *args, PyObject *kwds) {
    script_err err;
-   script_python_get_params(obj->state->env, args);
-   err = script_call(obj->state->env, obj->fn_name);
+   script_env* env = obj->state->env;
+   script_python_tuple_to_params(env, args);
+   err = script_call(env, obj->fn_name);
    if (err != SCRIPT_OK) {
-      script_params(obj->state->env);
+      script_reset_params(env);
       PyErr_SetString(PyExc_RuntimeError, "No such function");
       Py_RETURN_NONE;
    }
-   if (script_param_count(obj->state->env) == 0) {
+   if (script_param_count(env) == 0) {
       Py_RETURN_NONE;
    } else {
-      PyObject* ret = script_python_put_params(obj->state->env);
+fprintf(stderr, "%d\n", script_python(env));
+      PyObject* ret = script_python_params_to_tuple(env);
       if (PyTuple_GET_SIZE(ret) > 1) {
          return ret;
       } else {
@@ -144,13 +147,12 @@ script_plugin_state script_plugin_init_python(script_env* env) {
    state = malloc(sizeof(script_python_state));
    state->env = env;
 
-   namespace = (char*) script_get_namespace(env);
+   namespace = (char*) script_namespace(env);
    module = Py_InitModule3(namespace, script_python_methods, namespace);
    state->dict = PyModule_GetDict(module);
    Py_INCREF(state->dict);
    module->ob_type->tp_getattro = script_python_getattro;
    PyDict_SetItemString(state->dict, "__state", PyCObject_FromVoidPtr(state, NULL));
-
 
    snprintf(import_namespace, 200, "import %s\n", namespace);
    PyRun_SimpleString(import_namespace);
@@ -171,13 +173,13 @@ int script_plugin_call_python(script_python_state* state, char* fn) {
    const char* namespace;
 
    env = state->env;
-   namespace = script_get_namespace(env);
+   namespace = script_namespace(env);
 
    obj = PyDict_GetItemString(state->dict, fn);
    if (!(obj && PyFunction_Check(obj)))
       return SCRIPT_ERRFNUNDEF;
 
-   args = script_python_put_params(env);
+   args = script_python_params_to_tuple(env);
    ret = PyEval_CallObject(obj, args);
    if (!ret) {
       PyObject* message = PyObject_Str(PyErr_Occurred());
@@ -190,7 +192,7 @@ int script_plugin_call_python(script_python_state* state, char* fn) {
       PyTuple_SetItem(tuple, 0, ret);
       ret = tuple;
    }
-   script_python_get_params(env, ret);
+   script_python_tuple_to_params(env, ret);
    return SCRIPT_OK;
 }
 

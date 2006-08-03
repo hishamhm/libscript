@@ -24,54 +24,46 @@ static ID method_id;
 
 static int script_ruby_state_count = 0;
 
-INLINE static void script_ruby_get_param(script_env* env, VALUE arg) {
+INLINE static void script_ruby_put_value(script_env* env, int i, VALUE arg) {
    if (arg == Qtrue) {
-      script_put_bool(env, 1);
+      script_put_bool(env, i, 1);
       return;
    } else if (arg == Qfalse) {
-      script_put_bool(env, 0);
+      script_put_bool(env, i, 0);
       return;
    }
    switch (TYPE(arg)) {
    case T_FLOAT:
    case T_FIXNUM:
    case T_BIGNUM:
-      script_put_double(env, NUM2DBL(arg));
+      script_put_double(env, i, NUM2DBL(arg));
       break;
    case T_STRING:
-      script_put_string(env, StringValuePtr(arg));
+      script_put_string(env, i, StringValuePtr(arg));
       break;
    default:;
       /* TODO: other types */
    }
 }
 
-INLINE static void script_ruby_get_params(script_env* env, VALUE args) {
-   VALUE arg;
-
-   script_params(env);
-   while ( (arg = rb_ary_shift(args)) != Qnil ) {
-      script_ruby_get_param(env, arg);
-   }
-}
-
-INLINE static VALUE* script_ruby_put_params(script_env* env, int params) {
+INLINE static VALUE script_ruby_params_to_array(int nargs, script_env* env) {
+   VALUE ret;
    int i;
-   VALUE* args = malloc(sizeof(VALUE) * params);
-   for (i = 0; i < params; i++) {
+   VALUE* args = malloc(sizeof(VALUE) * nargs);
+   for (i = 0; i < nargs; i++) {
       VALUE arg = (VALUE) NULL;
-      switch (script_get_type(env)) {
+      switch (script_get_type(env, i)) {
       case SCRIPT_DOUBLE:
-         arg = rb_float_new(script_get_double(env)); 
+         arg = rb_float_new(script_get_double(env, i)); 
          break;
       case SCRIPT_STRING: {
-         char* param = script_get_string(env);
+         char* param = script_get_string(env, i);
          arg = rb_str_new2(param); 
          free(param);
          break;
       }
       case SCRIPT_BOOL:
-         if (script_get_bool(env))
+         if (script_get_bool(env, i))
             arg = Qtrue; 
          else
             arg = Qfalse;
@@ -83,15 +75,8 @@ INLINE static VALUE* script_ruby_put_params(script_env* env, int params) {
       assert(arg);
       args[i] = arg;
    }
-   return args;
-}
-
-INLINE static VALUE script_ruby_params_to_array(int nargs, script_env* env) {
-   VALUE ret;
-   VALUE* rets;
-   rets = script_ruby_put_params(env, nargs);
-   ret = rb_ary_new4(nargs, rets);
-   free(rets);
+   ret = rb_ary_new4(nargs, args);
+   free(args);
    return ret;
 }
 
@@ -112,9 +97,12 @@ INLINE static script_ruby_state* script_ruby_get_state_from_class(VALUE klass) {
 }
 
 static VALUE script_ruby_call(VALUE self, VALUE fn_value, VALUE args) {
+   int i, len;
    script_ruby_state* state = script_ruby_get_state_from_class(self);
    script_fn fn = (script_fn) NUM2LONG(fn_value);
-   script_ruby_get_params(state->env, args);
+   len = RARRAY(args)->len;
+   for (i = 0; i < len; i++)
+      script_ruby_put_value(state->env, i, RARRAY(args)->ptr[i]);
    fn(state->env);
    return script_ruby_params_to_value(state->env);
 }
@@ -122,7 +110,7 @@ static VALUE script_ruby_call(VALUE self, VALUE fn_value, VALUE args) {
 static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
    script_ruby_state* state = script_ruby_get_state_from_class(self);
    char *name = rb_id2name(SYM2ID(argv[0]));
-   script_fn fn = script_get_function(state->env, name);
+   script_fn fn = script_function(state->env, name);
    if (fn) {
       char fn_code[1024];
       VALUE args;
@@ -134,9 +122,8 @@ static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
    } else {
       script_err err;
       int i;
-      script_params(state->env);
       for (i = 0; i < argc; i++)
-         script_ruby_get_param(state->env, argv[i]);
+         script_ruby_put_value(state->env, i, argv[i]);
       err = script_call(state->env, name);
       if (err != SCRIPT_OK) {
          /* FIXME: I'm getting a Ruby segfault when Ruby raises exceptions. */
@@ -153,7 +140,7 @@ script_plugin_state script_plugin_init_ruby(script_env* env) {
    const char* name;
    int name_size;
 
-   name = script_get_namespace(env);
+   name = script_namespace(env);
    if (script_ruby_state_count == 0) {
       ruby_init();
       ruby_script("libscript");
@@ -198,8 +185,7 @@ int script_plugin_call_ruby(script_ruby_state* state, char* fn) {
    rb_ary_push(args, state->klass);
    rb_ary_push(args, ID2SYM(rb_intern(fn)));
    ret = rb_protect(script_ruby_pcall, args, &error);
-   script_params(state->env);
-   script_ruby_get_param(state->env, ret);
+   script_ruby_put_value(state->env, 0, ret);
    if (error) {
       script_set_error_message(env, StringValuePtr(ruby_errinfo));
       ruby_errinfo = Qnil;

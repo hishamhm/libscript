@@ -24,7 +24,7 @@ script_plugin_state script_plugin_init_perl(script_env* env) {
    my_perl = perl_alloc();
    state->P = my_perl;
 
-   state->package = strdup(script_get_namespace(env));
+   state->package = strdup(script_namespace(env));
    state->package[0] = toupper(state->package[0]);
 
    PERL_SET_CONTEXT(my_perl);

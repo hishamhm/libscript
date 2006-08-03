@@ -71,7 +71,7 @@ script_err script_new_function(script_env* env, script_fn fn, const char* name) 
    return SCRIPT_OK;
 }
 
-script_fn script_get_function(script_env* env, const char* name) {
+script_fn script_function(script_env* env, const char* name) {
    script_fn fn;
    ht_key key;
 
@@ -144,7 +144,6 @@ script_err script_call(script_env* env, const char* fn) {
    ht_start(env->plugins, &iter);
    while ( (plugin = ht_iterate(&iter) ) ) {
       env->error = script_plugin_call(env, plugin, fn);
-      env->param_ins = 0; /* TODO */
       if (env->error == SCRIPT_ERRFNUNDEF)
          continue;
       return env->error;
@@ -191,7 +190,7 @@ script_err script_error(script_env* env) {
  * Obtain the name of the namespace, as given to script_init.
  * @return The namespace, in a buffer owned by script_env.
  */
-const char* script_get_namespace(script_env* env) {
+const char* script_namespace(script_env* env) {
    return env->namespace;
 }
 
@@ -217,6 +216,7 @@ const char* script_error_message(script_env* env) {
    case SCRIPT_ERRFNREDEF: return "Function redefinition error";
    case SCRIPT_ERRFNUNDEF: return "Undef'd function";
    case SCRIPT_ERRPAR: return "Parameter error";
+   case SCRIPT_ERRPARORDER: return "Expected parameters passed in order";
    case SCRIPT_ERRPARMISSING: return "Expected parameter missing";
    case SCRIPT_ERRPAREXCESS: return "Too many parameters";
    case SCRIPT_ERRPARTYPE: return "Parameter type error";

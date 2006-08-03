@@ -21,6 +21,7 @@ typedef enum {
    SCRIPT_ERRFNREDEF,
    SCRIPT_ERRFNUNDEF,
    SCRIPT_ERRPAR,
+   SCRIPT_ERRPARORDER,
    SCRIPT_ERRPARMISSING,
    SCRIPT_ERRPAREXCESS,
    SCRIPT_ERRPARTYPE
@@ -55,25 +56,25 @@ script_err script_run_file(script_env* env, const char* name);
 script_err script_done(script_env* env);
 script_err script_call(script_env* env, const char* fn);
 script_err script_new_function(script_env* env, script_fn fn, const char* name);
-script_fn  script_get_function(script_env* env, const char* name);
+script_fn  script_function(script_env* env, const char* name);
 script_err script_error(script_env* env);
 const char* script_error_message(script_env* env);
 void script_set_error_message(script_env* env, const char* message);
-const char* script_get_namespace(script_env* env);
+const char* script_namespace(script_env* env);
 const char* script_fn_name(script_env* env);
 
 /* data.c */
-script_type script_get_type(script_env* env);
 int script_param_count(script_env* env);
-char* script_get_string(script_env* env);
-double script_get_double(script_env* env);
-int script_get_int(script_env* env);
-int script_get_bool(script_env* env);
-void script_put_string(script_env* env, const char* value);
-void script_put_double(script_env* env, double value);
-void script_put_int(script_env* env, int value);
-void script_put_bool(script_env* env, int value);
-void script_params(script_env* env);
+void script_reset_params(script_env* env);
+script_type script_get_type(script_env* env, int i);
+char* script_get_string(script_env* env, int i);
+double script_get_double(script_env* env, int i);
+int script_get_int(script_env* env, int i);
+int script_get_bool(script_env* env, int i);
+void script_put_string(script_env* env, int i, const char* value);
+void script_put_double(script_env* env, int i, double value);
+void script_put_int(script_env* env, int i, int value);
+void script_put_bool(script_env* env, int i, int value);
 #define SCRIPT_CHECK_INPUTS(env) do { script_err err = script_error(env); if (err) return err; } while (0)
 
 #endif

@@ -25,9 +25,7 @@ struct script_env_ {
    ht* plugins;
    ht* functions;
    script_data* params;
-   int param_size;
-   int param_ins;
-   int param_outs;
+   int n_params;
    int error;
    char error_message[SCRIPT_ERROR_MESSAGE_LEN];
    const char* fn_name;
