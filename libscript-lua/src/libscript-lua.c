@@ -22,6 +22,7 @@ INLINE static void script_lua_stack_to_params(script_env* env, lua_State *L) {
    int nargs;
    int i;
    nargs = lua_gettop(L);
+   script_reset_params(env);
    for (i = 1; i <= nargs; i++) {
       switch(lua_type(L, i)) {
       case LUA_TNUMBER: script_put_double(env, i-1, lua_tonumber(L, i)); break;
@@ -39,7 +40,9 @@ INLINE static int script_lua_params_to_stack(script_env* env, lua_State *L) {
    for (i = 0; i < len; i++) {
       type = script_get_type(env, i);
       switch (type) {
-      case SCRIPT_DOUBLE: lua_pushnumber(L, script_get_double(env, i)); break;
+      case SCRIPT_DOUBLE:
+         lua_pushnumber(L, script_get_double(env, i));
+         break;
       case SCRIPT_STRING: {
          char* param = script_get_string(env, i);
          lua_pushstring(L, param);

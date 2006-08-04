@@ -8,6 +8,7 @@
 #include "data.h"
 
 #include <stdio.h>
+#include <assert.h>
 
 #ifndef MAX
 #define MAX(a,b) ((a)>(b)?(a):(b))
@@ -23,6 +24,7 @@ void script_reset_params(script_env* env) {
       }
    }
    env->n_params = 0;
+   env->next_get = 0;
 }
 
 int script_param_count(script_env* env) {
@@ -31,6 +33,7 @@ int script_param_count(script_env* env) {
 
 script_type script_get_type(script_env* env, int i) {
    script_data* data;
+   assert (i == env->next_get);
    if (i >= env->n_params) return SCRIPT_NONE;
    data = &(env->params[i]);
    return data->type;
@@ -38,17 +41,20 @@ script_type script_get_type(script_env* env, int i) {
 
 INLINE static script_data* script_get_data(script_env* env, int i, script_type type) {
    script_data* data;
+   assert (i == env->next_get);
    script_check_ret(i >= env->n_params, SCRIPT_ERRPARMISSING, NULL);
    data = &(env->params[i]);
    script_check_ret(data->type != type, SCRIPT_ERRPARTYPE, NULL);
+   env->next_get++;
    return data;
 }
 
 static script_data* script_put_data(script_env* env, int i, script_type type) {
    script_data* data;
-   
+  
    if (i == 0)
       script_reset_params(env);
+   assert(i == env->n_params);
    script_check_ret(i != env->n_params, SCRIPT_ERRPAREXCESS, NULL);
    script_check_ret(i >= SCRIPT_MAX_PARAMS, SCRIPT_ERRPAREXCESS, NULL);
    data = &(env->params[i]);
@@ -66,6 +72,7 @@ char* script_get_string(script_env* env, int i) {
    if (!data) return NULL;
    result = data->u.string_value;
    data->u.string_value = NULL;
+   assert(result);
    return result;
 }
 

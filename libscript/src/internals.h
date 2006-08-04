@@ -26,6 +26,7 @@ struct script_env_ {
    ht* functions;
    script_data* params;
    int n_params;
+   int next_get;
    int error;
    char error_message[SCRIPT_ERROR_MESSAGE_LEN];
    const char* fn_name;

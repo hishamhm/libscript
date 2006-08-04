@@ -28,7 +28,7 @@ INLINE static void script_ruby_put_value(script_env* env, int i, VALUE arg) {
    if (arg == Qtrue) {
       script_put_bool(env, i, 1);
       return;
-   } else if (arg == Qfalse) {
+   } else if (arg == Qfalse || arg == Qnil) {
       script_put_bool(env, i, 0);
       return;
    }
@@ -43,6 +43,7 @@ INLINE static void script_ruby_put_value(script_env* env, int i, VALUE arg) {
       break;
    default:;
       /* TODO: other types */
+      assert(0);
    }
 }
 
@@ -72,7 +73,6 @@ INLINE static VALUE script_ruby_params_to_array(int nargs, script_env* env) {
          /* pacify gcc warnings */
          assert(0);
       }
-      assert(arg);
       args[i] = arg;
    }
    ret = rb_ary_new4(nargs, args);
@@ -101,6 +101,7 @@ static VALUE script_ruby_call(VALUE self, VALUE fn_value, VALUE args) {
    script_ruby_state* state = script_ruby_get_state_from_class(self);
    script_fn fn = (script_fn) NUM2LONG(fn_value);
    len = RARRAY(args)->len;
+   script_reset_params(state->env);
    for (i = 0; i < len; i++)
       script_ruby_put_value(state->env, i, RARRAY(args)->ptr[i]);
    fn(state->env);
@@ -122,12 +123,13 @@ static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
    } else {
       script_err err;
       int i;
-      for (i = 0; i < argc; i++)
-         script_ruby_put_value(state->env, i, argv[i]);
+      script_reset_params(state->env);
+      for (i = 1; i < argc; i++)
+         script_ruby_put_value(state->env, i-1, argv[i]);
       err = script_call(state->env, name);
       if (err != SCRIPT_OK) {
          /* FIXME: I'm getting a Ruby segfault when Ruby raises exceptions. */
-         rb_raise(rb_eRuntimeError, "No such function: '%s'.", name);
+         rb_raise(rb_eRuntimeError, script_error_message(state->env));
          return Qnil;
       }
       return script_ruby_params_to_value(state->env);
@@ -161,9 +163,19 @@ script_plugin_state script_plugin_init_ruby(script_env* env) {
    return state;
 }
 
-int script_plugin_run_ruby(script_plugin_state state, char* programtext) {
-   rb_eval_string(programtext);
-   return SCRIPT_OK;
+INLINE int script_ruby_return(script_ruby_state* state, int error) {
+   if (error) {
+      script_set_error_message(state->env, StringValuePtr(ruby_errinfo));
+      ruby_errinfo = Qnil;
+      return SCRIPT_ERRLANGRUN;
+   } else
+      return SCRIPT_OK;
+}
+
+int script_plugin_run_ruby(script_ruby_state* state, char* programtext) {
+   int error;
+   rb_eval_string_protect(programtext, &error);
+   return script_ruby_return(state, error);
 }
 
 INLINE static VALUE script_ruby_pcall(VALUE args) {
@@ -173,10 +185,10 @@ INLINE static VALUE script_ruby_pcall(VALUE args) {
 }
 
 int script_plugin_call_ruby(script_ruby_state* state, char* fn) {
-   script_env* env = state->env;
-   VALUE args;
    int error;
    VALUE ret;
+   script_env* env = state->env;
+   VALUE args;
    VALUE fn_value = rb_str_new2(fn);
    VALUE method = rb_funcall(state->klass, method_id, 1, fn_value);
    if (method == Qnil)
@@ -185,13 +197,10 @@ int script_plugin_call_ruby(script_ruby_state* state, char* fn) {
    rb_ary_push(args, state->klass);
    rb_ary_push(args, ID2SYM(rb_intern(fn)));
    ret = rb_protect(script_ruby_pcall, args, &error);
-   script_ruby_put_value(state->env, 0, ret);
-   if (error) {
-      script_set_error_message(env, StringValuePtr(ruby_errinfo));
-      ruby_errinfo = Qnil;
-      return SCRIPT_ERRLANGRUN;
-   } else
-      return SCRIPT_OK;
+   script_reset_params(env);
+   if (!error && ret != Qnil)
+      script_ruby_put_value(state->env, 0, ret);
+   return script_ruby_return(state, error);
 }
 
 void script_plugin_done_ruby(script_ruby_state* state) {

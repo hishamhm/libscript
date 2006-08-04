@@ -132,7 +132,7 @@ script_err script_call(script_env* env, const char* fn) {
    script_plugin* plugin;
    script_fn function;
    ht_key key;
- 
+
    key.str = (char*) fn;
    function = ht_get(env->functions, key);
    if (function) {

@@ -10,6 +10,7 @@ static int script_python_state_count = 0;
 INLINE static void script_python_tuple_to_params(script_env* env, PyObject* args) {
    int i;
    int nargs = PyTuple_GET_SIZE(args);
+   script_reset_params(env);
    for (i = 0; i < nargs; i++) {
       PyObject* arg = PyTuple_GET_ITEM(args, i);
       if (PyString_Check(arg)) {
@@ -37,7 +38,6 @@ INLINE static PyObject* script_python_params_to_tuple(script_env* env) {
    int i;
 
    nargs = script_param_count(env);
-fprintf(stderr, "%d\n", nargs);
    args = PyTuple_New(nargs);
    for(i = 0; i < nargs; i++) {
       PyObject* arg = NULL;
@@ -47,7 +47,6 @@ fprintf(stderr, "%d\n", nargs);
          break;
       case SCRIPT_STRING: {
          char* param = script_get_string(env, i);
-fprintf(stderr, "%d => %p\n", i, param);
          arg = PyString_FromString(param); 
          free(param);
          break;
@@ -85,7 +84,6 @@ static PyObject* script_python_call(script_python_object *obj, PyObject *args, P
    if (script_param_count(env) == 0) {
       Py_RETURN_NONE;
    } else {
-fprintf(stderr, "%d\n", script_python(env));
       PyObject* ret = script_python_params_to_tuple(env);
       if (PyTuple_GET_SIZE(ret) > 1) {
          return ret;
