@@ -55,7 +55,7 @@ script_env* script_init(const char* namespace) {
    env->functions = ht_new(20, HT_STR, HT_BORROW_REFS);
 
    env->params = calloc(sizeof(script_data), SCRIPT_MAX_PARAMS + 1);
-
+   
    return env;
 }
 

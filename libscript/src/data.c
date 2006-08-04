@@ -51,8 +51,8 @@ INLINE static script_data* script_get_data(script_env* env, int i, script_type t
 
 static script_data* script_put_data(script_env* env, int i, script_type type) {
    script_data* data;
-  
-   if (i == 0)
+
+   if (i == 0 && env->n_params > 0)
       script_reset_params(env);
    assert(i == env->n_params);
    script_check_ret(i != env->n_params, SCRIPT_ERRPAREXCESS, NULL);
