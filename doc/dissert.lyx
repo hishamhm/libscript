@@ -10688,11 +10688,10 @@ script_call
  nos próprios plugins não torna, então, a API resultante mais complexa.
 \layout Standard
 
-Além disso, um dos objetivos do projeto da API de LibScript foi compartilhar
- o máximo possível a API a ser usada pela aplicação e pela implementação
- dos plugins.
- Por este motivo, optou-se para a passagem de parâmetros e valores de retorno
- uma disciplina similar às abordagens empregadas em Lua (Seção 
+Além disso, um dos objetivos do projeto de LibScript foi compartilhar o
+ máximo possível a API a ser usada pela aplicação e pelos plugins.
+ Por este motivo, optamos por uma abordagem similar às empregadas em Lua
+ (Seção 
 \begin_inset LatexCommand \ref{sub:Lua-chamada}
 
 \end_inset 
@@ -10702,8 +10701,10 @@ Além disso, um dos objetivos do projeto da API de LibScript foi compartilhar
 
 \end_inset 
 
-).
- LibScript possui um buffer interno para entrada e saída de parâmetros.
+) para a passagem de dados na passagem de parâmetros e obtenção de valores
+ de retorno, usando um buffer interno como área de transferência.
+ Diferentemente destas linguagens, entretanto, passamos índices para os
+ parâmetros explicitamente ao invés de empregar uma disciplina de pilha.
  As funções 
 \family typewriter 
 script_
@@ -10737,12 +10738,13 @@ bool
 \family typewriter 
 script_put_
 \family default 
-* armazenam valores em um buffer interno e 
+* armazenam valores no buffer interno e 
 \family typewriter 
 script_get_
 \family default 
 * os removem.
- 
+ Elementos que não tenham sido consumidos do buffer, como por exemplo valores
+ de retorno ignorados, são descartados na chamada seguinte.
 \layout Standard
 
 Tanto nas funções da aplicação C a ser registradas em LibScript como no
