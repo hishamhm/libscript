@@ -48,8 +48,8 @@ script_plugin_state script_plugin_init_perl(script_env* env) {
    return (script_plugin_state) state;
 }
 
-void script_plugin_done_perl(script_plugin_state state) {
-   PerlInterpreter* my_perl = ((script_perl_state*)state)->P;
+void script_plugin_done_perl(script_perl_state* state) {
+   PerlInterpreter* my_perl = state->P;
 
    PERL_SET_CONTEXT(my_perl);
    PL_perl_destruct_level = 1;
@@ -57,13 +57,16 @@ void script_plugin_done_perl(script_plugin_state state) {
    perl_free(my_perl);
 }
 
-script_err script_plugin_run_perl(script_plugin_state state, char* programtext) {
-   PerlInterpreter* my_perl = ((script_perl_state*)state)->P;
+script_err script_plugin_run_perl(script_perl_state* state, char* programtext) {
+   PerlInterpreter* my_perl = state->P;
 
    PERL_SET_CONTEXT(my_perl);
    
-   Perl_eval_pv(my_perl, programtext, TRUE);
-
+   Perl_eval_pv(my_perl, programtext, FALSE);
+   if(SvTRUE(ERRSV)) {
+      script_set_error_message(state->env, SvPV(ERRSV, PL_na));
+      return SCRIPT_ERRLANGRUN;
+   }
    return SCRIPT_OK;
 }
 
