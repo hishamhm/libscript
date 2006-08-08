@@ -1,6 +1,9 @@
 #LyX 1.3 created this file. For more info see http://www.lyx.org/
 \lyxformat 221
 \textclass book
+\begin_preamble
+\usepackage{indentfirst}
+\end_preamble
 \language brazil
 \inputencoding auto
 \fontscheme default
@@ -10201,11 +10204,8 @@ Existe uma API pública para manipulação de dados Perl no código C, mas esta
  expor a ele um conjunto de funções C usando apenas código C.
  A saída é criar uma extensão Perl usando XS que expõe funções da aplicação
  e importar o pacote resultante no interpretador embutido.
- O emprego desta abordagem foi observada nos plugins para 
-\emph on 
-scripting
-\emph default 
- Perl de diversas aplicações 
+ O emprego desta abordagem foi observada nos plugins para scripting Perl
+ de diversas aplicações 
 \begin_inset Foot
 collapsed true
 
@@ -10493,11 +10493,7 @@ LibScript
 \layout Standard
 
 LibScript é uma biblioteca projetada para permitir a extensibilidade a aplicaçõe
-s através de 
-\emph on 
-scripting
-\emph default 
- de uma forma independente de linguagem.
+s através de scripting de uma forma independente de linguagem.
  Ela é baseada em uma arquitetura de plugin
 \emph on 
 s
@@ -10508,12 +10504,9 @@ s
 \family typewriter 
 libscript
 \family default 
-, é uma fina camada que provê uma API para 
-\emph on 
-scripting
-\emph default 
- independente de linguagem, permitindo à aplicação registrar as suas funções
- e invocar código a ser executado.
+, é uma fina camada que provê uma API para scripting independente de linguagem,
+ permitindo à aplicação registrar as suas funções e invocar código a ser
+ executado.
  Esta biblioteca então invoca o plugin da linguagem apropriada para rodar
  o código (por exemplo, 
 \family typewriter 
@@ -10550,8 +10543,14 @@ Cada plugin, além de embutir um ambiente de execução, registra nele uma
  estrutura de dados específica da linguagem (classe, módulo, tabela) que
  agirá como o espaço de nomes para funções registradas através de LibScript.
  Implementamos plugins para as linguagens Python, Ruby, Lua e Perl.
- Os plugins serão discutidos na Seção 
-\begin_inset LatexCommand \ref{sec:Plug-ins}
+ Estes plugins serão discutidos na Seção 
+\begin_inset LatexCommand \ref{sec:Implementação-dos-plugins}
+
+\end_inset 
+
+.
+ A API de LibScript é descrita por completo no Apêndice 
+\begin_inset LatexCommand \ref{cha:API-de-LibScript}
 
 \end_inset 
 
@@ -10567,7 +10566,7 @@ A Camada Independente de Linguagem
 \layout Standard
 
 A API oferecida por LibScript isola a aplicação das diferentes APIs oferecidas
- pelas linguagens de scripting.
+ pelas linguagens de script.
  Não se trata apenas de adicionar uma camada de indireção entre as chamadas,
  o que seria apropriado apenas para os recursos que são comuns a todas elas,
  como inicialização e chamadas de função.
@@ -10685,7 +10684,9 @@ dade de forma independente de linguagem.
 script_call
 \family default 
  -- genérica o suficiente para que pudesse invocar também funções implementadas
- nos próprios plugins não torna, então, a API resultante mais complexa.
+ nos próprios plugins não torna, então, a API da biblioteca principal mais
+ complexa.
+ 
 \layout Standard
 
 Além disso, um dos objetivos do projeto de LibScript foi compartilhar o
@@ -10747,7 +10748,7 @@ script_get_
  de retorno ignorados, são descartados na chamada seguinte.
 \layout Standard
 
-Tanto nas funções da aplicação C a ser registradas em LibScript como no
+Tanto nas funções da aplicação C a serem registradas em LibScript como no
  tratamento de chamadas de função nos plugins, usam-se as funções 
 \family typewriter 
 script_get_
@@ -10771,17 +10772,356 @@ script_put_
 script_get_
 \family default 
 * para obter os valores de retorno.
+\layout Standard
+
+A carga de plugins é feita de forma implícita, pelas duas funções de execução
+ de código: 
+\family typewriter 
+script_run_file
+\family default 
+, que executa um script contido em um arquivo, ou 
+\family typewriter 
+script_run
+\family default 
+, que executa um script contido em uma string.
+ Para código executado com 
+\family typewriter 
+script_run_file
+\family default 
+, o plugin a ser carregado é detectado a partir da extensão do arquivo ou
+ da linha de identificação 
+\begin_inset Quotes eld
+\end_inset 
+
+
+\family typewriter 
+#!
+\family default 
+
+\begin_inset Quotes erd
+\end_inset 
+
+ no início do script
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+A linha 
+\begin_inset Quotes eld
+\end_inset 
+
+
+\family typewriter 
+#!
+\family default 
+
+\begin_inset Quotes erd
+\end_inset 
+
+ é usada apenas para detectar a linguagem em que o script é escrito.
+ Por exemplo, uma linha 
+\family typewriter 
+#!/usr/bin/perl -w
+\family default 
+ indicará a carga do plugin 
+\family typewriter 
+libscript-perl
+\family default 
+, mas o interpretador Perl em 
+\family typewriter 
+/usr/bin
+\family default 
+ não é usado e nem a flag 
+\family typewriter 
+-w
+\family default 
+ passada é considerada.
+\end_inset 
+
+.
+ Na função 
+\family typewriter 
+script_run
+\family default 
+, um parâmetro adicional deve indicar explicitamente a linguagem do código.
+\layout Standard
+
+Um plugin consiste de uma biblioteca dinâmica chamada 
+\family typewriter 
+libscript-
+\family default 
+\emph on 
+<linguagem>
+\emph default 
+ e arquivos 
+\emph on 
+<identificador>
+\family typewriter 
+\emph default 
+.id
+\family default 
+ que associam diferentes nomes à biblioteca.
+ Estes nomes são usados por em 
+\family typewriter 
+script_run_file
+\family default 
+ para associar extensões de arquivo ou o nome do executável interpretador
+ a um plugin.
+ Por exemplo, o plugin 
+\family typewriter 
+libscript-python
+\family default 
+ inclui o arquivo 
+\family typewriter 
+py.id
+\family default 
+, contendo a string 
+\family typewriter 
+"python"
+\family default 
+.
+ Desta forma, um arquivo de extensão 
+\family typewriter 
+.py
+\family default 
+ carregado via 
+\family typewriter 
+script_run_file
+\family default 
+ dispara a carga do plugin apropriado.
 \layout Section
 
+A API de plugins
+\layout Standard
 
-\begin_inset LatexCommand \label{sec:Plug-ins}
+Um plugin que embute uma linguagem de script deve implementar quatro operações:
+ init, run, call e done.
+ Estas operaçãos são representadas em funções exportadas pela biblioteca
+ do plugin com nomes do tipo
+\family typewriter 
+ script_plugin_
+\family default 
+\emph on 
+<operação>
+\family typewriter 
+\emph default 
+_
+\family default 
+\emph on 
+<linguagem>
+\emph default 
+.
+\layout Standard
+
+A função 
+\family typewriter 
+script_plugin_init_
+\family default 
+\emph on 
+<linguagem>
+\emph default 
+ é responsável pela inicialização de um plugin, e é chamada pela função
+ 
+\family typewriter 
+script_init
+\family default 
+ da biblioteca principal.
+ A função 
+\family typewriter 
+script_init
+\family default 
+ recebe uma string como parâmetro que representa o nome de um 
+\emph on 
+ambiente
+\emph default 
+ a ser criado.
+ Um ambiente consiste de um conjunto de funções C nele registradas e os
+ estados correspondentes nos plugins carregados.
+ Ambientes são representados como um ponteiros opacos do tipo 
+\family typewriter 
+script_env
+\family default 
+, e são passados como primeiro parâmetro para todas as demais funções da
+ API de LibScript.
+ Na inicialização de um plugin, a biblioteca passa à função 
+\family typewriter 
+script_plugin_init_
+\family default 
+\emph on 
+<linguagem>
+\emph default 
+ um 
+\family typewriter 
+script_env
+\family default 
+ e recebe um 
+\family typewriter 
+script_plugin_state
+\family default 
+, que é um tipo opaco que é sempre retornado ao plugin nas demais chamadas.
+ Cada plugin define a sua representação interna para 
+\family typewriter 
+script_plugin_state
+\family default 
+, de modo a descrever de forma apropriada para a linguagem um espaço de
+ nomes.
+ Tipicamente, o estado da máquina virtual e o ponteiro para o ambiente LibScript
+ devem ser armazenados de modo a ser posteriormente acessíveis a partir
+ deste handle.
+ Na Seção 
+\begin_inset LatexCommand \ref{sub:Representação-de-estados}
 
 \end_inset 
 
+ discutiremos como cada plugin representa seus estados em 
+\family typewriter 
+script_plugin_state
+\family default 
+.
+\layout Standard
+
+A função 
+\family typewriter 
+script_plugin_run_
+\family default 
+\emph on 
+<linguagem>
+\emph default 
+ envia código para ser executado pelo plugin.
+ Ela recebe uma string contendo código a ser executado e retorna um código
+ de status indicando sucesso ou a ocorrência de erros de compilação ou execução.
+ No caso de erros, os plugins devem capturar exceções disparadas pela máquina
+ virtual e representá-las como erros de execução, retornar a constante 
+\family typewriter 
+SCRIPT_ERRLANGRUN
+\family default 
+ e, caso seja possível obter uma mensagem de erro, propagá-la usando a função
+ 
+\family typewriter 
+script_set_error_message
+\family default 
+ da biblioteca principal, que poderá ser posteriormente consultada pela
+ aplicação com 
+\family typewriter 
+script_error_message
+\family default 
+.
+ 
+\layout Standard
+
+Assim como a função 
+\family typewriter 
+script_plugin_run_
+\family default 
+\emph on 
+<linguagem>
+\emph default 
+ implementa a lógica específica de linguagem das funções 
+\family typewriter 
+script_run
+\family default 
+ e 
+\family typewriter 
+script_run_file
+\family default 
+ da biblioteca principal, a função 
+\family typewriter 
+script_plugin_call_
+\family default 
+\emph on 
+<linguagem>
+\emph default 
+ é usada por 
+\family typewriter 
+script_call
+\family default 
+.
+ A função 
+\family typewriter 
+script_plugin_call_
+\family default 
+\emph on 
+<linguagem>
+\emph default 
+ é responsável por realizar chamadas a funções implementadas na linguagem
+ embutida pelo plugin.
+ Ao chamar uma função do ambiente, seja em C através de 
+\family typewriter 
+script_call
+\family default 
+ ou executando código em algum dos plugins, LibScript irá utilizar esta
+ função para tentar executar a função usando o plugin.
+ A implementação de script_call tenta encontrar uma função solicitada inicialmen
+te na lista de funções C registradas, e posteriormente tentando invocá-la
+ nos plugins.
+ Se a função foi definida no plugin, isto é, se uma função com o nome solicitado
+ foi registrada na estrutura de dados que descreve o ambiente na máquina
+ virtual, ela será executada, e o sucesso ou falha da execução será reportado
+ de forma igual a 
+\family typewriter 
+script_plugin_run_
+\family default 
+\emph on 
+<linguagem>
+\emph default 
+.
+ Caso a função solicitada não tenha sido definida na máquina virtual, 
+\family typewriter 
+script_plugin_call_
+\family default 
+\emph on 
+<linguagem>
+\emph default 
+ deve retornar a constante 
+\family typewriter 
+SCRIPT_ERRFNUNDEF
+\family default 
+, para que LibScript tente o próximo plugin.
+ Parâmetros de entrada e valores de retorno são passados através do buffer
+ de parâmetros, com as funções 
+\family typewriter 
+script_get_*
+\family default 
+ e 
+\family typewriter 
+script_get_*
+\family default 
+ da biblioteca principal.
+\layout Standard
+
+Finalmente, 
+\family typewriter 
+script_plugin_done_
+\family default 
+\emph on 
+<linguagem>
+\emph default 
+ é responsável pelo encerramento de um estado.
+ Estados são encerrados quando um ambiente é finalizado pela biblioteca
+ principal com a função 
+\family typewriter 
+script_done
+\family default 
+.
+ Dependendo da representação interna de um estado no plugin, a finalização
+ de um estado pode ou não implicar na finalização da máquina virtual.
+\layout Section
+
 Implementação dos plugins
+\begin_inset LatexCommand \label{sec:Implementação-dos-plugins}
+
+\end_inset 
+
+
 \layout Subsection
 
-Múltiplos estados independentes
+Representação de estados
+\begin_inset LatexCommand \label{sub:Representação-de-estados}
+
+\end_inset 
+
+
 \layout Standard
 
 O design de LibScript permite que plugins mantenham múltiplos estados independen
@@ -10839,46 +11179,6 @@ este é um bug difícil de ser resolvido que será tratado em uma versão futura
 \end_inset 
 
 .
-\layout Standard
-
-A função 
-\family typewriter 
-script_init
-\family default 
- de LibScript recebe uma string como parâmetro, que será o nome do ambiente
- retornado.
- Um ambiente representa um conjunto de funções C nele registradas e os estados
- correspondentes nos plugins carregados.
- Ambientes são representados como um ponteiros opacos do tipo 
-\family typewriter 
-script_env
-\family default 
-, e são passados como primeiro parâmetro para todas as demais funções da
- API de LibScript.
-\layout Standard
-
-Na inicialização de um plugin, a biblioteca passa à função 
-\family typewriter 
-script_plugin_init_
-\emph on 
-linguagem
-\family default 
-\emph default 
- um 
-\family typewriter 
-script_env
-\family default 
- e recebe um 
-\family typewriter 
-script_plugin_state
-\family default 
-, que é um tipo opaco que é sempre retornado ao plugin nas demais chamadas.
- Cada plugin define a sua representação interna para 
-\family typewriter 
-script_plugin_state
-\family default 
-, de modo a descrever de forma apropriada para a linguagem um espaço de
- nomes.
 \layout Standard
 
 No plugin Lua, estados são implementados como 
@@ -10941,44 +11241,7 @@ script_new_function(env, hello, "hello");
 script_run(env, "lua", "exemplo.hello()");
 \layout Standard
 
-Um plugin é carregado automaticamente quando uma determinada linguagem é
- requisitada pela primeira vez, seja através do segundo parâmetro de 
-\family typewriter 
-script_run
-\family default 
- como neste exemplo ou em 
-\family typewriter 
-script_run_file
-\family default 
- através da extensão do arquivo ou da linha de identificação 
-\begin_inset Quotes eld
-\end_inset 
-
-
-\family typewriter 
-#!
-\family default 
-
-\begin_inset Quotes erd
-\end_inset 
-
-
-\begin_inset Foot
-collapsed true
-
-\layout Standard
-
-A API é descrita por completo no Apêndice 
-\begin_inset LatexCommand \ref{cha:API-de-LibScript}
-
-\end_inset 
-
-.
-\end_inset 
-
-.
- A forma como a função é inserida na tabela Lua será discutida na Seção
- 
+A forma como a função é inserida na tabela Lua será discutida na Seção 
 \begin_inset LatexCommand \ref{sub:Resolução-de-funções}
 
 \end_inset 
@@ -11102,6 +11365,432 @@ name
  como ocorre em Perl.
 \layout Subsection
 
+Incialização de estados
+\layout Standard
+
+TODO
+\layout Subsection
+
+Encerramento de estados
+\layout Standard
+
+Como Lua e Perl representam estados de forma independente, o encerramento
+ de um estado nestes plugins é simples: a estrutura da linguagem que encapsula
+ o ambiente completo de execução é encerrado.
+ A implementação da função de finalização no plugin Lua é a seguinte:
+\layout LyX-Code
+
+
+\size footnotesize 
+void script_plugin_done_lua(script_plugin_state state) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   
+\emph on 
+/* Em Lua, um state é um lua_State */
+\layout LyX-Code
+
+
+\size footnotesize 
+   lua_State* L = (lua_State*) state;
+\layout LyX-Code
+
+
+\size footnotesize 
+   
+\emph on 
+/* Encerra o estado.
+ Não afeta outros ambientes.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+   lua_close(L);
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Em Perl, o processo, embora um tanto mais elaborado, é essencialmente similar:
+\layout LyX-Code
+
+
+\size footnotesize 
+void script_plugin_done_perl(script_perl_state* state) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   
+\emph on 
+/* Algumas macros assumem que o ponteiro do interpretador
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      se chama my_perl.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+   PerlInterpreter* my_perl = state->P;
+\layout LyX-Code
+
+
+\size footnotesize 
+   
+\emph on 
+/* Algumas operações operam sobre o 
+\begin_inset Quotes eld
+\end_inset 
+
+estado atual
+\begin_inset Quotes erd
+\end_inset 
+
+,
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      então a macro PERL_SET_CONTEXT deve ser usada para
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      alternar o interpretador ativo */
+\layout LyX-Code
+
+
+\size footnotesize 
+   PERL_SET_CONTEXT(my_perl);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Esta flag deve ser ativada para que a limpeza do
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      ambiente seja completa, o que é necessário quando
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      pode haver mais de um interpretador ativo */
+\layout LyX-Code
+
+
+\size footnotesize 
+   PL_perl_destruct_level = 1;
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Encerramento do interpretador */
+\layout LyX-Code
+
+
+\size footnotesize 
+   perl_destruct(my_perl);
+\layout LyX-Code
+
+
+\size footnotesize 
+   perl_free(my_perl);
+\layout LyX-Code
+
+
+\size footnotesize 
+   
+\emph on 
+/* Desaloca o resto do estado do plugin */
+\layout LyX-Code
+
+
+\size footnotesize 
+   free(state->package); free(state);
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Em Python e Ruby, como não há instâncias independentes do ambiente de execução
+ das linguagens, o plugin precisa manter o controle do número de estados
+ ativos para desalocar a máquina virtual somente quando este chegar a zero.
+ Além disso, em Ruby não há como como em Python não há recursos nas APIs
+ (ou nas linguagens, de fato) para remover, respectivamente, classes ou
+ módulos.
+ Em Ruby, poderíamos atribuir 
+\family typewriter 
+nil
+\family default 
+ à constante que representa a classe que descreve o estado, mas depois disso
+ não é possível definir uma nova classe em seu lugar: tanto 
+\family typewriter 
+rb_define_class
+\family default 
+ via C como 
+\family typewriter 
+class 
+\family default 
+\emph on 
+<Nome>
+\emph default 
+ via Ruby geram um erro indicando que o valor já foi definido com outro
+ tipo.
+ Como Ruby possui classes abertas, uma construção 
+\family typewriter 
+class 
+\family default 
+\emph on 
+<Nome>
+\emph default 
+ para um 
+\emph on 
+<Nome>
+\emph default 
+ já existente é entendida como a continuação da descrição da classe, e não
+ como a redefinição de 
+\emph on 
+<Nome>
+\emph default 
+.
+ Python, por sua vez, não disponibiliza recursos na API para a descarga
+ de módulos, mas permite atribuir 
+\family typewriter 
+None
+\family default 
+ à global referente ao módulo.
+ O módulo pode ser importado novamente, mas será retornada a mesma instância
+ do módulo, armazenada internamente por Python.
+ A seguinte sessão interativa de linha de comando permite observar este
+ comportamento, que ocorre tanto diretamente em Python como via a API de
+ C:
+\layout LyX-Code
+
+
+\size footnotesize 
+>>> import sys
+\layout LyX-Code
+
+
+\size footnotesize 
+>>> sys.foo = "hello"
+\layout LyX-Code
+
+
+\size footnotesize 
+>>> sys.foo
+\layout LyX-Code
+
+
+\size footnotesize 
+'hello'
+\layout LyX-Code
+
+
+\size footnotesize 
+>>> sys = None
+\layout LyX-Code
+
+
+\size footnotesize 
+>>> import sys
+\layout LyX-Code
+
+
+\size footnotesize 
+>>> sys.foo
+\layout LyX-Code
+
+
+\size footnotesize 
+'hello' 
+\layout Standard
+
+Assim, as estruturas de dados referentes aos estados LibScript não são encerrado
+s nos plugins Python e Ruby.
+ Esta é implementação no plugin Ruby:
+\layout LyX-Code
+
+
+\size footnotesize 
+void script_plugin_done_ruby(script_ruby_state* state) {
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Decrementa o contador de estados, uma variável global 
+\emph default 
+static
+\emph on 
+ do plugin.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_ruby_state_count--;
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Finaliza o interpretador se este for o último estado.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+   if (script_ruby_state_count == 0)
+\layout LyX-Code
+
+
+\size footnotesize 
+      ruby_finalize();
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Desaloca o resto do estado do plugin */
+\layout LyX-Code
+
+
+\size footnotesize 
+   free(state->name); free(state);
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+A implementação no plugin Python é basicamente igual:
+\layout LyX-Code
+
+
+\size footnotesize 
+void script_plugin_done_python(script_python_state* state) {
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Decrementa o contador de estados, uma variável global 
+\emph default 
+static
+\emph on 
+ do plugin.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_python_state_count--;
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Finaliza o interpretador se este for o último estado.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+   if (script_python_state_count == 0)
+\layout LyX-Code
+
+
+\size footnotesize 
+      Py_Finalize();
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Desaloca o resto do estado do plugin */
+\layout LyX-Code
+
+
+\size footnotesize 
+   Py_DECREF(state->dict); free(state);
+\layout LyX-Code
+
+
+\size footnotesize 
+} 
+\layout Subsection
+
+Transferência de dados
+\layout Standard
+
+TODO
+\layout Comment
+
+A transferência de dados entre a biblioteca principal e os plugins é concentrada
+ em duas operações: uma para passar o conteúdo do buffer de parâmetros de
+ LibScript para o espaço de dados da máquina virtual e outra para realizar
+ a operação inversa.
+ Em cada plugin, procuramos isolar estas operações em um par de funções.
+ 
+\layout Comment
+
+Na implementação do plugin 
+\family typewriter 
+libscript-lua
+\family default 
+, a função 
+\family typewriter 
+script_lua_stack_to_params
+\family default 
+ converte o conteúdo da pilha de Lua para o buffer de parâmetros de LibScript.
+ Esta função é usada tanto para receber os valores de retorno obtidos após
+ uma chamada de função Lua como para fazer a passagem de parâmetros no back-end
+ Lua da função 
+\family typewriter 
+script_call
+\family default 
+.
+\layout Comment
+
+A API para implementação de funções em C a serem registradas em LibScript
+ permite declarar funções com múltiplos valores de retorno.
+ Muitas linguagens não possuem este recurso, mas é possível, ao detectar
+ no plugin que mais de um valor foi retornado, construir um tipo de dado
+ agregado e armazenar nele os valores, retornando então um valor de retorno
+ único.
+\layout Comment
+
+Em Lua, uma função pode retornar múltiplos valores através da pilha, como
+ discutido na Seção 
+\begin_inset LatexCommand \ref{sub:Lua-chamada}
+
+\end_inset 
+
+.
+ 
+\layout Subsection
+
 
 \begin_inset LatexCommand \label{sub:Resolução-de-funções}
 
@@ -11166,34 +11855,42 @@ upvalue
 \family typewriter 
 script_lua_call
 \family default 
- lê os valores da pilha de Lua (parâmetros de entrada) e os registra no
- ambiente LibScript, invoca a função C armazenada no 
+ lê os valores da pilha de Lua (parâmetros de entrada) e os passa para o
+ buffer de parâmetros de LibScript, invoca a função C armazenada no 
 \emph on 
 upvalue
 \emph default 
  e obtém os valores de retorno.
 \layout Standard
 
-Em Python, o espaço de nomes é declarado na inicialização como um módulo.
+No plugin Python, o espaço de nomes é declarado na inicialização como um
+ módulo.
  É declarado também um tipo de dado, 
 \family typewriter 
-script_py_object
+script_python_object
 \family default 
-, definido como um objeto Python contendo um ponteiro de função C e com
- um callback 
+, definido como um objeto Python contendo um ponteiro de função C representando
+ uma função registrada em LibScript.
+ Estes objetos possuem o seu callback 
 \family typewriter 
-__call
+tp_call
 \family default 
- definido 
+ definido como 
 \family typewriter 
-script_py_object_call
+script_python_object_call
 \family default 
-, uma função equivalente a 
+, uma função que, assim como 
 \family typewriter 
 script_lua_call
 \family default 
-.
- Assim, objetos deste tipo correspondem à 
+, converte os parâmetros recebidos para o buffer de LibScript, invoca a
+ função armazenada no ponteiro C e converte os valores de entrada de volta
+ à linguagem.
+ Assim, objetos deste tipo são 
+\emph on 
+functors
+\emph default 
+, e se comportam de forma similar à 
 \emph on 
 closure
 \emph default 
@@ -11214,7 +11911,7 @@ __getattro
 \family default 
  do módulo, definido como a função interna 
 \family typewriter 
-script_py_get
+script_python_get
 \family default 
 , é chamado.
  Esta função procura uma entrada no dicionário do módulo e, caso não a encontre,
@@ -11225,7 +11922,7 @@ script_py_get
  da lista de funções do ambiente.
  É declarado então um objeto 
 \family typewriter 
-script_py_object
+script_python_object
 \family default 
  contendo o atributo 
 \begin_inset Formula $f$
@@ -11245,7 +11942,7 @@ __call
 \family default 
  do objeto é invocada em seguida, executando 
 \family typewriter 
-script_py_object_call
+script_python_object_call
 \family default 
 , que registra os parâmetros de entrada no ambiente LibScript, invoca a
  função C armazenada no atributo interno do objeto e retorna a Python os
@@ -11280,17 +11977,6 @@ script_ruby_call
 script_ruby_call
 \family default 
  irá então converter os parâmetros e invocar a função.
-\layout Subsection
-
-Múltiplos valores de retorno
-\layout Standard
-
-A API para implementação de funções em C a serem registradas em LibScript
- permite declarar funções com múltiplos valores de retorno.
- Muitas linguagens não possuem este recurso, mas é possível, ao detectar
- no plugin que mais de um valor foi retornado, construir um tipo de dado
- agregado (tupla em Python, array em Ruby, etc.) e armazenar nele os valores,
- retornando então um valor de retorno único.
 \layout Chapter
 
 
