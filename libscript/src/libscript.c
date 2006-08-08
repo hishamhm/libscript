@@ -93,7 +93,7 @@ script_err script_run_file(script_env* env, const char* filename) {
    script_err err;
 
    programtext = read_file(filename);
-   script_check(!programtext, SCRIPT_ERRFILE);
+   script_check(!programtext, SCRIPT_ERRFILENOTFOUND);
    programinput = programtext;
    if (programtext[0] == '#' && programtext[1] == '!') {
       char *at, *start, *end;
@@ -156,7 +156,7 @@ script_err script_done(script_env* env) {
    int dlerr;
    script_plugin* plugin;
    
-   /* TODO: verify that removal of multiple states work for all plugins. */
+   /* TODO: verify that removal of multiple states works for all plugins. */
    while ((plugin = ht_take_first(env->plugins))) {
       script_err pluginerr;
 

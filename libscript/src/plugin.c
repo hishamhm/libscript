@@ -28,6 +28,7 @@ static script_err free_plugin(script_env* env, script_plugin* plugin) {
    int err = 0;
    script_plugin_done_fn done_fn;
 
+   /* FIXME: decouple finalization of states and unloading of plugins */
    if (plugin->dlhandle) {
       done_fn = (script_plugin_done_fn) get_symbol(plugin, "done");
       if (done_fn)
