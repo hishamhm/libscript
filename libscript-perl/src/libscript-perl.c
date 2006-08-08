@@ -55,6 +55,8 @@ void script_plugin_done_perl(script_perl_state* state) {
    PL_perl_destruct_level = 1;
    perl_destruct(my_perl);
    perl_free(my_perl);
+   free(state->package);
+   free(state);
 }
 
 script_err script_plugin_run_perl(script_perl_state* state, char* programtext) {
