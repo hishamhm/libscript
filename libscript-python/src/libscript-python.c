@@ -131,7 +131,6 @@ script_plugin_state script_plugin_init_python(script_env* env) {
    /* TODO: trap interpreter error messages */
    PyObject* module;
    char* namespace;
-   char import_namespace[201];
    script_python_state* state;
    
    if (script_python_state_count == 0) {
@@ -146,15 +145,15 @@ script_plugin_state script_plugin_init_python(script_env* env) {
    state->env = env;
 
    namespace = (char*) script_namespace(env);
-   module = Py_InitModule3(namespace, script_python_methods, namespace);
+   module = Py_InitModule3(namespace, NULL, namespace);
    state->dict = PyModule_GetDict(module);
    Py_INCREF(state->dict);
    module->ob_type->tp_getattro = script_python_getattro;
    PyDict_SetItemString(state->dict, "__state", PyCObject_FromVoidPtr(state, NULL));
 
-   snprintf(import_namespace, 200, "import %s\n", namespace);
-   PyRun_SimpleString(import_namespace);
-
+   PyDict_SetItemString(PyModule_GetDict(PyImport_AddModule("__builtin__")),
+                        namespace, module);
+   
    return state;
 }
 
@@ -196,10 +195,10 @@ int script_plugin_call_python(script_python_state* state, char* fn) {
 
 void script_plugin_done_python(script_python_state* state) {
    Py_DECREF(state->dict);
-   free(state);
    script_python_state_count--;
    if (script_python_state_count == 0) {
       /* FIXME: Getting strange gc-related errors. */
       /* Py_Finalize(); */
    }
+   free(state);
 }
