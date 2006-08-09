@@ -57,7 +57,7 @@ INLINE static int script_lua_params_to_stack(script_env* env, lua_State *L) {
    return len;
 }
 
-static int script_lua_call(lua_State *L) {
+static int script_lua_caller(lua_State *L) {
    script_env* env = script_lua_get_env(L);
    const char* name;
    script_err err;
@@ -71,8 +71,8 @@ static int script_lua_call(lua_State *L) {
    return script_lua_params_to_stack(env, L);
 }
 
-static int script_lua_find_function(lua_State *L) {
-   lua_pushcclosure(L, script_lua_call, 1);
+static int script_lua_make_caller(lua_State *L) {
+   lua_pushcclosure(L, script_lua_caller, 1);
    lua_pushvalue(L, 1);
    lua_pushvalue(L, 2);
    lua_pushvalue(L, -3);
@@ -99,7 +99,7 @@ script_plugin_state script_plugin_init_lua(script_env* env) {
    lua_newtable(L);
    lua_newtable(L);
    lua_pushstring(L, "__index");
-   lua_pushcfunction(L, script_lua_find_function);
+   lua_pushcfunction(L, script_lua_make_caller);
    lua_settable(L, -3);
    lua_setmetatable(L, -2);
    lua_setglobal(L, namespace);
