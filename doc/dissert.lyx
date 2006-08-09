@@ -10845,6 +10845,26 @@ libscript-perl
 script_run
 \family default 
 , um parâmetro adicional deve indicar explicitamente a linguagem do código.
+ O exemplo a seguir registra uma função C chamada 
+\family typewriter 
+hello
+\family default 
+ e a invoca a partir de código Lua:
+\layout LyX-Code
+
+
+\size footnotesize 
+env = script_init("exemplo");
+\layout LyX-Code
+
+
+\size footnotesize 
+script_new_function(env, hello, "hello");
+\layout LyX-Code
+
+
+\size footnotesize 
+script_run(env, "lua", "exemplo.hello()");
 \layout Standard
 
 Um plugin consiste de uma biblioteca dinâmica chamada 
@@ -10896,8 +10916,24 @@ A API de plugins
 \layout Standard
 
 Um plugin que embute uma linguagem de script deve implementar quatro operações:
- init, run, call e done.
- Estas operaçãos são representadas em funções exportadas pela biblioteca
+ 
+\family typewriter 
+init
+\family default 
+, 
+\family typewriter 
+run
+\family default 
+, 
+\family typewriter 
+call
+\family default 
+ e 
+\family typewriter 
+done
+\family default 
+.
+ Estas operações são representadas em funções exportadas pela biblioteca
  do plugin com nomes do tipo
 \family typewriter 
  script_plugin_
@@ -11181,7 +11217,32 @@ este é um bug difícil de ser resolvido que será tratado em uma versão futura
 .
 \layout Standard
 
-No plugin Lua, estados são implementados como 
+Além de inicializar o ambiente de execução da máquina virtual, a função
+ de inicialização de um plugin retorna à biblioteca principal uma representação
+ opaca do seu estado, que é repassada às chamadas subseqüentes de funções
+ do plugin.
+ O conteúdo desta representação varia de linguagem para linguagem, mas o
+ princípio básico é que dois dados devem estar disponíveis a partir deste
+ estado: uma referência para o ambiente LibScript, passado como parâmetro
+ para 
+\family typewriter 
+script_plugin_init_
+\family default 
+\emph on 
+<linguagem>
+\emph default 
+, para que o plugin possa fazer chamadas à biblioteca principal, e um identifica
+dor que permita acessar a partir de C a estrutura de dados que representa
+ na linguagem o espaço de nome de funções acessíveis via LibScript.
+ No plugin Lua, esta estrutura é uma tabela; em Python, um módulo; em Ruby,
+ uma classe; e em Perl, um pacote.
+\layout Standard
+
+Em 
+\family typewriter 
+libscript-lua
+\family default 
+, estados são implementados como 
 \family typewriter 
 lua_State
 \family default 
@@ -11209,57 +11270,73 @@ lua_State
 \family typewriter 
 lua_State
 \family default 
- como chave.
+ como chave, da seguinte forma:
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_pushlightuserdata(L, L);        
+\emph on 
+/* Empilha o estado */
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_pushlightuserdata(L, env);      
+\emph on 
+/* Empilha o ambiente LibScript */
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_settable(L, LUA_REGISTRYINDEX); 
+\emph on 
+/* registro[L] = env */
 \layout Standard
 
 O plugin cria neste 
 \family typewriter 
 lua_State
 \family default 
- uma tabela com o nome do ambiente.
- Funções registradas via LibScript estarão disponíveis como elementos desta
- tabela.
- O exemplo a seguir registra uma função C chamada 
+ uma tabela que representará o ambiente, para que funções registradas via
+ LibScript estarão disponíveis como elementos desta tabela e que funções
+ Lua inseridas nesta tabela sejam acessíveis a partir de C e de outros plugins.
+ Esta tabela é armazenada no 
 \family typewriter 
-hello
+lua_State
 \family default 
- e a invoca a partir de código Lua:
-\layout LyX-Code
-
-
-\size footnotesize 
-env = script_init("exemplo");
-\layout LyX-Code
-
-
-\size footnotesize 
-script_new_function(env, hello, "hello");
-\layout LyX-Code
-
-
-\size footnotesize 
-script_run(env, "lua", "exemplo.hello()");
+ como uma variável global com o nome do ambiente.
+ As demais funções de 
+\family typewriter 
+libscript-lua
+\family default 
+ localizam esta tabela obtendo o ponteiro para o ambiente LibScript no registro
+ e consultando o nome do ambiente usando a função 
+\family typewriter 
+script_namespace
+\family default 
+.
 \layout Standard
 
-A forma como a função é inserida na tabela Lua será discutida na Seção 
-\begin_inset LatexCommand \ref{sub:Resolução-de-funções}
-
-\end_inset 
-
-.
+Como nas demais linguagens não há uma forma conveniente de armazenar o ambiente
+ LibScript de forma isolada como no ocorre no registro de Lua, os estados
+ são representados como structs que armazenam o ponteiro para o ambiente
+ e o identificador representando a estrutura de dados específica da linguagem
+ que o representa.
 \layout Standard
 
 Em 
 \family typewriter 
 libscript-perl
 \family default 
- os estados são igualmente isolados.
+ os estados são isolados como em Lua.
  Cada estado criado inicializa uma nova instância de 
 \family typewriter 
 PerlInterpreter
 \family default 
 .
- Neste interpretador, é criado um pacote representando o ambiente.
+ Neste interpretador, é criado um pacote que será a representação do ambiente
+ visível a partir de código Perl.
  O estado é descrito com a seguinte estrutura:
 \layout LyX-Code
 
@@ -11285,7 +11362,7 @@ typedef struct {
 
 
 \size footnotesize 
-} script_perl_state; 
+} script_perl_state;
 \layout Standard
 
 Em 
@@ -11295,6 +11372,25 @@ script_perl_state
  são armazenadas referências para o interpretador e para o ambiente LibScript,
  bem como o nome do pacote (que é o nome do ambiente com a inicial em maiúscula,
  seguindo a convenção de pacotes de Perl).
+ O pacote em si é criado durante 
+\family typewriter 
+script_plugin_init_perl
+\family default 
+, executando a string de código 
+\family typewriter 
+"package 
+\family default 
+\emph on 
+<ambiente>
+\family typewriter 
+\emph default 
+;"
+\family default 
+ com a função 
+\family typewriter 
+Perl_eval_pv
+\family default 
+.
 \layout Standard
 
 Como Python não dispõe de facilidades para disparar múltiplas máquinas virtuais
@@ -11302,8 +11398,72 @@ Como Python não dispõe de facilidades para disparar múltiplas máquinas virtuais
  separados, compartilhando um mesmo estado global.
  Durante a inicialização de um estado, é criado um módulo Python com o nome
  do ambiente.
- A representação no plugin do estado consiste num ponteiro para o ambiente
- e para o dicionário de elementos do módulo:
+ O seguinte trecho da função 
+\family typewriter 
+script_plugin_init_python
+\family default 
+ exibe a seqüência onde o módulo é criado e importado:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Obtém o nome do ambiente */
+\layout LyX-Code
+
+
+\size footnotesize 
+char* namespace = script_namespace(env);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Cria o módulo.
+ O primeiro parâmetro é o nome do módulo,
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   o segundo a lista de métodos do módulo, que será inicialmente vazio.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject* module = Py_InitModule3(namespace, NULL);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Obtém dicionário de globais */
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject* globals = PyModule_GetDict(PyImport_AddModule("__builtin__"));
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Atribui o módulo à variável global com o seu nome.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+PyDict_SetItemString(globals, namespace, module);
+\layout Standard
+
+A representação no plugin do estado consiste de um ponteiro para o ambiente
+ e outro para o dicionário de elementos do módulo, obtido com 
+\family typewriter 
+PyModule_GetDict(module)
+\family default 
+:
 \layout LyX-Code
 
 
@@ -11313,12 +11473,12 @@ typedef struct {
 
 
 \size footnotesize 
-   PyObject* dict;
+   script_env* env;
 \layout LyX-Code
 
 
 \size footnotesize 
-   script_env* env;
+   PyObject* dict;
 \layout LyX-Code
 
 
@@ -11329,7 +11489,16 @@ typedef struct {
 De forma similar, estados em Ruby são implementados como classes que compartilha
 m um mesmo estado global, já que Ruby também não permite múltiplos ambientes
  de execução isolados.
- Um estado é representado em Ruby da seguinte forma:
+ Uma classe é criada em Ruby com a função 
+\family typewriter 
+rb_define_class
+\family default 
+ e armazenada na struct do estado juntamente com um ponteiro para o ambiente.
+ Um estado é representado em 
+\family typewriter 
+libscript-ruby
+\family default 
+ da seguinte forma:
 \layout LyX-Code
 
 
@@ -11339,36 +11508,17 @@ typedef struct {
 
 
 \size footnotesize 
-   VALUE klass;
-\layout LyX-Code
-
-
-\size footnotesize 
    script_env* env;
 \layout LyX-Code
 
 
 \size footnotesize 
-   char* name;
+   VALUE klass;
 \layout LyX-Code
 
 
 \size footnotesize 
 } script_ruby_state;
-\layout Standard
-
-O campo 
-\family typewriter 
-name
-\family default 
- armazena o nome da classe seguindo a convenção de capitalização de Ruby,
- como ocorre em Perl.
-\layout Subsection
-
-Incialização de estados
-\layout Standard
-
-TODO
 \layout Subsection
 
 Encerramento de estados
@@ -11676,7 +11826,7 @@ static
 
 
 \size footnotesize 
-   free(state->name); free(state);
+   free(state);
 \layout LyX-Code
 
 
@@ -11694,25 +11844,7 @@ void script_plugin_done_python(script_python_state* state) {
 
 
 \size footnotesize 
-\emph on 
-   /* Decrementa o contador de estados, uma variável global 
-\emph default 
-static
-\emph on 
- do plugin.
- */
-\layout LyX-Code
-
-
-\size footnotesize 
    script_python_state_count--;
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-   /* Finaliza o interpretador se este for o último estado.
- */
 \layout LyX-Code
 
 
@@ -11727,18 +11859,12 @@ static
 
 
 \size footnotesize 
-\emph on 
-   /* Desaloca o resto do estado do plugin */
-\layout LyX-Code
-
-
-\size footnotesize 
    Py_DECREF(state->dict); free(state);
 \layout LyX-Code
 
 
 \size footnotesize 
-} 
+}
 \layout Subsection
 
 Transferência de dados
@@ -11818,49 +11944,58 @@ stubs
  recursos de introspecção oferecidos por cada API.
 \layout Standard
 
-Em Lua, durante a inicialização do plugin, é criada uma tabela armazenada
- em uma variável global, com o nome do 
-\emph on 
-namespace
-\emph default 
- declarado.
- Esta tabela tem associada a si uma metatabela cujo índice 
+Como vimos na Seção 
+\begin_inset LatexCommand \ref{sub:Representação-de-estados}
+
+\end_inset 
+
+, em Lua, durante a inicialização do plugin, é criada uma tabela armazenada
+ em uma variável global com o nome do ambiente.
+ Funções são inseridas dinamicamente nesta tabela através da metatabela
+ associada a ela logo após a sua criação em 
+\family typewriter 
+script_plugin_init_lua
+\family default 
+.
+ O índice 
 \family typewriter 
 __index
 \family default 
- aponta para uma função C interna ao plugin, 
+ da metatabela aponta para uma função C interna ao plugin, 
 \family typewriter 
-script_lua_\SpecialChar \-
-find_function
+script_lua_
 \family default 
-, que localiza a função solicitada na lista de funções registradas no ambiente.
- Após localizar a função, 
+\SpecialChar \-
+
 \family typewriter 
-script_lua_find_function
+make_caller
 \family default 
- associa à entrada da tabela do namespace outra função C interna, 
+, que é então invocada sempre que um elemento inexistente for solicitado
+ na tabela.
+ A função 
 \family typewriter 
-script_lua_call
+script_lua_make_caller
 \family default 
-, criando uma 
+ cria uma 
 \emph on 
-C closure
+closure
 \emph default 
- e associando a ela o endereço da função localizada como um 
-\emph on 
-upvalue
-\emph default 
+ C, que consiste de outra função C interna ao plugin, 
+\family typewriter 
+script_lua_caller
+\family default 
+ e o nome da função solicitada.
+ Esta closure é associada à entrada da tabela do ambiente.
+ Assim, chamadas a funções não contidas na tabela serão finalmente resolvidas
+ por 
+\family typewriter 
+script_lua_caller
+\family default 
+, que as passará adiante para 
+\family typewriter 
+script_call
+\family default 
 .
- Ao ser invocada, a função 
-\family typewriter 
-script_lua_call
-\family default 
- lê os valores da pilha de Lua (parâmetros de entrada) e os passa para o
- buffer de parâmetros de LibScript, invoca a função C armazenada no 
-\emph on 
-upvalue
-\emph default 
- e obtém os valores de retorno.
 \layout Standard
 
 No plugin Python, o espaço de nomes é declarado na inicialização como um
@@ -11873,7 +12008,7 @@ script_python_object
  uma função registrada em LibScript.
  Estes objetos possuem o seu callback 
 \family typewriter 
-tp_call
+__call
 \family default 
  definido como 
 \family typewriter 
@@ -11881,7 +12016,7 @@ script_python_object_call
 \family default 
 , uma função que, assim como 
 \family typewriter 
-script_lua_call
+script_lua_caller
 \family default 
 , converte os parâmetros recebidos para o buffer de LibScript, invoca a
  função armazenada no ponteiro C e converte os valores de entrada de volta
@@ -11964,19 +12099,167 @@ or como uma string.
  chamada como um número.
  Quando invocado, o método realizará uma chamada ao método 
 \family typewriter 
-script_call
+caller
 \family default 
- (que corresponde à função C 
+.
+ Este método, registrado na classe durante a inicialização, corresponde
+ à função C 
 \family typewriter 
-script_ruby_call
+script_ruby_caller
 \family default 
-) passando o endereço da função C como um número e os argumentos passados
+.
+ A ele é passado o endereço da função C como um número e os argumentos passados
  como um array Ruby.
  Ao receber estes dados em C, 
 \family typewriter 
-script_ruby_call
+script_ruby_caller
 \family default 
- irá então converter os parâmetros e invocar a função.
+ irá então converter os parâmetros para o buffer LibScript e invocar a função
+ usando 
+\family typewriter 
+script_call
+\family default 
+.
+\layout Standard
+
+No plugin Perl, também há uma função C responsável por realizar a conversão
+ de parâmetros e valores de retorno a invocação de 
+\family typewriter 
+script_call
+\family default 
+.
+ Esta função, 
+\family typewriter 
+script_perl_caller
+\family default 
+, para que possa ser exposta ao interpretador Perl, é implementada em um
+ arquivo XS, e compilada como parte de um módulo de extensão Perl, que é
+ então ligado ao código do plugin.
+ Uma vez carregado o módulo, a função é visível em Perl como a função 
+\family typewriter 
+LibScript::caller
+\family default 
+.
+ A resolução dinâmica de funções do pacote Perl correspondente ao ambiente
+ LibScript é feita usando a função 
+\family typewriter 
+AUTOLOAD
+\family default 
+ de Perl, que se comporta como method_missing em Ruby, capturando chamadas
+ a funções inexistentes.
+ Na função de inicialização do plugin, código Perl é executado para carregar
+ o módulo de extensão, inicializar o pacote do ambiente e inserir nele uma
+ função 
+\family typewriter 
+AUTOLOAD
+\family default 
+ que chamará 
+\family typewriter 
+LibScript::caller
+\family default 
+:
+\layout LyX-Code
+
+
+\size footnotesize 
+snprintf(code, LEN_CODE,
+\layout LyX-Code
+
+
+\size footnotesize 
+        
+\emph on 
+ /* Inicializa o módulo de extensão */
+\layout LyX-Code
+
+
+\size footnotesize 
+         "bootstrap LibScript;"
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+         /* Declara o pacote do ambiente */
+\layout LyX-Code
+
+
+\size footnotesize 
+         "package %s;"
+\layout LyX-Code
+
+
+\size footnotesize 
+         "sub AUTOLOAD {"
+\layout LyX-Code
+
+
+\size footnotesize 
+            "our $AUTOLOAD;"
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+            /* Extrai o nome do método do nome qualificado 
+\begin_inset Quotes eld
+\end_inset 
+
+pacote::método
+\begin_inset Quotes erd
+\end_inset 
+
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+            "$AUTOLOAD =~ s/[^:]*:://;"
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+            /* Invoca caller passando o endereço do estado,
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+               o nome do método, e o array de argumentos */
+\layout LyX-Code
+
+
+\size footnotesize 
+            "LibScript::caller(%p, $AUTOLOAD, @_);"
+\layout LyX-Code
+
+
+\size footnotesize 
+         "}",
+\layout LyX-Code
+
+
+\size footnotesize 
+         state->package, state);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Avalia a string de código;
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   TRUE indica que erros devem ser sinalizados.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+Perl_eval_pv(my_perl, code, TRUE);
 \layout Chapter
 
 
