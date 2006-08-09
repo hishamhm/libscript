@@ -21,6 +21,7 @@
 #include "libscript-ruby.h"
 
 static ID method_id;
+static ID state_id;
 
 static int script_ruby_state_count = 0;
 
@@ -93,7 +94,7 @@ INLINE static VALUE script_ruby_params_to_value(script_env* env) {
 
 INLINE static script_ruby_state* script_ruby_get_state_from_class(VALUE klass) {
    /* assumes a void* fits in long */
-   return (script_ruby_state*) NUM2LONG(rb_cv_get(klass, "@@_state"));
+   return (script_ruby_state*) NUM2LONG(rb_const_get(klass, state_id));
 }
 
 static VALUE script_ruby_call(VALUE self, VALUE fn_value, VALUE args) {
@@ -155,8 +156,9 @@ script_plugin_state script_plugin_init_ruby(script_env* env) {
    state->env = env;
    state->name[0] = toupper(state->name[0]);
    state->klass = rb_define_class(state->name, rb_cObject);
+   state_id = rb_intern("@@State");
    /* assuming a void* fits in a long */
-   rb_cv_set(state->klass, "@@_state", INT2NUM((long int)state));
+   rb_const_set(state->klass, state_id, INT2NUM((long int)state));
    method_id = rb_intern("method");
    rb_define_singleton_method(state->klass, "method_missing", script_ruby_method_missing, -1);
    rb_define_singleton_method(state->klass, "call", script_ruby_call, 2);
