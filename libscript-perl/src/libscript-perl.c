@@ -36,11 +36,10 @@ script_plugin_state script_plugin_init_perl(script_env* env) {
    snprintf(code, LEN_CODE,
    "bootstrap LibScript;"
    "package %s;"
-   "$__state = %p;"
    "sub AUTOLOAD {"
-      "our $AUTOLOAD, $__state;"
+      "our $AUTOLOAD;"
       "$AUTOLOAD =~ s/[^:]*:://;"
-      "LibScript::call($__state, $AUTOLOAD, @_);"
+      "LibScript::call(%p, $AUTOLOAD, @_);"
    "}",
    state->package, state);
    Perl_eval_pv(my_perl, code, TRUE);
