@@ -19,7 +19,7 @@ static SV * script_perl_param_to_sv(script_env* env, int i) {
 MODULE = LibScript	PACKAGE = LibScript	PREFIX = script_perl_
 
 SV *
-script_perl_call(state_i, name, ...)
+script_perl_caller(state_i, name, ...)
 	int state_i
 	char* name
 	CODE:

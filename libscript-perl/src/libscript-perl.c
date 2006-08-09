@@ -39,7 +39,7 @@ script_plugin_state script_plugin_init_perl(script_env* env) {
    "sub AUTOLOAD {"
       "our $AUTOLOAD;"
       "$AUTOLOAD =~ s/[^:]*:://;"
-      "LibScript::call(%p, $AUTOLOAD, @_);"
+      "LibScript::caller(%p, $AUTOLOAD, @_);"
    "}",
    state->package, state);
    Perl_eval_pv(my_perl, code, TRUE);
