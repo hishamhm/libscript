@@ -22,6 +22,7 @@
 
 static ID method_id;
 static ID state_id;
+static ID name_id;
 
 static int script_ruby_state_count = 0;
 
@@ -111,13 +112,15 @@ static VALUE script_ruby_call(VALUE self, VALUE fn_value, VALUE args) {
 
 static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
    script_ruby_state* state = script_ruby_get_state_from_class(self);
-   char *name = rb_id2name(SYM2ID(argv[0]));
-   script_fn fn = script_function(state->env, name);
+   char *method_name = rb_id2name(SYM2ID(argv[0]));
+   VALUE name_value = rb_funcall(self, name_id, 0);
+   char *class_name = StringValuePtr(name_value);
+   script_fn fn = script_function(state->env, method_name);
    if (fn) {
       char fn_code[1024];
       VALUE args;
       snprintf(fn_code, 1023, "def %s.%s(*args); %s.call(%ld, args); end;",
-         state->name, name, state->name, (long int) fn);
+         class_name, method_name, class_name, (long int) fn);
       rb_eval_string(fn_code);
       args = rb_ary_new4(argc - 1, argv+1);
       return script_ruby_call(self, rb_int_new((long int) fn), args);
@@ -127,7 +130,7 @@ static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
       script_reset_params(state->env);
       for (i = 1; i < argc; i++)
          script_ruby_put_value(state->env, i-1, argv[i]);
-      err = script_call(state->env, name);
+      err = script_call(state->env, method_name);
       if (err != SCRIPT_OK) {
          /* FIXME: I'm getting a Ruby segfault when Ruby raises exceptions. */
          rb_raise(rb_eRuntimeError, script_error_message(state->env));
@@ -140,7 +143,8 @@ static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
 
 script_plugin_state script_plugin_init_ruby(script_env* env) {
    script_ruby_state* state;
-   const char* name;
+   const char *name;
+   char *ruby_name;
    int name_size;
 
    name = script_namespace(env);
@@ -148,20 +152,22 @@ script_plugin_state script_plugin_init_ruby(script_env* env) {
       ruby_init();
       ruby_script("libscript");
    }
+   state_id = rb_intern("@@State");
+   name_id = rb_intern("name");
+   method_id = rb_intern("method");
    script_ruby_state_count++;
    state = malloc(sizeof(script_ruby_state));
    name_size = strlen(name) + 1;
-   state->name = malloc(name_size);
-   strncpy(state->name, name, name_size);
+   ruby_name = malloc(name_size);
+   strncpy(ruby_name, name, name_size);
    state->env = env;
-   state->name[0] = toupper(state->name[0]);
-   state->klass = rb_define_class(state->name, rb_cObject);
-   state_id = rb_intern("@@State");
+   ruby_name[0] = toupper(ruby_name[0]);
+   state->klass = rb_define_class(ruby_name, rb_cObject);
    /* assuming a void* fits in a long */
    rb_const_set(state->klass, state_id, INT2NUM((long int)state));
-   method_id = rb_intern("method");
    rb_define_singleton_method(state->klass, "method_missing", script_ruby_method_missing, -1);
    rb_define_singleton_method(state->klass, "call", script_ruby_call, 2);
+   free(ruby_name);
    return state;
 }
 
@@ -207,9 +213,7 @@ int script_plugin_call_ruby(script_ruby_state* state, char* fn) {
 
 void script_plugin_done_ruby(script_ruby_state* state) {
    script_ruby_state_count--;
-   free(state->name);
-   free(state);
-   if (script_ruby_state_count == 0) {
+   if (script_ruby_state_count == 0)
       ruby_finalize();
-   }
+   free(state);
 }

@@ -5,7 +5,6 @@
 typedef struct {
    script_env* env;
    VALUE klass;
-   char* name;
 } script_ruby_state;
 
 script_plugin_state script_plugin_init_ruby(script_env* env);
