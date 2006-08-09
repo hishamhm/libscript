@@ -98,7 +98,7 @@ INLINE static script_ruby_state* script_ruby_get_state_from_class(VALUE klass) {
    return (script_ruby_state*) NUM2LONG(rb_const_get(klass, state_id));
 }
 
-static VALUE script_ruby_call(VALUE self, VALUE fn_value, VALUE args) {
+static VALUE script_ruby_caller(VALUE self, VALUE fn_value, VALUE args) {
    int i, len;
    script_ruby_state* state = script_ruby_get_state_from_class(self);
    script_fn fn = (script_fn) NUM2LONG(fn_value);
@@ -119,11 +119,11 @@ static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
    if (fn) {
       char fn_code[1024];
       VALUE args;
-      snprintf(fn_code, 1023, "def %s.%s(*args); %s.call(%ld, args); end;",
+      snprintf(fn_code, 1023, "def %s.%s(*args); %s.caller(%ld, args); end;",
          class_name, method_name, class_name, (long int) fn);
       rb_eval_string(fn_code);
       args = rb_ary_new4(argc - 1, argv+1);
-      return script_ruby_call(self, rb_int_new((long int) fn), args);
+      return script_ruby_caller(self, rb_int_new((long int) fn), args);
    } else {
       script_err err;
       int i;
@@ -166,7 +166,7 @@ script_plugin_state script_plugin_init_ruby(script_env* env) {
    /* assuming a void* fits in a long */
    rb_const_set(state->klass, state_id, INT2NUM((long int)state));
    rb_define_singleton_method(state->klass, "method_missing", script_ruby_method_missing, -1);
-   rb_define_singleton_method(state->klass, "call", script_ruby_call, 2);
+   rb_define_singleton_method(state->klass, "caller", script_ruby_caller, 2);
    free(ruby_name);
    return state;
 }
