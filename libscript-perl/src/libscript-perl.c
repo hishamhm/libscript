@@ -73,5 +73,5 @@ script_err script_plugin_run_perl(script_perl_state* state, char* programtext) {
 
 script_err script_plugin_call_perl(script_plugin_state state, char* fn) {
    /* TODO: stub */
-   return SCRIPT_OK;
+   return SCRIPT_ERRFNUNDEF;
 }
