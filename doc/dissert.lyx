@@ -1057,8 +1057,8 @@ o swig é o cara mais porrada nesse aspecto, porque segundo reza a lenda
 APIs de Linguagens de Script
 \layout Standard
 
-FLIs providas por linguagens de script são usualmente compreendidas como
- 
+Interfaces providas por linguagens de script são usualmente compreendidas
+ como 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -1066,10 +1066,9 @@ APIs de extensão
 \begin_inset Quotes erd
 \end_inset 
 
-: elas servem ou para estender a máquina virtual ou interpretador com recursos
- não oferecidos por esta, ou para estender uma aplicação externa com os
- recursos oferecidos pelo ambiente de execução da linguagem, embutindo-o
- nesta aplicação.
+: elas servem para estender a máquina virtual com recursos não oferecidos
+ por esta, ou ainda para estender uma aplicação externa com os recursos
+ oferecidos pelo ambiente de execução da linguagem, embutindo-o nesta aplicação.
  O primeiro cenário é o utilizado no modelo de programação onde a coordenação
  de alto nível é realizada em uma linguagem interpretada e módulos compilados
  em linguagens como C e C++ são usados para acesso a bibliotecas externas
@@ -1101,7 +1100,8 @@ O principal complicador na interação entre linguagens de programação não
 \layout Standard
 
 Freqüentemente, o formato como estes dados são representados difere.
- Nestes casos, há três possibilidades.
+ Nestes casos, há três alternativas para realizar a transferência de dados
+ entre as duas linguagens.
  A mais simples é expor o dado à linguagem de destino como uma entidade
  opaca.
  A linguagem de destino recebe apenas algum tipo de 
@@ -1230,6 +1230,11 @@ Todos os valores na máquina virtual de Python são representados como objetos,
 \family typewriter 
 PyObject
 \family default 
+ 
+\begin_inset LatexCommand \cite{vanrossum-extpy}
+
+\end_inset 
+
 .
  Tipos mais específicos como 
 \family typewriter 
@@ -1260,7 +1265,7 @@ PyObject*
 \family default 
  como tipo sempre que se referem a objetos Python, mesmo quando são projetadas
  para atuar sobre valores Python de tipos mais específicos, como por exemplo
- 
+ a função 
 \family typewriter 
 PyString_Size
 \family default 
@@ -1285,11 +1290,6 @@ PyTypeObject
 \family typewriter 
 PyObject
 \family default 
- 
-\begin_inset LatexCommand \cite{vanrossum-extpy}
-
-\end_inset 
-
 .
  Cada tipo Python possui um 
 \family typewriter 
@@ -1312,11 +1312,15 @@ PyList_Type
 \family typewriter 
 PyObject_TypeCheck
 \family default 
- compara um objeto Python a um 
+ compara o tipo de um 
+\family typewriter 
+PyObject
+\family default 
+ a um 
 \family typewriter 
 PyTypeObject
 \family default 
-.
+ passado como parâmetro.
 \layout Standard
 
 Para a conversão de dados de C para Python, a linguagem oferece uma série
@@ -1378,16 +1382,6 @@ PyObject
 PyLong_\SpecialChar \-
 AsUnsignedLong
 \family default 
-, 
-\family typewriter 
-PyLong_\SpecialChar \-
-AsUnsignedLongLong
-\family default 
-, 
-\family typewriter 
-PyComplex_\SpecialChar \-
-RealAsDouble
-\family default 
  e 
 \family typewriter 
 PyString_\SpecialChar \-
@@ -1422,24 +1416,18 @@ tamanho
 
 
 \size footnotesize 
-PyObject *obj = PyString_FromStringAndSize(NULL, 51);
+PyObject* obj = PyString_FromStringAndSize(NULL, 51);
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-/* como sabemos que obj é uma string, podemos usar a versão macro da
+/* obtendo o ponteiro para a área de memória da string */
 \layout LyX-Code
 
 
 \size footnotesize 
-\emph on 
-   função PyString_AsString, que não realiza verificação de tipo */
-\layout LyX-Code
-
-
-\size footnotesize 
-char *s = PyString_AS_STRING(obj);
+char* s = PyString_AsString(obj);
 \layout LyX-Code
 
 
@@ -1457,40 +1445,6 @@ for (int i = 0; i < 5; i++, s+=10)
 
 \size footnotesize 
    snprintf(s, 11, "[%-8d]", random());
-\layout Standard
-
-Desta forma, evitamos a criação de uma string temporária em C que seria
- copiada ao ser passada para Python.
-\layout LyX-Code
-
-
-\size footnotesize 
-char *t = malloc(51);
-\layout LyX-Code
-
-
-\size footnotesize 
-for (int i = 0, char *s = t; i < 5; i++, s+=10)
-\layout LyX-Code
-
-
-\size footnotesize 
-   snprintf(s, 11, "[%-8d]", random());
-\layout LyX-Code
-
-
-\size footnotesize 
-PyObject* obj = PyString_FromStringAndSize(t, 51);
-\layout LyX-Code
-
-
-\size footnotesize 
-char* s = PyString_AS_STRING(obj);
-\layout LyX-Code
-
-
-\size footnotesize 
-free(t);
 \layout Standard
 
 Para alguns de seus tipos básicos que não possuem correspondente direto
@@ -1521,7 +1475,7 @@ PyObject
 \family default 
  passado será compatível, oferecendo melhor desempenho às custas de segurança.
  Estas funções podem ser identificadas pelos nomes em maiúsculas.
- As únicas macros de conversão oferecidas são 
+ Entre as macros de conversão oferecidas estão 
 \family typewriter 
 PyString_\SpecialChar \-
 AS_STRING
@@ -1531,29 +1485,11 @@ AS_STRING
 PyInt_\SpecialChar \-
 AS_LONG
 \family default 
-, 
-\family typewriter 
-PyFloat_\SpecialChar \-
-AS_DOUBLE
-\family default 
-, 
+ e 
 \family typewriter 
 PyUnicode_\SpecialChar \-
 AS_\SpecialChar \-
 UNICODE
-\family default 
- e 
-\family typewriter 
-PyUnicode_\SpecialChar \-
-AS_DATA
-\family default 
-, além de macros especiais para obter valores dos campos de objetos 
-\family typewriter 
-PyDateTime_DateTime
-\family default 
- e 
-\family typewriter 
-PyDateTime_Time
 \family default 
 .
 \layout Standard
@@ -1590,8 +1526,8 @@ str
  
 \layout Standard
 
-Objetos Python são armazenados como atributos de outros objetos, ou em módulos,
- que são espaços de nomes declarados globalmente.
+Em Python, objetos são armazenados em módulos, que são espaços de nomes
+ declarados globalmente, ou como atributos de objetos.
  Variáveis são armazenadas em um 
 \emph on 
 ambiente
@@ -1626,11 +1562,11 @@ str
 \family typewriter 
 __builtin__
 \family default 
- com 
+ com a função 
 \family typewriter 
 PyImport_AddModule
 \family default 
- e em seguida o dicionário do módulo com 
+ e em seguida o dicionário do módulo com a função 
 \family typewriter 
 PyModule_GetDict
 \family default 
@@ -1640,17 +1576,17 @@ PyModule_GetDict
 
 
 \size footnotesize 
-PyObject *builtins_module = PyImport_AddModule("__builtin__");
+PyObject* builtins_module = PyImport_AddModule("__builtin__");
 \layout LyX-Code
 
 
 \size footnotesize 
-PyObject *builtins = PyModule_GetDict(builtins_module);
+PyObject* builtins = PyModule_GetDict(builtins_module);
 \layout LyX-Code
 
 
 \size footnotesize 
-PyObject *str = PyDict_GetItemString(builtins, "str");
+PyObject* str = PyDict_GetItemString(builtins, "str");
 \layout Standard
 
 Em Python, 
@@ -1670,7 +1606,7 @@ str
 \family typewriter 
 PyObject_Str
 \family default 
-: sobre um objeto Python qualquer 
+ sobre um objeto Python qualquer 
 \family typewriter 
 obj
 \family default 
@@ -1679,15 +1615,26 @@ obj
 
 
 \size footnotesize 
-PyObject *result = PyObject_CallFunctionObjArgs(str, obj, NULL);
-\layout Standard
+\emph on 
+/* Esta é uma função vararg que recebe como argumentos adicionais uma lista
+\layout LyX-Code
 
-Funções C chamadas a partir de Python não recebem referências ao ambiente
- além dos parâmetros da chamada da função (que podem incluir o objeto 
-\family typewriter 
-self
-\family default 
-).
+
+\size footnotesize 
+\emph on 
+   terminada em NULL de PyObjects a serem passados à função Python indicada
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   no primeiro argumento.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject* result = PyObject_CallFunctionObjArgs(str, obj, NULL);
 \layout Standard
 
 O armazenamento de dados de C no espaço de objetos de Python pode ser feito
@@ -1698,17 +1645,8 @@ CObject
 \family default 
  encapsulando um ponteiro C qualquer, construindo assim um valor opaco para
  Python.
- As funções de construção deste tipo, 
-\family typewriter 
-PyCObject_\SpecialChar \-
-FromVoidPtr
-\family default 
- e 
-\family typewriter 
-PyCObject_\SpecialChar \-
-FromVoidPtrAndDesc
-\family default 
-, permitem associar ao dado uma função C a ser chamada quando o 
+ As funções de construção deste objetos deste tipo permitem associar ao
+ dado uma função C a ser chamada quando o 
 \family typewriter 
 CObject
 \family default 
@@ -1728,7 +1666,7 @@ s têm como objetivo principal permitir a passagem de dados em C de um módulo
 
 A outra forma consiste em declarar novos tipos Python através de estruturas
  em C.
- Em C, um tipo Python é composto de duas partes: um tipo 
+ Em C, um tipo Python é descrito em duas partes: um tipo 
 \emph on 
 struct,
 \emph default 
@@ -1737,7 +1675,7 @@ struct,
 \family typewriter 
 PyTypeObject
 \family default 
-, que descreverá o tipo.
+, que descreverá o tipo para Python.
  O exemplo a seguir ilustra a criação de um novo tipo Python em C.
  Inicialmente, temos 
 \family typewriter 
@@ -1779,7 +1717,7 @@ PyObject
 \family typewriter 
 PyObject*
 \family default 
-, este pode ser convertido para de volta para 
+, este pode ser convertido de volta para 
 \family typewriter 
 point
 \family default 
@@ -1804,7 +1742,26 @@ point_type
 \family typewriter 
 PyTypeObject
 \family default 
- que descreve o tipo Python relativo a eles:
+ que descreve o tipo Python relativo a eles
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Para maior brevidade, apresentamos o exemplo usando a sintaxe para descrição
+ de structs de C99, evitando-nos de listar os elementos a serem inicializados
+ com 
+\family typewriter 
+NULL
+\family default 
+, já que a struct 
+\family typewriter 
+PyTypeObject
+\family default 
+ possui 54 campos ao todo.
+\end_inset 
+
+:
 \layout LyX-Code
 
 
@@ -2061,7 +2018,24 @@ PyTypeObject
 \family typewriter 
 point_type
 \family default 
- em tempo de execução:
+ em tempo de execução.
+ A documentação recomenda inicializar em tempo de execução a função padrão
+ de construção de objetos, 
+\family typewriter 
+PyType_GenericNew
+\family default 
+, por razões de portabilidade 
+\begin_inset LatexCommand \cite{vanrossum-extpy}
+
+\end_inset 
+
+.
+ Finalmente, o preenchimento dos campos não definidos na declaração da struct
+ é feita pela função 
+\family typewriter 
+PyType_Ready
+\family default 
+.
 \layout LyX-Code
 
 
@@ -2120,46 +2094,37 @@ globals
 
 \size footnotesize 
 PyDict_SetItemString(globals, "P", (PyObject*) a_point);
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-/* Código Python usando o valor */
-\layout LyX-Code
-
-
-\size footnotesize 
-PyRun_SimpleString( "print 'P.x = ' + str(P.x) 
-\backslash 
-n"
-\layout LyX-Code
-
-
-\size footnotesize 
-                    "print 'P.y = ' + str(P.y) 
-\backslash 
-n"
-\layout LyX-Code
-
-
-\size footnotesize 
-                    "print 'd   = ' + str(P.distance()) 
-\backslash 
-n" );
 \layout Standard
 
-A API possui um grande número de funções para manipulação de tipos pré-definidos
- de Python.
+Uma vez declarado em C, este valor pode ser usado em Python:
+\layout LyX-Code
+
+
+\size footnotesize 
+print 'P.x = ' + str(P.x)
+\layout LyX-Code
+
+
+\size footnotesize 
+print 'P.y = ' + str(P.y)
+\layout LyX-Code
+
+
+\size footnotesize 
+print 'd   = ' + str(P.distance())
+\layout Standard
+
+A API de Python possui um grande número de funções para manipulação de tipos
+ pré-definidos da linguagem.
  
 \emph on 
 Tuplas
 \emph default 
  merecem menção especial no que tange à transferência de dados entre Python
- e C, pois podem ser usadas tanto para passagem de parâmetros em chamadas
- a funções Python a partir de C, para recebimento dos parâmetros de entrada
- em funções C como para passagem e recebimento de múltiplos valores de retorno,
- como será visto nas Seções 
+ e C, pois são usadas em diversos contextos: na passagem de parâmetros em
+ chamadas a funções Python a partir de C, no recebimento dos parâmetros
+ de entrada em funções C e também na passagem e recebimento de múltiplos
+ valores de retorno, como será visto nas Seções 
 \begin_inset LatexCommand \ref{sub:Python-Chamada}
 
 \end_inset 
@@ -2725,7 +2690,12 @@ VALUE point_initialize_copy(VALUE copy, VALUE orig) {
 
 
 \size footnotesize 
-   point *p_copy, *p_orig;
+   point* p_copy;
+\layout LyX-Code
+
+
+\size footnotesize 
+   point* p_orig;
 \layout LyX-Code
 
 
@@ -2816,7 +2786,7 @@ VALUE point_distance(VALUE self) {
 
 
 \size footnotesize 
-   point *p;
+   point* p;
 \layout LyX-Code
 
 
@@ -3474,7 +3444,7 @@ JNIEXPORT void JNICALL
 
 
 \size footnotesize 
-Java_ExemploJNI_segundoElemento(JNIEnv *J, jobject this) {
+Java_ExemploJNI_segundoElemento(JNIEnv* J, jobject this) {
 \layout LyX-Code
 
 
@@ -5396,12 +5366,12 @@ collapsed false
 
 
 \size footnotesize 
-void bug(PyObject *list) {
+void bug(PyObject* list) {
 \layout LyX-Code
 
 
 \size footnotesize 
-   PyObject *item = PyList_GetItem(list, 0);
+   PyObject* item = PyList_GetItem(list, 0);
 \layout LyX-Code
 
 
@@ -5436,12 +5406,12 @@ PyObject_Print
 
 
 \size footnotesize 
-void no_bug(PyObject *list) {
+void no_bug(PyObject* list) {
 \layout LyX-Code
 
 
 \size footnotesize 
-   PyObject *item = PyList_GetItem(list, 0);
+   PyObject* item = PyList_GetItem(list, 0);
 \layout LyX-Code
 
 
@@ -6340,7 +6310,7 @@ JNIEXPORT jstring JNICALL
 
 
 \size footnotesize 
-Java_Exemplo_concatArray(JNIEnv *J, jobject this, jobjectArray a) {
+Java_Exemplo_concatArray(JNIEnv* J, jobject this, jobjectArray a) {
 \layout LyX-Code
 
 
@@ -7222,12 +7192,12 @@ teste
 
 
 \size footnotesize 
-PyObject *globals = PyModule_GetDict(PyImport_AddModule("__main__"));
+PyObject* globals = PyModule_GetDict(PyImport_AddModule("__main__"));
 \layout LyX-Code
 
 
 \size footnotesize 
-PyObject *teste = PyDict_GetItemString(globals, "teste");
+PyObject* teste = PyDict_GetItemString(globals, "teste");
 \layout LyX-Code
 
 
@@ -7244,7 +7214,7 @@ PyObject *teste = PyDict_GetItemString(globals, "teste");
 
 
 \size footnotesize 
-PyObject *obj_result = PyObject_CallFunction(teste, "si", "entrada", 2);
+PyObject* obj_result = PyObject_CallFunction(teste, "si", "entrada", 2);
 \layout LyX-Code
 
 
@@ -9221,7 +9191,7 @@ __main__
 
 
 \size footnotesize 
-PyObject *globals = PyModule_GetDict(PyImport_AddModule("__main__"));
+PyObject* globals = PyModule_GetDict(PyImport_AddModule("__main__"));
 \layout LyX-Code
 
 
@@ -9769,7 +9739,7 @@ JNIEXPORT jint JNICALL
 
 
 \size footnotesize 
-Java_Exemplo_teste(JNIEnv *J, jclass c, jstring obj_entrada, jint n) {
+Java_Exemplo_teste(JNIEnv* J, jclass c, jstring obj_entrada, jint n) {
 \layout LyX-Code
 
 
