@@ -535,9 +535,9 @@ O .NET Framework
 \end_inset 
 
 , o ambiente tem como um de seus objetivos oferecer suporte a múltiplas
- linguagens---evidenciado pelo próprio nome Common Language Runtime (CLR)---em
- contraste com as limitações que o ambiente de Java impõe àqueles que tentam
- utilizá-lo com outras linguagens.
+ linguagens -- evidenciado pelo próprio nome Common Language Runtime (CLR)
+ -- em contraste com as limitações que o ambiente de Java impõe àqueles
+ que tentam utilizá-lo com outras linguagens.
  Todavia, adaptações às linguagens continuam necessárias com o ambiente
  .NET: A versão .NET de Visual Basic inclui alterações na linguagem de modo
  a tornar a sua semântica mais similar à de C#; um novo dialeto de C++,
@@ -667,7 +667,7 @@ bindings
 \emph default 
  para algum destes modelos de objetos é necessário definir uma correspondência
  entre os tipos definidos pelo modelo e os oferecidos pela linguagem destino
- e prover a esta uma API para interação com o ambiente de execução---no
+ e prover a esta uma API para interação com o ambiente de execução -- no
  caso de CORBA, com o ORB (
 \emph on 
 Object Request Broker
@@ -1205,7 +1205,7 @@ A alternativa para permitir que código C opere sobre dados estruturados,
  Isto evita também a necessidade de controlar a consistência entre duas
  cópias de uma mesma estrutura.
  Problemas de consistência, entretanto, podem ocorrer caso a API permita
- ao código C armazenar ponteiros para objetos da linguagem---isto torna
+ ao código C armazenar ponteiros para objetos da linguagem -- isto torna
  necessário ao programador gerenciar explicitamente a sincronia entre os
  ponteiros e o ciclo de vida dos objetos, que podem estar sujeitos a coleta
  de lixo.
@@ -2156,13 +2156,10 @@ PyArg_ParseTuple
 vararg
 \emph default 
  que recebe como parâmetros a tupla, uma string indicando os tipos dos parâmetro
-s esperados e os endereços dos ponteiros para os 
-\family typewriter 
-PyObject
-\family default 
-s onde os parâmetros devem ser armazenados.
- A função define uma sintaxe para os indicadores de tipo da string passada
- e os tipos C correspondentes.
+s esperados e os endereços onde os valores, convertidos para tipos C, devem
+ ser armazenados.
+ A função define uma sintaxe para os indicadores de tipo especificados na
+ string passada e os tipos C correspondentes.
  Por exemplo: 
 \family typewriter 
 "s#"
@@ -2227,7 +2224,10 @@ De forma similar, a API de Python possui a função
 \family typewriter 
 Py_BuildValue
 \family default 
-, que permite a construção de objetos estruturados em uma só chamada.
+, que permite a construção de objetos estruturados, como tuplas, listas
+ e dicionários, em uma só chamada.
+ Esta função é freqüentemente usada tanto para a construção da tupla de
+ parâmetros ao chamar funções como para valores de retorno.
  A sintaxe da string de parâmetros é similar à de 
 \family typewriter 
 PyArg_ParseTuple
@@ -2244,12 +2244,20 @@ PyArg_ParseTuple
 PyObject* lista = Py_BuildValue("[id{si}]", 123, 12.30, "foo", 1234);
 \layout Standard
 
-Esta função é útil tanto para construir tuplas em funções C que desejem
- passar múltiplos valores de retorno de volta a Python, como para construir
- a tupla de parâmetros ao chamar funções Python a partir de C.
+Isto equivale à seguinte construção em Python:
+\layout LyX-Code
+
+
+\size footnotesize 
+lista = [123, 12.30, {"foo": 1234}]
 \layout Subsection
 
 Ruby
+\begin_inset LatexCommand \label{sub:Ruby-dados}
+
+\end_inset 
+
+
 \layout Standard
 
 Para a comunicação de dados entre Ruby e C, a API de Ruby define um tipo
@@ -2257,7 +2265,7 @@ Para a comunicação de dados entre Ruby e C, a API de Ruby define um tipo
 \family typewriter 
 VALUE
 \family default 
-, que referencia um objeto Ruby.
+, que representa um objeto Ruby.
  
 \family typewriter 
 VALUE
@@ -2286,20 +2294,6 @@ Qnil
 ==
 \family default 
 .
- Para os tipos numéricos, a conversão entre C e Ruby é feita através de
- macros como 
-\family typewriter 
-INT2NUM
-\family default 
- e de funções como 
-\family typewriter 
-rb_float_new
-\family default 
-, que recebem ou retornam 
-\family typewriter 
-VALUE
-\family default 
-s.
 \layout Standard
 
 Para a verificação de tipos, Ruby disponibiliza as macros 
@@ -2315,8 +2309,8 @@ TYPE
 \family typewriter 
 Check_Type
 \family default 
- que permite comparar valores a constantes representando alguns tipos básicos
- de Ruby como 
+ permite comparar o tipo de valores a constantes que descrevem os tipos
+ básicos de Ruby como 
 \family typewriter 
 T_OBJECT
 \family default 
@@ -2337,6 +2331,22 @@ rb_class_of
 .
 \layout Standard
 
+Para a transferência de valores numéricos, a conversão entre C e Ruby é
+ feita através de macros como 
+\family typewriter 
+INT2NUM
+\family default 
+ e de funções como 
+\family typewriter 
+rb_float_new
+\family default 
+, que recebem ou retornam 
+\family typewriter 
+VALUE
+\family default 
+s.
+\layout Standard
+
 Para a passagem de strings para Ruby a partir de C, são oferecidas as funções
  
 \family typewriter 
@@ -2353,8 +2363,8 @@ rb_str_new2
 \family typewriter 
  VALUE
 \family default 
-s que apontam para strings de Ruby permitem acessar o seu conteúdo através
- do 
+s que apontam para strings de Ruby permitem acessar e alterar o seu conteúdo
+ através do 
 \emph on 
 cast
 \emph default 
@@ -2505,6 +2515,11 @@ Point
 \layout LyX-Code
 
 
+\begin_inset LatexCommand \label{struct-point}
+
+\end_inset 
+
+
 \size footnotesize 
 typedef struct {
 \layout LyX-Code
@@ -2549,8 +2564,8 @@ void point_free(void* p) {
 }
 \layout LyX-Code
 
-\layout LyX-Code
-
+ 
+\newline 
 
 \size footnotesize 
 VALUE point_alloc(VALUE point_class) {
@@ -2563,7 +2578,25 @@ VALUE point_alloc(VALUE point_class) {
 
 
 \size footnotesize 
-   return Data_Wrap_Struct(point_class, 0, point_free, p);
+\emph on 
+   /* O segundo corresponde à função de marcação para coleta de lixo
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      (NULL aqui pois o tipo não armazena VALUEs), cf.
+ Seção 
+\begin_inset LatexCommand \ref{sub:Ruby-GC}
+
+\end_inset 
+
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+   return Data_Wrap_Struct(point_class, NULL, point_free, p);
 \layout LyX-Code
 
 
@@ -2575,7 +2608,15 @@ Note que
 \family typewriter 
 Data_Wrap_Struct
 \family default 
- faz uso de um VALUE que representa a classe Point em Ruby.
+ faz uso de um 
+\family typewriter 
+VALUE
+\family default 
+ que representa a classe 
+\family typewriter 
+Point
+\family default 
+ em Ruby.
  Classes são criadas em C com a função 
 \family typewriter 
 rb_define_class
@@ -2796,7 +2837,7 @@ VALUE point_distance(VALUE self) {
 
 
 \size footnotesize 
-   return rb_float_new( sqrt(pow(p->x,2)+pow(p->y,2)) ); 
+   return rb_float_new( sqrt(p->x*p->x + p->y*p->y)) ); 
 \layout LyX-Code
 
 
@@ -2843,7 +2884,7 @@ A função
 rb_class_new_instance
 \family default 
  produz novos objetos Ruby que são instâncias da classe, recebendo um array
- de 
+ C de 
 \family typewriter 
 VALUE
 \family default 
@@ -2926,7 +2967,55 @@ s correspondem ao tipo
 símbolo
 \emph default 
  de Ruby, que na prática são strings imutáveis.
- 
+ O seguinte exemplo obtém o valor de uma variável global 
+\family typewriter 
+x
+\family default 
+ e a atribui ao campo 
+\family typewriter 
+x
+\family default 
+ de um objeto, e depois altera o valor da variável global para zero:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Obtém variável global */
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE x = rb_gv_get("x");
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Atribui ao campo x do objeto obj */
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE obj = rb_gv_get("obj");
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_iv_set(obj, "x", x);
+\emph on 
+ /* Equivale a: rb_ivar_set(obj, rb_intern("x"), x); */
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Zera a variável global */
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_gv_set("x", INT2NUM(0));
 \layout Standard
 
 
@@ -2995,8 +3084,8 @@ tipos de referências
 jobject
 \family default 
 .
- Strings e arrays também são objetos em Java e são portanto também expostos
- como instâncias de
+ Strings e arrays também são objetos em Java e são portanto expostos como
+ instâncias de
 \family typewriter 
  jobject
 \family default 
@@ -3133,7 +3222,7 @@ arrays de arrays
 \begin_inset Quotes erd
 \end_inset 
 
- e, portanto, são, exceto na última dimensão, também arrays de objetos.
+ e, portanto, são também arrays de objetos.
 \end_inset 
 
 .
@@ -3187,14 +3276,19 @@ Release\SpecialChar \-
 PrimitiveArrayCritical
 \family default 
 ).
- Para arrays de objetos, é possível apenas obter elementos do array um a
- um, sob forma de referências 
+ Para arrays de objetos, não é possível obter um ponteiro para o buffer
+ interno do array, mas somente acessar e modificar os seus elementos um
+ a um, sob forma de referências 
 \family typewriter 
 jobject
 \family default 
 , com 
 \family typewriter 
-GetObjectArrayElement
+Get
+\family default 
+/
+\family typewriter 
+SetObjectArrayElement
 \family default 
 .
 \layout Standard
@@ -3222,15 +3316,19 @@ GetIntField
 GetStaticIntField
 \family default 
 .
- Todas estas funções recebem como parâmetro um 
-\emph on 
-identificador de campo
-\emph default 
-, do tipo 
+ Assim como Ruby, a API de Java define um tipo C específico para evitar
+ o uso freqüente de strings C na descrição de campos.
+ Todavia, enquanto Ruby utiliza 
+\family typewriter 
+ID
+\family default 
+s que são simplesmente strings internalizadas, em Java os identificdadores
+ de campo, do tipo 
 \family typewriter 
 jfieldID
 \family default 
-.
+, contêm informação de tipo e são específicos para o campo de uma determinada
+ classe.
  Estes valores são obtidos com uma chamada a 
 \family typewriter 
 GetFieldID
@@ -3289,17 +3387,36 @@ java.lang.reflect.Field
 FromReflectedField
 \family default 
 .
- Diferentemente de 
+\layout Standard
+
+As chamadas à JNI têm o formato 
 \family typewriter 
-ID
+(*J)->
 \family default 
-s de Ruby, 
+\emph on 
+função
 \family typewriter 
-jfieldID
+\emph default 
+(J,
 \family default 
-s contêm informação de tipo e são específicos para o campo de uma determinada
- classe.
- 
+ ...
+\family typewriter 
+)
+\family default 
+: funções da JNI são acessadas através de ponteiros para função armazenados
+ em uma tabela apontada pela estrutura 
+\family typewriter 
+JNIEnv
+\family default 
+, que por sua vez é propagada nas chamadas.
+ O objetivo destes dois níveis de indireção é desacoplar a ligação das chamadas
+ no código C e a biblioteca que implementa a JNI, permitindo ligar o código
+ em tempo de execução a diferentes implementações da JVM 
+\begin_inset LatexCommand \cite{stepanian-jni}
+
+\end_inset 
+
+.
 \layout Standard
 
 
@@ -3450,7 +3567,7 @@ Java_ExemploJNI_segundoElemento(JNIEnv* J, jobject this) {
 
 \size footnotesize 
 \emph on 
-   /* Obter a classe ExemploJNI (this) */
+   /* Obter a classe de this: ExemploJNI */
 \layout LyX-Code
 
 
@@ -3639,39 +3756,13 @@ ReleaseStringUTFChars
 .
 \layout Standard
 
-É interessante ainda notar que as chamadas à JNI têm o formato 
-\family typewriter 
-(*J)->
-\family default 
-\emph on 
-função
-\family typewriter 
-\emph default 
-(J, ...)
-\family default 
-: funções da JNI são acessadas através de ponteiros para função armazenados
- em uma tabela apontada pela estrutura 
-\family typewriter 
-JNIEnv
-\family default 
-, que por sua vez é propagada nas chamadas.
- O objetivo destes dois níveis de indireção é desacoplar a ligação das chamadas
- no código C e a biblioteca que implementa a JNI, permitindo ligar o código
- em tempo de execução a diferentes implementações da JVM 
-\begin_inset LatexCommand \cite{stepanian-jni}
-
-\end_inset 
-
-.
-\layout Standard
-
 A manipulação de objetos do tipo 
 \family typewriter 
 Class
 \family default 
  também é feita através de funções específicas.
- É possível criar uma nova classe Java em tempo de execução a partir da
- API C usando a função 
+ Não é possível criar classes Java através da API C, mas é possível carregar
+ classes em tempo de execução usando a função 
 \family typewriter 
 DefineClass
 \family default 
@@ -3779,11 +3870,13 @@ collapsed true
 
 \layout Standard
 
-O parâmetro 
+Funções da API que operam sobre um estado de execução Lua recebem um parâmetro
+ inicial (nos exemplos, chamado de 
 \family typewriter 
 L
 \family default 
- será explicado mais adiante, na Seção 
+) indicando o estado a que se referem.
+ Isto será discutido mais adiante, na Seção 
 \begin_inset LatexCommand \ref{sub:Lua-Registro}
 
 \end_inset 
@@ -3826,7 +3919,8 @@ lua_tonumber
 lua_tolstring
 \family default 
 , que recebem um índice da pilha, convertem o valor no índice para o tipo
- Lua especificado, e retornam o valor no tipo C equivalente.
+ Lua especificado se necessário, e retornam o valor convertido para o tipo
+ C equivalente.
  Números têm o tipo C 
 \family typewriter 
 lua_Number
@@ -3903,13 +3997,18 @@ lua_pushlightuserdata
 \family default 
 , permitem armazenar ponteiros de C em Lua; a alocação e gerência do bloco
  de memória ficam a cargo do código C.
- O seguinte exemplo ilustra as diferenças entre full e light userdata.
- Comparemos a criação de dois objetos, assumindo a mesma struct 
+ O seguinte exemplo ilustra o uso de userdata, assumindo a mesma struct
+ 
 \family typewriter 
 point
 \family default 
- definida na seção anterior.
- Primeiro, a criação de um full userdata:
+ definida na página 
+\begin_inset LatexCommand \pageref{struct-point}
+
+\end_inset 
+
+.
+ O userdata é criado da seguinte forma:
 \layout LyX-Code
 
 
@@ -3955,166 +4054,67 @@ PontoFull
 
 
 \size footnotesize 
-lua_setglobal(L, "PontoFull");
+lua_setglobal(L, "Ponto");
 \layout Standard
 
-
-\family roman 
-E, em seguida, de um light userdata:
+A seguir, o acesso:
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-/* Aloca um 
-\emph default 
-point
-\emph on 
- a ser referenciado via light userdata.
- */
+/* Empilha a global Ponto */
 \layout LyX-Code
 
 
 \size footnotesize 
-point* light_p = (point*) malloc(sizeof(point));
+lua_getglobal(L, "Ponto");
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-/* Armazena o ponteiro na pilha de Lua.
- O bloco de memória
+/* Obtém o ponteiro C do userdata no topo da pilha (posição -1) */
 \layout LyX-Code
 
 
 \size footnotesize 
-\emph on 
-   para que ele aponta ainda é responsabilidade do código C.
- */
+point* p = (point*) lua_touserdata(L, -1);
 \layout LyX-Code
 
 
 \size footnotesize 
-lua_pushlightuserdata(L, light_p);
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-/* Utilizamos então o ponteiro em C...
- */
-\layout LyX-Code
-
-
-\size footnotesize 
-light_p->x = 100; light_p->y = 200;
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-/* Atribui o objeto à variável global 
-\emph default 
-PontoLight
-\emph on 
- */
-\layout LyX-Code
-
-
-\size footnotesize 
-lua_setglobal(L, "PontoLight");
-\layout Standard
-
-
-\family roman 
-O acesso a ambos é 
-\family default 
-feito de forma 
-\family roman 
-igual:
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-/* Empilha as globais 
-\emph default 
-PontoFull
-\emph on 
- e 
-\emph default 
-PontoLight
-\emph on 
- */
-\layout LyX-Code
-
-
-\size footnotesize 
-lua_getglobal(L, "PontoFull");
-\layout LyX-Code
-
-
-\size footnotesize 
-lua_getglobal(L, "PontoLight");
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-/* Obtém o ponteiro C do userdata no topo da pilha (posição -1),
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-   e o do userdata logo abaixo dele (posição -2) */
-\layout LyX-Code
-
-
-\size footnotesize 
-point* pl = (point*) lua_touserdata(L, -1);
-\layout LyX-Code
-
-
-\size footnotesize 
-point* pf = (point*) lua_touserdata(L, -2);
-\layout LyX-Code
-
-
-\size footnotesize 
-printf("(%d,%d), (%d,%d)
+printf("(%d,%d)
 \backslash 
-n", pl->x, pl->y, pf->x, pf->y);
+n", p->x, p->y);
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-/* Restaura a pilha à posição original, removendo os 2 itens.
+/* Restaura a pilha à posição original, removendo o item.
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-   Eles não serão coletados pois estão associados às variáveis globais.
+   Ele não será coletado pois está associado à variável global.
  */
 \layout LyX-Code
 
 
 \size footnotesize 
-lua_pop(L, 2);
+lua_pop(L, 1);
 \layout Standard
 
-A desalocação dos objetos, entretanto, ocorre de forma diferente, já que
- um bloco de memória é gerenciado por Lua e outro por C.
- Assumindo que a global 
+Assumindo que a global 
 \family typewriter 
-PontoFull
+Ponto
 \family default 
  é a única referência para este bloco, para liberá-lo basta sobrescrevermos
  
 \family typewriter 
-PontoFull
+Ponto
 \family default 
 , por exemplo, com 
 \family typewriter 
@@ -4132,36 +4132,6 @@ lua_pushnil(L);
 
 \size footnotesize 
 lua_setglobal(L, "PontoFull");
-\layout Standard
-
-Para light userdata, devemos obter o ponteiro e liberar a memória manualmente,
- em C.
- Como usaremos 
-\family typewriter 
-free
-\family default 
- de forma explícita,
-\emph on 
- 
-\emph default 
-a memória é liberada instantaneamente.
- Entretanto, se houverem outros light userdata apontando para este bloco,
- eles passarão a conter ponteiros inválidos.
-\layout LyX-Code
-
-
-\size footnotesize 
-lua_getglobal(L, "PontoLight");
-\layout LyX-Code
-
-
-\size footnotesize 
-point* p = (point*) lua_touserdata(L, -1);
-\layout LyX-Code
-
-
-\size footnotesize 
-free(p);
 \layout Standard
 
 A área de armazenamento da pilha não se ajusta dinamicamente e as funções
@@ -4302,36 +4272,26 @@ LUA_ENVIRONINDEX
 \family default 
 , para isolar dados a serem compartilhados internamente em funções de módulos
  escritos em C.
- Neste exemplo, mostramos como o ambiente global pode ser manipulado como
- uma tabela:
+ Exemplificando, o ambiente global pode ser manipulado como uma tabela desta
+ forma:
 \layout LyX-Code
 
 
 \size footnotesize 
-\emph on 
-/* Isto...
- */
-\layout LyX-Code
-
-
-\size footnotesize 
-lua_getglobal(L, "PontoLight");
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-/* ...equivale a: */
-\layout LyX-Code
-
-
-\size footnotesize 
-lua_pushstring(L, "PontoLight");
+lua_pushstring(L, "Ponto");
 \layout LyX-Code
 
 
 \size footnotesize 
 lua_gettable(L, LUA_GLOBALSINDEX);
+\layout Standard
+
+Isto é equivalente a:
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_getglobal(L, "Ponto");
 \layout Subsection
 
 Perl
@@ -4515,16 +4475,18 @@ av
 \family typewriter 
 hv
 \family default 
- Passando um nome de variável inexistente e usando 
+ indica se a variável deve ser criada se o nome passado não corresponder
+ a uma variável existente.
+ Passar um nome inexistente e usar 
 \family typewriter 
 TRUE
 \family default 
- no segundo parâmetro de , criamos uma nova variável acessível no espaço
- de C já realizando o 
+ no segundo parâmetro é uma forma conveniente de criar uma nova variável
+ acessível no espaço de C já realizando o 
 \emph on 
 binding
 \emph default 
- do nome no espaço de Perl.
+ desta no espaço de Perl.
 \layout LyX-Code
 
 
@@ -4795,12 +4757,24 @@ hv_fetch
 \family typewriter 
 hv_exists
 \family default 
- permitem operar sobre elementos das estruturas -- referências para elementos
- são retornadas como ponteiros para 
+ permitem operar sobre elementos das estruturas.
+ Em 
 \family typewriter 
-SV
+av_fetch
 \family default 
-.
+ e 
+\family typewriter 
+hv_fetch
+\family default 
+, o tipo de retorno é 
+\family typewriter 
+SV**
+\family default 
+, para diferenciar o retorno de um elemento existente que aponta para 
+\family typewriter 
+NULL
+\family default 
+ de um elemento não encontrado.
  No exemplo a seguir, criaremos um array Perl contendo os 10 primeiros elementos
  da série de Fibonacci:
 \layout LyX-Code
@@ -5208,8 +5182,8 @@ ores, o programador deve levar em consideração as diferenças entre os modelos
 É preciso, então, indicar a partir do código C que os dados que continuam
  acessíveis por ele não devem ser coletados.
  De forma complementar, ao transferir o controle de objetos C para o domínio
- da outra linguagem---por exemplo, para armazená-los em uma estrutura de
- dados desta---é necessário indicar à linguagem como desalocar a memória
+ da outra linguagem -- por exemplo, para armazená-los em uma estrutura de
+ dados desta -- é necessário indicar à linguagem como desalocar a memória
  da estrutura quando o coletor de lixo detectar que ela não está mais em
  uso.
  A forma como a FLI irá fornecer estas funcionalidades depende não só do
@@ -5351,7 +5325,7 @@ PyTuple_SetItem
 \family typewriter 
 PyList_SetItem
 \family default 
- é uma chamada gera um novo objeto a ser armazenado na lista.
+ é uma chamada que gera um novo objeto a ser armazenado na lista.
  Assim, evita-se que o programador tenha que armazenar um ponteiro para
  o objeto apenas para decrementar a sua referência posteriormente.
 \layout Standard
@@ -5592,11 +5566,10 @@ PyTypeObject
 \layout Standard
 
 Ao desalocar estruturas de dados como listas pode-se provocar uma cadeia
- arbitrariamente grande de desalocações, à medida que o decremento da contagem
- de referências de cada elemento reduz o número de referências do objeto
- seguinte da estrutura para zero, disparando a função de desalocação recursivame
-nte.
- Isto pode facilmente causar estouro da pilha de C.
+ arbitrariamente grande de desalocações, à medida que cada elemento desencadeia
+ a desalocação do próximo elemento da estrutura.
+ Isto dispara a função de desalocação recursivamente e poderia facilmente
+ causar estouro da pilha de C.
  Para contornar este problema, Python inclui um par de macros, 
 \family typewriter 
 Py_TRASHCAN_SAFE_BEGIN
@@ -5606,21 +5579,32 @@ Py_TRASHCAN_SAFE_BEGIN
 Py_TRASHCAN_SAFE_END
 \family default 
 , que controla o número de níveis de recursão aceitos.
- Quando a pilha de chamadas excede um valor limite definido na constante
+ A cada execução de 
+\family typewriter 
+Py_TRASHCAN_SAFE_BEGIN
+\family default 
+ um contador interno é incrementado.
+ Enquanto este contador não atingir o valor limite definido na constante
  
 \family typewriter 
 PyTrash_UNWIND_LEVEL
 \family default 
- (50 por padrão), 
+ (50 por padrão), a função executa normalmente.
+ Quando o limite é atingido, 
 \family typewriter 
 Py_TRASHCAN_SAFE_BEGIN
 \family default 
- armazena o objeto em uma lista e salta diretamente para 
+ armazena o objeto em uma lista interna e salta diretamente para 
 \family typewriter 
 Py_TRASHCAN_SAFE_END
 \family default 
-, adiando a execução da função de desalocação.
- Quando a pilha diminui de volta ao tamanho original, 
+, evitando desalocar o objeto e entrar em recursão novamente.
+ Ao final de cada nível da recursão, a macro 
+\family typewriter 
+Py_TRASHCAN_SAFE_END
+\family default 
+ decrementa o contador.
+ Quando o contador chega a zero, 
 \family typewriter 
 Py_TRASHCAN_SAFE_END
 \family default 
@@ -5628,8 +5612,27 @@ Py_TRASHCAN_SAFE_END
 \family typewriter 
 tp_dealloc
 \family default 
- sobre os elementos da lista de pendências, reiniciando assim a recursão.
- 
+ sobre os elementos armazenados na lista interna, reiniciando assim a recursão
+ sobre a estrutura.
+ Assim, uma cadeia de 
+\begin_inset Formula $n$
+\end_inset 
+
+ desalocações é quebrada em 
+\begin_inset Formula $n/$
+\end_inset 
+
+
+\family typewriter 
+PyTrash_UNWIND_LEVEL
+\family default 
+ cadeias, nenhuma excedendo 
+\family typewriter 
+PyTrash_UNWIND_LEVEL
+\family default 
+ níveis de recursão na pilha de C.
+ As implementações dos principais tipos estruturados de Python, como listas,
+ tuplas e dicionários, fazem uso deste mecanismo.
 \layout Standard
 
 O modelo de coleta de lixo utilizando contagem de referências traz consigo
@@ -5650,7 +5653,7 @@ tp_traverse
 \family typewriter 
 tp_clear
 \family default 
- de 
+ da estrutura 
 \family typewriter 
 PyTypeObject
 \family default 
@@ -5677,9 +5680,13 @@ tp_traverse
 \family typewriter 
 Py_TPFLAGS_HAVE_GC
 \family default 
- em 
+ no campo 
 \family typewriter 
 tp_flags
+\family default 
+ de
+\family typewriter 
+ PyTypeObject
 \family default 
 .
 \layout Standard
@@ -5820,110 +5827,34 @@ mark-and-sweep
 
 \end_inset 
 
-: ele funciona em duas passadas, inicialmente marcando os objetos alcançáveis
- e depois percorrendo a lista completa de objetos coletando aqueles que
- não tenham sido marcados.
- Esta técnica evita o problema de referências cíclicas enfrentado por Python.
-\layout Standard
-
-Objetos Ruby criados com 
-\family typewriter 
-Data_Wrap_Struct
-\family default 
- e 
-\family typewriter 
-Data_Make_Struct
-\family default 
- contêm 
-\emph on 
-structs
-\emph default 
- C que podem conter referências a 
-\family typewriter 
-VALUE
-\family default 
-s Ruby.
- A 
-\emph on 
-struct
-\emph default 
- encapsulada, entretanto, é opaca para o universo Ruby.
- Então, para garantir que estes 
-\family typewriter 
-VALUE
-\family default 
-s sejam marcados como alcançáveis durante a coleta de lixo é necessário
- fazer isto via código C.
- 
-\family typewriter 
-Data_Wrap_Struct
-\family default 
- e 
-\family typewriter 
-Data_Make_Struct
-\family default 
- recebem, além da 
-\emph on 
-struct
-\emph default 
- a encapsular, dois ponteiros, um para uma função de marcação e outra para
- uma função de desalocação.
- Quando o coletor de lixo visita o objeto na fase de marcação, ele invoca
- a função registrada, que deve chamar 
-\family typewriter 
-rb_gc_mark
-\family default 
- em cada um dos 
-\family typewriter 
-VALUE
-\family default 
-s armazenados na 
-\emph on 
-struct
-\emph default 
- do objeto, informando assim que os objetos são alcançáveis.
- Quando um objeto encapsulado via 
-\family typewriter 
-Data_
-\family default 
-*
-\family typewriter 
-_Struct
-\family default 
- for dado como não alcançável, a função de desalocação registrada é chamada.
- Para estruturas que não armazenam outros 
-\family typewriter 
-VALUE
-\family default 
-s, pode-se definir a função de marcação como 
-\family typewriter 
-NULL
-\family default 
- e a de desalocação como 
-\family typewriter 
-free
-\family default 
 .
+ Esta técnica evita o problema de referências cíclicas enfrentado por Python,
+ bastando que os objetos válidos possam ser corretamente indicados como
+ alcançáveis.
 \layout Standard
 
-Muitas funções de API de Ruby retornam 
+Objetos alcançáveis a partir do espaço de objetos de Ruby -- atribuídos
+ a uma variável global Ruby ou inseridos em alguma estrutura de dados alcançável
+ em Ruby -- não estarão, a princípio, sujeitos à coleta de lixo.
+ Além destes, temos ainda os objetos retornados por Ruby para o espaço de
+ C, já que muitas funções de API retornam 
 \family typewriter 
 VALUE
 \family default 
 s.
- Caso estes objetos não sejam alcançáveis a partir do espaço de objetos
- de Ruby -- por exemplo, tendo sido atribuídos a uma variável global Ruby
- ou inserido em alguma estrutura de dados alcançável em Ruby -- estes objetos
- estarão, a princípio, sujeitos à coleta de lixo.
- A documentação alerta que, para armazenar objetos Ruby em variáveis globais
- ou estruturas de dados de C, é necessário notificar à máquina virtual que
- o valor não deve ser coletado, usando 
+ A documentação alerta que, para armazenar objetos Ruby em C, seja em variáveis
+ globais ou estruturas de dados, é necessário notificar à máquina virtual
+ que o 
+\family typewriter 
+VALUE
+\family default 
+ não deve ser coletado usando 
 \family typewriter 
 rb_global_variable
 \family default 
 
 \begin_inset Foot
-collapsed false
+collapsed true
 
 \layout Standard
 
@@ -5949,11 +5880,17 @@ s locais é bastante peculiar: ao realizar a fase de marcação, o coletor
 \family typewriter 
 VALUE
 \family default 
-s (isto é, seqüências numéricas que correspondam a endereços de 
+s, isto é, seqüências numéricas que correspondam a endereços de 
 \family typewriter 
 VALUE
 \family default 
-s válidos).
+s válidos.
+ Estes endereços podem ser identificados pois objetos são sempre alocados
+ dentro de 
+\emph on 
+heaps
+\emph default 
+ mantidas pelo interpretador Ruby.
  Cada 
 \family typewriter 
 VALUE
@@ -5992,6 +5929,71 @@ setjmp
 VALUE
 \family default 
  que tenham sido otimizadas pelo compilador deixem de ser verificadas.
+\layout Standard
+
+Conforme visto na Seção 
+\begin_inset LatexCommand \ref{sub:Ruby-dados}
+
+\end_inset 
+
+, objetos Ruby criados com 
+\family typewriter 
+Data_Wrap_Struct
+\family default 
+ contêm structs C, que podem conter referências a 
+\family typewriter 
+VALUE
+\family default 
+s Ruby.
+ A struct encapsulada, entretanto, é opaca para o universo Ruby.
+ Então, para garantir que estes 
+\family typewriter 
+VALUE
+\family default 
+s sejam marcados como alcançáveis durante a coleta de lixo é necessário
+ fazer isto via código C.
+ 
+\family typewriter 
+Data_Wrap_Struct
+\family default 
+ recebe, além da struct a encapsular, dois ponteiros, um para uma função
+ de marcação e outra para uma função de desalocação.
+ Quando o coletor de lixo visita o objeto na fase de marcação, ele invoca
+ a função registrada, que deve chamar 
+\family typewriter 
+rb_gc_mark
+\family default 
+ em cada um dos 
+\family typewriter 
+VALUE
+\family default 
+s armazenados na 
+\emph on 
+struct
+\emph default 
+ do objeto, informando assim que os objetos são alcançáveis.
+ Quando um objeto encapsulado via 
+\family typewriter 
+Data_
+\family default 
+*
+\family typewriter 
+_Struct
+\family default 
+ for dado como não alcançável, a função de desalocação registrada é chamada.
+ Para estruturas que não armazenam outros 
+\family typewriter 
+VALUE
+\family default 
+s, pode-se definir a função de marcação como 
+\family typewriter 
+NULL
+\family default 
+ e a de desalocação como 
+\family typewriter 
+free
+\family default 
+.
 \layout Standard
 
 Ruby possui um módulo 
@@ -6035,7 +6037,7 @@ rb_gc_force_recycle
  área de memória for reutilizada pelo alocador de Ruby.
 \layout Standard
 
-Ruby oferece ainda como conveniência alguns 
+Ruby oferece ainda como conveniência para o programador C alguns 
 \emph on 
 wrappers
 \emph default 
@@ -6164,7 +6166,9 @@ A Figura
  mostra um exemplo do tipo de gerência de referências necessário quando
  se tem um laço criando referências temporárias sobre um número arbitrário
  de objetos.
- No exemplo, a função 
+\layout Standard
+
+No exemplo, a função 
 \family typewriter 
 Java_Exemplo_concatArray
 \family default 
@@ -6255,7 +6259,25 @@ collapsed false
 static jmethodID concat = NULL, toString = NULL;
 \layout LyX-Code
 
- 
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Fazer o caching de jmethodIDs em código C é uma técnica comum.
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   Vale lembrar que jmethodIDs não são objetos Java, e portanto
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   não estão sujeitos a coleta de lixo.
+ */
 \layout LyX-Code
 
 
@@ -6320,25 +6342,16 @@ Java_Exemplo_concatArray(JNIEnv* J, jobject this, jobjectArray a) {
 
 
 \size footnotesize 
-   
+   jstring s = (*J)->NewString(J, NULL, 0);     
 \emph on 
 /* s = "" */
 \layout LyX-Code
 
 
 \size footnotesize 
-   jstring s = (*J)->NewString(J, NULL, 0);
-\layout LyX-Code
-
-
-\size footnotesize 
+   int len = (*J)->GetArrayLength(J, a);     
 \emph on 
    /* len = a.length */
-\layout LyX-Code
-
-
-\size footnotesize 
-   int len = (*J)->GetArrayLength(J, a);
 \layout LyX-Code
 
 
@@ -6348,45 +6361,28 @@ Java_Exemplo_concatArray(JNIEnv* J, jobject this, jobjectArray a) {
 
 
 \size footnotesize 
+      jobject o = (*J)->GetObjectArrayElement(J, a, i);
 \emph on 
       /* o = a[i] */
 \layout LyX-Code
 
 
 \size footnotesize 
-      jobject o = (*J)->GetObjectArrayElement(J, a, i);
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-      /* os = o.toString */
-\layout LyX-Code
-
-
-\size footnotesize 
       jstring os = (*J)->CallObjectMethod(J, o, toString);
-\layout LyX-Code
-
-
-\size footnotesize 
 \emph on 
-      /* s2 = s.concat(os) */
+   /* os = o.toString() */
 \layout LyX-Code
 
 
 \size footnotesize 
       jstring s2 = (*J)->CallObjectMethod(J, s, concat, os);
+\emph on 
+ /* s2 = s.concat(os) */
 \layout LyX-Code
 
 
 \size footnotesize 
       (*J)->DeleteLocalRef(J, s);
-\layout LyX-Code
-
-
-\size footnotesize 
-      s = s2;
 \layout LyX-Code
 
 
@@ -6397,6 +6393,11 @@ Java_Exemplo_concatArray(JNIEnv* J, jobject this, jobjectArray a) {
 
 \size footnotesize 
       (*J)->DeleteLocalRef(J, os);
+\layout LyX-Code
+
+
+\size footnotesize 
+      s = s2;
 \layout LyX-Code
 
 
@@ -6425,19 +6426,6 @@ Rotina para concatenar os elementos de um array representados como strings.
 
 \layout Standard
 
-Uma técnica comum consiste em fazer o 
-\emph on 
-caching
-\emph default 
- de classes Java em referências globais associadas a variáveis estáticas
- dentro de funções C, como também pode ser visto na Figura 
-\begin_inset LatexCommand \ref{cap:JNI-global-ref}
-
-\end_inset 
-
-.
-\layout Standard
-
 A partir da versão 1.2, a JNI inclui referências globais fracas, com o objetivo
  de oferecer uma forma simplificada das referências fracas de Java (
 \family typewriter 
@@ -6456,10 +6444,10 @@ multi-threaded
 \emph default 
 , o coletor de lixo pode invalidar a referência entre o teste e a instrução
  seguinte no código C.
- A documentação revisada avisa sobre esta limitação e recomenda a aquisição
- de referências globais, além de comportamentos indefinidos nas relações
- entre referências globais fracas em C e os tipos de referências fracas
- definidos em Java.
+ A documentação revisada avisa sobre esta limitação e recomenda o uso de
+ referências globais, além de alertar sobre comportamentos indefinidos nas
+ relações entre referências globais fracas em C e os tipos de referências
+ fracas definidos em Java.
 \layout Standard
 
 Além desta, outras questões surgem a partir da combinação do modelo 
@@ -6469,8 +6457,8 @@ multi-threaded
  de Java com a exposição de referências a objetos da máquina virtual ao
  código C.
  Para reduzir a quantidade de cópia de dados entre Java e C, a JNI oferece
- algumas funções que retornam ponteiros para a representação interna de
- strings e arrays de tipos pri\SpecialChar \-
+ algumas funções que retornam e liberam ponteiros para a representação interna
+ de strings e arrays de tipos pri\SpecialChar \-
 mi\SpecialChar \-
 ti\SpecialChar \-
 vos: 
@@ -6492,9 +6480,13 @@ ReleasePrimitiveArrayCritical
 .
  O uso destas funções, porém, possui importantes restrições.
  A API especifica que, uma vez obtido um ponteiro através destas funções,
- o código C não deve chamar outras funções da JNI ou realizar chamadas de
- sistema que possam bloquear a thread atual e fazer com que ela espere por
- outra thread Java.
+ o código C não deve chamar outras funções da JNI ou realizar chamadas que
+ possam bloquear a thread atual e fazer com que ela espere por outra thread
+ Java, sob o risco de causar um 
+\emph on 
+deadlock
+\emph default 
+.
  Recomenda-se não manter blocos de memória bloqueados usando estas funções
  por muito tempo já que uma das técnicas possíveis para a implementação
  desta 
@@ -6571,17 +6563,20 @@ lua_to
 \family typewriter 
 string
 \family default 
-, 
+ e 
 \family typewriter 
 lua_touserdata
 \family default 
- e 
+.
+ A validade dos ponteiros retornados por estas funções é dependente do tempo
+ de vida do objeto correspondente a eles; para strings em particular, o
+ ponteiro retornado só é garantidamente válido enquanto a string estiver
+ na pilha.
+ Lua oferece ainda a função 
 \family typewriter 
 lua_topointer
 \family default 
-.
- Esta última função permite obter ponteiros para alguns tipos de objetos
- (
+, que permite obter ponteiros para alguns tipos de objetos (
 \emph on 
 userdata
 \emph default 
@@ -6591,24 +6586,16 @@ threads
 \emph default 
  e funções), mas somente com o objetivo de obter informação para depuração,
  já que não é possível converter o ponteiro de volta para um valor Lua.
- A validade dos ponteiros retornados por estas funções é dependente do tempo
- de vida do objeto correspondente a eles; para strings em particular, o
- ponteiro retornado só é garantidamente válido enquanto o dado estiver na
- pilha.
+ 
 \layout Standard
 
 O conteúdo da pilha virtual é zerado quando a função C retorna o controle
  à máquina virtual de Lua.
  Dessa forma, não é possível reter ponteiros retornados por valores Lua
  para uso posterior em variáveis globais ou estruturas de C.
- Para acessar novamente um dado de Lua posteriormente, é necessário armazená-lo
- em uma variável no espaço de Lua e trazê-lo de volta à pilha através de
- chamadas da API.
-\layout Standard
-
-Uma forma conveniente de armazenar referências a dados do espaço de Lua
- em estruturas de dados em C consiste em armazenar os dados em uma tabela
- Lua e os índices desta tabela na estrutura C.
+ Uma forma possível de descrever dados do espaço de Lua em estruturas de
+ dados em C é armazenar os dados em uma tabela Lua e os índices desta tabela
+ na estrutura C.
  A biblioteca auxiliar de Lua encapsula tal idioma através de duas funções,
  
 \family typewriter 
@@ -6623,21 +6610,30 @@ luaL_unref
 \family typewriter 
 luaL_ref
 \family default 
- associa o valor Lua passado a um a chave numérica inteira em uma tabela
+ associa o valor Lua passado a uma chave numérica inteira em uma tabela
  especial, o 
 \emph on 
 registro
 \emph default 
 , e retorna este número.
- Como o tabela que implementa o registro não é coletada ao longo da execução,
- a inclusão do objeto nesta tabela o impede de ser coletado.
- A chave numérica pode então ser vista como um 
+ O registro é uma tabela disponibilizada pela API de Lua para o armazenamento
+ de valores Lua a partir de C; esta tabela não é acessível a partir de Lua.
+ Como o tabela que implementa o registro é parte do 
+\emph on 
+root set
+\emph default 
+ do coletor de lixo, a inclusão de um objeto nesta tabela o impede de ser
+ coletado.
+ O valor retornado por 
+\family typewriter 
+luaL_ref
+\family default 
+ pode então ser visto como um 
 \emph on 
 handle
 \emph default 
- de alto nível para o objeto: o código C pode armazená-la em variáveis ou
- estruturas e utilizá-la para referenciar-se ao objeto através do campo
- no registro.
+ de alto nível para o objeto: o código C pode armazená-lo em variáveis ou
+ estruturas e utilizá-lo para referenciar o objeto através do campo no registro.
  A função 
 \family typewriter 
 luaL_unref
@@ -6676,8 +6672,8 @@ fclose
 \layout Standard
 
 A princípio, o fato de que é possível obter e modificar a metatabela de
- um userdata pode parecer problemático, já que pode-se substituir o seu
- finalizador em 
+ um userdata via código Lua pode parecer problemático, já que pode-se substituir
+ o seu finalizador em 
 \family typewriter 
 __gc
 \family default 
@@ -6692,15 +6688,6 @@ tipo
 \end_inset 
 
 , identificado através da metatabela.
- Duas funções da biblioteca auxiliar que implementam este mecanismo: 
-\family typewriter 
-luaL_newmetatable
-\family default 
- cria uma metatabela e a associa a uma entrada no registro; 
-\family typewriter 
-luaL_checkudata
-\family default 
- compara a metatabela de um userdata com uma entrada do registro especificada.
  Assim, mesmo que código Lua manipule a metatabela, uma função de coleta
  implementada em C que use 
 \family typewriter 
@@ -6723,22 +6710,15 @@ false
 \family typewriter 
 __metatable
 \family default 
- da metatabela, que, quando presente, é retornado por 
-\family typewriter 
-getmetatable
-\family default 
-.
+ da metatabela, que passa a ser retornado no lugar da metatabela, tornando
+ a metatabela em si inacessível.
 \layout Standard
 
 Outro recurso relacionado à gerência de memória oferecido por Lua é a possibilid
 ade de configurar, em tempo de execução, a função de alocação de memória
  a ser usada pela máquina virtual.
- Na criação de um novo estado com 
-\family typewriter 
-lua_newstate
-\family default 
-, passa-se como parâmetro uma função de alocação que deve oferecer funcionalidad
-e similar às funções C 
+ Na criação de um novo estado Lua, passa-se como parâmetro uma função de
+ alocação que deve oferecer funcionalidade similar às funções C 
 \family typewriter 
 free
 \family default 
@@ -6747,19 +6727,7 @@ free
 realloc
 \family default 
 , dependendo se o tamanho de bloco passado for igual ou maior do que zero.
- A função auxiliar 
-\family typewriter 
-luaL_newstate
-\family default 
- cria um estado usando um alocador padrão baseado em 
-\family typewriter 
-realloc
-\family default 
- e 
-\family typewriter 
-free
-\family default 
-.
+ 
 \layout Standard
 
 Lua oferece uma interface com o coletor de lixo através das funções 
@@ -6776,8 +6744,8 @@ collectgarbage
 mark-and-sweep
 \emph default 
  incremental e permite ao programador configurar parâmetros relacionados
- aos intervalos de coleta, bem como ativar, desativar e disparar ciclos
- completos ou passos do coletor.
+ aos intervalos de coleta, bem como ativar, desativar, disparar ciclos completos
+ e executar passos do coletor.
 \layout Subsection
 
 Perl
@@ -6825,7 +6793,7 @@ RV
 newSViv
 \family default 
 , inicializam os seus contadores de referências com 1.
- Isto tem o efeito de que se um valor criado é em uma função C, armazenado
+ Isto tem o efeito de que se um valor é criado em uma função C, armazenado
  em um 
 \family typewriter 
 RV
@@ -6888,7 +6856,7 @@ HV
 \family typewriter 
 sv_newmortal
 \family default 
- ou mais comumente convertido para mortal com 
+ ou, mais comumente, convertido para mortal com 
 \family typewriter 
 sv_2mortal
 \family default 
@@ -6987,9 +6955,9 @@ Nesta seção serão discutidas as facilidades oferecidas por cada API para
 \family typewriter 
 teste
 \family default 
-, passando um inteiro e uma string como parâmetros e obtendo um inteiro
+, que recebe um inteiro e uma string como parâmetros e retorna um inteiro
  como resultado.
- Para maior brevidade, a verificação de erros será omitida.
+ Para maior brevidade, a verificação de erros será omitida nos exemplos.
 \layout Subsection
 
 Python
@@ -7027,11 +6995,7 @@ tp_call
 \family typewriter 
 PyTypeObject
 \family default 
-) pode ser chamado como uma função, e retornará sucesso em 
-\family typewriter 
-PyCallable_Check
-\family default 
-.
+) pode ser chamado como uma função.
 \layout Comment
 
 Funções para chamar funções
@@ -7042,7 +7006,7 @@ Passando argumentos
 
 A API de Python oferece diversas funções para realização de chamadas a partir
  de C.
- A chamada mais geral, 
+ A função mais geral, 
 \family typewriter 
 PyObject_Call
 \family default 
@@ -7103,32 +7067,29 @@ PyObject_CallFunction
 PyObject
 \family default 
  e uma string C contendo o nome do método.
- Assim, a chamada:
+ Assim, por exemplo, as duas formas abaixo são equivalentes à chamada Python
+\size footnotesize 
+ 
+\family typewriter 
+\size default 
+ret = uma_string.split(" ")
+\family default 
+:
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-/* Equivalente C a: ret = uma_string.split(" ")
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-   "s" indica que o parâmetro seguinte é do tipo string.
+/* "s" indica que o parâmetro seguinte é do tipo string.
  */
 \layout LyX-Code
 
 
 \size footnotesize 
 PyObject* ret = PyObject_CallMethod(uma_string, "split", "s", " ");
-\layout Standard
-
-é equivalente a:
-\layout LyX-Code
-
-
-\size footnotesize 
+\newline 
+ 
+\newline 
 PyObject* split = PyObject_GetAttrString(uma_string, "split");
 \layout LyX-Code
 
@@ -7137,8 +7098,8 @@ PyObject* split = PyObject_GetAttrString(uma_string, "split");
 PyObject* ret = PyObject_CallFunction(split, "s", " ");
 \layout Standard
 
-É interessante notar que mesmo quando um método é chamado como função, o
- argumento 
+É interessante notar que quando um método é chamado como função, o argumento
+ 
 \family typewriter 
 self
 \family default 
@@ -7162,7 +7123,7 @@ PyObject
 .
  Assim como ocorre em código Python, quando funções Python retornam múltiplos
  valores, estes são encapsulados em uma tupla.
- Para funções que não retornam valor, as funções retornam 
+ Para funções que não retornam valor, as funções C devem retornar 
 \family typewriter 
 Py_None
 \family default 
@@ -7172,7 +7133,7 @@ Py_None
 NULL
 \family default 
 .
- A ocorrência de exceções pode então ser verificada com 
+ A ocorrência de exceções pode então ser verificada com a função 
 \family typewriter 
 PyErr_Occurred
 \family default 
@@ -7203,13 +7164,7 @@ PyObject* teste = PyDict_GetItemString(globals, "teste");
 
 \size footnotesize 
 \emph on 
-/* Equivalente C a: obj_result = teste("entrada", 2)
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-   "si" indica que seguem parâmetros string e inteiro */
+/* "si" indica que seguem parâmetros string e inteiro */
 \layout LyX-Code
 
 
@@ -7254,6 +7209,11 @@ __main__
 PyObject_CallFunction
 \family default 
 .
+ Esta chamada equivale a 
+\family typewriter 
+obj_result = teste("entrada", 2)
+\family default 
+ em Python.
  O valor de retorno é retornado como uma nova referência a um objeto Python
  e, desta forma, precisa ter a contagem de referências decrementada após
  o seu uso.
@@ -7273,8 +7233,8 @@ PyDict_GetItemString
  PyObjects retornados por elas não precisam ser decrementadas após o seu
  uso.
  Todavia, após a chamada da função Python, não há garantia de que os ponteiros
- globals e teste ainda apontem para objetos válidos -- precisaríamos incrementar
- a sua contagem de referências caso quiséssemos usá-los novamente.
+ globals e teste ainda apontem para objetos válidos -- precisaríamos ter
+ incrementado a sua contagem de referências caso quiséssemos usá-los novamente.
 \layout Subsection
 
 Ruby
@@ -7291,7 +7251,13 @@ Como obter/referenciar uma função
 Funções para chamar funções
 \layout Standard
 
-Para a chamada de métodos Ruby em C, a API oferece a função 
+Como métodos não são valores de primeira classe em Ruby, eles não são representa
+dos como 
+\family typewriter 
+VALUE
+\family default 
+s na sua API de C.
+ Para a chamada de métodos Ruby em C, a API oferece a função 
 \family typewriter 
 rb_funcall
 \family default 
@@ -7306,12 +7272,7 @@ ID
 \family default 
  referente à string internalizada contendo o nome do método e um inteiro
  indicando o número de argumentos.
- Como métodos não são valores de primeira classe em Ruby, eles não são represent
-ados como 
-\family typewriter 
-VALUE
-\family default 
-s na sua API de C.
+ 
 \layout Comment
 
 Passando argumentos
@@ -7323,8 +7284,8 @@ Valor de retorno
 Múltiplos valores de retorno
 \layout Standard
 
-As funções da API para invocação de métodos diferem na forma como os argumentos
- são passados.
+Como em Python, as funções da API para invocação de métodos diferem na forma
+ como os argumentos são passados.
  Por exemplo, a função 
 \family typewriter 
 rb_funcall
@@ -7355,7 +7316,8 @@ VALUE
 VALUE
 \family default 
  como parâmetro.
- Múltiplos valores de retorno são representados como um array Ruby.
+ Assim como em código Ruby, múltiplos valores de retorno são representados
+ como um array Ruby.
 \layout Comment
 
 Função vs.
@@ -7490,15 +7452,8 @@ Um tipo de dados que possui um tratamento um tanto irregular em Ruby é o
  ser definidos como o último argumento de uma chamada de método.
  Assim, eles não são valores de primeira classe, não podendo ser, por exemplo,
  declarados em uma atribuição a variável.
- Eles podem, no entanto, ser 
-\begin_inset Quotes eld
-\end_inset 
-
-promovidos
-\begin_inset Quotes erd
-\end_inset 
-
- a valores de primeira classe, na forma de objetos da classe 
+ Eles podem, no entanto, ser promovidos a valores de primeira classe, na
+ forma de objetos da classe 
 \family typewriter 
 Proc
 \family default 
@@ -7508,8 +7463,8 @@ Proc
 \family typewriter 
 Proc.new
 \family default 
-, ou implicitamente, declarando em um método um último parâmetro formal
- precedido de 
+, ou implicitamente, quando o bloco for passado para um método que declara
+ um último parâmetro formal precedido de 
 \family typewriter 
 &
 \family default 
@@ -7637,6 +7592,18 @@ ID uma_funcao_ruby = rb_intern("uma_funcao_ruby");
 
 
 \size footnotesize 
+\emph on 
+/* O segundo parâmetro é um argumento adicional a ser
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   opcionalmente passado na invocação de um Proc */
+\layout LyX-Code
+
+
+\size footnotesize 
 VALUE um_proc = rb_proc_new(a_C_block, Qnil);
 \layout LyX-Code
 
@@ -7684,12 +7651,18 @@ wrapper
 
 
 \size footnotesize 
+\emph on 
+/* Declara uma função global com 0 parâmetros de entrada */
+\layout LyX-Code
+
+
+\size footnotesize 
 rb_define_global_function("um_bloco_C", um_bloco_C, 0);
 \layout LyX-Code
 
 
 \size footnotesize 
-rb_eval_string("$resultado = uma_funcao_ruby { um_bloco_C }");
+rb_eval_string("$resultado = uma_funcao_ruby { um_bloco_C() }");
 \layout LyX-Code
 
 
@@ -7799,6 +7772,18 @@ VALUE chama_uma_funcao_ruby() {
 
 \size footnotesize 
 ...
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Os argumentos Qnil indicam que não há parâmetros
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   nem para a função nem para o bloco */
 \layout LyX-Code
 
 
@@ -7914,8 +7899,8 @@ Java
 Como obter/referenciar uma função
 \layout Standard
 
-De forma similar ao acesso a atributos, na chamada de métodos deve-se inicialmen
-te obter um identificador para o método, do tipo 
+De forma similar ao acesso a atributos, na chamada de métodos em Java deve-se
+ inicialmente obter um identificador para o método, do tipo 
 \family typewriter 
 jmethodID
 \family default 
@@ -7929,7 +7914,7 @@ GetMethodID
 jclass
 \family default 
 ) e duas strings, uma com o nome do método e outra com a assinatura do método.
- A sintaxe que descreve assinaturas de método é similar à de descritores
+ A sintaxe que descreve assinaturas de métodos é similar à de descritores
  de campos discutida na Seção 
 \begin_inset LatexCommand \ref{sub:Dados-Java}
 
@@ -7950,20 +7935,23 @@ String[], int, int
 void
 \family default 
 .
- Alternativamente, a partir de Java 1.2 é possível obter um 
+ Alternativamente ao uso de 
+\family typewriter 
+GetMethodID
+\family default 
+, a partir de Java 1.2 é possível obter um 
 \family typewriter 
 jmethodID
 \family default 
- correspondente a um objeto Java do tipo 
-\family typewriter 
-Method
-\family default 
- -- isto é, um método reificado através da API de reflexão de Java -- usando
- a função 
+ correspondente a um método aplicando a função 
 \family typewriter 
 FromReflectedMethod
 \family default 
-.
+ sobre um objeto Java do tipo 
+\family typewriter 
+Method
+\family default 
+ -- isto é, um método reificado através da API de reflexão de Java.
 \layout Comment
 
 Funções da API para invocar funções
@@ -8011,7 +7999,7 @@ O
 \family typewriter 
 Static
 \family default 
- para funções estáticas, recebendo na chamada uma 
+ para funções estáticas, passando na chamada uma 
 \family typewriter 
 jclass
 \family default 
@@ -8050,15 +8038,6 @@ Void
 Int
 \family default 
 , etc.
- Em funções que retornam valores não-primitivos, como 
-\family typewriter 
-jarray
-\family default 
- ou 
-\family typewriter 
-jobject
-\family default 
-, o tipo de referência retornada é local.
 \layout Comment
 
 Passando argumentos
@@ -8068,11 +8047,11 @@ Os argumentos do método podem ser passados de três formas: como
 \emph on 
 varargs
 \emph default 
-; como um array de 
+, como um array C de 
 \family typewriter 
 jvalue
 \family default 
-s; ou propagando uma 
+s, ou propagando uma 
 \family typewriter 
 va_list
 \family default 
@@ -8188,7 +8167,6 @@ Pai
 static native
 \family default 
 .
- 
 \layout Comment
 
 Verificação da ocorrência de erros
@@ -8357,7 +8335,7 @@ longjmp
 \family typewriter 
 lua_pcall
 \family default 
- os captura os erros, retornando um código de 
+ captura os erros, retornando um código de 
 \emph on 
 status
 \emph default 
@@ -8398,7 +8376,7 @@ nil
 LUA_MULTRET
 \family default 
 , todos os valores são empilhados.
- Nesse caso, a única forma de descobrir quantos valores foram retornado
+ Nesse caso, a única forma de descobrir quantos valores foram retornados
  é comparando o tamanho da pilha antes e depois da chamada.
 \layout Standard
 
@@ -8633,7 +8611,7 @@ G_SCALAR
 \family typewriter 
 G_ARRAY
 \family default 
- especificam um contexto como a função deve ser chamada.
+ especificam o contexto como a função deve ser chamada.
  Em contextos escalares, por exemplo, somente um escalar é retornado na
  pilha; se a função chamada retornar uma lista, somente o último elemento
  desta estará disponível na pilha.
@@ -8685,11 +8663,15 @@ G_EVAL
 eval
 \family default 
 , capturando erros.
- A ocorrência de erros pode ser verificada através da macro 
+ Assim, a ocorrência de erros pode ser verificada através da macro 
 \family typewriter 
 ERRSV
 \family default 
-, que se refere a um escalar contendo a mensagem de erro.
+, que retorna o 
+\family typewriter 
+SV
+\family default 
+ contendo a mensagem de erro.
  Acrescentando a flag 
 \family typewriter 
 G_KEEPERR
@@ -8915,10 +8897,9 @@ a priori
  de código C usando a API da linguagem de script.
 \layout Standard
 
-Também nesta seção, a apresentação de cada linguagem encerrará com um exemplo.
- Em cada dos exemplos será apresentada uma função C declarada com a assinatura
- de formato esperado pela máquina virtual ou interpretador.
- Esta função obtém os valores de entrada e retorna um valor na saída.
+Também nesta seção, a apresentação de cada linguagem encerrará com o exemplo
+ de função C a ser registrada, que assim como nos exemplos da seção anterior,
+ recebe um inteiro e uma string e retorna um inteiro.
  Será apresentada também, para cada linguagem, a forma de registrar a função
  como a global
 \begin_inset Foot
@@ -8934,7 +8915,7 @@ ou no caso de Java, método estático
 teste
 \family default 
  de modo que ela possa ser invocada diretamente a partir da linguagem ou
- através da API do modo descrito na seção anterior.
+ através da API.
 \layout Subsection
 
 Python
@@ -8945,36 +8926,10 @@ Python
 
 \layout Comment
 
-O que são funções na linguagem
+Parâmetros de entrada
 \layout Standard
 
-Como visto na Seção 
-\begin_inset LatexCommand \ref{sub:Python-Chamada}
-
-\end_inset 
-
-, instâncias de classes Python podem ser tornadas 
-\begin_inset Quotes eld
-\end_inset 
-
-chamáveis
-\begin_inset Quotes erd
-\end_inset 
-
- implementando um método 
-\family typewriter 
-__call__
-\family default 
- em Python ou associando uma função C ao campo 
-\family typewriter 
-tp_call
-\family default 
- do seu 
-\family typewriter 
-PyTypeObject
-\family default 
- correspondente.
- Assim, Python não possui um tipo 
+Python não possui um tipo 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -8982,41 +8937,21 @@ função
 \begin_inset Quotes erd
 \end_inset 
 
- propriamente dito.
- Métodos de classes, no entanto, possuem um tipo específico, que pode ser
- verificado com 
+ propriamente dito declarável em C.
+ Métodos de classes, no entanto, são objetos e possuem um tipo específico,
+ que pode ser verificado com a função 
 \family typewriter 
 PyMethod_Check
 \family default 
 .
- Um objeto do tipo método pode ser criado explicitamente a partir de C com
- 
-\family typewriter 
-PyMethod_New
-\family default 
-, passando como parâmetro um objeto Python 
-\begin_inset Quotes eld
-\end_inset 
-
-chamável
-\begin_inset Quotes erd
-\end_inset 
-
- e o objeto ou classe a que ele deve se referir.
-\layout Comment
-
-Parâmetros de entrada
-\layout Standard
-
-Tipicamente, entretanto, funções C são registradas passando-se um array
- de estruturas 
+ Tipicamente, métodos são criados passando-se um array de estruturas 
 \family typewriter 
 PyMethodDef
 \family default 
 .
  Estas estruturas são compostas do nome da função, o ponteiro da função
- C, uma string de documentação e um vetor de flags.
- Estas flags são usadas para indicar a convenção adotada para os parâmetros
+ C, um vetor de flags e uma string de documentação.
+ As flags são usadas para indicar a convenção adotada para os parâmetros
  de entrada na função C.
  Por exemplo, a flag 
 \family typewriter 
@@ -9061,7 +8996,11 @@ PyMethodDef
 \family typewriter 
 tp_methods
 \family default 
-.
+ da estrutura 
+\family typewriter 
+PyTypeObject
+\family default 
+ relativa à classe.
 \layout Comment
 
 Valores de retorno
@@ -9097,6 +9036,55 @@ Py_None
 .
 \layout Comment
 
+O que são funções na linguagem
+\layout Standard
+
+Embora métodos sejam usualmente criados em C usando estruturas 
+\family typewriter 
+PyMethodDef
+\family default 
+, é possível ainda criar um objeto do tipo método explicitamente a partir
+ de C com a função 
+\family typewriter 
+PyMethod_New
+\family default 
+, passando como parâmetro um objeto Python 
+\begin_inset Quotes eld
+\end_inset 
+
+chamável
+\begin_inset Quotes erd
+\end_inset 
+
+ e o objeto ou classe a que ele deve se referir.
+ Como visto na Seção 
+\begin_inset LatexCommand \ref{sub:Python-Chamada}
+
+\end_inset 
+
+, objetos Python podem ser tornados 
+\begin_inset Quotes eld
+\end_inset 
+
+chamáveis
+\begin_inset Quotes erd
+\end_inset 
+
+ implementando um método 
+\family typewriter 
+__call__
+\family default 
+ em Python ou associando uma função C ao campo 
+\family typewriter 
+tp_call
+\family default 
+ do seu 
+\family typewriter 
+PyTypeObject
+\family default 
+ correspondente.
+\layout Comment
+
 Exemplo
 \layout Standard
 
@@ -9116,6 +9104,18 @@ PyObject* teste_py(PyObject* self, PyObject* args) {
 
 \size footnotesize 
    char* entrada; long n;
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Em caso de erro nos argumentos, PyArg_ParseTuple
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      gera uma exceção apropriada automaticamente */
 \layout LyX-Code
 
 
@@ -9148,7 +9148,8 @@ n", entrada, n);
 Verificar valores de entrada
 \layout Standard
 
-A assinatura de função empregada corresponde à flag 
+Como os argumentos são recebidos em uma tupla no segundo parâmetro, a assinatura
+ de função empregada corresponde à flag 
 \family typewriter 
 METH_VARARGS
 \family default 
@@ -9201,7 +9202,7 @@ static PyMethodDef teste_def[] = {
 
 
 \size footnotesize 
-   { "teste", (PyCFunction) teste_py, METH_VARARGS, NULL },
+   { "teste", (PyCFunction) teste_py, METH_VARARGS, "um teste" },
 \layout LyX-Code
 
 
@@ -9232,7 +9233,7 @@ NULL
 \family typewriter 
 Py_FindMethod
 \family default 
-, indicando que não há um objeto a que o método se refere.
+, indicando que não há um objeto do qual o método faz parte.
  O argumento 
 \family typewriter 
 self
@@ -9254,16 +9255,16 @@ teste_def
 \family typewriter 
 static
 \family default 
- pois na criação de 
+ para garantir que o 
+\family typewriter 
+PyMethodDef
+\family default 
+ continuará válido enquanto a função global estiver registrada, pois na
+ criação de 
 \family typewriter 
 teste_obj
 \family default 
  um ponteiro para ele é armazenado internamente no objeto criado.
- Desta forma, o 
-\family typewriter 
-PyMethodDef
-\family default 
- deve continuar válido enquanto a função global estiver registrada.
 \layout Subsection
 
 Ruby
@@ -9320,6 +9321,11 @@ De forma similar à função
 \family typewriter 
 PyArg_ParseTuple
 \family default 
+ discutida na Seção 
+\begin_inset LatexCommand \ref{sub:Dados-Python}
+
+\end_inset 
+
 , Ruby possui uma função projetada para simplificar o processamento dos
  valores de entrada em funções C: 
 \family typewriter 
@@ -9493,8 +9499,7 @@ rb_define_global_function("teste", teste_rb, 2);
 \layout Standard
 
 É indicado o nome da função no espaço de Ruby, a função C correspondente
- e o número de parâmetros a serem passados para ela (não incluindo o parâmetro
- 
+ e o número de parâmetros que ela espera (não incluindo o parâmetro 
 \family typewriter 
 self
 \family default 
@@ -9512,8 +9517,8 @@ Java
 Questões específicas: métodos native
 \layout Standard
 
-Métodos não implementados em Java devem ser declarados através de um protótipo
- incluindo o modificador 
+Métodos Java que não são implementados na própria linguagem devem ser declarados
+ através de um protótipo incluindo o modificador 
 \family typewriter 
 native
 \family default 
