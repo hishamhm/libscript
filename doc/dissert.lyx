@@ -11949,16 +11949,13 @@ void script_plugin_done_python(script_python_state* state) {
 Transferência de dados
 \layout Standard
 
-TODO
-\layout Comment
-
 A transferência de dados entre a biblioteca principal e os plugins é concentrada
  em duas operações: uma para passar o conteúdo do buffer de parâmetros de
  LibScript para o espaço de dados da máquina virtual e outra para realizar
  a operação inversa.
  Em cada plugin, procuramos isolar estas operações em um par de funções.
  
-\layout Comment
+\layout Standard
 
 Na implementação do plugin 
 \family typewriter 
@@ -11969,14 +11966,195 @@ libscript-lua
 script_lua_stack_to_params
 \family default 
  converte o conteúdo da pilha de Lua para o buffer de parâmetros de LibScript.
- Esta função é usada tanto para receber os valores de retorno obtidos após
- uma chamada de função Lua como para fazer a passagem de parâmetros no back-end
- Lua da função 
+ Em 
+\family typewriter 
+script_plugin_call_lua
+\family default 
+, a função do plugin responsável por invocar funções Lua a partir de C,
+ 
+\family typewriter 
+script_lua_stack_to_params
+\family default 
+ é usada para armazenar no buffer LibScript os valores de retorno da função
+ Lua invocada, já que estes são retornados na pilha virtual.
+ Quando código Lua chama funções implementadas em C ou outro plugin, 
+\family typewriter 
+script_lua_stack_to_params
+\family default 
+ é usada para converter os parâmetros de entrada da função, também recebidos
+ na pilha virtual.
+ A seguir, vemos a implementação desta função:
+\layout LyX-Code
+
+
+\size footnotesize 
+static void script_lua_stack_to_params(script_env* env, lua_State *L) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   int nargs; int i; 
+\layout LyX-Code
+
+
+\size footnotesize 
+   nargs = lua_gettop(L);    
+\emph on 
+/* Número de elementos na pilha de Lua */
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_reset_params(env); 
+\emph on 
+/* Esvazia o buffer LibScript */
+\layout LyX-Code
+
+
+\size footnotesize 
+   for (i = 1; i <= nargs; i++) {
+\layout LyX-Code
+
+
+\size footnotesize 
+     
+\emph on 
+/* Verifica o tipo Lua do elemento na posição i da pilha */
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+     /* e para cada tipo, converte o elemento e o armazena no buffer */
+\layout LyX-Code
+
+
+\size footnotesize 
+     switch(lua_type(L, i)) { 
+\layout LyX-Code
+
+
+\size footnotesize 
+      case LUA_TNUMBER:
+\layout LyX-Code
+
+
+\size footnotesize 
+         script_put_double(env, i-1, lua_tonumber(L, i)); break; 
+\layout LyX-Code
+
+
+\size footnotesize 
+      case LUA_TSTRING:
+\layout LyX-Code
+
+
+\size footnotesize 
+         script_put_string(env, i-1, lua_tostring(L, i)); break;
+\layout LyX-Code
+
+
+\size footnotesize 
+      case LUA_TBOOLEAN:
+\layout LyX-Code
+
+
+\size footnotesize 
+         script_put_bool(env, i-1, lua_toboolean(L, i)); break;
+\layout LyX-Code
+
+
+\size footnotesize 
+      default:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+         /* Tipos não tratados são substituídos por zero.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+        script_put_double(env, i-1, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
+      }
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Assumimos em LibScript strings no formato de C: a função 
+\family typewriter 
+script_put_string
+\family default 
+ copia a string passada até o primeiro 
+\family typewriter 
+'
+\backslash 
+0'
+\family default 
+.
+ Assim, ao obter strings de linguagens que permitem conteúdo arbitrário,
+ estas serão truncadas caso contenham 
+\family typewriter 
+'
+\backslash 
+0'
+\family default 
+.
+ Por isso, no plugin Lua usamos diretamente 
+\family typewriter 
+lua_tostring
+\family default 
+, e não a função mais geral 
+\family typewriter 
+lua_tolstring
+\family default 
+ (que retorna também o tamanho do buffer).
+\layout Standard
+
+Os valores de tipos desconhecidos são substituídos pelo valor zero, o que
+ mantém a posição dos demais valores na lista de argumentos.
+ Optamos por não sinalizar erro nesta situação para evitar aqui a geração
+ de exceções, o que complicaria a exposição.
+ A captura e propagação de erros serão vistas na Seção 
+\begin_inset LatexCommand \ref{sub:Resolução-de-funções}
+
+\end_inset 
+
+.
+\layout Standard
+
+A função 
+\family typewriter 
+script_lua_params_to_stack
+\family default 
+ obtém os valores do buffer LibScript e os insere na pilha virtual de Lua.
+ Esta função é usada para passar os parâmetros de entrada para Lua em 
+\family typewriter 
+script_plugin_call_lua
+\family default 
+ e para passar para Lua os valores obtidos pelo retorno de 
 \family typewriter 
 script_call
 \family default 
-.
-\layout Comment
+, que é invocada internamente pelo plugin quando Lua invoca uma função C.
+\layout Standard
+
+TODO - PAREI AQUI
+\layout Standard
 
 A API para implementação de funções em C a serem registradas em LibScript
  permite declarar funções com múltiplos valores de retorno.
@@ -11984,7 +12162,7 @@ A API para implementação de funções em C a serem registradas em LibScript
  no plugin que mais de um valor foi retornado, construir um tipo de dado
  agregado e armazenar nele os valores, retornando então um valor de retorno
  único.
-\layout Comment
+\layout Standard
 
 Em Lua, uma função pode retornar múltiplos valores através da pilha, como
  discutido na Seção 
