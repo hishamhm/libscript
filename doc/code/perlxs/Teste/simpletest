@@ -4,5 +4,5 @@ use ExtUtils::testlib;
 
 use Teste;
 
-$ret = Teste::teste("entrada", 2);
-print $ret . "\n";
+@ret = Teste::teste("entrada", 2);
+print @ret[0] . "\n";

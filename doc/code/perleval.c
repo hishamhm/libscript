@@ -39,7 +39,11 @@ int main(int argc, char **argv, char **env)
 
    Perl_eval_pv(my_perl, " for(@a) { "
                          "    print $_ . \"\\n\"; "
-                         " } ", TRUE);
+                         " } "
+                         " sub foo { "
+                         "    die "
+                         " } "
+                         , TRUE);
 
    perl_destruct(my_perl);
    perl_free(my_perl);
