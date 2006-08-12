@@ -7,7 +7,7 @@
 
 static int script_python_state_count = 0;
 
-INLINE static void script_python_put_value(script_env* env, int i, PyObject* o) {
+INLINE static void script_python_put_object(script_env* env, int i, PyObject* o) {
    if (PyString_Check(o))
       script_put_string(env, i, PyString_AS_STRING(o));
    else if (PyInt_Check(o))
@@ -28,40 +28,36 @@ INLINE static void script_python_tuple_to_buffer(script_env* env, PyObject* args
    script_reset_buffer(env);
    for (i = 0; i < nargs; i++) {
       PyObject* arg = PyTuple_GET_ITEM(args, i);
-      script_python_put_value(env, i, arg);
+      script_python_put_object(env, i, arg);
+   }
+}
+
+INLINE static PyObject* script_python_get_object(script_env* env, int i) {
+   PyObject* ret; char* s;
+   switch (script_get_type(env, i)) {
+   case SCRIPT_DOUBLE:
+      return PyFloat_FromDouble(script_get_double(env, i)); 
+   case SCRIPT_STRING:
+      s = script_get_string(env, i);
+      ret = PyString_FromString(s);
+      free(s);
+      return ret;
+   case SCRIPT_BOOL:
+      return PyBool_FromLong(script_get_bool(env, i));
+   default:
+      assert(0);
    }
 }
 
 INLINE static PyObject* script_python_buffer_to_tuple(script_env* env) {
-   PyObject* args;
-   int nargs;
    int i;
-
-   nargs = script_buffer_size(env);
-   args = PyTuple_New(nargs);
-   for(i = 0; i < nargs; i++) {
-      PyObject* arg = NULL;
-      switch (script_get_type(env, i)) {
-      case SCRIPT_DOUBLE:
-         arg = PyFloat_FromDouble(script_get_double(env, i)); 
-         break;
-      case SCRIPT_STRING: {
-         char* s = script_get_string(env, i);
-         arg = PyString_FromString(s);
-         free(s);
-         break;
-      }
-      case SCRIPT_BOOL:
-         arg = PyBool_FromLong(script_get_bool(env, i));
-         break;
-      default:
-         /* pacify gcc warnings */
-         assert(0);
-      }
-      assert(arg);
-      PyTuple_SetItem(args, i, arg);
+   int len = script_buffer_size(env);
+   PyObject* ret = PyTuple_New(len);
+   for(i = 0; i < len; i++) {
+      PyObject* o = script_python_get_object(env, i);
+      PyTuple_SetItem(ret, i, o);
    }
-   return args;
+   return ret;
 }
 
 static void script_python_destructor(PyObject* o) {
@@ -71,7 +67,7 @@ static void script_python_destructor(PyObject* o) {
    PyObject_DEL(o);
 }
 
-static PyObject* script_python_call(script_python_object *obj, PyObject *args, PyObject *kwds) {
+static PyObject* script_python_caller(script_python_object *obj, PyObject *args, PyObject *kwds) {
    script_err err;
    script_env* env = obj->state->env;
    script_python_tuple_to_buffer(env, args);
@@ -81,15 +77,10 @@ static PyObject* script_python_call(script_python_object *obj, PyObject *args, P
       PyErr_SetString(PyExc_RuntimeError, "No such function");
       Py_RETURN_NONE;
    }
-   if (script_buffer_size(env) == 0) {
-      Py_RETURN_NONE;
-   } else {
-      PyObject* ret = script_python_buffer_to_tuple(env);
-      if (PyTuple_GET_SIZE(ret) > 1) {
-         return ret;
-      } else {
-         return PyTuple_GET_ITEM(ret, 0);
-      }
+   switch(script_buffer_size(env)) {
+   case 0: Py_RETURN_NONE;
+   case 1: return script_python_get_object(env, 0);
+   default: return script_python_buffer_to_tuple(env);
    }
 }
 
@@ -99,7 +90,7 @@ static PyTypeObject script_python_object_type = {
    .tp_name = "libscript.Object",
    .tp_basicsize = sizeof(script_python_object),
    .tp_dealloc = script_python_destructor,
-   .tp_call = (ternaryfunc)script_python_call,
+   .tp_call = (ternaryfunc)script_python_caller,
    .tp_flags = Py_TPFLAGS_DEFAULT,
    .tp_doc = "LibScript object"
 };
@@ -185,7 +176,7 @@ int script_plugin_call_python(script_python_state* state, char* fn) {
    else if (PyTuple_Check(ret))
       script_python_tuple_to_buffer(env, ret);
    else 
-      script_python_put_value(env, 0, ret);
+      script_python_put_object(env, 0, ret);
    return SCRIPT_OK;
 }
 

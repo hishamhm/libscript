@@ -34,7 +34,7 @@ INLINE static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
 }
 
 INLINE static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
-   int i;
+   int i; char* s;
    int len = script_buffer_size(env);
    for (i = 0; i < len; i++) {
       script_type type = script_get_type(env, i);
@@ -42,13 +42,13 @@ INLINE static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
       case SCRIPT_DOUBLE:
          lua_pushnumber(L, script_get_double(env, i));
          break;
-      case SCRIPT_STRING: {
-         char* s = script_get_string(env, i);
+      case SCRIPT_STRING:
+         s = script_get_string(env, i);
          lua_pushstring(L, s);
          free(s);
          break;
-      }
-      case SCRIPT_BOOL: lua_pushboolean(L, script_get_bool(env, i)); break;
+      case SCRIPT_BOOL:
+         lua_pushboolean(L, script_get_bool(env, i)); break;
       case SCRIPT_NONE: /* pacify gcc warning */ break;
       /* TODO: other types */
       }
