@@ -10567,11 +10567,7 @@ libscript
  permitindo à aplicação registrar as suas funções e invocar código a ser
  executado.
  Esta biblioteca então invoca o plugin da linguagem apropriada para rodar
- o código (por exemplo, 
-\family typewriter 
-libscript-python
-\family default 
- para código Python).
+ o código (por exemplo, LibScript-Python para código Python).
  Desta forma, o desenvolvedor da aplicação permite ao seu usuário utilizar
  diferentes linguagens para scripting sem adicionar todas elas como dependências
  do programa.
@@ -10967,11 +10963,7 @@ script_run_file
 \family default 
  para associar extensões de arquivo ou o nome do executável interpretador
  a um plugin.
- Por exemplo, o plugin 
-\family typewriter 
-libscript-python
-\family default 
- inclui o arquivo 
+ Por exemplo, o plugin LibScript-Python inclui o arquivo 
 \family typewriter 
 py.id
 \family default 
@@ -11317,11 +11309,7 @@ dor que permita acessar a partir de C a estrutura de dados que representa
  uma classe; e em Perl, um pacote.
 \layout Standard
 
-Em 
-\family typewriter 
-libscript-lua
-\family default 
-, estados são implementados como 
+Em LibScript-Lua, estados são implementados como 
 \family typewriter 
 lua_State
 \family default 
@@ -11385,12 +11373,9 @@ lua_State
 lua_State
 \family default 
  como uma variável global com o nome do ambiente.
- As demais funções de 
-\family typewriter 
-libscript-lua
-\family default 
- localizam esta tabela obtendo o ponteiro para o ambiente LibScript no registro
- e consultando o nome do ambiente usando a função 
+ As demais funções de LibScript-Lua localizam esta tabela obtendo o ponteiro
+ para o ambiente LibScript no registro e consultando o nome do ambiente
+ usando a função 
 \family typewriter 
 script_namespace
 \family default 
@@ -11404,11 +11389,7 @@ Como nas demais linguagens não há uma forma conveniente de armazenar o ambiente
  que o representa.
 \layout Standard
 
-Em 
-\family typewriter 
-libscript-perl
-\family default 
- os estados são isolados como em Lua.
+Em LibScript-Perl os estados são isolados como em Lua.
  Cada estado criado inicializa uma nova instância de 
 \family typewriter 
 PerlInterpreter
@@ -11573,11 +11554,7 @@ m um mesmo estado global, já que Ruby também não permite múltiplos ambientes
 rb_define_class
 \family default 
  e armazenada na struct do estado juntamente com um ponteiro para o ambiente.
- Um estado é representado em 
-\family typewriter 
-libscript-ruby
-\family default 
- da seguinte forma:
+ Um estado é representado em LibScript-Ruby da seguinte forma:
 \layout LyX-Code
 
 
@@ -11957,13 +11934,9 @@ A transferência de dados entre a biblioteca principal e os plugins é concentrada
  
 \layout Standard
 
-Na implementação do plugin 
+Na implementação do plugin LibScript-Lua, a função 
 \family typewriter 
-libscript-lua
-\family default 
-, a função 
-\family typewriter 
-script_lua_stack_to_params
+script_lua_stack_to_buffer
 \family default 
  converte o conteúdo da pilha de Lua para o buffer de parâmetros de LibScript.
  Em 
@@ -11973,13 +11946,13 @@ script_plugin_call_lua
 , a função do plugin responsável por invocar funções Lua a partir de C,
  
 \family typewriter 
-script_lua_stack_to_params
+script_lua_stack_to_buffer
 \family default 
  é usada para armazenar no buffer LibScript os valores de retorno da função
  Lua invocada, já que estes são retornados na pilha virtual.
  Quando código Lua chama funções implementadas em C ou outro plugin, 
 \family typewriter 
-script_lua_stack_to_params
+script_lua_stack_to_buffer
 \family default 
  é usada para converter os parâmetros de entrada da função, também recebidos
  na pilha virtual.
@@ -11988,7 +11961,7 @@ script_lua_stack_to_params
 
 
 \size footnotesize 
-static void script_lua_stack_to_params(script_env* env, lua_State *L) {
+static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
 \layout LyX-Code
 
 
@@ -12005,7 +11978,7 @@ static void script_lua_stack_to_params(script_env* env, lua_State *L) {
 
 
 \size footnotesize 
-   script_reset_params(env); 
+   script_reset_buffer(env); 
 \emph on 
 /* Esvazia o buffer LibScript */
 \layout LyX-Code
@@ -12114,7 +12087,7 @@ script_put_string
 0'
 \family default 
 .
- Por isso, no plugin Lua usamos diretamente 
+ Por isso, no plugin Lua usamos diretamente a função 
 \family typewriter 
 lua_tostring
 \family default 
@@ -12139,39 +12112,451 @@ Os valores de tipos desconhecidos são substituídos pelo valor zero, o que
 
 A função 
 \family typewriter 
-script_lua_params_to_stack
+script_lua_buffer_to_stack
 \family default 
  obtém os valores do buffer LibScript e os insere na pilha virtual de Lua.
  Esta função é usada para passar os parâmetros de entrada para Lua em 
 \family typewriter 
 script_plugin_call_lua
 \family default 
- e para passar para Lua os valores obtidos pelo retorno de 
+ e para passar para Lua os valores obtidos pelo retorno da função 
 \family typewriter 
 script_call
 \family default 
 , que é invocada internamente pelo plugin quando Lua invoca uma função C.
-\layout Standard
+\layout LyX-Code
 
-TODO - PAREI AQUI
+
+\size footnotesize 
+static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   int i;
+\layout LyX-Code
+
+
+\size footnotesize 
+   int len = script_buffer_size(env); 
+\emph on 
+/* Número de elementos no buffer */
+\layout LyX-Code
+
+
+\size footnotesize 
+   for (i = 0; i < len; i++) {
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+     /* Verifica o tipo do elemento na posição i do buffer */
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+     /* e para cada tipo, o obtém e o insere na pilha de Lua */
+\layout LyX-Code
+
+
+\size footnotesize 
+      type = script_get_type(env, i);
+\layout LyX-Code
+
+
+\size footnotesize 
+      switch (type) {
+\layout LyX-Code
+
+
+\size footnotesize 
+      case SCRIPT_DOUBLE:
+\layout LyX-Code
+
+
+\size footnotesize 
+         lua_pushnumber(L, script_get_double(env, i)); break;
+\layout LyX-Code
+
+
+\size footnotesize 
+      case SCRIPT_STRING: {
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+            /* A string retornada por LibScript pertence ao chamador.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+            char* s = script_get_string(env, i);
+\layout LyX-Code
+
+
+\size footnotesize 
+            lua_pushstring(L, s);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+            /* Libera a string, já que Lua armazena sua própria cópia.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+            free(s);
+\layout LyX-Code
+
+
+\size footnotesize 
+            break;
+\layout LyX-Code
+
+
+\size footnotesize 
+         }
+\layout LyX-Code
+
+
+\size footnotesize 
+      case SCRIPT_BOOL: lua_pushboolean(L, script_get_bool(env, i)); break;
+\layout LyX-Code
+
+
+\size footnotesize 
+      }
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+   return len;
+\layout LyX-Code
+
+
+\size footnotesize 
+}
 \layout Standard
 
 A API para implementação de funções em C a serem registradas em LibScript
  permite declarar funções com múltiplos valores de retorno.
- Muitas linguagens não possuem este recurso, mas é possível, ao detectar
- no plugin que mais de um valor foi retornado, construir um tipo de dado
- agregado e armazenar nele os valores, retornando então um valor de retorno
- único.
-\layout Standard
-
-Em Lua, uma função pode retornar múltiplos valores através da pilha, como
+ Em Lua, uma função pode retornar múltiplos valores através da pilha, como
  discutido na Seção 
 \begin_inset LatexCommand \ref{sub:Lua-chamada}
 
 \end_inset 
 
 .
- 
+\layout Standard
+
+Em LibScript-Python, a conversão de dados recebidos de Python para o buffer
+ de LibScript é divida em duas funções: 
+\family typewriter 
+script_python_put_value
+\family default 
+ e 
+\family typewriter 
+script_python_tuple_to_buffer
+\family default 
+.
+ A primeira função converte um único valor Python e o insere na posição
+ solicitada no buffer:
+\layout LyX-Code
+
+
+\size footnotesize 
+static void script_python_put_value(script_env* env, int i, PyObject* o)
+ {
+\layout LyX-Code
+
+
+\size footnotesize 
+   if (PyString_Check(o))
+\layout LyX-Code
+
+
+\size footnotesize 
+      script_put_string(env, i, PyString_AS_STRING(o));
+\layout LyX-Code
+
+
+\size footnotesize 
+   else if (PyInt_Check(o))
+\layout LyX-Code
+
+
+\size footnotesize 
+      script_put_int(env, i, PyInt_AS_LONG(o));
+\layout LyX-Code
+
+
+\size footnotesize 
+   else if (PyLong_Check(o))
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      /* Não existe PyLong_AS_DOUBLE */
+\layout LyX-Code
+
+
+\size footnotesize 
+      script_put_double(env, i, PyLong_AsDouble(o));
+\layout LyX-Code
+
+
+\size footnotesize 
+   else if (PyFloat_Check(o))
+\layout LyX-Code
+
+
+\size footnotesize 
+      script_put_double(env, i, PyFloat_AS_DOUBLE(o));
+\layout LyX-Code
+
+
+\size footnotesize 
+   else if (PyBool_Check(o))
+\layout LyX-Code
+
+
+\size footnotesize 
+      script_put_bool(env, i, o == Py_True ? 1 : 0);
+\layout LyX-Code
+
+
+\size footnotesize 
+   else
+\layout LyX-Code
+
+
+\size footnotesize 
+      script_put_int(env, i, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+É importante notar que os tipos Python 
+\family typewriter 
+PyInt
+\family default 
+ e 
+\family typewriter 
+PyLong
+\family default 
+ não correspondem aos tipos C 
+\family typewriter 
+int
+\family default 
+ e 
+\family typewriter 
+long
+\family default 
+: 
+\family typewriter 
+PyInt
+\family default 
+ é o tipo inteiro correspondente ao tamanho da palavra da máquina (análogo
+ a 
+\family typewriter 
+int
+\family default 
+), mas 
+\family typewriter 
+PyLong
+\family default 
+ é um inteiro de precisão arbitrária.
+ Em LibScript, representamos 
+\family typewriter 
+PyLong
+\family default 
+s como 
+\family typewriter 
+double
+\family default 
+s.
+ A API de LibScript oferece a função 
+\family typewriter 
+script_put_int
+\family default 
+ como conveniência, mas internamente, como ocorre por exemplo em Lua, todos
+ os números são armazenados como 
+\family typewriter 
+double
+\family default 
+s.
+\layout Standard
+
+A segunda função, 
+\family typewriter 
+script_python_tuple_to_buffer
+\family default 
+, insere os elementos de uma tupla no buffer:
+\layout LyX-Code
+
+
+\size footnotesize 
+static void script_python_tuple_to_buffer(script_env* env, PyObject* tuple)
+ {
+\layout LyX-Code
+
+
+\size footnotesize 
+   int i;
+\layout LyX-Code
+
+
+\size footnotesize 
+   int len = PyTuple_GET_SIZE(tuple); 
+\emph on 
+/* Número de elementos da tupla */
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_reset_buffer(env);          
+\emph on 
+/* Esvazia o buffer LibScript */
+\layout LyX-Code
+
+
+\size footnotesize 
+   for (i = 0; i < len; i++) {
+\layout LyX-Code
+
+
+\size footnotesize 
+      PyObject* o = PyTuple_GET_ITEM(tuple, i); 
+\emph on 
+/* Obtém elemento da tupla */
+\layout LyX-Code
+
+
+\size footnotesize 
+      script_python_put_value(env, i, o);       
+\emph on 
+/* Insere-o no buffer.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Como podemos observar, juntas, estas duas funções realizam uma função equivalent
+e à que 
+\family typewriter 
+script_lua_stack_to_buffer
+\family default 
+ exerce no plugin Lua.
+ Elas foram separadas aqui em duas partes para tratar 
+\family typewriter 
+PyObject
+\family default 
+s retornados por chamadas a funções Python: no caso de múltiplos valores
+ de retorno, eles são retornados como uma tupla; para valores simples, eles
+ são passados diretamente.
+ Isto é evidenciado no seguinte trecho da função 
+\family typewriter 
+script_plugin_call_python
+\family default 
+:
+\layout LyX-Code
+
+
+\size footnotesize 
+PyObject* ret;
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* ...
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+ret = PyEval_CallObject(func, args); 
+\emph on 
+       /* Chama uma função Python */
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* ...
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+if (ret == Py_None)                         
+\emph on 
+/* Se a função não retornou valor */
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_reset_buffer(env);                
+\emph on 
+/* Apenas zere o buffer LibScript */
+\layout LyX-Code
+
+
+\size footnotesize 
+else if (PyTuple_Check(ret))                
+\emph on 
+/* Se retornou uma tupla */
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_python_tuple_to_buffer(env, ret); 
+\emph on 
+/* Insira os seus elementos no buffer */
+\layout LyX-Code
+
+
+\size footnotesize 
+else                                        
+\emph on 
+/* Se retornou outro tipo de objeto */
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_python_put_value(env, 0, ret);    
+\emph on 
+/* Insira-o como único elemento */
+\layout Standard
+
+Como o buffer de LibScript é projetado para ser usado apenas como uma área
+ de transferência temporária entre a biblioteca principal e os plugins,
+ e não como uma facilidade para armazenamento e manipulação de dados, a
+ sua API é voltada para a inserção e remoção seqüencial de elementos.
+ Assim, a inserção de um elemento na posição 0 automaticamente zera o buffer.
 \layout Subsection
 
 
@@ -12424,41 +12809,32 @@ snprintf(code, LEN_CODE,
 
 
 \size footnotesize 
-        
+   "bootstrap LibScript;"     
 \emph on 
- /* Inicializa o módulo de extensão */
+/* Inicializa o módulo de extensão */
 \layout LyX-Code
 
 
 \size footnotesize 
-         "bootstrap LibScript;"
-\layout LyX-Code
-
-
-\size footnotesize 
+   "package %s;" 
 \emph on 
-         /* Declara o pacote do ambiente */
+             /* Declara o pacote do ambiente */
 \layout LyX-Code
 
 
 \size footnotesize 
-         "package %s;"
+   "sub AUTOLOAD {"
 \layout LyX-Code
 
 
 \size footnotesize 
-         "sub AUTOLOAD {"
-\layout LyX-Code
-
-
-\size footnotesize 
-            "our $AUTOLOAD;"
+      "our $AUTOLOAD;"
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-            /* Extrai o nome do método do nome qualificado 
+      /* Extrai o nome do método do nome qualificado 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -12471,34 +12847,37 @@ pacote::método
 
 
 \size footnotesize 
-            "$AUTOLOAD =~ s/[^:]*:://;"
+      "$AUTOLOAD =~ s/[^:]*:://;"
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-            /* Invoca caller passando o endereço do estado,
+      /* Invoca caller passando o endereço do estado, */
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-               o nome do método, e o array de argumentos */
+      /* o nome do método, e o array de argumentos */
 \layout LyX-Code
 
 
 \size footnotesize 
-            "LibScript::caller(%p, $AUTOLOAD, @_);"
+\emph on 
+      
+\emph default 
+"LibScript::caller(%p, $AUTOLOAD, @_);"  
 \layout LyX-Code
 
 
 \size footnotesize 
-         "}",
+   "}",
 \layout LyX-Code
 
 
 \size footnotesize 
-         state->package, state);
+   state->package, state);
 \layout LyX-Code
 
 
@@ -12667,7 +13046,7 @@ script_in_string
 \family typewriter 
 script_type script_in_type(script_env* env)
 \newline 
-int script_param_count(script_env* env)
+int script_buffer_size(script_env* env)
 \newline 
 
 \family default 
@@ -12683,7 +13062,7 @@ script_in_*
 \family default 
  e 
 \family typewriter 
-script_param_count
+script_buffer_size
 \family default 
  retorna o número de parâmetros disponíveis para consumo.
 \layout Itemize
@@ -12852,7 +13231,7 @@ Define um novo valor para a mensagem de erro do ambiente.
 
 
 \family typewriter 
-void script_start_params(script_env* env)
+void script_reset_buffer(script_env* env)
 \family default 
 
 \newline 
