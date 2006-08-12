@@ -49,7 +49,7 @@ INLINE static void script_ruby_put_value(script_env* env, int i, VALUE arg) {
    }
 }
 
-INLINE static VALUE script_ruby_params_to_array(int nargs, script_env* env) {
+INLINE static VALUE script_ruby_buffer_to_array(int nargs, script_env* env) {
    VALUE ret;
    int i;
    VALUE* args = malloc(sizeof(VALUE) * nargs);
@@ -60,16 +60,13 @@ INLINE static VALUE script_ruby_params_to_array(int nargs, script_env* env) {
          arg = rb_float_new(script_get_double(env, i)); 
          break;
       case SCRIPT_STRING: {
-         char* param = script_get_string(env, i);
-         arg = rb_str_new2(param); 
-         free(param);
+         char* s = script_get_string(env, i);
+         arg = rb_str_new2(s); 
+         free(s);
          break;
       }
       case SCRIPT_BOOL:
-         if (script_get_bool(env, i))
-            arg = Qtrue; 
-         else
-            arg = Qfalse;
+         arg = script_get_bool(env, i) ? Qtrue : Qfalse;
          break;
       default:
          /* pacify gcc warnings */
@@ -82,12 +79,12 @@ INLINE static VALUE script_ruby_params_to_array(int nargs, script_env* env) {
    return ret;
 }
 
-INLINE static VALUE script_ruby_params_to_value(script_env* env) {
+INLINE static VALUE script_ruby_buffer_to_value(script_env* env) {
    VALUE ret;
    int nargs;
-   nargs = script_param_count(env);
+   nargs = script_buffer_size(env);
    if (nargs > 0) {
-      return script_ruby_params_to_array(nargs, env);
+      return script_ruby_buffer_to_array(nargs, env);
    } else
       ret = Qnil;
    return ret;
@@ -103,11 +100,11 @@ static VALUE script_ruby_caller(VALUE self, VALUE fn_value, VALUE args) {
    script_ruby_state* state = script_ruby_get_state_from_class(self);
    script_fn fn = (script_fn) NUM2LONG(fn_value);
    len = RARRAY(args)->len;
-   script_reset_params(state->env);
+   script_reset_buffer(state->env);
    for (i = 0; i < len; i++)
       script_ruby_put_value(state->env, i, RARRAY(args)->ptr[i]);
    fn(state->env);
-   return script_ruby_params_to_value(state->env);
+   return script_ruby_buffer_to_value(state->env);
 }
 
 static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
@@ -127,7 +124,7 @@ static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
    } else {
       script_err err;
       int i;
-      script_reset_params(state->env);
+      script_reset_buffer(state->env);
       for (i = 1; i < argc; i++)
          script_ruby_put_value(state->env, i-1, argv[i]);
       err = script_call(state->env, method_name);
@@ -136,7 +133,7 @@ static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
          rb_raise(rb_eRuntimeError, script_error_message(state->env));
          return Qnil;
       }
-      return script_ruby_params_to_value(state->env);
+      return script_ruby_buffer_to_value(state->env);
    }
    return Qnil;
 }
@@ -201,11 +198,11 @@ int script_plugin_call_ruby(script_ruby_state* state, char* fn) {
    VALUE method = rb_funcall(state->klass, method_id, 1, fn_value);
    if (method == Qnil)
       return SCRIPT_ERRFNUNDEF;
-   args = script_ruby_params_to_array(script_param_count(env), env);
+   args = script_ruby_buffer_to_array(script_buffer_size(env), env);
    rb_ary_push(args, state->klass);
    rb_ary_push(args, ID2SYM(rb_intern(fn)));
    ret = rb_protect(script_ruby_pcall, args, &error);
-   script_reset_params(env);
+   script_reset_buffer(env);
    if (!error && ret != Qnil)
       script_ruby_put_value(state->env, 0, ret);
    return script_ruby_return(state, error);

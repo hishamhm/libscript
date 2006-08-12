@@ -18,11 +18,11 @@ INLINE static script_env* script_lua_get_env(lua_State *L) {
    return env;
 }
 
-INLINE static void script_lua_stack_to_params(script_env* env, lua_State *L) {
+INLINE static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
    int nargs;
    int i;
    nargs = lua_gettop(L);
-   script_reset_params(env);
+   script_reset_buffer(env);
    for (i = 1; i <= nargs; i++) {
       switch(lua_type(L, i)) {
       case LUA_TNUMBER: script_put_double(env, i-1, lua_tonumber(L, i)); break;
@@ -33,20 +33,19 @@ INLINE static void script_lua_stack_to_params(script_env* env, lua_State *L) {
    }
 }
 
-INLINE static int script_lua_params_to_stack(script_env* env, lua_State *L) {
-   script_type type;
+INLINE static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
    int i;
-   int len = script_param_count(env);
+   int len = script_buffer_size(env);
    for (i = 0; i < len; i++) {
-      type = script_get_type(env, i);
+      script_type type = script_get_type(env, i);
       switch (type) {
       case SCRIPT_DOUBLE:
          lua_pushnumber(L, script_get_double(env, i));
          break;
       case SCRIPT_STRING: {
-         char* param = script_get_string(env, i);
-         lua_pushstring(L, param);
-         free(param);
+         char* s = script_get_string(env, i);
+         lua_pushstring(L, s);
+         free(s);
          break;
       }
       case SCRIPT_BOOL: lua_pushboolean(L, script_get_bool(env, i)); break;
@@ -61,14 +60,14 @@ static int script_lua_caller(lua_State *L) {
    script_env* env = script_lua_get_env(L);
    const char* name;
    script_err err;
-   script_lua_stack_to_params(env, L);
+   script_lua_stack_to_buffer(env, L);
    name = lua_tostring(L, lua_upvalueindex(1));
    err = script_call(env, name);
    if (err != SCRIPT_OK) {
       lua_pushstring(L, "No such function.");
       lua_error(L);
    }
-   return script_lua_params_to_stack(env, L);
+   return script_lua_buffer_to_stack(env, L);
 }
 
 static int script_lua_make_caller(lua_State *L) {
@@ -138,13 +137,13 @@ script_err script_plugin_call_lua(script_plugin_state state, char* fn) {
    lua_gettable(L, -2);
    if (!lua_isfunction(L, -1) || lua_iscfunction(L, -1))
       return SCRIPT_ERRFNUNDEF;
-   args = script_lua_params_to_stack(env, L);
+   args = script_lua_buffer_to_stack(env, L);
    err = lua_pcall(L, args, 0, 0);
    if (err) {
       script_set_error_message(env, lua_tostring(L, -1));
       return SCRIPT_ERRLANGRUN;
    }
-   script_lua_stack_to_params(env, L);
+   script_lua_stack_to_buffer(env, L);
    return SCRIPT_OK;
 }
 
