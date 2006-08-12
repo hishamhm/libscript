@@ -1,7 +1,8 @@
 
 lib_LTLIBRARIES = libscript-perl.la
 
-libscript_perl_la_SOURCES = src/libscript-perl.c src/libscript-perl.h perlxsi.c libscript-perl-xs.c
+libscript_perl_la_SOURCES = src/libscript-perl.c src/libscript-perl.h
+nodist_libscript_perl_la_SOURCES = perlxsi.c libscript-perl-xs.c
 
 BUILT_SOURCES = perlxsi.c libscript-perl-xs.c
 CLEANFILES = perlxsi.c libscript-perl-xs.c
@@ -11,7 +12,7 @@ AM_CFLAGS = -ansi -Wall $(PERL_CFLAGS) -I./src
 idsdir = $(datadir)/libscript/ids
 ids_DATA = ids/pl.id ids/perl.id
 
-EXTRA_DIST = typemap
+EXTRA_DIST = src/libscript-perl.xs typemap
 
 libscript_perl_la_LDFLAGS = -module -version-info 0:0:0
 libscript_perl_la_LIBADD = $(PERL_LDFLAGS)
