@@ -18,14 +18,15 @@
 #define SCRIPT_DIRSEP '/'
 #endif
 
+#define SCRIPT_BUFFER_MAXSIZE 50
 #define SCRIPT_ERROR_MESSAGE_LEN 128
 
 struct script_env_ {
    char* namespace;
    ht* plugins;
    ht* functions;
-   script_data* params;
-   int n_params;
+   script_data* buffer;
+   int buffer_size;
    int next_get;
    int error;
    char error_message[SCRIPT_ERROR_MESSAGE_LEN];

@@ -54,7 +54,7 @@ script_env* script_init(const char* namespace) {
    env->plugins = ht_new(5, HT_STR, HT_BORROW_REFS);
    env->functions = ht_new(20, HT_STR, HT_BORROW_REFS);
 
-   env->params = calloc(sizeof(script_data), SCRIPT_MAX_PARAMS + 1);
+   env->buffer = calloc(sizeof(script_data), SCRIPT_BUFFER_MAXSIZE + 1);
    
    return env;
 }
@@ -166,7 +166,7 @@ script_err script_done(script_env* env) {
    free(env->namespace);
    ht_delete(env->plugins);
    ht_delete(env->functions);
-   free(env->params);
+   free(env->buffer);
    free(env);
    dlerr = lt_dlexit();
    if (dlerr)

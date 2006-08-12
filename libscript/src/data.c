@@ -14,36 +14,36 @@
 #define MAX(a,b) ((a)>(b)?(a):(b))
 #endif
 
-void script_reset_params(script_env* env) {
-   int size = env->n_params;
+void script_reset_buffer(script_env* env) {
+   int size = env->buffer_size;
    int i;
    for (i = 0; i < size; i++) {
-      script_data* data = &(env->params[i]);
+      script_data* data = &(env->buffer[i]);
       if (data->type == SCRIPT_STRING) {
          free(data->u.string_value);
       }
    }
-   env->n_params = 0;
+   env->buffer_size = 0;
    env->next_get = 0;
 }
 
-int script_param_count(script_env* env) {
-   return env->n_params;
+int script_buffer_size(script_env* env) {
+   return env->buffer_size;
 }
 
 script_type script_get_type(script_env* env, int i) {
    script_data* data;
    assert (i == env->next_get);
-   if (i >= env->n_params) return SCRIPT_NONE;
-   data = &(env->params[i]);
+   if (i >= env->buffer_size) return SCRIPT_NONE;
+   data = &(env->buffer[i]);
    return data->type;
 }
 
 INLINE static script_data* script_get_data(script_env* env, int i, script_type type) {
    script_data* data;
    assert (i == env->next_get);
-   script_check_ret(i >= env->n_params, SCRIPT_ERRPARMISSING, NULL);
-   data = &(env->params[i]);
+   script_check_ret(i >= env->buffer_size, SCRIPT_ERRPARMISSING, NULL);
+   data = &(env->buffer[i]);
    script_check_ret(data->type != type, SCRIPT_ERRPARTYPE, NULL);
    env->next_get++;
    return data;
@@ -52,14 +52,14 @@ INLINE static script_data* script_get_data(script_env* env, int i, script_type t
 static script_data* script_put_data(script_env* env, int i, script_type type) {
    script_data* data;
 
-   if (i == 0 && env->n_params > 0)
-      script_reset_params(env);
-   assert(i == env->n_params);
-   script_check_ret(i != env->n_params, SCRIPT_ERRPAREXCESS, NULL);
-   script_check_ret(i >= SCRIPT_MAX_PARAMS, SCRIPT_ERRPAREXCESS, NULL);
-   data = &(env->params[i]);
+   if (i == 0 && env->buffer_size > 0)
+      script_reset_buffer(env);
+   assert(i == env->buffer_size);
+   script_check_ret(i != env->buffer_size, SCRIPT_ERRPAREXCESS, NULL);
+   script_check_ret(i >= SCRIPT_BUFFER_MAXSIZE, SCRIPT_ERRPAREXCESS, NULL);
+   data = &(env->buffer[i]);
    data->type = type;
-   env->n_params = i + 1;
+   env->buffer_size = i + 1;
    return data;
 }
 
