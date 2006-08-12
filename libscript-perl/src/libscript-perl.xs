@@ -6,7 +6,7 @@
 #include "libscript.h"
 #include "libscript-perl.h"
 
-static SV * script_perl_param_to_sv(script_env* env, int i) {
+static SV * script_perl_get_sv(script_env* env, int i) {
 	switch (script_get_type(env, i)) {
 	case SCRIPT_DOUBLE: return newSVnv(script_get_double(env, i));
 	case SCRIPT_STRING: return newSVpv(script_get_string(env, i), 0);
@@ -41,16 +41,16 @@ script_perl_caller(state_i, name, ...)
 		}
 		switch (GIMME_V) {
 		case G_SCALAR:
-			RETVAL = script_perl_param_to_sv(env, 0);
+			RETVAL = script_perl_get_sv(env, 0);
 			break;
 		case G_ARRAY:
 			{
-				int len = script_param_count(env);
+				int len = script_buffer_size(env);
 				int i;
 				RETVAL = (SV*)newAV();
 				sv_2mortal((SV*)RETVAL);
 				for (i = 0; i < len; i++)
-					Perl_av_push(aTHX_ (AV*)RETVAL, script_perl_param_to_sv(env, i));
+					Perl_av_push(aTHX_ (AV*)RETVAL, script_perl_get_sv(env, i));
 			}
 		case G_VOID:
 			RETVAL = &PL_sv_undef;
