@@ -27,25 +27,19 @@ static ID name_id;
 static int script_ruby_state_count = 0;
 
 INLINE static void script_ruby_put_value(script_env* env, int i, VALUE arg) {
-   if (arg == Qtrue) {
-      script_put_bool(env, i, 1);
-      return;
-   } else if (arg == Qfalse || arg == Qnil) {
-      script_put_bool(env, i, 0);
-      return;
-   }
    switch (TYPE(arg)) {
    case T_FLOAT:
    case T_FIXNUM:
    case T_BIGNUM:
-      script_put_double(env, i, NUM2DBL(arg));
-      break;
+      script_put_double(env, i, NUM2DBL(arg)); break;
    case T_STRING:
-      script_put_string(env, i, StringValuePtr(arg));
-      break;
-   default:;
-      /* TODO: other types */
-      assert(0);
+      script_put_string(env, i, StringValuePtr(arg)); break;
+   case T_TRUE:
+      script_put_bool(env, i, 1); break;
+   case T_FALSE:
+      script_put_bool(env, i, 0); break;
+   default:
+      script_put_int(env, i, 0); break;
    }
 }
 
