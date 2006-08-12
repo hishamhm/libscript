@@ -23,6 +23,8 @@ int main(int argc, char** argv) {
    VALUE result;
 
    ruby_init();
+   
+   printf("TYPE(Qtrue) = %d\n", TYPE(Qtrue));
 
    rb_define_global_function("teste", teste_rb, 2);
 

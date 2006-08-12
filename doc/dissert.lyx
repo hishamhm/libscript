@@ -8426,7 +8426,7 @@ o.
 \family typewriter 
 lua_gettable
 \family default 
- e a tabela deve ser empilhada explicitamente juntamente com os demais parametro
+ e a tabela deve ser empilhada explicitamente juntamente com os demais parâmetro
 s.
 \layout Comment
 
@@ -10819,8 +10819,6 @@ script_put_
 script_get_
 \family default 
 * os removem.
- Elementos que não tenham sido consumidos do buffer, como por exemplo valores
- de retorno ignorados, são descartados na chamada seguinte.
 \layout Standard
 
 Tanto nas funções da aplicação C a serem registradas em LibScript como no
@@ -10847,6 +10845,19 @@ script_put_
 script_get_
 \family default 
 * para obter os valores de retorno.
+\layout Standard
+
+O buffer de LibScript foi projetado para ser usado apenas como uma área
+ de transferência temporária entre a biblioteca principal e os plugins,
+ e não como uma facilidade geral para armazenamento e manipulação de dados.
+ Assim, a sua API é voltada para a inserção e remoção seqüencial de elementos.
+ Por exemplo, a inserção de um elemento na posição 0 automaticamente zera
+ o buffer, freqüentemente evitando a necessidade de zerar o buffer explicitament
+e com a função 
+\family typewriter 
+script_reset_buffer
+\family default 
+.
 \layout Standard
 
 A carga de plugins é feita de forma implícita, pelas duas funções de execução
@@ -11833,7 +11844,7 @@ None
 
 Assim, as estruturas de dados referentes aos estados LibScript não são encerrado
 s nos plugins Python e Ruby.
- Esta é implementação no plugin Ruby:
+ Esta é a implementação no plugin Ruby:
 \layout LyX-Code
 
 
@@ -11990,7 +12001,7 @@ static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
 
 
 \size footnotesize 
-     
+      
 \emph on 
 /* Verifica o tipo Lua do elemento na posição i da pilha */
 \layout LyX-Code
@@ -11998,12 +12009,12 @@ static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
 
 \size footnotesize 
 \emph on 
-     /* e para cada tipo, converte o elemento e o armazena no buffer */
+      /* e para cada tipo, converte o elemento e o armazena no buffer */
 \layout LyX-Code
 
 
 \size footnotesize 
-     switch(lua_type(L, i)) { 
+      switch(lua_type(L, i)) { 
 \layout LyX-Code
 
 
@@ -12050,7 +12061,7 @@ static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
 
 
 \size footnotesize 
-        script_put_double(env, i-1, 0);
+         script_put_double(env, i-1, 0);
 \layout LyX-Code
 
 
@@ -12133,7 +12144,7 @@ static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
 
 
 \size footnotesize 
-   int i;
+   int i; char* s;
 \layout LyX-Code
 
 
@@ -12151,13 +12162,13 @@ static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
 
 \size footnotesize 
 \emph on 
-     /* Verifica o tipo do elemento na posição i do buffer */
+      /* Verifica o tipo do elemento na posição i do buffer */
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-     /* e para cada tipo, o obtém e o insere na pilha de Lua */
+      /* e para cada tipo, o obtém e o insere na pilha de Lua */
 \layout LyX-Code
 
 
@@ -12182,51 +12193,43 @@ static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
 
 
 \size footnotesize 
-      case SCRIPT_STRING: {
+      case SCRIPT_STRING:
 \layout LyX-Code
 
 
 \size footnotesize 
+         s = script_get_string(env, i); 
 \emph on 
-            /* A string retornada por LibScript pertence ao chamador.
+/* A string pertence ao chamador.
  */
 \layout LyX-Code
 
 
 \size footnotesize 
-            char* s = script_get_string(env, i);
+         lua_pushstring(L, s);
 \layout LyX-Code
 
 
 \size footnotesize 
-            lua_pushstring(L, s);
-\layout LyX-Code
-
-
-\size footnotesize 
+         free(s); 
 \emph on 
-            /* Libera a string, já que Lua armazena sua própria cópia.
+/* Libera a string, já que Lua armazena sua própria cópia.
  */
 \layout LyX-Code
 
 
 \size footnotesize 
-            free(s);
+         break;
 \layout LyX-Code
 
 
 \size footnotesize 
-            break;
+      case SCRIPT_BOOL:
 \layout LyX-Code
 
 
 \size footnotesize 
-         }
-\layout LyX-Code
-
-
-\size footnotesize 
-      case SCRIPT_BOOL: lua_pushboolean(L, script_get_bool(env, i)); break;
+         lua_pushboolean(L, script_get_bool(env, i)); break;
 \layout LyX-Code
 
 
@@ -12263,7 +12266,7 @@ A API para implementação de funções em C a serem registradas em LibScript
 Em LibScript-Python, a conversão de dados recebidos de Python para o buffer
  de LibScript é divida em duas funções: 
 \family typewriter 
-script_python_put_value
+script_python_put_object
 \family default 
  e 
 \family typewriter 
@@ -12276,7 +12279,7 @@ script_python_tuple_to_buffer
 
 
 \size footnotesize 
-static void script_python_put_value(script_env* env, int i, PyObject* o)
+static void script_python_put_object(script_env* env, int i, PyObject* o)
  {
 \layout LyX-Code
 
@@ -12448,7 +12451,7 @@ static void script_python_tuple_to_buffer(script_env* env, PyObject* tuple)
 
 
 \size footnotesize 
-      script_python_put_value(env, i, o);       
+      script_python_put_object(env, i, o);      
 \emph on 
 /* Insere-o no buffer.
  */
@@ -12464,19 +12467,160 @@ static void script_python_tuple_to_buffer(script_env* env, PyObject* tuple)
 }
 \layout Standard
 
-Como podemos observar, juntas, estas duas funções realizam uma função equivalent
-e à que 
+A operação inversa, de transferência de dados do buffer LibScript para Python,
+ também é implementada em duas funções, uma tratando objetos individualmente
+ e outra tratando tuplas.
+ A função 
 \family typewriter 
-script_lua_stack_to_buffer
+script_get_object
 \family default 
- exerce no plugin Lua.
- Elas foram separadas aqui em duas partes para tratar 
+ converte um elemento do buffer para um 
 \family typewriter 
 PyObject
 \family default 
-s retornados por chamadas a funções Python: no caso de múltiplos valores
- de retorno, eles são retornados como uma tupla; para valores simples, eles
- são passados diretamente.
+ equivalente:
+\layout LyX-Code
+
+
+\size footnotesize 
+static PyObject* script_python_get_object(script_env* env, int i) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyObject* ret; char* s;
+\layout LyX-Code
+
+
+\size footnotesize 
+   switch (script_get_type(env, i)) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   case SCRIPT_DOUBLE:
+\layout LyX-Code
+
+
+\size footnotesize 
+      return PyFloat_FromDouble(script_get_double(env, i));
+\layout LyX-Code
+
+
+\size footnotesize 
+   case SCRIPT_STRING:
+\layout LyX-Code
+
+
+\size footnotesize 
+      s = script_get_string(env, i);
+\layout LyX-Code
+
+
+\size footnotesize 
+      PyObject* ret = PyString_FromString(s);
+\layout LyX-Code
+
+
+\size footnotesize 
+      free(s);
+\layout LyX-Code
+
+
+\size footnotesize 
+      return ret;
+\layout LyX-Code
+
+
+\size footnotesize 
+   case SCRIPT_BOOL:
+\layout LyX-Code
+
+
+\size footnotesize 
+      return PyBool_FromLong(script_get_bool(env, i));
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+A função 
+\family typewriter 
+script_python_buffer_to_tuple
+\family default 
+ gera uma tupla contendo todos os elementos do buffer LibScript:
+\layout LyX-Code
+
+
+\size footnotesize 
+static PyObject* script_python_buffer_to_tuple(script_env* env) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   int i;
+\layout LyX-Code
+
+
+\size footnotesize 
+   int len = script_buffer_size(env);
+\layout LyX-Code
+
+
+\size footnotesize 
+   PyObject* ret = PyTuple_New(len);
+\layout LyX-Code
+
+
+\size footnotesize 
+   for(i = 0; i < len; i++) {
+\layout LyX-Code
+
+
+\size footnotesize 
+      PyObject* o = script_python_get_object(env, i);
+\layout LyX-Code
+
+
+\size footnotesize 
+      PyTuple_SetItem(ret, i, o);
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+   return ret;
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Como podemos observar, estes dois pares de funções realizam funções equivalentes
+ às que 
+\family typewriter 
+script_lua_stack_to_buffer
+\family default 
+ e 
+\family typewriter 
+script_lua_buffer_to_stack
+\family default 
+ exercem no plugin Lua.
+ Elas foram separadas em duas partes em função do modelo de retorno de valores
+ em funções Python: no caso de múltiplos valores de retorno, eles são retornados
+ como uma tupla; para valores simples, eles são passados diretamente.
  Isto é evidenciado no seguinte trecho da função 
 \family typewriter 
 script_plugin_call_python
@@ -12486,7 +12630,7 @@ script_plugin_call_python
 
 
 \size footnotesize 
-PyObject* ret;
+PyObject *ret, *args;
 \layout LyX-Code
 
 
@@ -12494,6 +12638,13 @@ PyObject* ret;
 \emph on 
 /* ...
  */
+\layout LyX-Code
+
+
+\size footnotesize 
+args = script_python_buffer_to_tuple(env);  
+\emph on 
+/* Obtém o parâmetros para a chamada */
 \layout LyX-Code
 
 
@@ -12547,16 +12698,263 @@ else
 
 
 \size footnotesize 
-   script_python_put_value(env, 0, ret);    
+   script_python_put_object(env, 0, ret);   
 \emph on 
 /* Insira-o como único elemento */
 \layout Standard
 
-Como o buffer de LibScript é projetado para ser usado apenas como uma área
- de transferência temporária entre a biblioteca principal e os plugins,
- e não como uma facilidade para armazenamento e manipulação de dados, a
- sua API é voltada para a inserção e remoção seqüencial de elementos.
- Assim, a inserção de um elemento na posição 0 automaticamente zera o buffer.
+No tratador de chamadas a funções externas do plugin, a comunicação no sentido
+ inverso emprega uma lógica similar:
+\layout LyX-Code
+
+
+\size footnotesize 
+script_python_tuple_to_buffer(env, args);    
+\emph on 
+/* Obtém o parâmetros para a chamada */
+\layout LyX-Code
+
+
+\size footnotesize 
+err = script_call(env, fn_name);             
+\emph on 
+/* Chama um função via LibScript */
+\layout LyX-Code
+
+
+\size footnotesize 
+/* ...
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+switch(script_buffer_size(env)) {
+\layout LyX-Code
+
+
+\size footnotesize 
+case 0:                                      
+\emph on 
+ /* Se a função não retornou valor */
+\layout LyX-Code
+
+
+\size footnotesize 
+   Py_RETURN_NONE;                           
+\emph on 
+ /* Retorne o valor Python 'None' */
+\layout LyX-Code
+
+
+\size footnotesize 
+case 1:                                      
+\emph on 
+ /* Se retornou um único valor */
+\layout LyX-Code
+
+
+\size footnotesize 
+   return script_python_get_object(env, 0);  
+\emph on 
+ /* Converta e retorne-o */
+\layout LyX-Code
+
+
+\size footnotesize 
+default:                                      /* Se retornou mais de um
+ valor */
+\layout LyX-Code
+
+
+\size footnotesize 
+   return script_python_buffer_to_tuple(env); 
+\emph on 
+/* Colete-os em uma tupla e retorne-a */
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Assim como Python, funções em Ruby retornam múltiplos valores encapsulando-os
+ em um tipo agregado.
+ Desta forma, as operações de transferências de dados de LibScript-Ruby
+ também são divididas em pares de funções, uma convertendo um valor do buffer,
+ e outra operando sobre um array Ruby.
+ A função análoga a 
+\family typewriter 
+script_python_put_object
+\family default 
+ é 
+\family typewriter 
+script_ruby_put_value
+\family default 
+:
+\layout LyX-Code
+
+
+\size footnotesize 
+static void script_ruby_put_value(script_env* env, int i, VALUE arg) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   switch (TYPE(arg)) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   case T_FLOAT:
+\layout LyX-Code
+
+
+\size footnotesize 
+   case T_FIXNUM:
+\layout LyX-Code
+
+
+\size footnotesize 
+   case T_BIGNUM:
+\layout LyX-Code
+
+
+\size footnotesize 
+      script_put_double(env, i, NUM2DBL(arg)); break;
+\layout LyX-Code
+
+
+\size footnotesize 
+   case T_STRING:
+\layout LyX-Code
+
+
+\size footnotesize 
+      script_put_string(env, i, StringValuePtr(arg)); break;
+\layout LyX-Code
+
+
+\size footnotesize 
+   case T_TRUE:
+\layout LyX-Code
+
+
+\size footnotesize 
+      script_put_bool(env, i, 1); break;
+\layout LyX-Code
+
+
+\size footnotesize 
+   case T_FALSE:
+\layout LyX-Code
+
+
+\size footnotesize 
+      script_put_bool(env, i, 0); break;
+\layout LyX-Code
+
+
+\size footnotesize 
+   default:
+\layout LyX-Code
+
+
+\size footnotesize 
+      script_put_int(env, i, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Aqui, alguns problemas da API de Ruby são aparente.
+ Além da inconsistência na nomenclatura das funções de conversão de objetos,
+ o significado do valor retornado pela macro 
+\family typewriter 
+TYPE
+\family default 
+ só pode ser compreendido através da representação interna de 
+\family typewriter 
+VALUE
+\family default 
+s na implementação de Ruby, e não através da hierarquia de tipos dos objetos
+ da linguagem.
+ Os objetos cujas classes que têm tratamento especial na estrutura interna
+ de 
+\family typewriter 
+VALUE
+\family default 
+s possuem constantes associadas a si, como 
+\family typewriter 
+T_FLOAT
+\family default 
+ e 
+\family typewriter 
+T_STRING
+\family default 
+; os demais são identificados apenas como 
+\family typewriter 
+T_OBJECT
+\family default 
+s.
+ O uso de 
+\family typewriter 
+T_TRUE
+\family default 
+ e 
+\family typewriter 
+T_FALSE
+\family default 
+ pode dar a entender que alguns valores específicos também retornam resultados
+ especiais para 
+\family typewriter 
+TYPE
+\family default 
+.
+ De fato, estes valores são definidos como 
+\family typewriter 
+VALUE
+\family default 
+s que não correspondem a índices da heap de objetos de Ruby e são tratados
+ de forma especial na implementação.
+ Do ponto de vista de código Ruby, entretanto, esta classificação dos valores
+ 
+\family typewriter 
+true
+\family default 
+, 
+\family typewriter 
+false
+\family default 
+ e 
+\family typewriter 
+nil
+\family default 
+ em tipos separados na API C é justificada por estes serem definidos como
+ 
+\emph on 
+singletons
+\emph default 
+ das classes 
+\family typewriter 
+TrueClass
+\family default 
+, 
+\family typewriter 
+FalseClass
+\family default 
+ e 
+\family typewriter 
+NilClass
+\family default 
+, respectivamente.
 \layout Subsection
 
 
@@ -12565,6 +12963,11 @@ Como o buffer de LibScript é projetado para ser usado apenas como uma área
 \end_inset 
 
 Resolução de funções sob demanda
+\layout Standard
+
+
+\color red
+TODO: simplificar
 \layout Standard
 
 Nos plugins de LibScript a ligação entre a função C declarada e uma função
@@ -12654,7 +13057,7 @@ __call
 \family default 
  definido como 
 \family typewriter 
-script_python_object_call
+script_python_caller
 \family default 
 , uma função que, assim como 
 \family typewriter 
@@ -12719,7 +13122,7 @@ __call
 \family default 
  do objeto é invocada em seguida, executando 
 \family typewriter 
-script_python_object_call
+script_python_caller
 \family default 
 , que registra os parâmetros de entrada no ambiente LibScript, invoca a
  função C armazenada no atributo interno do objeto e retorna a Python os
