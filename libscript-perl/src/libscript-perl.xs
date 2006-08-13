@@ -68,6 +68,7 @@ script_perl_caller(env_i, name, ...)
 				sv_2mortal((SV*)RETVAL);
 				for (i = 0; i < len; i++)
 					Perl_av_push(aTHX_ (AV*)RETVAL, script_perl_get_sv(aTHX_ env, i));
+				break;
 			}
 		case G_VOID:
 			RETVAL = &PL_sv_undef;
