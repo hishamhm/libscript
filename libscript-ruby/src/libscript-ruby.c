@@ -87,14 +87,11 @@ INLINE static script_env* script_ruby_get_env(VALUE state) {
    return (script_env*) NUM2LONG(rb_const_get(state, env_id));
 }
 
-static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
+static VALUE script_ruby_method_missing(VALUE self, VALUE args) {
    script_env* env = script_ruby_get_env(self);
-   char *method_name = rb_id2name(SYM2ID(argv[0]));
+   char *method_name = rb_id2name(SYM2ID(rb_ary_shift(args)));
    script_err err;
-   int i;
-   script_reset_buffer(env);
-   for (i = 1; i < argc; i++)
-      script_ruby_put_value(env, i-1, argv[i]);
+   script_ruby_array_to_buffer(env, args);
    err = script_call(env, method_name);
    if (err != SCRIPT_OK)
       /* Raises exception and longjmps away from this function. */
@@ -133,7 +130,7 @@ script_plugin_state script_plugin_init_ruby(script_env* env) {
    free(class_name);
    /* assuming a void* fits in a long */
    rb_const_set(state, env_id, INT2NUM((long int)env));
-   rb_define_singleton_method(state, "method_missing", script_ruby_method_missing, -1);
+   rb_define_singleton_method(state, "method_missing", script_ruby_method_missing, -2);
    return (script_plugin_state) state;
 }
 
