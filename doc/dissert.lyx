@@ -11393,13 +11393,6 @@ script_namespace
 .
 \layout Standard
 
-Como nas demais linguagens não há uma forma conveniente de armazenar o ambiente
- LibScript de forma isolada como no ocorre no registro de Lua, os estados
- são representados como structs que armazenam o ponteiro para o ambiente
- e o identificador representando a estrutura de dados específica da linguagem
- que o representa.
-\layout Standard
-
 Em LibScript-Perl os estados são isolados como em Lua.
  Cada estado criado inicializa uma nova instância de 
 \family typewriter 
@@ -12644,7 +12637,7 @@ PyObject *ret, *args;
 \size footnotesize 
 args = script_python_buffer_to_tuple(env);  
 \emph on 
-/* Obtém o parâmetros para a chamada */
+/* Obtém o parâmetros de entrada */
 \layout LyX-Code
 
 
@@ -12686,7 +12679,7 @@ else if (PyTuple_Check(ret))
 \size footnotesize 
    script_python_tuple_to_buffer(env, ret); 
 \emph on 
-/* Insira os seus elementos no buffer */
+/* Insira seus elementos no buffer */
 \layout LyX-Code
 
 
@@ -12711,7 +12704,7 @@ No tratador de chamadas a funções externas do plugin, a comunicação no sentido
 \size footnotesize 
 script_python_tuple_to_buffer(env, args);    
 \emph on 
-/* Obtém o parâmetros para a chamada */
+/* Obtém o parâmetros de entrada */
 \layout LyX-Code
 
 
@@ -12762,15 +12755,16 @@ case 1:
 
 
 \size footnotesize 
-default:                                      /* Se retornou mais de um
- valor */
+default:                                      
+\emph on 
+/* Se retornou mais de um valor */
 \layout LyX-Code
 
 
 \size footnotesize 
    return script_python_buffer_to_tuple(env); 
 \emph on 
-/* Colete-os em uma tupla e retorne-a */
+/* Retorne-os em uma tupla */
 \layout LyX-Code
 
 
@@ -12874,7 +12868,7 @@ static void script_ruby_put_value(script_env* env, int i, VALUE arg) {
 }
 \layout Standard
 
-Aqui, alguns problemas da API de Ruby são aparente.
+Aqui, alguns problemas da API de Ruby são aparentes.
  Além da inconsistência na nomenclatura das funções de conversão de objetos,
  o significado do valor retornado pela macro 
 \family typewriter 
@@ -12886,8 +12880,7 @@ VALUE
 \family default 
 s na implementação de Ruby, e não através da hierarquia de tipos dos objetos
  da linguagem.
- Os objetos cujas classes que têm tratamento especial na estrutura interna
- de 
+ As classes que têm tratamento especial na estrutura interna de 
 \family typewriter 
 VALUE
 \family default 
@@ -12899,7 +12892,7 @@ T_FLOAT
 \family typewriter 
 T_STRING
 \family default 
-; os demais são identificados apenas como 
+; as demais são identificados apenas como 
 \family typewriter 
 T_OBJECT
 \family default 
@@ -12929,16 +12922,11 @@ s que não correspondem a índices da heap de objetos de Ruby e são tratados
 \family typewriter 
 true
 \family default 
-, 
+ e 
 \family typewriter 
 false
 \family default 
- e 
-\family typewriter 
-nil
-\family default 
- em tipos separados na API C é justificada por estes serem definidos como
- 
+ em tipos separados na API C é justificada definindo-os como 
 \emph on 
 singletons
 \emph default 
@@ -12946,15 +12934,753 @@ singletons
 \family typewriter 
 TrueClass
 \family default 
-, 
+ e 
 \family typewriter 
 FalseClass
 \family default 
+, abordagem provavelmente influenciada por Smalltalk.
+ Porém, diferentemente de Smalltalk, onde 
+\family typewriter 
+True
+\family default 
  e 
 \family typewriter 
-NilClass
+False
 \family default 
-, respectivamente.
+ são subclasses de 
+\family typewriter 
+Boolean
+\family default 
+, em Ruby 
+\family typewriter 
+TrueClass
+\family default 
+ e 
+\family typewriter 
+FalseClass
+\family default 
+ são subclasses diretas de 
+\family typewriter 
+Object
+\family default 
+.
+ Isto traz a inconveniência de que verificar se um tipo é um valor booleano
+ incorre sempre em dois testes.
+\layout Standard
+
+Assim como LibScript-Python tem uma função para armazenar no buffer os elementos
+ de uma tupla, LibScript-Ruby possui uma função para armazenar os elementos
+ de um array:
+\layout LyX-Code
+
+
+\size footnotesize 
+static void script_ruby_array_to_buffer(script_env* env, VALUE array) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   int i;
+\layout LyX-Code
+
+
+\size footnotesize 
+   int len = RARRAY(array)->len;
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_reset_buffer(env);
+\layout LyX-Code
+
+
+\size footnotesize 
+   for (i = 0; i < len; i++) {
+\layout LyX-Code
+
+
+\size footnotesize 
+      VALUE o = rb_ary_entry(array, i);
+\layout LyX-Code
+
+
+\size footnotesize 
+      script_ruby_put_value(env, i, o);
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Ruby não possui uma função na API C para retornar o tamanho de um array;
+ ao invés disso, a estrutura interna do 
+\family typewriter 
+VALUE
+\family default 
+ é exposta através da macro 
+\family typewriter 
+RARRAY
+\family default 
+ (que apenas encapsula um cast).
+ 
+\layout Standard
+
+As operações para conversão de valores do buffer LibScript para Ruby também
+ são similares às implementadas no plugin Python.
+ Novamente, onde em Python há uma função para manipulação de tuplas, temos
+ em Ruby uma função que opera sobre arrays:
+\layout LyX-Code
+
+
+\size footnotesize 
+static VALUE script_ruby_get_value(script_env* env, int i) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   VALUE ret; char* s;
+\layout LyX-Code
+
+
+\size footnotesize 
+   switch (script_get_type(env, i)) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   case SCRIPT_DOUBLE:
+\layout LyX-Code
+
+
+\size footnotesize 
+      return rb_float_new(script_get_double(env, i));
+\layout LyX-Code
+
+
+\size footnotesize 
+   case SCRIPT_STRING:
+\layout LyX-Code
+
+
+\size footnotesize 
+      s = script_get_string(env, i);
+\layout LyX-Code
+
+
+\size footnotesize 
+      ret = rb_str_new2(s);
+\layout LyX-Code
+
+
+\size footnotesize 
+      free(s);
+\layout LyX-Code
+
+
+\size footnotesize 
+      return ret;
+\layout LyX-Code
+
+
+\size footnotesize 
+   case SCRIPT_BOOL:
+\layout LyX-Code
+
+
+\size footnotesize 
+      return script_get_bool(env, i) ? Qtrue : Qfalse;
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout LyX-Code
+
+
+\size footnotesize 
+ 
+\newline 
+static VALUE script_ruby_buffer_to_array(script_env* env) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   int i;
+\layout LyX-Code
+
+
+\size footnotesize 
+   int len = script_buffer_size(env);
+\layout LyX-Code
+
+
+\size footnotesize 
+   VALUE ret = rb_ary_new2(len);
+\layout LyX-Code
+
+
+\size footnotesize 
+   for (i = 0; i < len; i++) {
+\layout LyX-Code
+
+
+\size footnotesize 
+      VALUE o = script_ruby_get_value(env, i);
+\layout LyX-Code
+
+
+\size footnotesize 
+      rb_ary_store(ret, i, o);
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+   return ret;
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+De forma similar a Python, na chamada de funções Ruby a partir de LibScript,
+ a implementação usa a função 
+\family typewriter 
+script_ruby_buffer_to_array
+\family default 
+ para converter os parâmetros de entrada e as funções 
+\family typewriter 
+script_ruby_put_value
+\family default 
+ ou 
+\family typewriter 
+script_ruby_array_to_buffer
+\family default 
+ para converter o valor de retorno, dependendo se a função retornou um ou
+ mais valores (ou mais precisamente, se a função retornou ou não um array).
+ Em chamadas de funções LibScript a partir de Ruby, os parâmetros de entrada
+ são convertidos com 
+\family typewriter 
+script_ruby_array_to_buffer
+\family default 
+ e os valores de retorno com 
+\family typewriter 
+script_ruby_get_value
+\family default 
+ ou 
+\family typewriter 
+script_ruby_buffer_to_array
+\family default 
+.
+\layout Standard
+
+No plugin Perl, temos três funções: a transferência de dados da pilha para
+ o buffer LibScript pôde ser implementada em uma única função como em Lua,
+ mas a transferência no sentido oposto teve que ser dividida em duas funções,
+ como em Python e Ruby.
+ Esta assimetria vem do fato de que o tratamento de valores de retorno é
+ encapsulado pelo pré-processador XS através da variável especial 
+\family typewriter 
+RETVAL
+\family default 
+; assim, nesta situação não podemos manipular a pilha diretamente, mas apenas
+ passar 
+\family typewriter 
+SV
+\family default 
+s como valores de saída.
+ 
+\layout Standard
+
+A transferência de dados da pilha de Perl para o buffer LibScript é razoavelment
+e simples:
+\layout LyX-Code
+
+
+\size footnotesize 
+void script_perl_stack_to_buffer(pTHX_ int ax, script_env* env,
+\layout LyX-Code
+
+
+\size footnotesize 
+                                 int count, int offset) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   int i;
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_reset_buffer(env);
+\layout LyX-Code
+
+
+\size footnotesize 
+   for (i = 0; i < count; i++) {
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      /* Obtém um ponteiro para o SV */
+\layout LyX-Code
+
+
+\size footnotesize 
+      SV* o = ST(i+offset);
+\layout LyX-Code
+
+
+\size footnotesize 
+      if (SvIOK(o))
+\layout LyX-Code
+
+
+\size footnotesize 
+         script_put_int(env, i, SvIV(o));
+\layout LyX-Code
+
+
+\size footnotesize 
+      else if (SvNOK(o))
+\layout LyX-Code
+
+
+\size footnotesize 
+         script_put_double(env, i, SvNV(o));
+\layout LyX-Code
+
+
+\size footnotesize 
+      else if (SvPOK(o))
+\layout LyX-Code
+
+
+\size footnotesize 
+         script_put_string(env, i, SvPV_nolen(o));
+\layout LyX-Code
+
+
+\size footnotesize 
+      else
+\layout LyX-Code
+
+
+\size footnotesize 
+         script_put_int(env, i, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Os parâmetros de entrada desta função merecem comentário.
+ Inicialmente, temos a macro 
+\family typewriter 
+pTHX_
+\family default 
+.
+ Esta macro foi adicionada à API quando Perl passou a permitir múltiplos
+ interpretadores simultâneos por processo: as funções da API foram transformadas
+ em macros que encapsulam a passagem deste primeiro parâmetro.
+ Por exemplo, a função 
+\family typewriter 
+eval_sv
+\family default 
+ pode ser chamada como 
+\family typewriter 
+Perl_eval_sv
+\family default 
+, passando a macro 
+\family typewriter 
+aTHX_
+\family default 
+ como parâmetro inicial.
+ De maneira geral o uso destas macros fica implícito, mas ao escrever funções
+ que usam a API de Perl torna-se necessário usar a macro 
+\family typewriter 
+pTHX_
+\family default 
+ na declaração, para propagar a informação de estado do interpretador através
+ de chamadas de função, e 
+\family typewriter 
+aTHX_
+\family default 
+ nas chamadas.
+\layout Standard
+
+Outro sintoma de que a API de Perl foi projetada mais para uso interno do
+ pré-processador XS do que para manipulação direta transparece no segundo
+ argumento, 
+\family typewriter 
+ax
+\family default 
+.
+ Algumas macros assumem a existência deste valor, que não é propagado via
+ 
+\family typewriter 
+pTHX_
+\family default 
+, mas é declarado implicitamente quando funções são encapsuladas via XS.
+ A API parece assumir que uma função XS não irá invocar outra função C que
+ também use a API.
+ Tivemos então que propagar esta variável (que é citada na documentação,
+ mas apenas como 
+\emph on 
+"the 'ax' variable"
+\emph default 
+, sem explicações do seu propósito).
+\layout Standard
+
+Os outros dois parâmetros, 
+\family typewriter 
+count
+\family default 
+ e 
+\family typewriter 
+offset
+\family default 
+, são necessários devido às diferentes formas que as informações que eles
+ representam são obtidas nos dois contextos onde esta função é usada.
+ Na rotina chamadora de funções LibScript, implementada no arquivo XS, o
+ tamanho da pilha (
+\family typewriter 
+count
+\family default 
+) é obtido através de uma variável especial, 
+\family typewriter 
+items
+\family default 
+, e os parâmetros de entrada começam a partir da posição 2 da pilha (
+\family typewriter 
+offset
+\family default 
+), pois LibScript passa o ponteiro do ambiente e o nome da função nos dois
+ primeiros argumentos.
+ Na chamada de funções Perl, o valor de 
+\family typewriter 
+count
+\family default 
+ é obtido como retorno da função que realiza a invocação, 
+\family typewriter 
+Perl_call_pv
+\family default 
+, e o valor de 
+\family typewriter 
+offset
+\family default 
+ é zero pois, como visto no protocolo de chamada de funções Perl discutido
+ na Seção 
+\begin_inset LatexCommand \ref{sub:Perl-call}
+
+\end_inset 
+
+, a base da pilha é ajustada após a chamada da função pela macro 
+\family typewriter 
+SPAGAIN
+\family default 
+.
+ 
+\layout Standard
+
+A conversão de valores do buffer LibScript para a pilha de Perl é dada em
+ duas funções, uma que gera um único SV e outra que empilha todos os elementos:
+\layout LyX-Code
+
+
+\size footnotesize 
+SV* script_perl_get_sv(pTHX_ script_env* env, int i) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   switch (script_get_type(env, i)) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   case SCRIPT_DOUBLE: return newSVnv(script_get_double(env, i));
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* 0 indica que o tamanho da string deve ser calculado por Perl.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+   case SCRIPT_STRING: return newSVpv(script_get_string(env, i), 0);
+\layout LyX-Code
+
+
+\size footnotesize 
+   case SCRIPT_BOOL: return newSViv(script_get_bool(env, i));
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout LyX-Code
+
+
+\size footnotesize 
+  
+\newline 
+SV** script_perl_buffer_to_stack(pTHX_ SV** sp, script_env* env) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   int i;
+\layout LyX-Code
+
+
+\size footnotesize 
+   int len = script_buffer_size(env);
+\layout LyX-Code
+
+
+\size footnotesize 
+   for (i = 0; i < len; i++) {
+\layout LyX-Code
+
+
+\size footnotesize 
+      XPUSHs(sv_2mortal(script_perl_get_sv(aTHX_ env, i)));
+\layout LyX-Code
+
+
+\size footnotesize 
+   }
+\layout LyX-Code
+
+
+\size footnotesize 
+   return sp;
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Novamente, uma variável criada internamente por Perl teve que ser propagada
+ explicitamente: 
+\family typewriter 
+sp
+\family default 
+, o 
+\emph on 
+stack pointer
+\emph default 
+.
+ Além disso, como 
+\family typewriter 
+XPUSHs
+\family default 
+ pode redimensionar a pilha, precisamos retornar o valor atualizado de 
+\family typewriter 
+sp
+\family default 
+ de volta para o chamador.
+ No mais, a geração de 
+\family typewriter 
+SV
+\family default 
+s, o registro destes como variáveis mortais e o seu empilhamento ocorre
+ da forma usual, já apresentada na Seção 
+\begin_inset LatexCommand \ref{sub:Perl-call}
+
+\end_inset 
+
+.
+\layout Standard
+
+Assim como nos demais plugins, em LibScript-Perl, a passagem de parâmetros
+ de entrada, tanto para a chamada de funções Perl como de funções via LibScript,
+ é feita chamando a função de conversão que opera sobre o buffer como um
+ todo: na chamada de funções Perl usamos 
+\family typewriter 
+script_perl_buffer_to_stack
+\family default 
+ e na de funções via LibScript, 
+\family typewriter 
+script_perl_stack_to_buffer
+\family default 
+.
+ Para tratar os valores de retorno de funções Perl, pudemos utilizar diretamente
+ a função 
+\family typewriter 
+script_perl_stack_to_buffer
+\family default 
+, de forma similar à realizada em LibScript-Lua.
+ Para o retorno de funções chamadas via LibScript (usando 
+\family typewriter 
+script_call
+\family default 
+), precisamos lidar com a variável especial 
+\family typewriter 
+RETVAL
+\family default 
+ de XS e com os diferentes contextos de chamada de Perl.
+ O trecho abaixo ilustra o tratamento de valores de retorno neste caso:
+\layout LyX-Code
+
+
+\size footnotesize 
+err = script_call(env, function_name);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* ...
+ (tratamento de erro omitido) ...
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+switch (GIMME_V) {
+\layout LyX-Code
+
+
+\size footnotesize 
+case G_SCALAR:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Retorna o primeiro item do buffer */
+\layout LyX-Code
+
+
+\size footnotesize 
+   RETVAL = script_perl_get_sv(aTHX_ env, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
+   break;
+\layout LyX-Code
+
+
+\size footnotesize 
+case G_ARRAY:
+\layout LyX-Code
+
+
+\size footnotesize 
+   len = script_buffer_size(env);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Cria um array */
+\layout LyX-Code
+
+
+\size footnotesize 
+   RETVAL = (SV*)newAV();
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Arrays retornados devem ser marcados como mortais */
+\layout LyX-Code
+
+
+\size footnotesize 
+   sv_2mortal((SV*)RETVAL);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Insere o conteúdo do buffer no array */
+\layout LyX-Code
+
+
+\size footnotesize 
+   for (i = 0; i < len; i++)
+\layout LyX-Code
+
+
+\size footnotesize 
+      av_push((AV*)RETVAL, script_perl_get_sv(aTHX_ env, i));
+\layout LyX-Code
+
+
+\size footnotesize 
+   break;
+\layout LyX-Code
+
+
+\size footnotesize 
+case G_VOID:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* O valor de retorno é descartado em contextos void.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Retornamos então a constante Perl undef.
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+   RETVAL = &PL_sv_undef;
+\layout LyX-Code
+
+
+\size footnotesize 
+   break;
+\layout LyX-Code
+
+
+\size footnotesize 
+}
 \layout Subsection
 
 
