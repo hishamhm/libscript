@@ -21,8 +21,7 @@
 #include "libscript-ruby.h"
 
 static ID method_id;
-static ID state_id;
-static ID name_id;
+static ID env_id;
 
 static int script_ruby_state_count = 0;
 
@@ -43,138 +42,116 @@ INLINE static void script_ruby_put_value(script_env* env, int i, VALUE arg) {
    }
 }
 
-INLINE static VALUE script_ruby_buffer_to_array(int nargs, script_env* env) {
-   VALUE ret;
+INLINE static void script_ruby_array_to_buffer(script_env* env, VALUE array) {
    int i;
-   VALUE* args = malloc(sizeof(VALUE) * nargs);
-   for (i = 0; i < nargs; i++) {
-      VALUE arg = (VALUE) NULL;
-      switch (script_get_type(env, i)) {
-      case SCRIPT_DOUBLE:
-         arg = rb_float_new(script_get_double(env, i)); 
-         break;
-      case SCRIPT_STRING: {
-         char* s = script_get_string(env, i);
-         arg = rb_str_new2(s); 
-         free(s);
-         break;
-      }
-      case SCRIPT_BOOL:
-         arg = script_get_bool(env, i) ? Qtrue : Qfalse;
-         break;
-      default:
-         /* pacify gcc warnings */
-         assert(0);
-      }
-      args[i] = arg;
+   int len = RARRAY(array)->len;
+   script_reset_buffer(env);
+   for (i = 0; i < len; i++) {
+      VALUE o = rb_ary_entry(array, i);
+      script_ruby_put_value(env, i, o);
    }
-   ret = rb_ary_new4(nargs, args);
-   free(args);
+}
+
+INLINE static VALUE script_ruby_get_value(script_env* env, int i) {
+   VALUE ret; char* s;
+   switch (script_get_type(env, i)) {
+   case SCRIPT_DOUBLE:
+      return rb_float_new(script_get_double(env, i)); 
+   case SCRIPT_STRING:
+      s = script_get_string(env, i);
+      ret = rb_str_new2(s);
+      free(s);
+      return ret;
+   case SCRIPT_BOOL:
+      return script_get_bool(env, i) ? Qtrue : Qfalse;
+   default:
+      /* pacify gcc warnings */
+      assert(0);
+      return Qnil;
+   }
+}
+
+INLINE static VALUE script_ruby_buffer_to_array(script_env* env) {
+   int i;
+   int len = script_buffer_size(env);
+   VALUE ret = rb_ary_new2(len);
+   for (i = 0; i < len; i++) {
+      VALUE o = script_ruby_get_value(env, i);
+      rb_ary_store(ret, i, o);
+   }
    return ret;
 }
 
-INLINE static VALUE script_ruby_buffer_to_value(script_env* env) {
-   VALUE ret;
-   int nargs;
-   nargs = script_buffer_size(env);
-   if (nargs > 0) {
-      return script_ruby_buffer_to_array(nargs, env);
-   } else
-      ret = Qnil;
-   return ret;
-}
-
-INLINE static script_ruby_state* script_ruby_get_state_from_class(VALUE klass) {
+INLINE static script_env* script_ruby_get_env(VALUE state) {
    /* assumes a void* fits in long */
-   return (script_ruby_state*) NUM2LONG(rb_const_get(klass, state_id));
-}
-
-static VALUE script_ruby_caller(VALUE self, VALUE fn_value, VALUE args) {
-   int i, len;
-   script_ruby_state* state = script_ruby_get_state_from_class(self);
-   script_fn fn = (script_fn) NUM2LONG(fn_value);
-   len = RARRAY(args)->len;
-   script_reset_buffer(state->env);
-   for (i = 0; i < len; i++)
-      script_ruby_put_value(state->env, i, RARRAY(args)->ptr[i]);
-   fn(state->env);
-   return script_ruby_buffer_to_value(state->env);
+   return (script_env*) NUM2LONG(rb_const_get(state, env_id));
 }
 
 static VALUE script_ruby_method_missing(int argc, VALUE *argv, VALUE self) {
-   script_ruby_state* state = script_ruby_get_state_from_class(self);
+   script_env* env = script_ruby_get_env(self);
    char *method_name = rb_id2name(SYM2ID(argv[0]));
-   VALUE name_value = rb_funcall(self, name_id, 0);
-   char *class_name = StringValuePtr(name_value);
-   script_fn fn = script_function(state->env, method_name);
-   if (fn) {
-      char fn_code[1024];
-      VALUE args;
-      snprintf(fn_code, 1023, "def %s.%s(*args); %s.caller(%ld, args); end;",
-         class_name, method_name, class_name, (long int) fn);
-      rb_eval_string(fn_code);
-      args = rb_ary_new4(argc - 1, argv+1);
-      return script_ruby_caller(self, rb_int_new((long int) fn), args);
-   } else {
-      script_err err;
-      int i;
-      script_reset_buffer(state->env);
-      for (i = 1; i < argc; i++)
-         script_ruby_put_value(state->env, i-1, argv[i]);
-      err = script_call(state->env, method_name);
-      if (err != SCRIPT_OK) {
-         /* FIXME: I'm getting a Ruby segfault when Ruby raises exceptions. */
-         rb_raise(rb_eRuntimeError, script_error_message(state->env));
-         return Qnil;
-      }
-      return script_ruby_buffer_to_value(state->env);
+   script_err err;
+   int i;
+   script_reset_buffer(env);
+   for (i = 1; i < argc; i++)
+      script_ruby_put_value(env, i-1, argv[i]);
+   err = script_call(env, method_name);
+   if (err != SCRIPT_OK)
+      /* Raises exception and longjmps away from this function. */
+      rb_raise(rb_eRuntimeError, script_error_message(env));
+   switch (script_buffer_size(env)) {
+   case 0:
+      return Qnil;
+   case 1:
+      return script_ruby_get_value(env, 0);
+   default:
+      return script_ruby_buffer_to_array(env);
    }
-   return Qnil;
+}
+
+INLINE char* script_ruby_make_class_name(const char* name) {
+   int name_size = strlen(name) + 1;
+   char* class_name = malloc(name_size);
+   strncpy(class_name, name, name_size);
+   class_name[0] = toupper(class_name[0]);
+   return class_name;
 }
 
 script_plugin_state script_plugin_init_ruby(script_env* env) {
-   script_ruby_state* state;
-   const char *name;
-   char *ruby_name;
-   int name_size;
+   VALUE state;
+   char *class_name;
 
-   name = script_namespace(env);
    if (script_ruby_state_count == 0) {
       ruby_init();
       ruby_script("libscript");
    }
-   state_id = rb_intern("@@State");
-   name_id = rb_intern("name");
+   env_id = rb_intern("@@LibScriptEnv");
    method_id = rb_intern("method");
    script_ruby_state_count++;
-   state = malloc(sizeof(script_ruby_state));
-   name_size = strlen(name) + 1;
-   ruby_name = malloc(name_size);
-   strncpy(ruby_name, name, name_size);
-   state->env = env;
-   ruby_name[0] = toupper(ruby_name[0]);
-   state->klass = rb_define_class(ruby_name, rb_cObject);
+   class_name = script_ruby_make_class_name(script_namespace(env));
+   state = rb_define_class(class_name, rb_cObject);
+   free(class_name);
    /* assuming a void* fits in a long */
-   rb_const_set(state->klass, state_id, INT2NUM((long int)state));
-   rb_define_singleton_method(state->klass, "method_missing", script_ruby_method_missing, -1);
-   rb_define_singleton_method(state->klass, "caller", script_ruby_caller, 2);
-   free(ruby_name);
-   return state;
+   rb_const_set(state, env_id, INT2NUM((long int)env));
+   rb_define_singleton_method(state, "method_missing", script_ruby_method_missing, -1);
+   return (script_plugin_state) state;
 }
 
-INLINE int script_ruby_return(script_ruby_state* state, int error) {
-   if (error) {
-      script_set_error_message(state->env, StringValuePtr(ruby_errinfo));
-      ruby_errinfo = Qnil;
-      return SCRIPT_ERRLANGRUN;
-   } else
-      return SCRIPT_OK;
+INLINE int script_ruby_error(script_env* env) {
+   script_reset_buffer(env);
+   script_set_error_message(env, StringValuePtr(ruby_errinfo));
+   ruby_errinfo = Qnil;
+   return SCRIPT_ERRLANGRUN;
 }
 
-int script_plugin_run_ruby(script_ruby_state* state, char* programtext) {
+int script_plugin_run_ruby(script_ruby_state state, char* programtext) {
+   script_env* env = script_ruby_get_env(state);
    int error;
    rb_eval_string_protect(programtext, &error);
-   return script_ruby_return(state, error);
+   if (error)
+      return script_ruby_error(env);
+   else
+      return SCRIPT_OK;
 }
 
 INLINE static VALUE script_ruby_pcall(VALUE args) {
@@ -183,28 +160,32 @@ INLINE static VALUE script_ruby_pcall(VALUE args) {
    return rb_apply(klass, fn_id, args);
 }
 
-int script_plugin_call_ruby(script_ruby_state* state, char* fn) {
+int script_plugin_call_ruby(script_ruby_state state, char* fn) {
+   script_env* env = script_ruby_get_env(state);
    int error;
    VALUE ret;
-   script_env* env = state->env;
    VALUE args;
    VALUE fn_value = rb_str_new2(fn);
-   VALUE method = rb_funcall(state->klass, method_id, 1, fn_value);
+   VALUE method = rb_funcall(state, method_id, 1, fn_value);
    if (method == Qnil)
       return SCRIPT_ERRFNUNDEF;
-   args = script_ruby_buffer_to_array(script_buffer_size(env), env);
-   rb_ary_push(args, state->klass);
+   args = script_ruby_buffer_to_array(env);
+   rb_ary_push(args, state);
    rb_ary_push(args, ID2SYM(rb_intern(fn)));
    ret = rb_protect(script_ruby_pcall, args, &error);
-   script_reset_buffer(env);
-   if (!error && ret != Qnil)
-      script_ruby_put_value(state->env, 0, ret);
-   return script_ruby_return(state, error);
+   if (error)
+      return script_ruby_error(env);
+   if (ret == Qnil)
+      script_reset_buffer(env);
+   else if (TYPE(ret) == T_ARRAY)
+      script_ruby_array_to_buffer(env, ret);
+   else
+      script_ruby_put_value(env, 0, ret);
+   return SCRIPT_OK;
 }
 
-void script_plugin_done_ruby(script_ruby_state* state) {
+void script_plugin_done_ruby(script_ruby_state state) {
    script_ruby_state_count--;
    if (script_ruby_state_count == 0)
       ruby_finalize();
-   free(state);
 }
