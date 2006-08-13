@@ -29,15 +29,14 @@ void script_perl_stack_to_buffer(pTHX_ int ax, script_env* env, int count, int o
    int i;
    script_reset_buffer(env);
    for (i = 0; i < count; i++) {
-      int s = i+offset;
-      if (SvIOK(ST(s))) {
-         script_put_int(env, i, SvIV(ST(s)));
-      } else if (SvNOK(ST(s))) {
-         script_put_double(env, i, SvNV(ST(s)));
-      } else if (SvPOK(ST(s))) {
-         script_put_string(env, i, SvPV_nolen(ST(s)));
+      SV* o = ST(i+offset);
+      if (SvIOK(o)) {
+         script_put_int(env, i, SvIV(o));
+      } else if (SvNOK(o)) {
+         script_put_double(env, i, SvNV(o));
+      } else if (SvPOK(o)) {
+         script_put_string(env, i, SvPV_nolen(o));
       } else {
-         abort();
       	 script_put_int(env, i, 0);
       }
    }
