@@ -10559,13 +10559,9 @@ plugins
 \emph default 
 , de modo a desacoplar a aplicação dos ambientes de execução providos pelas
  diversas linguagens.
- A biblioteca principal, 
-\family typewriter 
-libscript
-\family default 
-, é uma fina camada que provê uma API para scripting independente de linguagem,
- permitindo à aplicação registrar as suas funções e invocar código a ser
- executado.
+ A biblioteca principal que provê uma API para scripting independente de
+ linguagem, permitindo à aplicação registrar as suas funções e invocar código
+ a ser executado.
  Esta biblioteca então invoca o plugin da linguagem apropriada para rodar
  o código (por exemplo, LibScript-Python para código Python).
  Desta forma, o desenvolvedor da aplicação permite ao seu usuário utilizar
@@ -10626,10 +10622,248 @@ Visão geral da arquitetura de LibScript
 
 \layout Standard
 
-Cada plugin, além de embutir um ambiente de execução, registra nele uma
- estrutura de dados específica da linguagem (classe, módulo, etc.) que agirá
- como o espaço de nomes para funções registradas através de LibScript.
+LibScript é composta de uma biblioteca dinâmica principal, 
+\family typewriter 
+libscript
+\family default 
+, e os 
+\emph on 
+plugins
+\emph default 
+ (Figura 
+\begin_inset LatexCommand \ref{cap:Visão-geral}
+
+\end_inset 
+
+).
+ A biblioteca principal é ligada a uma aplicação, e expõe a ela uma API
+ de scripting independente de linguagem, que permite executar strings de
+ código e invocar funções.
+ Esta biblioteca é uma fina camada que encaminha estas operações para os
+ plugins, que são bibliotecas dinâmicas auxiliares, carregadas em tempo
+ de execução pela biblioteca principal.
+ Estes plugins embutem os ambientes de execução das linguagens de script.
+\layout Standard
+
+A aplicação pode registrar funções C na biblioteca principal (ilustrado
+ pela função 
+\family typewriter 
+c
+\family default 
+ na figura) e solicitar a ela que execute scripts que registram funções
+ nas diferentes linguagens.
+ Todavia, a aplicação não interage diretamente com os plugins.
+ Quando a biblioteca principal recebe código a ser executado em uma determinada
+ linguagem, ela carrega o plugin adeqüado (caso este ainda não esteja carregado)
+ e encaminha o código.
+ O plugin irá executar o script em sua máquina virtual, o que pode registrar
+ nela novas funções (ilustrado pelas funções 
+\family typewriter 
+py
+\family default 
+, 
+\family typewriter 
+r
+\family default 
+, 
+\family typewriter 
+l
+\family default 
+ e 
+\family typewriter 
+pl
+\family default 
+ na figura).
+\layout Standard
+
+A biblioteca principal decide qual plugin carregar através de um identificador
+ que especifica qual a linguagem do código a ser executado.
+ Este identificador pode ser obtido a partir da extensão do arquivo, da
+ linha de identificação 
+\begin_inset Quotes eld
+\end_inset 
+
+
+\family typewriter 
+#!
+\family default 
+
+\begin_inset Quotes erd
+\end_inset 
+
+ no início do script
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+A linha 
+\begin_inset Quotes eld
+\end_inset 
+
+
+\family typewriter 
+#!
+\family default 
+
+\begin_inset Quotes erd
+\end_inset 
+
+ é usada apenas para detectar a linguagem em que o script é escrito.
+ Por exemplo, uma linha 
+\family typewriter 
+#!/usr/bin/perl -w
+\family default 
+ indicará a carga do plugin 
+\family typewriter 
+libscript-perl
+\family default 
+, mas o interpretador Perl em 
+\family typewriter 
+/usr/bin
+\family default 
+ não é usado e nem a flag 
+\family typewriter 
+-w
+\family default 
+ passada é considerada.
+\end_inset 
+
+ ou mesmo passado explicitamente pela aplicação.
+ Os plugins possuem, além de uma biblioteca dinâmica chamada 
+\family typewriter 
+libscript-
+\family default 
+\emph on 
+<linguagem>
+\emph default 
+, arquivos 
+\emph on 
+<identificador>
+\family typewriter 
+\emph default 
+.id
+\family default 
+ que associam diferentes identificadores à biblioteca.
+ Por exemplo, o plugin LibScript-Python inclui o arquivo 
+\family typewriter 
+py.id
+\family default 
+, contendo a string 
+\family typewriter 
+"python"
+\family default 
+.
+ Desta forma, a execução de um arquivo de extensão 
+\family typewriter 
+.py
+\family default 
+ via LibScript dispara a carga da biblioteca 
+\family typewriter 
+libscript-python
+\family default 
+.
+\layout Standard
+
+
+\begin_inset Float figure
+wide false
+collapsed false
+
+\layout Standard
+\align center 
+
+\begin_inset Graphics
+	filename figura2.eps
+	width 100col%
+	keepAspectRatio
+
+\end_inset 
+
+
+\layout Caption
+
+
+\begin_inset LatexCommand \label{cap:Ambientes-virtuais}
+
+\end_inset 
+
+Ambientes virtuais em LibScript
+\end_inset 
+
+
+\layout Standard
+
+Funções são registradas em LibScript em um 
+\emph on 
+ambiente virtual
+\emph default 
+.
+ A aplicação pode criar um ou mais ambientes na biblioteca principal, identifica
+ndo-os com um nome.
+ Cada ambiente virtual ganhará um correspondente nos plugins, onde uma estrutura
+ de dados específica da linguagem (classe, módulo, etc.) que o representará.
+ No exemplo da Figura 
+\begin_inset LatexCommand \ref{cap:Ambientes-virtuais}
+
+\end_inset 
+
+ temos dois ambientes virtuais criados pela aplicação na biblioteca principal,
  
+\family typewriter 
+X
+\family default 
+ e 
+\family typewriter 
+Y
+\family default 
+.
+ Em cada um destes ambientes, a aplicação registrou uma função C com o nome
+ 
+\family typewriter 
+c
+\family default 
+ (que podem ou não corresponder à mesma função C).
+ Scripts foram executados nestes ambientes, o que causou a carga dos plugins.
+ No exemplo, estes scripts registraram algumas funções (
+\family typewriter 
+X.py
+\family default 
+, 
+\family typewriter 
+Y.py
+\family default 
+, 
+\family typewriter 
+X.r
+\family default 
+, etc.).
+\layout Standard
+
+À parte da função para criação de ambientes virtuais, todas as demais funções
+ da API de LibScript recebem como parâmetro um ambiente virtual sobre a
+ qual elas devem operar.
+ No caso de linguagens que permitem múltiplos estados de execução independentes,
+ como Lua e Perl, isto indica qual estado o script deve executar.
+ Quando um script declara uma função como elemento da estrutura que descreve
+ o ambiente virtual, esta função passa a ser acessível através da API de
+ LibScript.
+ Por exemplo, no plugin Lua, o ambiente virtual é representado por uma tabela
+ com o nome do ambiente; uma vez que uma função 
+\family typewriter 
+l
+\family default 
+ é declarada como elemento da tabela Lua 
+\family typewriter 
+X
+\family default 
+ por um script Lua executado no ambiente virtual 
+\family typewriter 
+X
+\family default 
+, esta função passa a poder ser invocada por C (através da API de LibScript)
+ ou pelos outros plugins.
+ Em cada um dos plugins, 
 \layout Subsection
 
 
@@ -10951,47 +11185,6 @@ script_new_function(env, hello, "hello");
 
 \size footnotesize 
 script_run(env, "lua", "exemplo.hello()");
-\layout Standard
-
-Um plugin consiste de uma biblioteca dinâmica chamada 
-\family typewriter 
-libscript-
-\family default 
-\emph on 
-<linguagem>
-\emph default 
- e arquivos 
-\emph on 
-<identificador>
-\family typewriter 
-\emph default 
-.id
-\family default 
- que associam diferentes nomes à biblioteca.
- Estes nomes são usados por em 
-\family typewriter 
-script_run_file
-\family default 
- para associar extensões de arquivo ou o nome do executável interpretador
- a um plugin.
- Por exemplo, o plugin LibScript-Python inclui o arquivo 
-\family typewriter 
-py.id
-\family default 
-, contendo a string 
-\family typewriter 
-"python"
-\family default 
-.
- Desta forma, um arquivo de extensão 
-\family typewriter 
-.py
-\family default 
- carregado via 
-\family typewriter 
-script_run_file
-\family default 
- dispara a carga do plugin apropriado.
 \layout Subsection
 
 A API de plugins
@@ -11943,18 +12136,18 @@ Na implementação do plugin LibScript-Lua, a função
 script_lua_stack_to_buffer
 \family default 
  converte o conteúdo da pilha de Lua para o buffer de parâmetros de LibScript.
- Em 
+ A função do plugin responsável por invocar funções Lua a partir de C, 
 \family typewriter 
 script_plugin_call_lua
 \family default 
-, a função do plugin responsável por invocar funções Lua a partir de C,
- 
+, usa a função 
 \family typewriter 
 script_lua_stack_to_buffer
 \family default 
- é usada para armazenar no buffer LibScript os valores de retorno da função
- Lua invocada, já que estes são retornados na pilha virtual.
- Quando código Lua chama funções implementadas em C ou outro plugin, 
+ para armazenar no buffer LibScript os valores de retorno da função Lua
+ invocada, já que estes são retornados na pilha virtual.
+ Quando o código Lua chama funções implementadas em C ou em outro plugin,
+ 
 \family typewriter 
 script_lua_stack_to_buffer
 \family default 
@@ -12114,11 +12307,11 @@ Os valores de tipos desconhecidos são substituídos pelo valor zero, o que
 .
 \layout Standard
 
-A função 
+A segunda função de transferência de dados de LibScript-Lua, 
 \family typewriter 
 script_lua_buffer_to_stack
 \family default 
- obtém os valores do buffer LibScript e os insere na pilha virtual de Lua.
+, obtém os valores do buffer LibScript e os insere na pilha virtual de Lua.
  Esta função é usada para passar os parâmetros de entrada para Lua em 
 \family typewriter 
 script_plugin_call_lua
@@ -12256,8 +12449,11 @@ A API para implementação de funções em C a serem registradas em LibScript
 .
 \layout Standard
 
-Em LibScript-Python, a conversão de dados recebidos de Python para o buffer
- de LibScript é divida em duas funções: 
+Em LibScript-Python, não foi possível concentrar as operações de transferência
+ de dados em apenas duas funções.
+ Cada operação teve que ser dividida em duas partes.
+ A conversão de dados recebidos de Python para o buffer de LibScript foi
+ divida nas funções 
 \family typewriter 
 script_python_put_object
 \family default 
@@ -12601,8 +12797,8 @@ static PyObject* script_python_buffer_to_tuple(script_env* env) {
 }
 \layout Standard
 
-Como podemos observar, estes dois pares de funções realizam funções equivalentes
- às que 
+Assim, estes dois pares de funções realizam funções equivalentes às que
+ 
 \family typewriter 
 script_lua_stack_to_buffer
 \family default 
@@ -12772,7 +12968,7 @@ default:
 }
 \layout Standard
 
-Assim como Python, funções em Ruby retornam múltiplos valores encapsulando-os
+Assim como em Python, funções em Ruby retornam múltiplos valores encapsulando-os
  em um tipo agregado.
  Desta forma, as operações de transferências de dados de LibScript-Ruby
  também são divididas em pares de funções, uma convertendo um valor do buffer,
@@ -13159,8 +13355,8 @@ static VALUE script_ruby_buffer_to_array(script_env* env) {
 }
 \layout Standard
 
-De forma similar a Python, na chamada de funções Ruby a partir de LibScript,
- a implementação usa a função 
+De forma similar ao plugin Python, a implementação da chamada de funções
+ Ruby a partir de LibScript usa a função 
 \family typewriter 
 script_ruby_buffer_to_array
 \family default 
@@ -13527,8 +13723,8 @@ s, o registro destes como variáveis mortais e o seu empilhamento ocorre
 .
 \layout Standard
 
-Assim como nos demais plugins, em LibScript-Perl, a passagem de parâmetros
- de entrada, tanto para a chamada de funções Perl como de funções via LibScript,
+Assim como nos demais plugins, a passagem de parâmetros de entrada em LibScript-
+Perl, tanto para a chamada de funções Perl como de funções via LibScript,
  é feita chamando a função de conversão que opera sobre o buffer como um
  todo: na chamada de funções Perl usamos 
 \family typewriter 
@@ -13545,11 +13741,8 @@ script_perl_stack_to_buffer
 script_perl_stack_to_buffer
 \family default 
 , de forma similar à realizada em LibScript-Lua.
- Para o retorno de funções chamadas via LibScript (usando 
-\family typewriter 
-script_call
-\family default 
-), precisamos lidar com a variável especial 
+ Para o retorno de funções chamadas via LibScript, porém, precisamos lidar
+ com a variável especial 
 \family typewriter 
 RETVAL
 \family default 
