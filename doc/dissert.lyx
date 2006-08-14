@@ -2,6 +2,7 @@
 \lyxformat 221
 \textclass book
 \begin_preamble
+\usepackage{a4wide}
 \usepackage{indentfirst}
 \end_preamble
 \language brazil
@@ -10,8 +11,8 @@
 \graphics default
 \paperfontsize 12
 \spacing single 
-\papersize a4paper
-\paperpackage widemarginsa4
+\papersize Default
+\paperpackage a4
 \use_geometry 0
 \use_amsmath 0
 \use_natbib 0
@@ -27,33 +28,39 @@
 \papersides 1
 \paperpagestyle default
 
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 
 \backslash 
 titulo{Estudo sobre APIs de linguagens de script}
-\layout Comment
+\layout Standard
 
 
 \backslash 
 autor{Hisham H.
  Muhammad}
-\layout Comment
+\layout Standard
 
 
 \backslash 
 autorR{Muhammad, Hisham H.}
-\layout Comment
+\layout Standard
 
 
 \backslash 
 orientador{Roberto Ierusalimschy}
-\layout Comment
+\layout Standard
 
 
 \backslash 
 orientadorR{Ierusalimschy, Roberto}
-\layout Comment
+\layout Standard
 
 
 \backslash 
@@ -62,35 +69,38 @@ dia{11}
 mes{Junho} 
 \backslash 
 ano{2006}
-\layout Comment
+\layout Standard
 
 
 \backslash 
 cidade{Rio de Janeiro}
-\layout Comment
+\layout Standard
 
 
 \backslash 
 departamento{Informática}
-\layout Comment
+\layout Standard
 
 
 \backslash 
 programa{Informática}
-\layout Comment
+\layout Standard
 
 
 \backslash 
 centro{Centro Técnico Científico} 
+\end_inset 
+
+
 \layout Title
 
 Estudo sobre APIs de linguagens de script
 \layout Author
-
+\added_space_bottom bigskip 
 Hisham H.
  Muhammad
 \layout Standard
-\added_space_top bigskip \added_space_bottom bigskip \align center 
+\added_space_bottom bigskip \align center 
 Resumo
 \layout Standard
 
@@ -136,7 +146,7 @@ Ilustramos as diferenças das APIs destas linguagens e o impacto destas no
 
 
 \begin_inset ERT
-status Collapsed
+status Open
 
 \layout Standard
 
@@ -146,7 +156,7 @@ pagebreak
 
 
 \layout Standard
-\added_space_top bigskip \added_space_bottom bigskip \align center 
+\added_space_bottom bigskip \align center 
 
 \lang english
 Abstract
@@ -189,19 +199,28 @@ We illustrate the differences of the APIs of those languages and their impact
 \layout Chapter
 
 Introdução
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 
 \emph on 
 \color red
 [questões gerais: como padronizar o uso de itálicos?]
-\layout Comment
+\layout Standard
 
 
 \emph on 
 \color red
 [TODO: tem pouco aqui além do texto da proposta.
  estender a intro como um todo]
+\end_inset 
+
+
 \layout Standard
 
 Existem muitas situações onde é necessário ou interessante que haja interação
@@ -317,7 +336,13 @@ amente, Python, Perl
  biblioteca de reflexão, que oferece recursos de intercessão como carga
  de classes em tempo de execução e invocação dinâmica de métodos, é possível
  encará-la, para os fins de interação com código C, como uma linguagem dinâmica.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 
 \emph on 
@@ -331,6 +356,9 @@ fecho
 \end_inset 
 
  na coisa.]
+\end_inset 
+
+
 \layout Section
 
 Estrutura do Texto
@@ -394,7 +422,7 @@ As abordagens aplicadas na interação entre diferentes linguagens de programação
 te utilizadas: tradução de linguagens, seja de uma para outra ou de ambas
  para uma terceira; comunicação através de protocolo ou linguagem intermediária;
  compartilhamento de um ambiente de execução comum, seja de máquina virtual
- ou através de convenção de chamadas.
+ ou através de convenção de chamadas; e interfaces de acesso externo.
 \layout Section
 
 Tradução de Código
@@ -598,23 +626,7 @@ mangling
  De forma similar, C++ permite especificar funções com linkagem compatível
  com C (
 \family typewriter 
-extern 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-"
-\end_inset 
-
-C
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-"
-\end_inset 
-
-
+extern "C"
 \family default 
 ).
 \layout Section
@@ -836,14 +848,14 @@ A linguagem C tem, na atualidade, um papel especial no mundo das linguagens
  de programação.
  Além de ser bastante utilizada na implementação de compiladores, interpretadore
 s e máquinas virtuais (as principais implementações de Perl, Python, Ruby,
- Tcl e Lua são apenas alguns exemplos), é tambem usada em compiladores como
+ e Lua são apenas alguns exemplos), é também usada em compiladores como
  formato de saída na geração de código portável (dois exemplos notáveis
  são os compiladores GHC 
 \begin_inset LatexCommand \cite{jones93glasgow}
 
 \end_inset 
 
- e o SmartEiffel 
+ e SmartEiffel 
 \begin_inset LatexCommand \cite{collin-eiffel}
 
 \end_inset 
@@ -984,14 +996,10 @@ bindings
 
 Os padrões que ocorrem na produção de bindings são tão comuns que deram
  origem a programas visam automatizar o processo.
- Estes geradores de 
-\emph on 
-bindings
-\emph default 
- costumam trabalhar a partir de alguma representação preparada para o seu
- uso, já que analisar os cabeçalhos C pode-se mostrar insuficiente: por
- exemplo, o programa muitas vezes não seria capaz de interpretar a intenção
- de uma construção como 
+ Estes geradores de bindings costumam trabalhar a partir de alguma representação
+ preparada para o seu uso, já que analisar os cabeçalhos C pode-se mostrar
+ insuficiente: por exemplo, o programa muitas vezes não seria capaz de interpret
+ar a intenção de uma construção como 
 \family typewriter 
 int**
 \family default 
@@ -1001,12 +1009,8 @@ int**
 
 \end_inset 
 
- é uma popular ferramenta multi-linguagem para geração de 
-\emph on 
-bindings
-\emph default 
- de bibliotecas C e C++ que utiliza um formato próprio para descrição de
- interfaces.
+ é uma popular ferramenta multi-linguagem para geração de bindings de biblioteca
+s C e C++ que utiliza um formato próprio para descrição de interfaces.
  FLIs podem ainda utilizar geradores de 
 \emph on 
 stubs
@@ -1021,32 +1025,41 @@ stubs
 
  é um gerador de módulos C para Python a partir de uma sintaxe baseada na
  própria linguagem Python.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Falar de tolua, outros geradores.
-\layout Comment
+\layout Standard
 
 a qualidade da conversão depende do código C, não da api
-\layout Comment
+\layout Standard
 
 vc não pode ter conversores que funcionem 100% automaticos
-\layout Comment
+\layout Standard
 
 alguém tem que explicar pro gerador se char** é um array de strings, um
  ponteiro pra uma string, um array de array de caracteres, um ponteiro pra
  um ponteiro pra um caracter, um..........
-\layout Comment
+\layout Standard
 
 ah, o código tem que ser "anotado" pra ser passado como entrada pra ele.
  se tu passa um .h intocado ele dá o melhor chute que ele puder.
  sem contar que se o .h estiver cheio de macros, o parserzinho dele vai pedir
  água 
-\layout Comment
+\layout Standard
 
 o swig é o cara mais porrada nesse aspecto, porque segundo reza a lenda
  ele "entende ANSI C", então pelo menos a dança das macros ele consegue
  fazer (mas ainda assim precisa de um arquivo anotado pra fazer a conversão
  correta)
+\end_inset 
+
+
 \layout Chapter
 
 
@@ -5737,12 +5750,21 @@ Py_TRASHCAN_SAFE_BEGIN
 END
 \family default 
 .
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Um longo comentário em typeobject.c descreve cuidados adicionais e um cenário
  de bug que pode ser causado pela interação incorreta entre Track/Untrack
  e a trashcan.
  
+\end_inset 
+
+
 \layout Standard
 
 Apesar de oferecer um mecanismo de detecção de ciclos, Python é incapaz
@@ -6957,9 +6979,18 @@ Python
 \end_inset 
 
 
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Como obter/referenciar uma função
+\end_inset 
+
+
 \layout Standard
 
 Para chamar uma função Python a partir de C, deve-se inicialmente obter
@@ -6987,12 +7018,21 @@ tp_call
 PyTypeObject
 \family default 
 ) pode ser chamado como uma função.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Funções para chamar funções
-\layout Comment
+\layout Standard
 
 Passando argumentos
+\end_inset 
+
+
 \layout Standard
 
 A API de Python oferece diversas funções para realização de chamadas a partir
@@ -7038,10 +7078,19 @@ vararg
 PyObject
 \family default 
 s.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Função vs.
  método
+\end_inset 
+
+
 \layout Standard
 
 Existem também funções de conveniência para a invocação de métodos.
@@ -7096,15 +7145,24 @@ self
 \family default 
  não é passado explicitamente.
  
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Valor de retorno
-\layout Comment
+\layout Standard
 
 Múltiplos valores de retorno
-\layout Comment
+\layout Standard
 
 Verificação da ocorrência de erros
+\end_inset 
+
+
 \layout Standard
 
 O valor de retorno em todas as funções de chamada é um ponteiro para 
@@ -7129,9 +7187,18 @@ NULL
 PyErr_Occurred
 \family default 
 .
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Exemplo de chamada de função
+\end_inset 
+
+
 \layout Standard
 
 Uma forma típica para chamar uma função Python 
@@ -7184,9 +7251,18 @@ long result = PyInt_AsLong(obj_result);
 
 \size footnotesize 
 Py_DECREF(obj_result);
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Controle das referências no exemplo
+\end_inset 
+
+
 \layout Standard
 
 Uma função global é obtida através do dicionário do módulo 
@@ -7234,12 +7310,21 @@ Ruby
 \end_inset 
 
 
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Como obter/referenciar uma função
-\layout Comment
+\layout Standard
 
 Funções para chamar funções
+\end_inset 
+
+
 \layout Standard
 
 Como métodos não são valores de primeira classe em Ruby, eles não são representa
@@ -7264,15 +7349,24 @@ ID
  referente à string internalizada contendo o nome do método e um inteiro
  indicando o número de argumentos.
  
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Passando argumentos
-\layout Comment
+\layout Standard
 
 Valor de retorno
-\layout Comment
+\layout Standard
 
 Múltiplos valores de retorno
+\end_inset 
+
+
 \layout Standard
 
 Como em Python, as funções da API para invocação de métodos diferem na forma
@@ -7309,10 +7403,19 @@ VALUE
  como parâmetro.
  Assim como em código Ruby, múltiplos valores de retorno são representados
  como um array Ruby.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Função vs.
  método
+\end_inset 
+
+
 \layout Standard
 
 Todas as rotinas de chamada de função na API se referem a métodos, precisando
@@ -7335,9 +7438,18 @@ nil
 Qnil
 \family default 
  como o objeto alvo do método.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Exemplo de chamada de função
+\end_inset 
+
+
 \layout Standard
 
 A seguir, é apresentada a forma típica para chamar uma função global Ruby
@@ -7389,10 +7501,19 @@ INT2NUM
 VALUE
 \family default 
 s.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Controle das refs.
  no exemplo
+\end_inset 
+
+
 \layout Standard
 
 Conforme discutido na Seção 
@@ -7432,9 +7553,18 @@ rb_intern
 rb_funcall
 \family default 
 , tendo sido separadas apenas para maior legibilidade.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Questões específicas da linguagem: blocos Ruby
+\end_inset 
+
+
 \layout Standard
 
 Um tipo de dados que possui um tratamento um tanto irregular em Ruby é o
@@ -7847,9 +7977,18 @@ setjmp
 longjmp
 \family default 
 .
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Verificação da ocorrência de erros.
+\end_inset 
+
+
 \layout Standard
 
 Para o correto tratamento de erros, funções C que realizam chamadas a funções
@@ -7885,9 +8024,18 @@ Java
 \end_inset 
 
 
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Como obter/referenciar uma função
+\end_inset 
+
+
 \layout Standard
 
 De forma similar ao acesso a atributos, na chamada de métodos em Java deve-se
@@ -7943,9 +8091,18 @@ FromReflectedMethod
 Method
 \family default 
  -- isto é, um método reificado através da API de reflexão de Java.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Funções da API para invocar funções
+\end_inset 
+
+
 \layout Standard
 
 Uma vez obtido o 
@@ -7977,9 +8134,18 @@ Method
 \family roman 
 \emph on 
 <argumentos>
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Valor de retorno
+\end_inset 
+
+
 \layout Standard
 
 O 
@@ -8029,9 +8195,18 @@ Void
 Int
 \family default 
 , etc.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Passando argumentos
+\end_inset 
+
+
 \layout Standard
 
 Os argumentos do método podem ser passados de três formas: como 
@@ -8073,10 +8248,19 @@ s.
 jmethodID
 \family default 
 s.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Questões específicas da linguagem: escopo léxico vs.
  dinâmico
+\end_inset 
+
+
 \layout Standard
 
 É importante notar que, ao obter identificadores de métodos e campos fazendo
@@ -8165,9 +8349,18 @@ Pai
 static native
 \family default 
 .
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Verificação da ocorrência de erros
+\end_inset 
+
+
 \layout Standard
 
 O código C pode verificar a ocorrência de exceções através de 
@@ -8183,13 +8376,22 @@ ExceptionOccurred
 ExceptionClear
 \family default 
 , ou então mantê-la ativa de modo que seja propagada ao código Java.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Exemplo de chamada de função
-\layout Comment
+\layout Standard
 
 Função vs.
  método
+\end_inset 
+
+
 \layout Standard
 
 Para realizar o exemplo da função 
@@ -8241,9 +8443,18 @@ jstring entrada = (*J)->NewStringUTF(J, "entrada");
 
 \size footnotesize 
 long result = (*J)->CallStaticIntMethod(J, exemplo, teste, entrada, (jint)2);
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Controle das referências no exemplo
+\end_inset 
+
+
 \layout Standard
 
 Inicialmente, é obtida uma referência à classe 
@@ -8288,18 +8499,27 @@ Tanto em funções C disparadas por Lua como em chamadas de funções Lua realizadas
 \end_inset 
 
 .
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Como obter/referenciar uma função
-\layout Comment
+\layout Standard
 
 Funções da API para invocar funções
-\layout Comment
+\layout Standard
 
 Verificação da ocorrência de erros
-\layout Comment
+\layout Standard
 
 Passando argumentos
+\end_inset 
+
+
 \layout Standard
 
 Para chamar uma função Lua a partir de C, devemos inicalmente empilhar o
@@ -8338,12 +8558,21 @@ lua_pcall
 status
 \emph default 
  e a mensagem de erro na pilha.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Valores de retorno
-\layout Comment
+\layout Standard
 
 Múltiplos valores de retorno
+\end_inset 
+
+
 \layout Standard
 
 No caso de execução sem erros, a pilha conterá os valores de retorno da
@@ -8403,10 +8632,19 @@ lua_pcall
 rb_protect
 \family default 
 .
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Função vs.
  método
+\end_inset 
+
+
 \layout Standard
 
 Lua não possui distinção entre funções e métodos, mas possui açúcar sintático
@@ -8428,9 +8666,18 @@ lua_gettable
 \family default 
  e a tabela deve ser empilhada explicitamente juntamente com os demais parâmetro
 s.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Exemplo de chamada de função
+\end_inset 
+
+
 \layout Standard
 
 O exemplo da chamada da função 
@@ -8501,9 +8748,18 @@ long result = lua_tointeger(L, -1);
 lua_pop(L, 1);                       
 \emph on 
 /* Remove-o da pilha */
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Controle das refs no exemplo
+\end_inset 
+
+
 \layout Standard
 
 Com 
@@ -8543,16 +8799,25 @@ Perl
 \end_inset 
 
 
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Como obter/referenciar uma função
-\layout Comment
+\layout Standard
 
 Funções da API para invocar funções
-\layout Comment
+\layout Standard
 
 Funções vs.
  métodos
+\end_inset 
+
+
 \layout Standard
 
 A chamada de funções Perl a partir de C se dá através de uma disciplina
@@ -8585,9 +8850,18 @@ call_argv
 , como conveniência, recebe como um argumento adicional um array C contendo
  strings C representando parâmetros a serem empilhados.
  Todas retornam o número de valores de retorno disponíveis na pilha.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Questões específicas da linguagem: contextos Perl
+\end_inset 
+
+
 \layout Standard
 
 As funções 
@@ -8640,9 +8914,18 @@ Isto tem o efeito colateral de que a função chamada herda o valor de
 \end_inset 
 
 .
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Verificação da ocorrência de erros.
+\end_inset 
+
+
 \layout Standard
 
 O precedimento para verificação de erros depende do contexto e das flags
@@ -8681,9 +8964,18 @@ $@
 , mas são concatenadas a ela, acumulando seqüências de erros em níveis de
  chamada diferentes.
  
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Exemplo de chamada de função
+\end_inset 
+
+
 \layout Standard
 
 Uma série de macros descrevem um protocolo para a chamada de funções e a
@@ -8759,12 +9051,21 @@ FREETMPS;
 
 \size footnotesize 
 LEAVE;
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Passando argumentos
-\layout Comment
+\layout Standard
 
 Controle de referências no exemplo
+\end_inset 
+
+
 \layout Standard
 
 Inicialmente 
@@ -8819,9 +9120,18 @@ teste
 call_pv
 \family default 
 .
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Valores de retorno
+\end_inset 
+
+
 \layout Standard
 
 Após o retorno desta função, a memória da pilha de Perl pode ter sido realocada,
@@ -8926,9 +9236,18 @@ Python
 \end_inset 
 
 
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Parâmetros de entrada
+\end_inset 
+
+
 \layout Standard
 
 Python não possui um tipo 
@@ -8983,9 +9302,18 @@ METH_KEYWORDS
 keywords
 \emph default 
  passados à função.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 API para registrar funções
+\end_inset 
+
+
 \layout Standard
 
 De posse destas informações, funções da API que operam sobre arrays de 
@@ -9012,9 +9340,18 @@ tp_methods
 PyTypeObject
 \family default 
  relativa à classe.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Valores de retorno
+\end_inset 
+
+
 \layout Standard
 
 Funções C registradas em Python devem retornar um ponteiro para 
@@ -9045,9 +9382,18 @@ Py_None
 \end_inset 
 
 .
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 O que são funções na linguagem
+\end_inset 
+
+
 \layout Standard
 
 Embora métodos sejam usualmente criados em C usando estruturas 
@@ -9094,9 +9440,18 @@ tp_call
 PyTypeObject
 \family default 
  correspondente.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Exemplo
+\end_inset 
+
+
 \layout Standard
 
 Uma implementação simples de uma função C que pode ser registrada em Python
@@ -9154,9 +9509,18 @@ n", entrada, n);
 
 \size footnotesize 
 }
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Verificar valores de entrada
+\end_inset 
+
+
 \layout Standard
 
 Como os argumentos são recebidos em uma tupla no segundo parâmetro, a assinatura
@@ -9179,9 +9543,18 @@ PyObject
 PyInt_FromLong
 \family default 
 , gerando uma nova referência.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Exemplo de registro de global
+\end_inset 
+
+
 \layout Standard
 
 A API de Python é projetada primariamente para o desenvolvimento de módulos
@@ -9284,12 +9657,21 @@ Ruby
 \end_inset 
 
 
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 API para registrar funções
-\layout Comment
+\layout Standard
 
 Convenção para parâmetros de entrada
+\end_inset 
+
+
 \layout Standard
 
 Para que funções C possam ser chamadas a partir de Ruby, elas devem ser
@@ -9354,9 +9736,18 @@ PyArg_ParseTuple
  Por outro lado, ela não realiza verificação de tipo dos argumentos.
  A string de formato permite indicar o número mínimo e máximo de parâmetros
  aceitos e se os parâmetros excedentes devem ser coletados em um array Ruby.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Questões específicas: blocos
+\end_inset 
+
+
 \layout Standard
 
 Uma vez declarada no espaço de objetos de Ruby, uma função C pode ser chamada
@@ -9398,9 +9789,18 @@ rb_scan_args
 &
 \family default 
  em declarações de funções Ruby.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Valores de retorno
+\end_inset 
+
+
 \layout Standard
 
 Funções C implementado métodos Ruby devem sempre retornar um 
@@ -9414,9 +9814,18 @@ Qnil
  quando não há retorno).
  Funções que retornam múltiplos valores devem fazê-lo através de um array
  Ruby.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Exemplo de função
+\end_inset 
+
+
 \layout Standard
 
 Dando continuidade à série de exemplos, a função global Ruby 
@@ -9456,9 +9865,18 @@ n", entrada, n);
 
 \size footnotesize 
 }
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Verificar valores de entrada
+\end_inset 
+
+
 \layout Standard
 
 A conversão dos 
@@ -9491,9 +9909,18 @@ INT2NUM
 .
  O primeiro parâmetro de entrada é necessário segundo a convenção de assinaturas
  de função da API, mas para funções globais ele deve ser ignorado.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Exemplo de registro de fn global
+\end_inset 
+
+
 \layout Standard
 
 Como Ruby oferece uma função na API para a definição de funções globais,
@@ -9523,9 +9950,18 @@ Java
 \end_inset 
 
 
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Questões específicas: métodos native
+\end_inset 
+
+
 \layout Standard
 
 Métodos Java que não são implementados na própria linguagem devem ser declarados
@@ -9657,12 +10093,21 @@ ThrowNew
  e retornar imediatamente.
  O valor de retorno será ignorado quando a exceção for capturada no código
  Java.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Exemplo de registro de função global
-\layout Comment
+\layout Standard
 
 Funções da API para registrar funções (não há)
+\end_inset 
+
+
 \layout Standard
 
 Como o modo de expor à máquina virtual de Java funções implementadas em
@@ -9714,9 +10159,18 @@ public class Exemplo {
 
 \size footnotesize 
 }
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Exemplo de função
+\end_inset 
+
+
 \layout Standard
 
 Após compilar esta classe podemos passá-la para o comando 
@@ -9826,12 +10280,21 @@ n", entrada, n);
 
 \size footnotesize 
 } 
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Parâmetros de entrada
-\layout Comment
+\layout Standard
 
 Verificar valores de entrada
+\end_inset 
+
+
 \layout Standard
 
 
@@ -9886,9 +10349,18 @@ GetStringUTFChars
 ReleaseStringUTFChars
 \family default 
 .
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Valor de retorno
+\end_inset 
+
+
 \layout Standard
 
 Neste exemplo, a função retorna um valor imediato.
@@ -9940,9 +10412,18 @@ lua_newstate
 lua_State
 \family default 
  novo.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Convenções p/ parâmetros de entrada
+\end_inset 
+
+
 \layout Standard
 
 Ao início da função C, os argumentos passados a ela encontram-se inseridos
@@ -9951,9 +10432,18 @@ Ao início da função C, os argumentos passados a ela encontram-se inseridos
  para uma função C invocada a partir de Lua ou através da API.
  O código C pode verificar o número de argumentos passados inspecionando
  o tamanho da pilha recebida.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Verificar valores de entrada
+\end_inset 
+
+
 \layout Standard
 
 A biblioteca auxiliar provê ainda funções para verificar de forma mais convenien
@@ -9984,9 +10474,18 @@ nil
 \family default 
 .
  
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Valores de retorno
+\end_inset 
+
+
 \layout Standard
 
 Valores de retorno também são passados pela função C de volta para Lua através
@@ -9994,9 +10493,18 @@ Valores de retorno também são passados pela função C de volta para Lua através
  O valor inteiro retornado da função C indica quantos elementos da pilha
  devem ser retornados à função chamadora.
  Os demais valores da pilha são descartados.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Funções da API p/ registrar funções
+\end_inset 
+
+
 \layout Standard
 
 Uma função C do tipo 
@@ -10023,9 +10531,18 @@ luaL_register
 luaL_Reg
 \family default 
  contendo nomes e ponteiros de função.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Exemplo de função
+\end_inset 
+
+
 \layout Standard
 
 A função C implementando a função de exemplo 
@@ -10134,9 +10651,18 @@ integer
 \family default 
 , indica à máquina virtual que há um único valor de saída a ser obtido da
  pilha e usado como retorno da função em Lua.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Exemplo de registro
+\end_inset 
+
+
 \layout Standard
 
 A função é registrada em Lua criando um objeto Lua do tipo 
@@ -10210,9 +10736,23 @@ lua_pushcclosure
 \layout Subsection
 
 Perl
-\layout Comment
+\begin_inset LatexCommand \label{sub:Perl-registro}
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Questões específicas
+\end_inset 
+
+
 \layout Standard
 
 Como discutido na Seção 
@@ -10242,9 +10782,18 @@ xsubpp
 namespace
 \emph default 
  comum).
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 API para registrar funções (não tem)
+\end_inset 
+
+
 \layout Standard
 
 Existe uma API pública para manipulação de dados Perl no código C, mas esta
@@ -10317,9 +10866,18 @@ eval_pv
 \end_inset 
 
 .
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Exemplo de função
+\end_inset 
+
+
 \layout Standard
 
 O utilitário 
@@ -10380,9 +10938,18 @@ n", entrada, n);
 
 \size footnotesize 
                 RETVAL 
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Parâmetros de entrada
+\end_inset 
+
+
 \layout Standard
 
 O arquivo 
@@ -10410,9 +10977,18 @@ xsubpp
  Em funções vararg, por exemplo, os argumentos adicionais devem ser acessados
  diretamente na pilha.
  O código para registrar as funções do módulo também é gerado automaticamente.
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 Valores de retorno
+\end_inset 
+
+
 \layout Standard
 
 XS cria uma variável 
@@ -10802,7 +11378,7 @@ ambiente virtual
  A aplicação pode criar um ou mais ambientes na biblioteca principal, identifica
 ndo-os com um nome.
  Cada ambiente virtual ganhará um correspondente nos plugins, onde uma estrutura
- de dados específica da linguagem (classe, módulo, etc.) que o representará.
+ de dados específica da linguagem (classe, módulo, etc.) o representará.
  No exemplo da Figura 
 \begin_inset LatexCommand \ref{cap:Ambientes-virtuais}
 
@@ -10843,27 +11419,67 @@ X.r
 À parte da função para criação de ambientes virtuais, todas as demais funções
  da API de LibScript recebem como parâmetro um ambiente virtual sobre a
  qual elas devem operar.
+ Isto indica em qual estrutura de C devem ser armazenadas mensagens de erro
+ e valores de retorno.
  No caso de linguagens que permitem múltiplos estados de execução independentes,
- como Lua e Perl, isto indica qual estado o script deve executar.
- Quando um script declara uma função como elemento da estrutura que descreve
+ como Lua e Perl, isto indica também em qual estado o script deve executar.
+\layout Standard
+
+Quando um script declara uma função como elemento da estrutura que descreve
  o ambiente virtual, esta função passa a ser acessível através da API de
  LibScript.
  Por exemplo, no plugin Lua, o ambiente virtual é representado por uma tabela
- com o nome do ambiente; uma vez que uma função 
+ com o nome do ambiente; uma vez que um método Ruby 
 \family typewriter 
-l
+r
 \family default 
- é declarada como elemento da tabela Lua 
-\family typewriter 
-X
-\family default 
- por um script Lua executado no ambiente virtual 
+ é declarado na classe 
 \family typewriter 
 X
 \family default 
 , esta função passa a poder ser invocada por C (através da API de LibScript)
  ou pelos outros plugins.
- Em cada um dos plugins, 
+ Assim, por exemplo, embora na tabela Lua que implementa o ambiente virtual
+ 
+\family typewriter 
+X
+\family default 
+ só conste a função 
+\family typewriter 
+l
+\family default 
+, scripts Lua podem invocar as demais funções do ambiente virtual, como
+ 
+\family typewriter 
+X.c
+\family default 
+ e 
+\family typewriter 
+X.r
+\family default 
+.
+ Estas chamadas serão tratadas pela biblioteca principal e resolvidas por
+ ela, no caso de funções C como 
+\family typewriter 
+X.c
+\family default 
+, ou repassadas para o plugin apropriado, como no caso de 
+\family typewriter 
+X.r
+\family default 
+, realizando a chamada no plugin Ruby e passando os valores de retorno para
+ o plugin Lua.
+\layout Standard
+
+Na implementação dos plugins, utilizamos recursos oferecidos pelas linguagens
+ para tratar acessos a elementos inexistentes nas estruturas, capturando
+ estes acessos e repassando-os para a biblioteca principal.
+ Estes recursos serão discutidos na Seção 
+\begin_inset LatexCommand \ref{sub:Resolução-de-funções}
+
+\end_inset 
+
+.
 \layout Subsection
 
 
@@ -10871,7 +11487,7 @@ X
 
 \end_inset 
 
-A Camada Independente de Linguagem
+A API da Biblioteca Principal
 \layout Standard
 
 A API oferecida por LibScript isola a aplicação das diferentes APIs oferecidas
@@ -10962,46 +11578,185 @@ perl_eval_sv
 .
 \layout Standard
 
-LibScript adota esta abordagem mais minimalista para sua API: não são oferecidas
- funções específicas para manipulação de estruturas de dados, apenas para
- a execução de strings e chamadas de função com tipos básicos (números e
- strings).
- Operações sobre dados mais complexos de tipos específicos de cada linguagem
- podem ser especificados diretamente nas strings de código.
- Referências a estes dados podem ser mantidas em C usando identificadores
- numéricos, como no registro de Lua, apresentado na Seção 
-\begin_inset LatexCommand \ref{sub:Lua-GC}
+
+\begin_inset Float figure
+wide false
+collapsed false
+
+\layout Standard
+
+
+\begin_inset Graphics
+	filename figura3.eps
+	width 100col%
+	keepAspectRatio
 
 \end_inset 
 
-.
+
+\layout Caption
+
+
+\begin_inset LatexCommand \label{fig:API-para-execução}
+
+\end_inset 
+
+API para execução de código em LibScript
+\end_inset 
+
+
 \layout Standard
 
-Chamadas de função são disponibilizadas como a única operação primitiva
- além de execução de strings pois elas permitem um grau mínimo de interoperabili
-dade de forma independente de linguagem.
- Dois objetivos são atingidos desta forma.
- O primeiro é que programas C embutindo LibScript podem acessar a funcionalidade
- de scripts carregados sem precisar incluir no seu código strings de texto
- em alguma linguagem específica.
- O segundo objetivo é permitir que os próprios plugins possam invocar funções
- definidas em outros plugins.
- De qualquer forma, necessariamente teríamos que prover uma forma de permitir
- aos plugins chamarem as funções C registradas em LibScript.
- Tornar esta função de chamada -- 
+LibScript adota esta abordagem mais minimalista para sua API: não são oferecidas
+ operações específicas para manipulação de estruturas de dados, apenas para
+ a 
+\emph on 
+execução de strings
+\emph default 
+ -- 
+\family typewriter 
+script_run
+\family default 
+ (e a função de conveniência 
+\family typewriter 
+script_run_file
+\family default 
+, que lê um arquivo e o envia para 
+\family typewriter 
+script_run
+\family default 
+) -- e 
+\emph on 
+chamadas de função
+\emph default 
+ com tipos básicos (números e strings) -- 
 \family typewriter 
 script_call
 \family default 
- -- genérica o suficiente para que pudesse invocar também funções implementadas
- nos próprios plugins não torna, então, a API da biblioteca principal mais
- complexa.
- 
+.
+ Operações sobre dados mais complexos de tipos específicos de cada linguagem,
+ quando necessárias, podem ser encapsuladas em funções implementadas nas
+ linguagens de script.
+ Pode-se ainda referenciar objetos da linguagem a partir de C armazenando-as
+ em estruturas na linguagem de script e retornando a C índices numéricos
+ destas estruturas, servindo como 
+\emph on 
+handles
+\emph default 
+ de alto nível para os objetos.
 \layout Standard
 
-Além disso, um dos objetivos do projeto de LibScript foi compartilhar o
- máximo possível a API a ser usada pela aplicação e pelos plugins.
- Por este motivo, optamos por uma abordagem similar às empregadas em Lua
- (Seção 
+A Figura 
+\begin_inset LatexCommand \ref{fig:API-para-execução}
+
+\end_inset 
+
+ ilustra a interação entre a aplicação, a biblioteca principal e os plugins
+ em relação a estas duas operações fundamentais, simbolizadas pelas funções
+ 
+\family typewriter 
+script_run
+\family default 
+ e 
+\family typewriter 
+script_call
+\family default 
+.
+ Para a execução de strings, a biblioteca principal recebe da aplicação
+ a entrada e repassa o código a ser executado para o plugin apropriado.
+ Em 
+\family typewriter 
+script_run
+\family default 
+, são passadas duas strings, uma identificando a linguagem e outra contendo
+ o código; em 
+\family typewriter 
+script_run_file
+\family default 
+, um nome de arquivo
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Para código executado com 
+\family typewriter 
+script_run_file
+\family default 
+, a linguagem é automaticamente detectada como discutido na seção anterior.
+\end_inset 
+
+.
+ O exemplo a seguir declara um ambiente virtual, registra uma função C chamada
+ 
+\family typewriter 
+hello
+\family default 
+ e a invoca a partir de código Lua:
+\layout LyX-Code
+
+
+\size footnotesize 
+script_env* env = script_init("exemplo");
+\layout LyX-Code
+
+
+\size footnotesize 
+script_new_function(env, hello, "hello");
+\layout LyX-Code
+
+
+\size footnotesize 
+script_run(env, "lua", "exemplo.hello()");
+\layout Standard
+
+O ambiente virtual é declarado com a função 
+\family typewriter 
+script_init
+\family default 
+, que recebe o nome que identificará o ambiente e retorna um identificador
+ do tipo 
+\family typewriter 
+script_env
+\family default 
+, um ponteiro opaco que representa um ambiente virtual.
+ A função C é registrada usando a função 
+\family typewriter 
+script_new_function
+\family default 
+, que recebe como parâmetros o ambiente, a função a ser registrada (cujo
+ formato discutiremos mais adiante) e o nome que a função terá no ambiente
+ virtual.
+ No código Lua, a função é acessada como um elemento 
+\family typewriter 
+hello
+\family default 
+ (nome registrado da função) da tabela 
+\family typewriter 
+exemplo
+\family default 
+ (nome do ambiente virtual).
+\layout Standard
+
+Para a chamada de funções, a aplicação deve passar os parâmetros de entrada
+ e chamar 
+\family typewriter 
+script_call
+\family default 
+, indicando o nome de uma função registrada no ambiente virtual.
+ A mesma função 
+\family typewriter 
+script_call
+\family default 
+ é usada pelos plugins quando eles desejam invocar funções do ambiente virtual
+ registradas em C ou implementadas por outros plugins.
+\layout Standard
+
+Por este motivo, procuramos usar uma API para transferência de dados genérica,
+ a ser usada tanto na entrada como na saída de dados, tanto na comunicação
+ entre a aplicação e a biblioteca principal como entre a biblioteca principal
+ e os plugins.
+ Optamos por uma abordagem similar às empregadas em Lua (Seção 
 \begin_inset LatexCommand \ref{sub:Lua-chamada}
 
 \end_inset 
@@ -11011,7 +11766,7 @@ Além disso, um dos objetivos do projeto de LibScript foi compartilhar o
 
 \end_inset 
 
-) para a passagem de dados na passagem de parâmetros e obtenção de valores
+) para o envio de dados na passagem de parâmetros e obtenção de valores
  de retorno, usando um buffer interno como área de transferência.
  Diferentemente destas linguagens, entretanto, passamos índices para os
  parâmetros explicitamente ao invés de empregar uma disciplina de pilha.
@@ -11053,32 +11808,64 @@ script_put_
 script_get_
 \family default 
 * os removem.
+ Uma chamada a uma função teste passando uma string e um inteiro como parâmetros
+ e obtendo um inteiro como resultado é realizada da seguinte forma:
+\layout LyX-Code
+
+
+\size footnotesize 
+script_put_string(env, 0, "entrada"); /* índice 0: "entrada" */
+\layout LyX-Code
+
+
+\size footnotesize 
+script_put_int(env, 1, 2);            /* índice 1: 2 */
+\layout LyX-Code
+
+
+\size footnotesize 
+script_call("teste");
+\layout LyX-Code
+
+
+\size footnotesize 
+resultado = script_get_int(env, 0);   /* retorna índice 0 */
 \layout Standard
 
-Tanto nas funções da aplicação C a serem registradas em LibScript como no
- tratamento de chamadas de função nos plugins, usam-se as funções 
+Chamadas de função são disponibilizadas como uma operação primitiva pois
+ elas permitem um grau mínimo de interoperabilidade de forma independente
+ de linguagem.
+ Dois objetivos são atingidos desta forma.
+ O primeiro é que assim programas C embutindo LibScript podem acessar a
+ funcionalidade de scripts carregados sem precisar incluir no seu código
+ strings de texto em alguma linguagem específica, por exemplo, inserindo
+ em seu código uma chamada a uma função de callback a ser definida via script.
+ Note que no exemplo acima, não é especificada a linguagem em que a função
+ 
 \family typewriter 
-script_get_
+teste 
 \family default 
-* para obter os parâmetros de entrada e 
+é implementada.
+ Se a chamada fosse feita via execução de string de código, isto atrelaria
+ a aplicação a pelo menos uma linguagem de script.
+ Usando 
 \family typewriter 
-script_put_
+script_run_file
 \family default 
-* para fazer a saída dos valores de retorno.
- De forma inversa, na implementação de chamadas a funções C em plugins bem
- como no uso de 
+ e 
 \family typewriter 
 script_call
 \family default 
- em funções C, usa-se 
-\family typewriter 
-script_put_
-\family default 
-* para passar os parâmetros passados e 
-\family typewriter 
-script_get_
-\family default 
-* para obter os valores de retorno.
+, pode-se implementar uma aplicação extensível sem especificar explicitamente
+ a linguagem de script a ser usada.
+ O segundo objetivo é permitir que os próprios plugins possam invocar funções
+ definidas em outros plugins.
+ De qualquer forma, necessariamente teríamos que prover aos plugins uma
+ função de chamada, para que eles pudessem invocar as funções C registradas
+ em LibScript.
+ Tornar a função de chamada genérica o suficiente para que possa invocar
+ também funções implementadas nos próprios plugins não torna, então, a API
+ da biblioteca principal mais complexa.
 \layout Standard
 
 O buffer de LibScript foi projetado para ser usado apenas como uma área
@@ -11086,105 +11873,105 @@ O buffer de LibScript foi projetado para ser usado apenas como uma área
  e não como uma facilidade geral para armazenamento e manipulação de dados.
  Assim, a sua API é voltada para a inserção e remoção seqüencial de elementos.
  Por exemplo, a inserção de um elemento na posição 0 automaticamente zera
- o buffer, freqüentemente evitando a necessidade de zerar o buffer explicitament
-e com a função 
+ o buffer, evitando em muitos casos a necessidade de usar a função 
 \family typewriter 
 script_reset_buffer
 \family default 
-.
+, que realiza tal operação explicitamente.
 \layout Standard
 
-A carga de plugins é feita de forma implícita, pelas duas funções de execução
- de código: 
+Funções C registradas com 
 \family typewriter 
-script_run_file
+script_new_function
 \family default 
-, que executa um script contido em um arquivo, ou 
+ devem receber o ambiente virtual como parâmetro e retornar um código de
+ erro.
+ As funções 
 \family typewriter 
-script_run
+script_get_
 \family default 
-, que executa um script contido em uma string.
- Para código executado com 
+* e 
 \family typewriter 
-script_run_file
+script_put_
 \family default 
-, o plugin a ser carregado é detectado a partir da extensão do arquivo ou
- da linha de identificação 
-\begin_inset Quotes eld
-\end_inset 
-
-
+* são usadas para receber parâmetros e retornar valores ao implementar funções
+ que podem ser chamadas via LibScript, da mesma forma que são usadas para
+ passar parâmetros e obter valores de retorno ao realizar chamadas com 
 \family typewriter 
-#!
+script_call
 \family default 
+.
+\layout LyX-Code
 
-\begin_inset Quotes erd
-\end_inset 
 
- no início do script
-\begin_inset Foot
-collapsed true
+\size footnotesize 
+script_err teste_lua(script_env* env) {
+\layout LyX-Code
 
+
+\size footnotesize 
+   char* entrada = script_get_string(env, 0);  
+\emph on 
+/* Entrada, índice 0: string */
+\layout LyX-Code
+
+
+\size footnotesize 
+   int n = script_get_int(env, 1);             
+\emph on 
+/* Entrada, índice 1: inteiro */
+\layout LyX-Code
+
+
+\size footnotesize 
+   /* Sai da função com erro se algum script_get_* falhou */
+\layout LyX-Code
+
+
+\size footnotesize 
+   SCRIPT_CHECK_INPUTS(env);
+\layout LyX-Code
+
+
+\size footnotesize 
+   printf("Recebi %s e %ld 
+\backslash 
+n", entrada, n);
+\layout LyX-Code
+
+
+\size footnotesize 
+   free(entrada);
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_put_int(env, 0, 42);                 
+\emph on 
+/* Retorno, índice 0: inteiro */
+\layout LyX-Code
+
+
+\size footnotesize 
+   return SCRIPT_OK;
+\layout LyX-Code
+
+
+\size footnotesize 
+}
 \layout Standard
 
-A linha 
-\begin_inset Quotes eld
-\end_inset 
-
-
+Em LibScript as strings retornadas por 
 \family typewriter 
-#!
+script_get_string
 \family default 
-
-\begin_inset Quotes erd
-\end_inset 
-
- é usada apenas para detectar a linguagem em que o script é escrito.
- Por exemplo, uma linha 
-\family typewriter 
-#!/usr/bin/perl -w
-\family default 
- indicará a carga do plugin 
-\family typewriter 
-libscript-perl
-\family default 
-, mas o interpretador Perl em 
-\family typewriter 
-/usr/bin
-\family default 
- não é usado e nem a flag 
-\family typewriter 
--w
-\family default 
- passada é considerada.
-\end_inset 
-
-.
- Na função 
-\family typewriter 
-script_run
-\family default 
-, um parâmetro adicional deve indicar explicitamente a linguagem do código.
- O exemplo a seguir registra uma função C chamada 
-\family typewriter 
-hello
-\family default 
- e a invoca a partir de código Lua:
-\layout LyX-Code
-
-
-\size footnotesize 
-env = script_init("exemplo");
-\layout LyX-Code
-
-
-\size footnotesize 
-script_new_function(env, hello, "hello");
-\layout LyX-Code
-
-
-\size footnotesize 
-script_run(env, "lua", "exemplo.hello()");
+ pertencem à função chamadora, sendo responsabilidade dela desalocar a memória,
+ diferentemente do que ocorre nas funções similares das APIs das linguagens
+ discutidas neste trabalho.
+ Tal decisão foi tomada devido ao caráter temporário do buffer de LibScript:
+ retornar ao chamador um ponteiro para uma string cuja validade seria restrita
+ até a próxima chamada da API seria algo pouco intuitivo, e na prática forçaria
+ freqüentemente o programador a fazer uma cópia da string.
 \layout Subsection
 
 A API de plugins
@@ -11208,8 +11995,8 @@ call
 done
 \family default 
 .
- Estas operações são representadas em funções exportadas pela biblioteca
- do plugin com nomes do tipo
+ A biblioteca principal espera que a biblioteca dinâmica que implementa
+ o plugin de uma linguagem exporte quatro funções, com nomes do tipo
 \family typewriter 
  script_plugin_
 \family default 
@@ -11238,31 +12025,14 @@ script_plugin_init_
 script_init
 \family default 
  da biblioteca principal.
- A função 
-\family typewriter 
-script_init
-\family default 
- recebe uma string como parâmetro que representa o nome de um 
-\emph on 
-ambiente
-\emph default 
- a ser criado.
- Um ambiente consiste de um conjunto de funções C nele registradas e os
- estados correspondentes nos plugins carregados.
- Ambientes são representados como um ponteiros opacos do tipo 
-\family typewriter 
-script_env
-\family default 
-, e são passados como primeiro parâmetro para todas as demais funções da
- API de LibScript.
- Na inicialização de um plugin, a biblioteca passa à função 
+ Na inicialização de um plugin, a biblioteca principal passa à função 
 \family typewriter 
 script_plugin_init_
 \family default 
 \emph on 
 <linguagem>
 \emph default 
- um 
+ um ponteiro 
 \family typewriter 
 script_env
 \family default 
@@ -11270,13 +12040,13 @@ script_env
 \family typewriter 
 script_plugin_state
 \family default 
-, que é um tipo opaco que é sempre retornado ao plugin nas demais chamadas.
+, que é um tipo opaco que é sempre passado de volta ao plugin nas demais
+ chamadas.
  Cada plugin define a sua representação interna para 
 \family typewriter 
 script_plugin_state
 \family default 
-, de modo a descrever de forma apropriada para a linguagem um espaço de
- nomes.
+.
  Tipicamente, o estado da máquina virtual e o ponteiro para o ambiente LibScript
  devem ser armazenados de modo a ser posteriormente acessíveis a partir
  deste handle.
@@ -11285,7 +12055,8 @@ script_plugin_state
 
 \end_inset 
 
- discutiremos como cada plugin representa seus estados em 
+ discutiremos como cada plugin representa o ambiente e o seu estado interno
+ em 
 \family typewriter 
 script_plugin_state
 \family default 
@@ -11299,44 +12070,35 @@ script_plugin_run_
 \emph on 
 <linguagem>
 \emph default 
- envia código para ser executado pelo plugin.
- Ela recebe uma string contendo código a ser executado e retorna um código
- de status indicando sucesso ou a ocorrência de erros de compilação ou execução.
+ é invocada por 
+\family typewriter 
+script_run
+\family default 
+.
+ Ela recebe uma string contendo código da linguagem de script, executa este
+ código na máquina virtual e retorna um valor de status indicando sucesso
+ ou a ocorrência de erros de compilação ou execução.
  No caso de erros, os plugins devem capturar exceções disparadas pela máquina
- virtual e representá-las como erros de execução, retornar a constante 
+ virtual e retornar a constante 
 \family typewriter 
 SCRIPT_ERRLANGRUN
 \family default 
- e, caso seja possível obter uma mensagem de erro, propagá-la usando a função
- 
+.
+ Caso seja possível obter da linguagem uma mensagem de erro, esta pode ser
+ propagada usando a função 
 \family typewriter 
 script_set_error_message
 \family default 
- da biblioteca principal, que poderá ser posteriormente consultada pela
- aplicação com 
+ da biblioteca principal.
+ A mensagem armazenadaa por ela poderá ser posteriormente consultado pela
+ aplicação com a função 
 \family typewriter 
 script_error_message
 \family default 
 .
- 
 \layout Standard
 
-Assim como a função 
-\family typewriter 
-script_plugin_run_
-\family default 
-\emph on 
-<linguagem>
-\emph default 
- implementa a lógica específica de linguagem das funções 
-\family typewriter 
-script_run
-\family default 
- e 
-\family typewriter 
-script_run_file
-\family default 
- da biblioteca principal, a função 
+A função 
 \family typewriter 
 script_plugin_call_
 \family default 
@@ -11347,25 +12109,8 @@ script_plugin_call_
 \family typewriter 
 script_call
 \family default 
-.
- A função 
-\family typewriter 
-script_plugin_call_
-\family default 
-\emph on 
-<linguagem>
-\emph default 
- é responsável por realizar chamadas a funções implementadas na linguagem
+, e é responsável por realizar chamadas a funções implementadas na linguagem
  embutida pelo plugin.
- Ao chamar uma função do ambiente, seja em C através de 
-\family typewriter 
-script_call
-\family default 
- ou executando código em algum dos plugins, LibScript irá utilizar esta
- função para tentar executar a função usando o plugin.
- A implementação de script_call tenta encontrar uma função solicitada inicialmen
-te na lista de funções C registradas, e posteriormente tentando invocá-la
- nos plugins.
  Se a função foi definida no plugin, isto é, se uma função com o nome solicitado
  foi registrada na estrutura de dados que descreve o ambiente na máquina
  virtual, ela será executada, e o sucesso ou falha da execução será reportado
@@ -11382,13 +12127,14 @@ script_plugin_run_
 script_plugin_call_
 \family default 
 \emph on 
+\SpecialChar \-
 <linguagem>
 \emph default 
  deve retornar a constante 
 \family typewriter 
 SCRIPT_ERRFNUNDEF
 \family default 
-, para que LibScript tente o próximo plugin.
+.
  Parâmetros de entrada e valores de retorno são passados através do buffer
  de parâmetros, com as funções 
 \family typewriter 
@@ -11401,22 +12147,54 @@ script_get_*
  da biblioteca principal.
 \layout Standard
 
-Finalmente, 
+A implementação da função 
+\family typewriter 
+script_call
+\family default 
+ na biblioteca principal faz uso deste comportamento dos plugins para invocar
+ funções de modo independente de linguagem.
+ Inicialmente, ela tenta encontrar uma função solicitada na lista de funções
+ C registradas.
+ Caso não haja uma função C no ambiente virtual com este nome, 
+\family typewriter 
+script_call
+\family default 
+ tenta localizar a função nos plugins carregados, chamando a função com
+ 
+\family typewriter 
+script_plugin_call_
+\family default 
+\emph on 
+<linguagem>
+\emph default 
+ em cada plugin, e tentando o próximo a cada vez que recebe 
+\family typewriter 
+SCRIPT_ERRFNUNDEF
+\family default 
+.
+\layout Standard
+
+Finalmente, a função 
 \family typewriter 
 script_plugin_done_
 \family default 
 \emph on 
 <linguagem>
 \emph default 
- é responsável pelo encerramento de um estado.
- Estados são encerrados quando um ambiente é finalizado pela biblioteca
- principal com a função 
+ é chamada por 
 \family typewriter 
 script_done
 \family default 
-.
- Dependendo da representação interna de um estado no plugin, a finalização
- de um estado pode ou não implicar na finalização da máquina virtual.
+ quando um ambiente virtual é encerrado.
+ Dependendo da representação interna usada no plugin, a finalização de um
+ estado pode ou não implicar na finalização da máquina virtual.
+ Preferencialmente, esta função deve remover a estrutura que descreve o
+ ambiente virtual, mas como veremos na seção 
+\begin_inset LatexCommand \ref{sub:Encerramento-de-estados}
+
+\end_inset 
+
+, isto nem sempre é possível.
 \layout Section
 
 Implementação dos plugins
@@ -11435,15 +12213,16 @@ Representação de estados
 
 \layout Standard
 
-O design de LibScript permite que plugins mantenham múltiplos estados independen
-tes.
- Idealmente estes estados seriam totalmente isolados entre si, oferecendo
- maior segurança ao ambiente de execução dos scripts.
- As linguagens, entretanto, oferecem diferentes graus de isolamento entre
- estados independentes.
- Lua e Perl são linguagens que permitem múltiplas instâncias isoladas do
- ambiente de execução de forma simples, uma vez que as chamadas à API incluem
- um identificador de estado
+O design de LibScript permite que plugins mantenham múltiplos estados de
+ execução independentes.
+ Idealmente estes estados seriam totalmente isolados entre si, como por
+ exemplo diferentes instâncias da máquina virtual, oferecendo maior segurança
+ ao ambiente de execução dos scripts.
+ Todavia, as linguagens oferecem diferentes graus de isolamento possível
+ entre estados independentes.
+ Lua e Perl permitem múltiplas instâncias isoladas do ambiente de execução
+ de forma simples, uma vez que as chamadas à API incluem um identificador
+ de estado
 \begin_inset Foot
 collapsed true
 
@@ -11455,8 +12234,13 @@ O recurso de múltiplos estados independentes é opcional em Perl, selecionado
 
 .
  Já linguagens que mantêm estado de forma estática, como Python e Ruby,
- não permitem trabalhar com múltiplos estados isolados facilmente.
- O modelo de threads de Python oferece uma forma de alternar entre estados
+ não permitem trabalhar com múltiplos estados isolados facilmente
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+O modelo de threads de Python oferece uma forma de alternar entre estados
  na máquina virtual obtendo objetos 
 \family typewriter 
 PyThreadState
@@ -11467,17 +12251,12 @@ Py_NewInterpreter
 \family default 
 , mas isto pode causar problemas quando módulos de extensão escritos em
  C utilizam variáveis globais estáticas ou quando módulos manipulam o seu
- próprio dicionário, que é compartilhado entre estados
-\begin_inset Foot
-collapsed true
-
-\layout Standard
-
-A documentação diz que 
+ próprio dicionário, que é compartilhado entre estados.
+ A documentação diz, desde 1999, que 
 \begin_inset Quotes eld
 \end_inset 
 
-este é um bug difícil de ser resolvido que será tratado em uma versão futura
+This is a hard-to-fix bug that will be addressed in a future release.
 \begin_inset Quotes erd
 \end_inset 
 
@@ -11486,20 +12265,38 @@ este é um bug difícil de ser resolvido que será tratado em uma versão futura
 
 \end_inset 
 
-.
+
 \end_inset 
 
 .
+ Nas linguagens que não permitem múltiplas instâncias da máquina virtual,
+ podemos definir apenas espaços de nomes separados para os ambientes virtuais
+ LibScript, que compartilham um único estado global de execução dentro do
+ plugin.
+ À representação de um estado de execução relativo a um ambiente virtual
+ LibScript dentro de um plugin damos o nome de 
+\emph on 
+estado virtual
+\emph default 
+, que pode ou não corresponder a um estado de execução isolado.
 \layout Standard
 
-Além de inicializar o ambiente de execução da máquina virtual, a função
- de inicialização de um plugin retorna à biblioteca principal uma representação
- opaca do seu estado, que é repassada às chamadas subseqüentes de funções
- do plugin.
+Como comentado na seção anterior, a função 
+\family typewriter 
+script_plugin_init_
+\family default 
+\emph on 
+<linguagem>
+\emph default 
+ retorna à biblioteca principal um 
+\family typewriter 
+script_plugin_state
+\family default 
+, que é a representação opaca do seu estado virtual.
  O conteúdo desta representação varia de linguagem para linguagem, mas o
  princípio básico é que dois dados devem estar disponíveis a partir deste
- estado: uma referência para o ambiente LibScript, passado como parâmetro
- para 
+ valor: uma referência para o ambiente virtual LibScript, recebido como
+ parâmetro para 
 \family typewriter 
 script_plugin_init_
 \family default 
@@ -11507,8 +12304,8 @@ script_plugin_init_
 <linguagem>
 \emph default 
 , para que o plugin possa fazer chamadas à biblioteca principal, e um identifica
-dor que permita acessar a partir de C a estrutura de dados que representa
- na linguagem o espaço de nome de funções acessíveis via LibScript.
+dor que permita ao plugin acessar a estrutura de dados que representa na
+ linguagem o espaço de nome de funções acessíveis via LibScript.
  No plugin Lua, esta estrutura é uma tabela; em Python, um módulo; em Ruby,
  uma classe; e em Perl, um pacote.
 \layout Standard
@@ -11536,54 +12333,41 @@ script_plugin_state
 lua_State
 \family default 
  convertido via cast.
- O ponteiro para o ambiente LibScript é armazenado em Lua no registro, usando
- o endereço do 
-\family typewriter 
-lua_State
-\family default 
- como chave, da seguinte forma:
+ O ponteiro para o ambiente LibScript é armazenado em Lua no registro, da
+ seguinte forma:
 \layout LyX-Code
 
 
 \size footnotesize 
-lua_pushlightuserdata(L, L);        
+lua_pushlightuserdata(L, "LibScript.env"); 
 \emph on 
-/* Empilha o estado */
+/* Empilha o índice */
 \layout LyX-Code
 
 
 \size footnotesize 
-lua_pushlightuserdata(L, env);      
+lua_pushlightuserdata(L, env);             
 \emph on 
 /* Empilha o ambiente LibScript */
 \layout LyX-Code
 
 
 \size footnotesize 
-lua_settable(L, LUA_REGISTRYINDEX); 
+lua_settable(L, LUA_REGISTRYINDEX);        
 \emph on 
-/* registro[L] = env */
+/* registro["LibScript.env"] = env */
 \layout Standard
 
 O plugin cria neste 
 \family typewriter 
 lua_State
 \family default 
- uma tabela que representará o ambiente, para que funções registradas via
- LibScript estarão disponíveis como elementos desta tabela e que funções
- Lua inseridas nesta tabela sejam acessíveis a partir de C e de outros plugins.
+ uma tabela que representará para scripts Lua o ambiente virtual.
  Esta tabela é armazenada no 
 \family typewriter 
 lua_State
 \family default 
- como uma variável global com o nome do ambiente.
- As demais funções de LibScript-Lua localizam esta tabela obtendo o ponteiro
- para o ambiente LibScript no registro e consultando o nome do ambiente
- usando a função 
-\family typewriter 
-script_namespace
-\family default 
-.
+ como uma variável global com o nome do ambiente virtual.
 \layout Standard
 
 Em LibScript-Perl os estados são isolados como em Lua.
@@ -11594,42 +12378,48 @@ PerlInterpreter
 .
  Neste interpretador, é criado um pacote que será a representação do ambiente
  visível a partir de código Perl.
- O estado é descrito com a seguinte estrutura:
-\layout LyX-Code
-
-
-\size footnotesize 
-typedef struct {
-\layout LyX-Code
-
-
-\size footnotesize 
-   PerlInterpreter* P;
-\layout LyX-Code
-
-
-\size footnotesize 
-   script_env* env;
-\layout LyX-Code
-
-
-\size footnotesize 
-   char* package;
-\layout LyX-Code
-
-
-\size footnotesize 
-} script_perl_state;
+ O tipo 
+\family typewriter 
+script_plugin_state
+\family default 
+, então, é um 
+\emph on 
+typedef
+\emph default 
+ para 
+\family typewriter 
+PerlInterpreter
+\family default 
+*.
 \layout Standard
 
-Em 
+Como discutido na seção 
+\begin_inset LatexCommand \ref{sub:Perl-registro}
+
+\end_inset 
+
+, a implementação de funções C exportadas para um interpretador Perl é feita
+ escrevendo um módulo de extensão usando o pré-processador XS, e a forma
+ de obter comunicação no sentido Perl
+\begin_inset Formula $\rightarrow$
+\end_inset 
+
+C em uma máquina virtual embutida é ligando um módulo de extensão juntamente
+ com a máquina virtual.
+ Assim, parte do plugin LibScript-Perl é implementado como um módulo XS,
+ exposto na máquina virtual embutida como o pacote Perl 
 \family typewriter 
-script_perl_state
+LibScript
 \family default 
- são armazenadas referências para o interpretador e para o ambiente LibScript,
- bem como o nome do pacote (que é o nome do ambiente com a inicial em maiúscula,
- seguindo a convenção de pacotes de Perl).
- O pacote em si é criado durante 
+.
+ Durante a inicialização de um estado virtual, o ponteiro para o ambiente
+ virtual LibScript é armazenado neste pacote, na variável 
+\family typewriter 
+$LibScript::env
+\family default 
+.
+ O pacote em que representa o ambiente virtual em si é criado pela função
+ 
 \family typewriter 
 script_plugin_init_perl
 \family default 
@@ -11651,8 +12441,8 @@ Perl_eval_pv
 \layout Standard
 
 Como Python não dispõe de facilidades para disparar múltiplas máquinas virtuais
- plenamente isoladas, o plugin Python implementa estados apenas como módulos
- separados, compartilhando um mesmo estado global.
+ plenamente isoladas, o plugin Python implementa estados virtuais apenas
+ como módulos separados, compartilhando um mesmo estado global.
  Durante a inicialização de um estado, é criado um módulo Python com o nome
  do ambiente.
  O seguinte trecho da função 
@@ -11715,71 +12505,127 @@ PyObject* globals = PyModule_GetDict(PyImport_AddModule("__builtin__"));
 PyDict_SetItemString(globals, namespace, module);
 \layout Standard
 
-A representação no plugin do estado consiste de um ponteiro para o ambiente
- e outro para o dicionário de elementos do módulo, obtido com 
+O tipo 
+\family typewriter 
+script_plugin_state
+\family default 
+ é um 
+\emph on 
+typedef
+\emph default 
+ para 
+\family typewriter 
+PyObject*
+\family default 
+.
+ O objeto retornado pela função de inicialização é o dicionário de elementos
+ do módulo, obtido com 
 \family typewriter 
 PyModule_GetDict(module)
 \family default 
-:
-\layout LyX-Code
-
-
-\size footnotesize 
-typedef struct {
-\layout LyX-Code
-
-
-\size footnotesize 
-   script_env* env;
-\layout LyX-Code
-
-
-\size footnotesize 
-   PyObject* dict;
-\layout LyX-Code
-
-
-\size footnotesize 
-} script_python_state;
+.
+ Neste dicionário, armazenamos o ponteiro do ambiente virtual como o atributo
+ privado 
+\family typewriter 
+__env
+\family default 
+.
 \layout Standard
 
-De forma similar, estados em Ruby são implementados como classes que compartilha
-m um mesmo estado global, já que Ruby também não permite múltiplos ambientes
- de execução isolados.
- Uma classe é criada em Ruby com a função 
+De forma similar, em Ruby estados virtuais são implementados como classes
+ que compartilham um mesmo estado global, já que Ruby também não permite
+ múltiplos ambientes de execução isolados.
+ Na função de inicialização 
+\family typewriter 
+script_plugin_init_ruby
+\family default 
+, uma classe com o nome do ambiente virtual é criada usando a função 
 \family typewriter 
 rb_define_class
 \family default 
- e armazenada na struct do estado juntamente com um ponteiro para o ambiente.
- Um estado é representado em LibScript-Ruby da seguinte forma:
+.
+ O ponteiro do ambiente virtual é armazenado em uma constante da classe
+ como um número.
+ O 
+\family typewriter 
+VALUE
+\family default 
+ referente à classe é retornado como o 
+\family typewriter 
+script_plugin_state
+\family default 
+.
 \layout LyX-Code
 
 
 \size footnotesize 
-typedef struct {
+VALUE state;
 \layout LyX-Code
 
 
 \size footnotesize 
-   script_env* env;
+\emph on 
+/* ...
+ (inicialização do interpretador omitida) ...
+ */
 \layout LyX-Code
 
 
 \size footnotesize 
-   VALUE klass;
+\emph on 
+/* class_name é o nome do ambiente virtual,
 \layout LyX-Code
 
 
 \size footnotesize 
-} script_ruby_state;
+\emph on 
+   com a inicial convertida para maiúsculas,
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   respeitando a convenção de nomes de classe Ruby */
+\layout LyX-Code
+
+
+\size footnotesize 
+state = rb_define_class(class_name, rb_cObject);
+\layout LyX-Code
+
+
+\size footnotesize 
+/* Isto assume que void* cabe em um long */
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_const_set(state, rb_intern("@@LibScriptEnv"), INT2NUM((long)env));  
+  
+\layout LyX-Code
+
+
+\size footnotesize 
+/* ...
+ */
+\layout LyX-Code
+
+
+\size footnotesize 
+return (script_plugin_state) state;
 \layout Subsection
 
 Encerramento de estados
+\begin_inset LatexCommand \label{sub:Encerramento-de-estados}
+
+\end_inset 
+
+
 \layout Standard
 
 Como Lua e Perl representam estados de forma independente, o encerramento
  de um estado nestes plugins é simples: a estrutura da linguagem que encapsula
- o ambiente completo de execução é encerrado.
+ o ambiente completo de execução é encerrada.
  A implementação da função de finalização no plugin Lua é a seguinte:
 \layout LyX-Code
 
@@ -11843,7 +12689,7 @@ void script_plugin_done_perl(script_perl_state* state) {
 
 
 \size footnotesize 
-   PerlInterpreter* my_perl = state->P;
+   PerlInterpreter* my_perl = (PerlInterpreter*) state;
 \layout LyX-Code
 
 
@@ -11919,33 +12765,20 @@ estado atual
 
 
 \size footnotesize 
-   
-\emph on 
-/* Desaloca o resto do estado do plugin */
-\layout LyX-Code
-
-
-\size footnotesize 
-   free(state->package); free(state);
-\layout LyX-Code
-
-
-\size footnotesize 
 }
 \layout Standard
 
-Em Python e Ruby, como não há instâncias independentes do ambiente de execução
- das linguagens, o plugin precisa manter o controle do número de estados
+Em Python e Ruby, o plugin precisa manter o controle do número de estados
  ativos para desalocar a máquina virtual somente quando este chegar a zero.
- Além disso, em Ruby não há como como em Python não há recursos nas APIs
- (ou nas linguagens, de fato) para remover, respectivamente, classes ou
- módulos.
+ Além disso, tanto em Ruby como em Python não há recursos nas APIs (ou nas
+ linguagens, de fato) para remover, respectivamente, classes ou módulos.
  Em Ruby, poderíamos atribuir 
 \family typewriter 
 nil
 \family default 
- à constante que representa a classe que descreve o estado, mas depois disso
- não é possível definir uma nova classe em seu lugar: tanto 
+ à constante que representa a classe que descreve o ambiente virtual, mas
+ depois disso não é possível definir uma nova classe em seu lugar: tanto
+ 
 \family typewriter 
 rb_define_class
 \family default 
@@ -11981,8 +12814,8 @@ class
 None
 \family default 
  à global referente ao módulo.
- O módulo pode ser importado novamente, mas será retornada a mesma instância
- do módulo, armazenada internamente por Python.
+ O módulo pode ser importado novamente, mas a mesma instância dele, armazenada
+ internamente por Python, será retornada.
  A seguinte sessão interativa de linha de comando permite observar este
  comportamento, que ocorre tanto diretamente em Python como via a API de
  C:
@@ -12030,12 +12863,12 @@ None
 
 Assim, as estruturas de dados referentes aos estados LibScript não são encerrado
 s nos plugins Python e Ruby.
- Esta é a implementação no plugin Ruby:
+ Esta é a implementação da rotina de encerramento no plugin Ruby:
 \layout LyX-Code
 
 
 \size footnotesize 
-void script_plugin_done_ruby(script_ruby_state* state) {
+void script_plugin_done_ruby(script_ruby_state state) {
 \layout LyX-Code
 
 
@@ -12073,17 +12906,6 @@ static
 
 
 \size footnotesize 
-\emph on 
-   /* Desaloca o resto do estado do plugin */
-\layout LyX-Code
-
-
-\size footnotesize 
-   free(state);
-\layout LyX-Code
-
-
-\size footnotesize 
 }
 \layout Standard
 
@@ -12092,7 +12914,7 @@ A implementação no plugin Python é basicamente igual:
 
 
 \size footnotesize 
-void script_plugin_done_python(script_python_state* state) {
+void script_plugin_done_python(script_python_state state) {
 \layout LyX-Code
 
 
@@ -12108,11 +12930,6 @@ void script_plugin_done_python(script_python_state* state) {
 
 \size footnotesize 
       Py_Finalize();
-\layout LyX-Code
-
-
-\size footnotesize 
-   Py_DECREF(state->dict); free(state);
 \layout LyX-Code
 
 
@@ -12299,12 +13116,7 @@ Os valores de tipos desconhecidos são substituídos pelo valor zero, o que
  mantém a posição dos demais valores na lista de argumentos.
  Optamos por não sinalizar erro nesta situação para evitar aqui a geração
  de exceções, o que complicaria a exposição.
- A captura e propagação de erros serão vistas na Seção 
-\begin_inset LatexCommand \ref{sub:Resolução-de-funções}
-
-\end_inset 
-
-.
+ A captura e propagação de erros serão vistas na Seção .
 \layout Standard
 
 A segunda função de transferência de dados de LibScript-Lua, 
@@ -13881,31 +14693,25 @@ case G_VOID:
 
 \end_inset 
 
-Resolução de funções sob demanda
+Chamada de funções
 \layout Standard
 
-
-\color red
-TODO: simplificar
-\layout Standard
-
-Nos plugins de LibScript a ligação entre a função C declarada e uma função
- 
-\emph on 
-stub
-\emph default 
- nativa só é realizada no momento em que esta é chamada.
+Nos plugins de LibScript, funções implementadas externamente (em C ou outros
+ plugins) são localizadas somente no momento em que elas são chamadas.
  O objetivo aqui, além de otimizar o tempo de inicialização e consumo de
- memória no ambiente de execução da linguagem de script (ao evitar a criação
- de 
-\emph on 
-stubs
-\emph default 
- que não serão utilizados), é permitir a localização de funções declaradas
- após a inicialização do ambiente -- possivelmente funções implementadas
- em outras linguagens, declaradas em outros plugins.
- Ao comparar as abordagens empregadas em cada plugin podemos avaliar os
- recursos de introspecção oferecidos por cada API.
+ memória no ambiente de execução da linguagem de script (ao evitar a declaração
+ de funções que não serão utilizadas), é permitir a localização de funções
+ declaradas após a inicialização do ambiente.
+ Para permitir esta resolução de funções de forma dinâmica, é preciso capturar
+ o acesso a elementos inexistentes na estrutura que descreve o ambiente
+ virtual no plugin e encaminhar a chamada à biblioteca principal via 
+\family typewriter 
+script_call
+\family default 
+.
+ Ao comparar as abordagens empregadas em cada plugin para obter tal comportament
+o, podemos avaliar alguns recursos de meta-programação oferecidos por cada
+ linguagem e a sua disponibilidade através das suas APIs.
 \layout Standard
 
 Como vimos na Seção 
@@ -13962,14 +14768,29 @@ script_call
 .
 \layout Standard
 
-No plugin Python, o espaço de nomes é declarado na inicialização como um
- módulo.
- É declarado também um tipo de dado, 
+No plugin Python, ao chamar uma função no módulo do ambiente virtual, o
+ callback 
+\family typewriter 
+__getattro
+\family default 
+ do módulo, definido como a função interna 
+\family typewriter 
+script_python_get
+\family default 
+, é chamado.
+ Esta função procura uma entrada no dicionário do módulo e, caso não a encontre,
+ cria um objeto do tipo 
 \family typewriter 
 script_python_object
 \family default 
-, definido como um objeto Python contendo um ponteiro de função C representando
- uma função registrada em LibScript.
+, e o retorna como resultado de 
+\family typewriter 
+__getattro
+\family default 
+.
+ Este tipo de dado é declarado no plugin como uma classe Python, cujas instância
+s contêm um ponteiro para o ambiente virtual e uma string C com o nome da
+ função que eles representam.
  Estes objetos possuem o seu callback 
 \family typewriter 
 __call
@@ -13982,9 +14803,11 @@ script_python_caller
 \family typewriter 
 script_lua_caller
 \family default 
-, converte os parâmetros recebidos para o buffer de LibScript, invoca a
- função armazenada no ponteiro C e converte os valores de entrada de volta
- à linguagem.
+, converte os parâmetros recebidos para o buffer de LibScript, invoca 
+\family typewriter 
+script_call
+\family default 
+ e converte os valores de retorno de volta a Python.
  Assim, objetos deste tipo são 
 \emph on 
 functors
@@ -13994,100 +14817,44 @@ functors
 closure
 \emph default 
  definida no plugin Lua.
- O módulo é automaticamente importado na inicialização do plugin.
 \layout Standard
 
-Ao chamar 
-\family typewriter 
-\emph on 
-namespace
-\emph default 
-.f()
-\family default 
-, o callback 
-\family typewriter 
-__getattro
-\family default 
- do módulo, definido como a função interna 
-\family typewriter 
-script_python_get
-\family default 
-, é chamado.
- Esta função procura uma entrada no dicionário do módulo e, caso não a encontre,
- obtém o endereço de 
-\begin_inset Formula $f$
-\end_inset 
-
- da lista de funções do ambiente.
- É declarado então um objeto 
-\family typewriter 
-script_python_object
-\family default 
- contendo o atributo 
-\begin_inset Formula $f$
-\end_inset 
-
-, que é em seguida armazenado em 
-\family typewriter 
-\emph on 
-namespace
-\emph default 
-.f
-\family default 
-.
- A função callback do módulo retorna e o rotina 
-\family typewriter 
-__call
-\family default 
- do objeto é invocada em seguida, executando 
-\family typewriter 
-script_python_caller
-\family default 
-, que registra os parâmetros de entrada no ambiente LibScript, invoca a
- função C armazenada no atributo interno do objeto e retorna a Python os
- valores de saída da função.
-\layout Standard
-
-O espaço de nomes é implementado em Ruby como uma classe.
- A resolução de funções sob demanda é implementada utilizando o método 
+A resolução de funções sob demanda em Ruby é implementada utilizando o método
+ 
 \family typewriter 
 method_missing
 \family default 
 , que é um fallback definido pela linguagem, chamado sempre que um método
  inexistente é invocado em uma classe.
- Como métodos não são valores de primeira classe em Ruby, não é possível
- construir o método stub através de funções C da API.
- A saída então é declarar o método através de código Ruby enviado ao interpretad
-or como uma string.
- No corpo do método, armazenamos o endereço do ponteiro da função C a ser
- chamada como um número.
- Quando invocado, o método realizará uma chamada ao método 
+ Diferentemente de 
 \family typewriter 
-caller
+__getattro
 \family default 
-.
- Este método, registrado na classe durante a inicialização, corresponde
- à função C 
+ em Python e 
 \family typewriter 
-script_ruby_caller
+__index
 \family default 
-.
- A ele é passado o endereço da função C como um número e os argumentos passados
- como um array Ruby.
- Ao receber estes dados em C, 
+ em Lua, que são tratadores de acesso a atributos e portanto precisam retornar
+ um objeto que é chamado em um passo seguinte, o método 
 \family typewriter 
-script_ruby_caller
+method_missing
 \family default 
- irá então converter os parâmetros para o buffer LibScript e invocar a função
- usando 
+ trata chamadas diretamente.
+ Assim, ao ser invocado, 
+\family typewriter 
+method_missing
+\family default 
+ recebe o nome do método solicitado e os parâmetros passados e os encaminha
+ para a função 
 \family typewriter 
 script_call
 \family default 
 .
 \layout Standard
 
-No plugin Perl, também há uma função C responsável por realizar a conversão
- de parâmetros e valores de retorno a invocação de 
+No plugin Perl, como em Lua e Python, também há uma função C responsável
+ por realizar a conversão de parâmetros e valores de retorno a invocação
+ de 
 \family typewriter 
 script_call
 \family default 
@@ -14097,20 +14864,22 @@ script_call
 script_perl_caller
 \family default 
 , para que possa ser exposta ao interpretador Perl, é implementada em um
- arquivo XS, e compilada como parte de um módulo de extensão Perl, que é
- então ligado ao código do plugin.
+ módulo XS.
  Uma vez carregado o módulo, a função é visível em Perl como a função 
 \family typewriter 
 LibScript::caller
 \family default 
 .
- A resolução dinâmica de funções do pacote Perl correspondente ao ambiente
- LibScript é feita usando a função 
+ A resolução dinâmica de funções do pacote Perl que representa o ambiente
+ virtual é feita usando a função 
 \family typewriter 
 AUTOLOAD
 \family default 
- de Perl, que se comporta como method_missing em Ruby, capturando chamadas
- a funções inexistentes.
+ de Perl, que se comporta como 
+\family typewriter 
+method_missing
+\family default 
+ em Ruby, capturando chamadas a funções inexistentes.
  Na função de inicialização do plugin, código Perl é executado para carregar
  o módulo de extensão, inicializar o pacote do ambiente e inserir nele uma
  função 
@@ -14131,7 +14900,7 @@ snprintf(code, LEN_CODE,
 
 
 \size footnotesize 
-   "bootstrap LibScript;"     
+   "bootstrap LibScript;"   
 \emph on 
 /* Inicializa o módulo de extensão */
 \layout LyX-Code
@@ -14140,7 +14909,14 @@ snprintf(code, LEN_CODE,
 \size footnotesize 
    "package %s;" 
 \emph on 
-             /* Declara o pacote do ambiente */
+           /* Declara o pacote do ambiente */
+\layout LyX-Code
+
+
+\size footnotesize 
+   "$LibScript::env = %p;"  
+\emph on 
+/* Armazena o ponteiro do ambiente em Perl */
 \layout LyX-Code
 
 
@@ -14175,7 +14951,7 @@ pacote::método
 
 \size footnotesize 
 \emph on 
-      /* Invoca caller passando o endereço do estado, */
+      /* Invoca caller passando o endereço do ambiente, */
 \layout LyX-Code
 
 
@@ -14199,7 +14975,7 @@ pacote::método
 
 
 \size footnotesize 
-   state->package, state);
+   state->package, env, env);
 \layout LyX-Code
 
 
@@ -14218,6 +14994,240 @@ pacote::método
 
 \size footnotesize 
 Perl_eval_pv(my_perl, code, TRUE);
+\layout Subsection
+
+Captura de erros
+\layout Standard
+
+Os plugins devem capturar a ocorrência de erros na execução de strings de
+ código e em chamadas de função.
+ Em Lua, ambas as operações são realizadas usando a função 
+\family typewriter 
+lua_pcall
+\family default 
+, cujo valor de retorno indica a ocorrência de erros.
+ No caso de erros, a mensagem de erro é obtida no topo da pilha virtual
+ de Lua e propagada para a biblioteca principal usando 
+\family typewriter 
+script_set_error_message
+\family default 
+.
+ No caso da execução de strings de código, erros de compilação são detectados
+ através do valor de retorno da função 
+\family typewriter 
+luaL_loadstring
+\family default 
+, que carrega o código a ser executado por 
+\family typewriter 
+lua_pcall
+\family default 
+.
+\layout Standard
+
+Em Python, a ocorrência de erros é sinalizada pelo valor de retorno das
+ funções de execução de strings, 
+\family typewriter 
+PyRun_SimpleString
+\family default 
+, e de chamada de funções, 
+\family typewriter 
+PyEval_CallObject
+\family default 
+.
+ No caso de erros, chamamos a função 
+\family typewriter 
+PyErr_Occurred
+\family default 
+, que retorna um objeto Python representando a exceção.
+ A mensagem de erro é obtida convertendo este objeto para uma string Python
+ usando 
+\family typewriter 
+PyObject_Str
+\family default 
+, e finalmente para uma string C com 
+\family typewriter 
+PyString_AS_STRING
+\family default 
+.
+\layout Standard
+
+Em Perl, erros são sinalizados na variável especial 
+\family typewriter 
+$@
+\family default 
+, cujo conteúdo pode ser verificado através da API de C com a macro 
+\family typewriter 
+ERRSV
+\family default 
+.
+ O teste para ocorrência de erros é 
+\family typewriter 
+SvTRUE(ERRSV)
+\family default 
+, e a mensagem de erro pode ser obtida convertendo esta variável para uma
+ string C com a macro 
+\family typewriter 
+SvPV
+\family default 
+.
+\layout Standard
+
+Ruby disponibiliza uma função para execução de strings de código, 
+\family typewriter 
+rb_eval_string
+\family default 
+, e uma versão desta que captura erros e sinaliza a sua ocorrência através
+ do valor de retorno, 
+\family typewriter 
+rb_eval_string_protect
+\family default 
+.
+ Entretanto, para chamadas de método, não há uma versão protegida da função
+ 
+\family typewriter 
+rb_funcall
+\family default 
+.
+ A função disponibilizada pela API para proteger chamadas, 
+\family typewriter 
+rb_protect
+\family default 
+, não recebe como parâmetro um método Ruby, mas sim uma função C.
+ Para chamar métodos Ruby de forma protegida, precisamos escrever uma função
+ C que encapsula a chamada:
+\layout LyX-Code
+
+
+\size footnotesize 
+static VALUE script_ruby_pcall(VALUE args) {
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Extrai nome do método do array de argumentos */
+\layout LyX-Code
+
+
+\size footnotesize 
+   ID fn_id = SYM2ID(rb_ary_pop(args)); 
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Extrai a classe do array de argumentos */
+\layout LyX-Code
+
+
+\size footnotesize 
+   VALUE klass = rb_ary_pop(args);
+\layout LyX-Code
+
+
+\size footnotesize 
+   return rb_apply(klass, fn_id, args);
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+e então invocá-la usando 
+\family typewriter 
+rb_protect
+\family default 
+:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Insere a classe no array de argumentos */
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_ary_push(args, klass);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Insere o nome do método no array de argumentos */
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_ary_push(args, ID2SYM(rb_intern(fn)));
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Chama a função wrapper */
+\layout LyX-Code
+
+
+\size footnotesize 
+ret = rb_protect(script_ruby_pcall, args, &error); 
+\layout LyX-Code
+
+
+\size footnotesize 
+if (error) {
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_reset_buffer(env);
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_set_error_message(env, StringValuePtr(ruby_errinfo));
+\layout LyX-Code
+
+
+\size footnotesize 
+   ruby_errinfo = Qnil;
+\layout LyX-Code
+
+
+\size footnotesize 
+   return SCRIPT_ERRLANGRUN;
+\layout LyX-Code
+
+
+\size footnotesize 
+}
+\layout Standard
+
+Como a função 
+\family typewriter 
+rb_protect
+\family default 
+ passa apenas um 
+\family typewriter 
+VALUE
+\family default 
+ para a função C, precisamos armazenar a classe, o identificador do método
+ e os parâmetros de entrada do método Ruby a ser invocado em um array Ruby.
+ A ocorrência de erros é sinalizada em uma variável passada no terceiro
+ parâmetro de 
+\family typewriter 
+rb_protect
+\family default 
+, e a mensagem de erro é obtida no 
+\family typewriter 
+VALUE
+\family default 
+ global 
+\family typewriter 
+ruby_errinfo
+\family default 
+.
 \layout Chapter
 
 
@@ -14226,33 +15236,42 @@ Perl_eval_pv(my_perl, code, TRUE);
 \end_inset 
 
 Considerações Finais
-\layout Comment
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
 
 
 \emph on 
 \color red
 [TODO: Concluir alguma coisa :-) ]
-\layout Comment
+\layout Standard
 
 as pessoas quando escolhem uma linguagem, tendem a olhar mais pra linguagem
  e esquecem de olhar pras apis.
-\layout Comment
+\layout Standard
 
 por isso que puxei a brasa pro lado do embedding mais do que do extending,
  um pouco
-\layout Comment
+\layout Standard
 
 as apis todas tornam escrever extensões algo fácil.
  lua bate elas na parte do embedding, imho
-\layout Comment
+\layout Standard
 
 conversores podem simplificar extensões, mas embedding tende a interagir
  mais diretamente com a API
-\layout Comment
+\layout Standard
 
 conversores: aí a gente está falando de outro problema altogether, que é
  "a difícil tarefa de entender código C".
  trabalho futuro, possibly.
+\end_inset 
+
+
 \layout Chapter
 \start_of_appendix 
 
