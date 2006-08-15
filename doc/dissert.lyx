@@ -253,7 +253,7 @@ foreign language interface
 \emph default 
 , FLI) que permita ao programador receber e enviar tanto chamadas como dados
  para outra linguagem 
-\begin_inset LatexCommand \cite{finne-fli}
+\begin_inset LatexCommand \cite{finne98haskellfli}
 
 \end_inset 
 
@@ -311,23 +311,28 @@ Este trabalho realiza, a partir da pesquisa de implementações de FLIs, um
 \layout Standard
 
 O estudo consiste da análise em profundidade de um conjunto de FLIs -- especific
-amente, Python, Perl 
-\begin_inset LatexCommand \cite{wall-perl}
+amente, Python 
+\begin_inset LatexCommand \cite{vanrossum06ref}
+
+\end_inset 
+
+, Perl 
+\begin_inset LatexCommand \cite{wall00perl}
 
 \end_inset 
 
 , Ruby 
-\begin_inset LatexCommand \cite{thomas-ruby}
+\begin_inset LatexCommand \cite{thomas04ruby}
 
 \end_inset 
 
 , Lua 
-\begin_inset LatexCommand \cite{lua}
+\begin_inset LatexCommand \cite{ierusalimschy06pil2}
 
 \end_inset 
 
  e Java 
-\begin_inset LatexCommand \cite{gosling-java}
+\begin_inset LatexCommand \cite{gosling00java}
 
 \end_inset 
 
@@ -442,7 +447,7 @@ Um exemplo típico é a complexidade adicionada pela simulação de funções
  de alta ordem e recursão final ao traduzir-se o código de linguagens funcionais
  para outra que não possui estes recursos.
  Em 
-\begin_inset LatexCommand \cite{tarditi92no}
+\begin_inset LatexCommand \cite{tarditi92mlc}
 
 \end_inset 
 
@@ -451,7 +456,7 @@ Um exemplo típico é a complexidade adicionada pela simulação de funções
  resultando em código em média 2 vezes mais lento que o gerado pelo compilador
  ML nativo.
  Em 
-\begin_inset LatexCommand \cite{tolmach-from}
+\begin_inset LatexCommand \cite{tolmach98mlada}
 
 \end_inset 
 
@@ -511,22 +516,17 @@ Outra abordagem envolve o uso de um ambiente de execução comum, como uma
 s compatíveis entre si, de acordo com os tipos de dados oferecidos pelo
  ambiente de execução.
  Diversas implementações utilizam a Java Virtual Machine 
-\begin_inset LatexCommand \cite{gosling-java}
+\begin_inset LatexCommand \cite{lindholm99jvm}
 
 \end_inset 
 
  com essa finalidade.
  Jython 
-\begin_inset LatexCommand \cite{hugunin-jython}
+\begin_inset LatexCommand \cite{hugunin97python}
 
 \end_inset 
 
- é uma implementação da linguagem Python 
-\begin_inset LatexCommand \cite{lutz-python}
-
-\end_inset 
-
- que produz bytecodes Java.
+ é uma implementação da linguagem Python que produz bytecodes Java.
  SMLj 
 \begin_inset LatexCommand \cite{benton99interlanguage}
 
@@ -550,7 +550,7 @@ arrays
 \layout Standard
 
 O .NET Framework 
-\begin_inset LatexCommand \cite{box-net}
+\begin_inset LatexCommand \cite{box02net}
 
 \end_inset 
 
@@ -558,7 +558,7 @@ O .NET Framework
  pela Microsoft como plataforma de programação preferencial em sistemas
  Windows.
  Apesar de com ele ter sido introduzida a linguagem C# 
-\begin_inset LatexCommand \cite{hejlsberg-csharp}
+\begin_inset LatexCommand \cite{csharp06spec}
 
 \end_inset 
 
@@ -569,16 +569,16 @@ O .NET Framework
  Todavia, adaptações às linguagens continuam necessárias com o ambiente
  .NET: A versão .NET de Visual Basic inclui alterações na linguagem de modo
  a tornar a sua semântica mais similar à de C#; um novo dialeto de C++,
- Managed C++, foi introduzido adaptando o modelo de gerenciamento de memória
+ C++/CLI, foi introduzido adaptando o modelo de gerenciamento de memória
  ao do CLR 
-\begin_inset LatexCommand \cite{managedcpp}
+\begin_inset LatexCommand \cite{cppcli05spec}
 
 \end_inset 
 
 ; de forma similar, foi desenvolvido um novo dialeto de ML chamado F#, para,
  entre outros motivos, proporcionar melhor integração com componentes .NET
  desenvolvidos em outras linguagens 
-\begin_inset LatexCommand \cite{syme-fsharp}
+\begin_inset LatexCommand \cite{syme06fsharp}
 
 \end_inset 
 
@@ -587,7 +587,7 @@ O .NET Framework
 
 Outra implementação de uma máquina virtual para múltiplas linguagens vem
  sendo feita pelo projeto Parrot 
-\begin_inset LatexCommand \cite{randal-perl6}
+\begin_inset LatexCommand \cite{randal04perl6}
 
 \end_inset 
 
@@ -618,7 +618,7 @@ mangling
  explicitamente considere este tipo de interação na sua definição: o padrão
  de Ada, por exemplo, requer que as suas implementações sejam compatíveis
  com as convenções de C, COBOL e Fortran 
-\begin_inset LatexCommand \cite{ada95}
+\begin_inset LatexCommand \cite{ada95manual}
 
 \end_inset 
 
@@ -653,7 +653,7 @@ interface description language
 Common Object Request Broker Architecture
 \emph default 
 ) 
-\begin_inset LatexCommand \cite{omg-corba}
+\begin_inset LatexCommand \cite{omg02corba}
 
 \end_inset 
 
@@ -722,12 +722,12 @@ bindings
 Outras abordagens de mais alto nível têm sido propostas para a integração
  de aplicações desenvolvidas em múltiplas linguagens.
  Linguagens de coordenação como Linda 
-\begin_inset LatexCommand \cite{gelernter-linda}
+\begin_inset LatexCommand \cite{gelernter85linda}
 
 \end_inset 
 
  e Opus 
-\begin_inset LatexCommand \cite{chapman-opus}
+\begin_inset LatexCommand \cite{chapman97opus}
 
 \end_inset 
 
@@ -746,12 +746,12 @@ C como Linguagem Intermediária
 O desejo de uma linguagem intermediária universal é antigo no mundo da computaçã
 o.
  Diversas propostas surgiram ao longo dos anos, desde o projeto UNCOL 
-\begin_inset LatexCommand \cite{conway-uncol}
+\begin_inset LatexCommand \cite{conway58uncol}
 
 \end_inset 
 
  às linguagens de sintaxe extensível da década de 70 
-\begin_inset LatexCommand \cite{metzner-xl}
+\begin_inset LatexCommand \cite{metzner79extensible}
 
 \end_inset 
 
@@ -793,13 +793,13 @@ ponte
  A integração entre Python e Fortran se dá através de um módulo Python escrito
  em C que acessa uma biblioteca Fortran, que por sua vez expõe funções com
  convenção de chamada compatível com C 
-\begin_inset LatexCommand \cite{peterson-fpy}
+\begin_inset LatexCommand \cite{peterson01fortranpy}
 
 \end_inset 
 
 .
  LunaticPython 
-\begin_inset LatexCommand \cite{lunatic-python}
+\begin_inset LatexCommand \cite{niemeyer06lunaticpython}
 
 \end_inset 
 
@@ -811,7 +811,7 @@ ponte
 Todavia, linguagens intermediárias genéricas continuam a ser propostas como
  alternativas a C.
  C-- 
-\begin_inset LatexCommand \cite{jones99portable}
+\begin_inset LatexCommand \cite{jones99cminusminus}
 
 \end_inset 
 
@@ -850,13 +850,8 @@ A linguagem C tem, na atualidade, um papel especial no mundo das linguagens
 s e máquinas virtuais (as principais implementações de Perl, Python, Ruby,
  e Lua são apenas alguns exemplos), é também usada em compiladores como
  formato de saída na geração de código portável (dois exemplos notáveis
- são os compiladores GHC 
-\begin_inset LatexCommand \cite{jones93glasgow}
-
-\end_inset 
-
- e SmartEiffel 
-\begin_inset LatexCommand \cite{collin-eiffel}
+ são os compiladores GHC e SmartEiffel 
+\begin_inset LatexCommand \cite{collin97smalleiffel}
 
 \end_inset 
 
@@ -944,7 +939,7 @@ multithreading
 Java Native Interface
 \emph default 
 ) 
-\begin_inset LatexCommand \cite{liang-jni}
+\begin_inset LatexCommand \cite{liang99jni}
 
 \end_inset 
 
@@ -966,12 +961,11 @@ yield
 \emph default 
  caso haja uma função C na sua pilha, uma vez que não há uma forma portável
  de alternar entre múltiplas pilhas em C 
-\begin_inset LatexCommand \cite{moura-colua}
+\begin_inset LatexCommand \cite{moura04colua}
 
 \end_inset 
 
 .
- 
 \layout Standard
 
 Uma das motivações mais freqüentes para integração com código C é o uso
@@ -1005,7 +999,7 @@ int**
 \family default 
 .
  SWIG 
-\begin_inset LatexCommand \cite{beazley-swig}
+\begin_inset LatexCommand \cite{beazley96swig}
 
 \end_inset 
 
@@ -1019,7 +1013,7 @@ stubs
  Java possui um gerador de cabeçalhos C contendo os protótipos dos métodos
  nativos a serem implementados.
  Pyrex 
-\begin_inset LatexCommand \cite{ewing-pyrex}
+\begin_inset LatexCommand \cite{ewing06pyrex}
 
 \end_inset 
 
@@ -1244,7 +1238,7 @@ Todos os valores na máquina virtual de Python são representados como objetos,
 PyObject
 \family default 
  
-\begin_inset LatexCommand \cite{vanrossum-extpy}
+\begin_inset LatexCommand \cite{vanrossum06extpy}
 
 \end_inset 
 
@@ -1416,6 +1410,11 @@ tamanho
 \emph default 
 )
 \family default 
+ 
+\begin_inset LatexCommand \cite{vanrossum06api}
+
+\end_inset 
+
 .
  Desta forma, é possível alocar uma string para armazenamento em Python
  e preenchê-la posteriormente através de código C, como no exemplo a seguir:
@@ -1670,7 +1669,7 @@ CObject
 \family default 
 s têm como objetivo principal permitir a passagem de dados em C de um módulo
  de extensão para outro 
-\begin_inset LatexCommand \cite{pyvhll_cobjects}
+\begin_inset LatexCommand \cite{vanrossum06api}
 
 \end_inset 
 
@@ -1851,7 +1850,7 @@ Py_FindMethod
  localiza uma função no array passado como parâmetro e a retorna como um
  método
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -1876,7 +1875,7 @@ PyTypeObject
 \family default 
  que descreve o tipo Python relativo a eles
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -2022,7 +2021,7 @@ point_type
 PyType_GenericNew
 \family default 
 , por razões de portabilidade 
-\begin_inset LatexCommand \cite{vanrossum-extpy}
+\begin_inset LatexCommand \cite{vanrossum06extpy}
 
 \end_inset 
 
@@ -3410,7 +3409,7 @@ JNIEnv
  O objetivo destes dois níveis de indireção é desacoplar a ligação das chamadas
  no código C e a biblioteca que implementa a JNI, permitindo ligar o código
  em tempo de execução a diferentes implementações da JVM 
-\begin_inset LatexCommand \cite{stepanian-jni}
+\begin_inset LatexCommand \cite{stepanian05inliningjava}
 
 \end_inset 
 
@@ -3824,7 +3823,12 @@ SetFloatArrayRegion
  Para os demais tipos, não há uma provisão específica para o armazenamento
  de dados de C no espaço de objetos de Java.
  Nestes casos, a documentação sugere o armazenamento de ponteiros em tipos
- numéricos, apesar dos problemas de portabilidade em que tal abordagem incorre.
+ numéricos 
+\begin_inset LatexCommand \cite{liang99jni}
+
+\end_inset 
+
+, apesar dos problemas de portabilidade em que tal abordagem incorre .
 \layout Subsection
 
 Lua
@@ -5044,7 +5048,7 @@ AV
 HV
 \family default 
  
-\begin_inset LatexCommand \cite{perlguts}
+\begin_inset LatexCommand \cite{okamoto06perlguts}
 
 \end_inset 
 
@@ -5125,7 +5129,12 @@ s; isto é análogo ao conceito de
 contextos
 \emph default 
  de Perl, onde um mesmo valor pode ser tratado como lista (array ou hash)
- ou escalar dependendo da expressão onde ele é inserido.
+ ou escalar dependendo da expressão onde ele é inserido 
+\begin_inset LatexCommand \cite{marquess06perlcall}
+
+\end_inset 
+
+.
  Em código Perl, o contexto em que uma função está executando pode ser verificad
 o com 
 \family typewriter 
@@ -5454,10 +5463,15 @@ A interação com o contador de referências pode ser bastante sutil.
 
 \end_inset 
 
-, extraído da documentação de Python, demonstra que uma referência pode
- ser invalidada por código aparentemente não relacionado
+, extraído da documentação de Python 
+\begin_inset LatexCommand \cite{vanrossum06extpy}
+
+\end_inset 
+
+, demonstra que uma referência pode ser invalidada por código aparentemente
+ não relacionado
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -5529,7 +5543,7 @@ Py_INCREF(Py_none)
 \family default 
 
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -5834,7 +5848,7 @@ Ruby utiliza um coletor de lixo
 mark-and-sweep
 \emph default 
  
-\begin_inset LatexCommand \cite{wilson-gc}
+\begin_inset LatexCommand \cite{wilson92gc}
 
 \end_inset 
 
@@ -5865,7 +5879,7 @@ rb_global_variable
 \family default 
 
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -5875,6 +5889,11 @@ Embora a documentação não informe, é possível desmarcar um valor global
 rb_gc_unregister_address
 \family default 
 .
+\end_inset 
+
+ 
+\begin_inset LatexCommand \cite{thomas04ruby}
+
 \end_inset 
 
 .
@@ -6063,7 +6082,7 @@ realloc
  que interagem com o coletor de lixo, forçando a execução do coletor durante
  alocações grandes
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -6458,7 +6477,12 @@ multi-threaded
  A documentação revisada avisa sobre esta limitação e recomenda o uso de
  referências globais, além de alertar sobre comportamentos indefinidos nas
  relações entre referências globais fracas em C e os tipos de referências
- fracas definidos em Java.
+ fracas definidos em Java 
+\begin_inset LatexCommand \cite{jni1503spec}
+
+\end_inset 
+
+.
 \layout Standard
 
 Além desta, outras questões surgem a partir da combinação do modelo 
@@ -9215,11 +9239,11 @@ Também nesta seção, a apresentação de cada linguagem encerrará com o exemplo
  Será apresentada também, para cada linguagem, a forma de registrar a função
  como a global
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
-ou no caso de Java, método estático
+Ou no caso de Java, método estático.
 \end_inset 
 
  
@@ -10185,7 +10209,7 @@ System.loadLibrary
 \family default 
 
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -10802,7 +10826,7 @@ Existe uma API pública para manipulação de dados Perl no código C, mas esta
  conveniência do programador.
  De fato, Perl não expõe uma API documentada para o registro de funções
  
-\begin_inset LatexCommand \cite{perlapi}
+\begin_inset LatexCommand \cite{okamoto06perlapi}
 
 \end_inset 
 
@@ -10814,7 +10838,7 @@ Existe uma API pública para manipulação de dados Perl no código C, mas esta
  O emprego desta abordagem foi observada nos plugins para scripting Perl
  de diversas aplicações 
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -11027,27 +11051,29 @@ AV
 \family default 
 s, deve-se declarar o valor de retorno como variável mortal
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
-Este comportamento é descrito na documentação como um 
+Este comportamento é descrito na documentação como 
+\emph on 
+
 \begin_inset Quotes eld
 \end_inset 
 
-bug que não pode ser resolvido
+an unfixable bug (fixing it would break lots of existing CPAN modules)
 \begin_inset Quotes erd
 \end_inset 
 
- pois 
-\begin_inset Quotes eld
-\end_inset 
 
-muitas extensões dependem do comportamento atual
-\begin_inset Quotes erd
+\emph default 
+ 
+\begin_inset LatexCommand \cite{roehrich06perlxs}
+
 \end_inset 
 
 .
+ 
 \end_inset 
 
 .
@@ -11102,6 +11128,11 @@ xsinit
 \family default 
  é a melhor abordagem, já que a inicialização depende de rotinas não documentada
 s (o exemplo de função de inicialização incluído na documentação de Perl
+ 
+\begin_inset LatexCommand \cite{maceachern06perlembed}
+
+\end_inset 
+
  está desatualizado).
 \layout Chapter
 
@@ -11525,7 +11556,7 @@ Outra abordagem é, ao invés de expor a API da linguagem à aplicação, expor
  ser executado e obtém resultados de volta quando o script passa parâmetros
  ao chamar funções da aplicação.
  Esta abordagem é proposta em 
-\begin_inset LatexCommand \cite{ltn004}
+\begin_inset LatexCommand \cite{thomas02ltn004}
 
 \end_inset 
 
@@ -11538,7 +11569,7 @@ very high level layer
 \end_inset 
 
  
-\begin_inset LatexCommand \cite{pyvhll_ext,pyvhll_ref}
+\begin_inset LatexCommand \cite{vanrossum06extpy,vanrossum06ref}
 
 \end_inset 
 
@@ -11552,26 +11583,16 @@ luaL_loadstring
 \family typewriter 
 PyRun_SimpleString
 \family default 
- em Python 
-\begin_inset LatexCommand \cite{pyvhll_ref}
-
-\end_inset 
-
-, 
+ em Python, 
 \family typewriter 
 rb_eval_string
 \family default 
- em Ruby 
-\begin_inset LatexCommand \cite{ext_ruby}
-
-\end_inset 
-
-, 
+ em Ruby , 
 \family typewriter 
 perl_eval_sv
 \family default 
  em Perl 
-\begin_inset LatexCommand \cite{perlembed}
+\begin_inset LatexCommand \cite{maceachern06perlembed}
 
 \end_inset 
 
@@ -11675,7 +11696,7 @@ script_run_file
 \family default 
 , um nome de arquivo
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -12224,7 +12245,7 @@ O design de LibScript permite que plugins mantenham múltiplos estados de
  de forma simples, uma vez que as chamadas à API incluem um identificador
  de estado
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -12236,7 +12257,7 @@ O recurso de múltiplos estados independentes é opcional em Perl, selecionado
  Já linguagens que mantêm estado de forma estática, como Python e Ruby,
  não permitem trabalhar com múltiplos estados isolados facilmente
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -12256,12 +12277,16 @@ Py_NewInterpreter
 \begin_inset Quotes eld
 \end_inset 
 
+
+\emph on 
 This is a hard-to-fix bug that will be addressed in a future release.
+\emph default 
+
 \begin_inset Quotes erd
 \end_inset 
 
  
-\begin_inset LatexCommand \cite{py-hardtofix}
+\begin_inset LatexCommand \cite{vanrossum99api,vanrossum06api}
 
 \end_inset 
 
@@ -14361,6 +14386,11 @@ pTHX_
 \emph on 
 "the 'ax' variable"
 \emph default 
+ 
+\begin_inset LatexCommand \cite{okamoto06perlapi}
+
+\end_inset 
+
 , sem explicações do seu propósito).
 \layout Standard
 
@@ -15272,6 +15302,14 @@ conversores: aí a gente está falando de outro problema altogether, que é
 \end_inset 
 
 
+\layout Standard
+
+
+\begin_inset LatexCommand \BibTeX[plain]{dissert}
+
+\end_inset 
+
+
 \layout Chapter
 \start_of_appendix 
 
@@ -15718,506 +15756,4 @@ lang
 
 \newline 
 Responsável pelo encerramento do ambiente.
-\layout Bibliography
-\bibitem {finne-fli}
-
-FINNE, S.; LEIJEN, D.; MEIJER, E.; PEYTON JONES, S.
- 
-\series bold 
-H/Direct: a Binary Foreign Language Interface for Haskell
-\series default 
-, Em: THIRD ACM SIGPLAN INTERNATIONAL CONFERENCE ON FUNCTIONAL PROGRAMMING,
- PROCEEDINGS, p.
- 153--162, Baltimore, EUA, 1998.
- ACM Press, New York, EUA.
- ISBN: 1581130244
-\layout Bibliography
-\bibitem {ada95}
-
-ANSI/ISO/IEC-8652:1995; 
-\series bold 
-Ada 95 Reference Manual
-\series default 
-.
- volume 1246 de 
-\series bold 
-Lecture Notes in Computer Science
-\series default 
-, 1995.
- Springer-Verlag.
-\layout Bibliography
-\bibitem {tarditi92no}
-
-TARDITI, D.; LEE, P.; ACHARYA, A.
- 
-\series bold 
-No Assembly Required: Compiling Standard ML to C
-\series default 
-.
- Em: ACM LETTERS ON PROGRAMMING LANGUAGES AND SYSTEMS, volume 1, número
- 2, p.
- 161--177, junho 1992.
- ACM Press.
-\layout Bibliography
-\bibitem {tolmach-from}
-
-TOLMACH, A.; OLIVA, D.
- 
-\series bold 
-From ML to Ada: Strongly-typed Language Interoperability via Source Translation
-\series default 
-.
- Em: JOURNAL OF FUNCTIONAL PROGRAMMING, volume 8, número 4, p.
- 367--412, 1998.
-\layout Bibliography
-\bibitem {jones93glasgow}
-
-PEYTON JONES, S.; HALL, C.; HAMMOND, K.; PARTAIN, W.; WADLER, P.
- 
-\series bold 
-The Glasgow Haskell compiler: a technical overview
-\series default 
-.
- Em: UK JOINT FRAMEWORK FOR INFORMATION TECHNOLOGY (JFIT) TECHNICAL CONFERENCE,
- PROCEEDINGS, 1993.
-\layout Bibliography
-\bibitem {gosling-java}
-
-GOSLING, J.; JOY, B.; STEELE, G.
- 
-\series bold 
-The Java Language Specification
-\series default 
-.
- Addison-Wesley Professional, Reading, EUA, 3a.
- Edição, junho 2005.
- ISBN: 0321246780
-\layout Bibliography
-\bibitem {hugunin-jython}
-
-HUGUNIN, J.
- 
-\series bold 
-Java and Python: the Best of Both Worlds
-\series default 
-.
- Em: 6TH INTERNATIONAL PYTHON CONFERENCE.
- San Jose, EUA, 1997.
-\layout Bibliography
-\bibitem {lutz-python}
-
-LUTZ, M.
- 
-\series bold 
-Programming Python
-\series default 
-.
- O'Reilly Media Inc.
- 2a.
- Edição, março 2001.
- ISBN: 0596000855
-\layout Bibliography
-\bibitem {luajava}
-
-Kepler Project.
-
-\series bold 
- LuaJava
-\series default 
-.
- 
-\begin_inset LatexCommand \url{http://www.keplerproject.org/luajava/}
-
-\end_inset 
-
-
-\layout Bibliography
-\bibitem {lua}
-
-IERUSALIMSCHY, R.; FIGUEIREDO, L.H.; CELES, W.; 
-\series bold 
-Lua -- an Extensible Extension Language
-\series default 
-.
- Em: Software--Practice and Experience, volume 26, número 6, p.
- 635--652, 1996.
-\layout Bibliography
-\bibitem {benton99interlanguage}
-
-BENTON, N.; KENNEDY, A.
- 
-\series bold 
-Interlanguage Working Without Tears: Blending SML with Java
-\series default 
-.
- Em: INTERNATIONAL CONFERENCE ON FUNCTIONAL PROGRAMMING, PROCEEDINGS, p.
- 126--137, 1999.
- 
-\layout Bibliography
-\bibitem {box-net}
-
-BOX, D.; SELLS, C.
- 
-\series bold 
-Essential .NET, Volume I: The Common Language Runtime
-\series default 
-.
- Addison-Wesley Professional, 1a.
- Edição, novembro 2002.
- ISBN: 0201734117
-\layout Bibliography
-\bibitem {hejlsberg-csharp}
-
-HEJLSBERG, A.; WILTAMUTH, S.
- 
-\series bold 
-C# Language Specification
-\series default 
-.
- Microsoft Corporation, 2000.
-\layout Bibliography
-\bibitem {managedcpp}
-
-Microsoft Corporation.
- 
-\series bold 
-Managed Extensions for C++ Specification
-\series default 
-.
- 
-\begin_inset LatexCommand \url{http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vcmxspec/html/vcmanagedextensionsspec_start.asp}
-
-\end_inset 
-
- 
-\layout Bibliography
-\bibitem {syme-fsharp}
-
-SYME, D.; MARGETSON, J.; MARLOW, S.
-
-\series bold 
- F#.
-
-\series default 
- Microsoft Corporation.
- 
-\begin_inset LatexCommand \url{http://research.microsoft.com/projects/ilx/fsharp.aspx}
-
-\end_inset 
-
- 
-\layout Bibliography
-\bibitem {randal-perl6}
-
-RANDAL, A.; SUGALSKI, D.; TOETSCH, L.
- 
-\series bold 
-Perl 6 and Parrot Essentials
-\series default 
-.
- O'Reilly Media, Inc.
- 2a.
- Edição, junho 2004.
- ISBN: 059600737X
-\layout Bibliography
-\bibitem {conway-uncol}
-
-CONWAY, M.
- 
-\series bold 
-Proposal for an UNCOL
-\series default 
-.
- Em: COMMUNICATIONS OF THE ACM, volume 1, número 10.
- p.
- 5--8, ACM Press, New York, NY, EUA.
- ISSN: 0001-0782
-\layout Bibliography
-\bibitem {metzner-xl}
-
-METZNER, J.
- 
-\series bold 
-A Graded Bibliography on Macro Systems and Extensible Languages
-\series default 
-.
- Em: ACM SIGPLAN NOTICES, volume 14, número 1, p.
- 57--64, 1979.
- ACM Press.
- New York, NY, EUA.
- ISSN: 0362-1340
-\layout Bibliography
-\bibitem {peterson-fpy}
-
-PETERSON, P.; MARTINS, J.R.R.A; ALONSO, J.J.; 
-\series bold 
-Fortran to Python Interface Generator with an Application to Aerospace Engineeri
-ng
-\series default 
-.
- Em: 9TH INTERNATIONAL PYTHON CONFERENCE, PROCEEDINGS, Long Beach, EUA,
- março 2001.
-\layout Bibliography
-\bibitem {lunatic-python}
-
-NIEMEYER, G.
- 
-\series bold 
-Lunatic Python
-\series default 
-.
- 
-\begin_inset LatexCommand \url{http://labix.org/lunatic-python}
-
-\end_inset 
-
- 
-\layout Bibliography
-\bibitem {jones99portable}
-
-PEYTON JONES, S.; RAMSEY, N.; REIG, F.
- 
-\series bold 
-C--: a Portable Assembly Language that Supports Garbage Collection
-\series default 
-, Em: INTERNATIONAL CONFERENCE ON PRINCIPLES AND PRACTICE OF DECLARATIVE
- PROGRAMMING, PROCEEDINGS.
- 1999.
-\layout Bibliography
-\bibitem {dvorak05gcc}
-
-DVORAK, Z.
- 
-\series bold 
-Gimplification Improvements.
- 
-\series default 
-Em: GCC DEVELOPERS' SUMMIT, PROCEEDINGS.
- p.
- 47--56.
- Ottawa, Canada.
- junho 2005.
-\layout Bibliography
-\bibitem {omg-corba}
-
-Object Management Group, Inc.
- 
-\series bold 
-The Common Object Request Broker: Architecture and Specification
-\series default 
-, Versão 3.0, Framingham, MA, EUA, julho 2002.
-\layout Bibliography
-\bibitem {gelernter-linda}
-
-GELERNTER, D.
- 
-\series bold 
-Generative communication in Linda
-\series default 
-.
- Em: ACM TRANSACTIONS ON PROGRAMMING LANGUAGES AND SYSTEMS, volume 7, número
- 1, p.
- 80--112.
- New York, NY, EUA.
- ACM Press.
- ISSN: 0164-0925
-\layout Bibliography
-\bibitem {chapman-opus}
-
-CHAPMAN, B.; HAINES, M.; MEHROTRA, P.; ZIMA, H.; VAN ROSENDALE, J.
- 
-\series bold 
-Opus: A Coordination Language for Multidisciplinary Applications
-\series default 
-.
- Em: SCIENTIFIC PROGRAMMING, volume 6, número 4.
- p 345--362.
- 1997.
-\layout Bibliography
-\bibitem {collin-eiffel}
-
-COLLIN, S.; COLNET, D.; ZENDRA, O.
- 
-\series bold 
-Type Inference for Late Binding
-\series default 
-.
- The SmallEiffel Compiler.
- Em: JOINT MODULAR LANGUAGES CONFERENCE, (JMLC'97), 1997, volume 1204 de
- 
-\series bold 
-Lecture Notes in Computer Science
-\series default 
-, p.
- 67--81.
- IEEE, Springer-Verlag.
-\layout Bibliography
-\bibitem {thomas-ruby}
-
-THOMAS, D.; FOWLER, C.; HUNT, A.
- 
-\series bold 
-Programming Ruby: The Pragmatic Programmer's Guide
-\series default 
-.
- 2a.
- Edição.
- Pragmatic Bookshelf, outubro 2004.
-\layout Bibliography
-\bibitem {vanrossum-extpy}
-
-VAN ROSSUM, G.
- 
-\series bold 
-Extending and Embedding the Python Interpreter
-\series default 
-.
- Versão 2.4.2.
- Python Software Foundation, setembro 2005.
-\layout Bibliography
-\bibitem {wilson-gc}
-
-WILSON, P.
- 
-\series bold 
-Uniprocessor Garbage Collection Techniques
-\series default 
-.
- Em: INTERNATIONAL WORKSHOP ON MEMORY MANAGEMENT, PROCEEDINGS, p.
- 637.
- Saint-Malo, França, 1992.
- Springer-Verlag.
-\layout Bibliography
-\bibitem {liang-jni}
-
-LIANG, S.
- 
-\series bold 
-Java Native Interface: Programmer's Guide and Specification
-\series default 
-.
- Addison-Wesley Professional, junho 1999.
- ISBN: 0201325772
-\layout Bibliography
-\bibitem {moura-colua}
-
-MOURA, A.L.; RODRIGUEZ, N.; IERUSALIMSCHY, R.
- 
-\series bold 
-Coroutines in Lua
-\series default 
-.
- Em: JOURNAL OF UNIVERSAL COMPUTER SCIENCE, volume 10, número 7, p.
- 910--925, julho 2004.
- 
-\layout Bibliography
-\bibitem {beazley-swig}
-
-BEAZLEY, D.; 
-\series bold 
-SWIG and Automated C/C++ Scripting Extensions
-\series default 
-.
- Em: DR.
- DOBB'S JOURNAL, fevereiro 1998.
-\layout Bibliography
-\bibitem {ewing-pyrex}
-
-EWING, G.; 
-\series bold 
-Pyrex - a Language for Writing Python Extension Modules
-\series default 
-.
- 
-\begin_inset LatexCommand \url{http://nz.cosc.canterbury.ac.nz/~greg/python/Pyrex/}
-
-\end_inset 
-
-
-\layout Bibliography
-\bibitem {wall-perl}
-
-WALL, L.; CHRISTIANSEN, T.; ORWANT, J.
- Programming Perl.
- 3a.
- Edição.
- O'Reilly, julho 2000.
-\layout Bibliography
-\bibitem {ltn004}
-
-http://www.lua.org/notes/ltn004.html
-\layout Bibliography
-\bibitem {pyvhll_ext}
-
-http://www.python.org/doc/ext/high-level-embedding.html
-\layout Bibliography
-\bibitem {pyvhll_cobjects}
-
-http://www.python.org/doc/ext/using-cobjects.html
-\layout Bibliography
-\bibitem {pyvhll_ref}
-
-http://www.python.org/doc/api/veryhigh.html
-\layout Bibliography
-\bibitem {ext_ruby}
-
-http://www.rubycentral.com/book/ext_ruby.html
-\layout Bibliography
-\bibitem {perlembed}
-
-ORWANT, J., MacEACHERN, D.
- et al.
- PERLEMBED(1).
- Man-page da documentação de Perl 5.8.8.
- Janeiro 2006.
-\layout Bibliography
-\bibitem {perlguts}
-
-OKAMOTO, J.
- et al.
- PERLGUTS(1).
- Man-page da documentação de Perl 5.8.8.
- Janeiro 2006.
-\layout Bibliography
-\bibitem {perlapi}
-
-OKAMOTO, J., ROEHRICH, D.
- et al.
- PERLAPI(1).
- Man-page da documentação de Perl 5.8.8.
- Janeiro 2006.
-\layout Bibliography
-\bibitem {key-4}
-
-ROEHRICH, D.
- et al.
- PERLXS(1).
- Man-page da documentação de Perl 5.8.8.
- Janeiro 2006.
-\layout Bibliography
-\bibitem {janino}
-
-http://www.janino.net
-\layout Bibliography
-\bibitem {py-hardtofix}
-
-http://www.python.org/doc/api/initialization.html
-\layout Bibliography
-\bibitem {java-weak}
-
-http://java.sun.com/j2se/1.5.0/docs/guide/jni/spec/functions.html#weak
-\layout Bibliography
-\bibitem {key-5}
-
-MARQUESS, P.
- PERLCALL(1).
- Man-page da documentação de Perl 5.8.8.
- Janeiro 2006.
-\layout Bibliography
-\bibitem {stepanian-jni}
-
-STEPANIAN, L.
- Inlining Java Native Calls at Runtime.
- Tese de mestrado, Graduate Department of Computer Science, University of
- Toronto.
 \the_end
