@@ -488,7 +488,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="0"
      inkscape:zoom="1.5243802"
-     inkscape:cx="-267.53517"
+     inkscape:cx="-242.3085"
      inkscape:cy="808.33414"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -605,275 +605,116 @@
        id="path19942"
        d="M -230.63314,349.23321 L -62.355374,310.97737"
        style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:2.00000143;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#TriangleOutM);stroke-opacity:1" />
-    <g
-       id="g11731"
-       transform="translate(304.4402,-67.0117)">
-      <rect
-         y="264.22021"
-         x="-427.75793"
-         height="113.09478"
-         width="141.77386"
-         id="rect11716"
-         style="opacity:1;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:black;stroke-width:1.25000036;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-      <text
-         xml:space="preserve"
-         style="font-size:12px;font-style:normal;font-weight:normal;fill:black;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;font-family:Bitstream Vera Sans"
-         x="-356.75967"
-         y="280.08124"
-         id="text8892"><tspan
-           sodipodi:role="line"
-           id="tspan8894"
-           x="-356.75967"
-           y="280.08124"
-           style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none">Plugin</tspan><tspan
-           sodipodi:role="line"
-           x="-356.75967"
-           y="295.08124"
-           id="tspan8896"
-           style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;font-family:Bitstream Vera Sans Mono">libscript-perl</tspan></text>
-      <g
-         id="g11700"
-         transform="translate(-188.3113,55.16154)">
-        <rect
-           y="251.09766"
-           x="-211.57841"
-           height="62.505848"
-           width="86.03746"
-           id="rect11702"
-           style="fill:#e6e6e6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-        <text
-           id="text11704"
-           y="270.93066"
-           x="-200.66928"
-           style="font-size:12px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-           xml:space="preserve"><tspan
-             y="270.93066"
-             x="-200.66928"
-             id="tspan11706"
-             sodipodi:role="line"
-             style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono">sub pl {</tspan><tspan
-             y="285.93066"
-             x="-200.66928"
-             sodipodi:role="line"
-             style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
-             id="tspan11708">  ...</tspan><tspan
-             y="300.93066"
-             x="-200.66928"
-             sodipodi:role="line"
-             style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
-             id="tspan11710">}</tspan><tspan
-             y="315.93066"
-             x="-200.66928"
-             sodipodi:role="line"
-             style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
-             id="tspan11712" /></text>
-      </g>
-    </g>
-    <g
-       id="g11718"
-       transform="translate(304.2935,-67.0117)">
-      <rect
-         style="opacity:1;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:black;stroke-width:1.25000036;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-         id="rect11714"
-         width="141.77386"
-         height="113.09478"
-         x="-579.75793"
-         y="264.22021" />
-      <text
-         id="text8884"
-         y="280.08124"
-         x="-508.83292"
-         style="font-size:12px;font-style:normal;font-weight:normal;fill:black;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;font-family:Bitstream Vera Sans"
-         xml:space="preserve"><tspan
-           style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none"
-           y="280.08124"
-           x="-508.83292"
-           id="tspan8886"
-           sodipodi:role="line">Plugin</tspan><tspan
-           style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;font-family:Bitstream Vera Sans Mono"
-           id="tspan8888"
-           y="295.08124"
-           x="-508.83292"
-           sodipodi:role="line">libscript-lua</tspan></text>
-      <g
-         id="g11686"
-         transform="translate(-353.5478,54.68382)">
-        <rect
-           y="251.09766"
-           x="-211.57841"
-           height="61.035122"
-           width="112.51052"
-           id="rect11688"
-           style="fill:#e6e6e6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-        <text
-           id="text11690"
-           y="270.93066"
-           x="-200.66928"
-           style="font-size:12px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-           xml:space="preserve"><tspan
-             y="270.93066"
-             x="-200.66928"
-             id="tspan11692"
-             sodipodi:role="line"
-             style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono">function l()</tspan><tspan
-             y="285.93066"
-             x="-200.66928"
-             sodipodi:role="line"
-             style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
-             id="tspan11694">  ...</tspan><tspan
-             y="300.93066"
-             x="-200.66928"
-             sodipodi:role="line"
-             style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
-             id="tspan11696">end</tspan><tspan
-             y="315.93066"
-             x="-200.66928"
-             sodipodi:role="line"
-             style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
-             id="tspan11698" /></text>
-      </g>
-    </g>
-    <g
-       id="g11757"
-       transform="translate(0,56.98832)">
-      <rect
-         y="140.2202"
-         x="-579.75793"
-         height="113.09478"
-         width="141.77386"
-         id="rect8860"
-         style="opacity:1;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:black;stroke-width:1.25000036;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-      <text
-         id="text8866"
-         y="155.84004"
+    <rect
+       style="fill:white;fill-opacity:1;fill-rule:nonzero;stroke:black;stroke-width:1.25000036;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect11716"
+       width="141.77386"
+       height="113.09478"
+       x="-123.31773"
+       y="197.20851" />
+    <text
+       id="text8892"
+       y="213.06953"
+       x="-52.319473"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:black;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none"
+         y="213.06953"
+         x="-52.319473"
+         id="tspan8894"
+         sodipodi:role="line">Plugin</tspan><tspan
+         style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;font-family:Bitstream Vera Sans Mono"
+         id="tspan8896"
+         y="228.06953"
+         x="-52.319473"
+         sodipodi:role="line">libscript-perl</tspan></text>
+    <rect
+       y="197.20851"
+       x="-275.46445"
+       height="113.09478"
+       width="141.77386"
+       id="rect11714"
+       style="fill:white;fill-opacity:1;fill-rule:nonzero;stroke:black;stroke-width:1.25000036;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:black;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="-204.53941"
+       y="213.06953"
+       id="text8884"><tspan
+         sodipodi:role="line"
+         id="tspan8886"
+         x="-204.53941"
+         y="213.06953"
+         style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none">Plugin</tspan><tspan
+         sodipodi:role="line"
+         x="-204.53941"
+         y="228.06953"
+         id="tspan8888"
+         style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;font-family:Bitstream Vera Sans Mono">libscript-lua</tspan></text>
+    <rect
+       style="fill:white;fill-opacity:1;fill-rule:nonzero;stroke:black;stroke-width:1.25000036;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect8860"
+       width="141.77386"
+       height="113.09478"
+       x="-579.75793"
+       y="197.20853" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:black;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="-508.80948"
+       y="212.82837"
+       id="text8866"><tspan
+         sodipodi:role="line"
+         id="tspan8868"
          x="-508.80948"
-         style="font-size:12px;font-style:normal;font-weight:normal;fill:black;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;font-family:Bitstream Vera Sans"
-         xml:space="preserve"><tspan
-           style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none"
-           y="155.84004"
-           x="-508.80948"
-           id="tspan8868"
-           sodipodi:role="line">Plugin</tspan><tspan
-           style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;font-family:Bitstream Vera Sans Mono"
-           id="tspan8872"
-           y="170.84004"
-           x="-508.80948"
-           sodipodi:role="line">libscript-python</tspan></text>
-      <g
-         transform="translate(-326.8687,-6.824355)"
-         id="g11651">
-        <rect
-           y="193.92201"
-           x="-227.22713"
-           height="47.063229"
-           width="90.449638"
-           id="rect11636"
-           style="fill:#e6e6e6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-        <text
-           id="text11638"
-           y="213.75502"
-           x="-216.31799"
-           style="font-size:12px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-           xml:space="preserve"><tspan
-             y="213.75502"
-             x="-216.31799"
-             id="tspan11640"
-             sodipodi:role="line"
-             style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono">def py():</tspan><tspan
-             y="228.75502"
-             x="-216.31799"
-             sodipodi:role="line"
-             style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
-             id="tspan11642">  ...</tspan><tspan
-             y="243.75502"
-             x="-216.31799"
-             sodipodi:role="line"
-             style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
-             id="tspan11644" /></text>
-      </g>
-    </g>
-    <g
-       id="g11744"
-       transform="translate(0.146729,56.98832)">
-      <rect
-         style="opacity:1;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:black;stroke-width:1.25000036;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-         id="rect11602"
-         width="141.77386"
-         height="113.09478"
-         x="-427.75793"
-         y="140.2202" />
-      <text
-         xml:space="preserve"
-         style="font-size:12px;font-style:normal;font-weight:normal;fill:black;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;font-family:Bitstream Vera Sans"
-         x="-357.10831"
-         y="155.84004"
-         id="text8876"><tspan
-           sodipodi:role="line"
-           id="tspan8878"
-           x="-357.10831"
-           y="155.84004"
-           style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none">Plugin</tspan><tspan
-           sodipodi:role="line"
-           x="-357.10831"
-           y="170.84004"
-           id="tspan8880"
-           style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;font-family:Bitstream Vera Sans Mono">libscript-ruby</tspan></text>
-      <g
-         transform="translate(-178.0162,-70.06556)"
-         id="g11678">
-        <rect
-           style="fill:#e6e6e6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="rect11660"
-           width="65.447296"
-           height="62.505848"
-           x="-211.57841"
-           y="251.09766" />
-        <text
-           xml:space="preserve"
-           style="font-size:12px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-           x="-200.66928"
-           y="270.93066"
-           id="text11662"><tspan
-             style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
-             sodipodi:role="line"
-             id="tspan11664"
-             x="-200.66928"
-             y="270.93066">def r</tspan><tspan
-             id="tspan11666"
-             style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
-             sodipodi:role="line"
-             x="-200.66928"
-             y="285.93066">  ...</tspan><tspan
-             id="tspan11670"
-             style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
-             sodipodi:role="line"
-             x="-200.66928"
-             y="300.93066">end</tspan><tspan
-             id="tspan11668"
-             style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
-             sodipodi:role="line"
-             x="-200.66928"
-             y="315.93066" /></text>
-      </g>
-    </g>
+         y="212.82837"
+         style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none">Plugin</tspan><tspan
+         sodipodi:role="line"
+         x="-508.80948"
+         y="227.82837"
+         id="tspan8872"
+         style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;font-family:Bitstream Vera Sans Mono">libscript-python</tspan></text>
+    <rect
+       y="197.20853"
+       x="-427.61121"
+       height="113.09478"
+       width="141.77386"
+       id="rect11602"
+       style="fill:white;fill-opacity:1;fill-rule:nonzero;stroke:black;stroke-width:1.25000036;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <text
+       id="text8876"
+       y="212.82837"
+       x="-356.96158"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:black;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none"
+         y="212.82837"
+         x="-356.96158"
+         id="tspan8878"
+         sodipodi:role="line">Plugin</tspan><tspan
+         style="text-align:center;text-anchor:middle;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;font-family:Bitstream Vera Sans Mono"
+         id="tspan8880"
+         y="227.82837"
+         x="-356.96158"
+         sodipodi:role="line">libscript-ruby</tspan></text>
     <path
        id="path19944"
        d="M -326.12557,344.51027 L -523.64195,290.67379"
-       style="opacity:0.19230772;fill:black;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:2.00000072;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#TriangleInM);marker-end:none;stroke-opacity:1" />
+       style="opacity:0.19230772;fill:gray;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:2.00000072;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#TriangleInM);marker-end:none;stroke-opacity:1" />
     <path
-       style="opacity:0.19230772;fill:black;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:2.00000095;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#TriangleInM);marker-end:none;stroke-opacity:1"
+       style="opacity:0.19230772;fill:gray;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:2.00000095;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#TriangleInM);marker-end:none;stroke-opacity:1"
        d="M -290.00427,343.94105 L -349.62595,299.65767"
        id="path19946" />
     <path
        id="path19948"
        d="M -269.59297,344.34711 L -215.28911,299.41292"
-       style="opacity:0.19230772;fill:black;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:2.00000238;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#TriangleInM);marker-end:none;stroke-opacity:1" />
+       style="opacity:0.19230772;fill:gray;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:2.00000238;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#TriangleInM);marker-end:none;stroke-opacity:1" />
     <path
-       style="opacity:0.19230772;fill:black;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.99999952;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#TriangleInM);marker-end:none;stroke-opacity:1"
+       style="opacity:0.19230772;fill:gray;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.99999952;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#TriangleInM);marker-end:none;stroke-opacity:1"
        d="M -233.59098,344.62546 L -79.411457,302.1261"
        id="path19950" />
     <path
-       style="opacity:0.19230772;fill:black;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:2.00000167;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#TriangleInM);marker-end:none;stroke-opacity:1"
+       style="opacity:0.19230772;fill:gray;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:2.00000167;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#TriangleInM);marker-end:none;stroke-opacity:1"
        d="M -105.26661,362.16288 L -204.88152,362.27772"
        id="path19960" />
     <g
@@ -919,6 +760,149 @@
            x="-427.23663"
            id="tspan16974"
            sodipodi:role="line">script_run</tspan></text>
+    </g>
+    <g
+       id="g11651"
+       transform="translate(-325.4109,51.37011)">
+      <rect
+         style="fill:#e6e6e6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="rect11636"
+         width="113.30678"
+         height="47.063229"
+         x="-240.08427"
+         y="193.92201" />
+      <text
+         xml:space="preserve"
+         style="font-size:12px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+         x="-229.88942"
+         y="213.75502"
+         id="text11638"><tspan
+           style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
+           sodipodi:role="line"
+           id="tspan11640"
+           x="-229.88942"
+           y="213.75502">def py_fun():</tspan><tspan
+           id="tspan11642"
+           style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
+           sodipodi:role="line"
+           x="-229.88942"
+           y="228.75502">  ...</tspan><tspan
+           id="tspan11644"
+           style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
+           sodipodi:role="line"
+           x="-229.88942"
+           y="243.75502" /></text>
+    </g>
+    <g
+       id="g11678"
+       transform="translate(-176.4117,-11.8711)">
+      <rect
+         y="251.09766"
+         x="-226.57841"
+         height="62.505848"
+         width="93.304436"
+         id="rect11660"
+         style="fill:#e6e6e6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <text
+         id="text11662"
+         y="270.93066"
+         x="-211.38356"
+         style="font-size:12px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="270.93066"
+           x="-211.38356"
+           id="tspan11664"
+           sodipodi:role="line"
+           style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono">def r_fun</tspan><tspan
+           y="285.93066"
+           x="-211.38356"
+           sodipodi:role="line"
+           style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
+           id="tspan11666">  ...</tspan><tspan
+           y="300.93066"
+           x="-211.38356"
+           sodipodi:role="line"
+           style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
+           id="tspan11670">end</tspan><tspan
+           y="315.93066"
+           x="-211.38356"
+           sodipodi:role="line"
+           style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
+           id="tspan11668" /></text>
+    </g>
+    <g
+       transform="translate(-48.51077,-11.12173)"
+       id="g11686">
+      <rect
+         style="fill:#e6e6e6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="rect11688"
+         width="129.65337"
+         height="61.035122"
+         x="-220.86414"
+         y="251.09766" />
+      <text
+         xml:space="preserve"
+         style="font-size:12px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+         x="-212.81213"
+         y="270.21637"
+         id="text11690"><tspan
+           style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
+           sodipodi:role="line"
+           id="tspan11692"
+           x="-212.81213"
+           y="270.21637">function l_fun()</tspan><tspan
+           id="tspan11694"
+           style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
+           sodipodi:role="line"
+           x="-212.81213"
+           y="285.21637">  ...</tspan><tspan
+           id="tspan11696"
+           style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
+           sodipodi:role="line"
+           x="-212.81213"
+           y="300.21637">end</tspan><tspan
+           id="tspan11698"
+           style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
+           sodipodi:role="line"
+           x="-212.81213"
+           y="315.21637" /></text>
+    </g>
+    <g
+       transform="translate(118.301,-10.64401)"
+       id="g11700">
+      <rect
+         style="fill:#e6e6e6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="rect11702"
+         width="104.60889"
+         height="62.505848"
+         x="-221.57841"
+         y="251.09766" />
+      <text
+         xml:space="preserve"
+         style="font-size:12px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+         x="-212.09785"
+         y="270.93066"
+         id="text11704"><tspan
+           style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
+           sodipodi:role="line"
+           id="tspan11706"
+           x="-212.09785"
+           y="270.93066">sub pl_fun {</tspan><tspan
+           id="tspan11708"
+           style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
+           sodipodi:role="line"
+           x="-212.09785"
+           y="285.93066">  ...</tspan><tspan
+           id="tspan11710"
+           style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
+           sodipodi:role="line"
+           x="-212.09785"
+           y="300.93066">}</tspan><tspan
+           id="tspan11712"
+           style="text-align:start;text-anchor:start;fill:black;stroke:none;font-family:Bitstream Vera Sans Mono"
+           sodipodi:role="line"
+           x="-212.09785"
+           y="315.93066" /></text>
     </g>
   </g>
 </svg>

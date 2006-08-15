@@ -196,6 +196,14 @@ We illustrate the differences of the APIs of those languages and their impact
  This way, the code of each plugin allows us to observe in a clear and isolated
  way the procedures adopted by each language for function calls, registration
  of C functions and conversion of data between the environments.
+\layout Standard
+
+
+\begin_inset LatexCommand \tableofcontents{}
+
+\end_inset 
+
+
 \layout Chapter
 
 Introdução
@@ -366,7 +374,7 @@ fecho
 
 \layout Section
 
-Estrutura do Texto
+Estrutura do texto
 \layout Standard
 
 O trabalho está organizado da seguinte forma.
@@ -419,7 +427,7 @@ O trabalho está organizado da seguinte forma.
 
 \end_inset 
 
-Interação entre Linguagens de Programação
+Interação entre linguagens de programação
 \layout Standard
 
 As abordagens aplicadas na interação entre diferentes linguagens de programação
@@ -430,7 +438,7 @@ te utilizadas: tradução de linguagens, seja de uma para outra ou de ambas
  ou através de convenção de chamadas; e interfaces de acesso externo.
 \layout Section
 
-Tradução de Código
+Tradução de código
 \layout Standard
 
 Permitir o uso de duas linguagens diferentes em um programa traduzindo o
@@ -507,7 +515,7 @@ lingua franca
 .
 \layout Section
 
-Compartilhamento de Máquinas Virtuais
+Compartilhamento de máquinas virtuais
 \layout Standard
 
 Outra abordagem envolve o uso de um ambiente de execução comum, como uma
@@ -636,7 +644,7 @@ extern "C"
 
 \end_inset 
 
-Modelos de Objetos Independentes de Linguagem
+Modelos de objetos independentes de linguagem
 \layout Standard
 
 Adotar um modelo de tipos independente de linguagem é uma outra forma de
@@ -740,7 +748,7 @@ s para indicar o fluxo destas entre agentes implementados em outras linguagens.
 
 \end_inset 
 
-C como Linguagem Intermediária
+C como linguagem intermediária
 \layout Standard
 
 O desejo de uma linguagem intermediária universal é antigo no mundo da computaçã
@@ -944,7 +952,7 @@ Java Native Interface
 \end_inset 
 
  define funções para controlar exclusão mútua entre dados compartilhados
- entre C e Java.
+ entre as duas linguagens.
  O programador deve tomar o cuidado de buscar o equilíbrio entre o tempo
  gasto bloqueando a máquina virtual acessando dados compartilhados e o tempo
  gasto realizando cópia de dados entre os ambientes para reduzir o compartilhame
@@ -1019,41 +1027,113 @@ stubs
 
  é um gerador de módulos C para Python a partir de uma sintaxe baseada na
  própria linguagem Python.
-\layout Standard
+ Outro exemplo é toLua++ 
+\begin_inset LatexCommand \cite{manzur06tolua}
 
-
-\begin_inset Note
-collapsed true
-
-\layout Standard
-
-Falar de tolua, outros geradores.
-\layout Standard
-
-a qualidade da conversão depende do código C, não da api
-\layout Standard
-
-vc não pode ter conversores que funcionem 100% automaticos
-\layout Standard
-
-alguém tem que explicar pro gerador se char** é um array de strings, um
- ponteiro pra uma string, um array de array de caracteres, um ponteiro pra
- um ponteiro pra um caracter, um..........
-\layout Standard
-
-ah, o código tem que ser "anotado" pra ser passado como entrada pra ele.
- se tu passa um .h intocado ele dá o melhor chute que ele puder.
- sem contar que se o .h estiver cheio de macros, o parserzinho dele vai pedir
- água 
-\layout Standard
-
-o swig é o cara mais porrada nesse aspecto, porque segundo reza a lenda
- ele "entende ANSI C", então pelo menos a dança das macros ele consegue
- fazer (mas ainda assim precisa de um arquivo anotado pra fazer a conversão
- correta)
 \end_inset 
 
+, uma ferramenta para integrar código C e C++ a Lua, que gera stubs a partir
+ de arquivos de cabeçalhos C preparados para uso pelo programa, podendo
+ conter anotações que auxiliem o processo de conversão.
+\layout Section
 
+Linguagens de script
+\layout Standard
+
+Um modelo de interação entre linguagens que tem se mostrado especialmente
+ relevante na atualidade é o que se dá entre linguagens compiladas tipadas
+ estaticamente, como C e C++, e linguagens interpretadas tipadas dinamicamente,
+ como Perl e Python.
+ Em 
+\begin_inset LatexCommand \cite{ousterhout98scripting}
+
+\end_inset 
+
+, Ousterhout categoriza estes dois grupos como 
+\emph on 
+linguagens de programação de sistemas
+\emph default 
+ e 
+\emph on 
+linguagens de script
+\emph default 
+.
+\layout Standard
+
+Estas duas categorias de linguagens possuem objetivos fundamentalmente diferente
+s.
+ Linguagens de programação de sistemas surgiram como alternativa ao assembly
+ no desenvolvimento de aplicações, tendo como principais características
+ a tipagem estática, o que facilita a compreensão das estruturas de dados
+ de sistemas grandes, e a implementação através de compiladores, devido
+ a preocupações com o desempenho.
+ Em contraste, linguagens de script são tipadas dinamicamente e implementadas
+ como interpretadores ou máquinas virtuais.
+ A tipagem dinâmica e o uso extensivo de construções de alto nível como
+ tipos básicos, como listas e hashes, traz maior flexibilidade na interação
+ entre componentes; em linguagens estáticas, o sistema de tipos impõe restrições
+ a estas interações, muitas vezes exigindo que o programador escreva interfaces
+ de adaptação, o que torna o reuso de componentes mais difícil.
+\layout Standard
+
+Ousterhout aponta que, num modelo integrando estes dois tipos de linguagens,
+ a tendência é que linguagens de programação de sistemas não sejam mais
+ usadas para escrever aplicações inteiras, mas passem a ser usadas para
+ a implementação de componentes, que por sua vez são conectados através
+ de código escrito com linguagens de script.
+ A conveniência oferecida por linguagens interpretadas de alto nível permite
+ prototipagem rápida e encoraja o reuso de componentes.
+\layout Standard
+
+A integração de programas desenvolvidos em linguagens de programação de
+ sistemas coordenados através de linguagens de script é prática comum há
+ bastante tempo.
+ Shell scripting em sistemas Unix é provavelmente o exemplo mais célebre,
+ onde construções como pipes (que conectam a saída de um processo à entrada
+ de outro) permitem realizar tarefas combinando uma série de programas implement
+ados em outras linguagens, ou mesmo outros scripts.
+ Com o surgimento de Tcl 
+\begin_inset LatexCommand \cite{ousterhout94tcl}
+
+\end_inset 
+
+, este tipo de coordenação de componentes através de linguagens de script
+ passou a ocorrer com maior freqüência 
+\emph on 
+dentro
+\emph default 
+ de aplicações.
+ Neste modelo, a linguagem de script é implementada como uma biblioteca
+ e é embutida em uma aplicação escrita em uma linguagem de mais baixo nível,
+ como C.
+ Estruturas de dados da aplicação são expostas ao ambiente de script como
+ objetos manipuláveis; em contrapartida, a aplicação pode disparar funções
+ na linguagem de script e acessar os seus dados.
+ Aplicações programáveis já existiam bem antes disso, tipicamente usando
+ pequenas linguagens criadas especificamente para a aplicação, mas o conceito
+ introduzido por Tcl de implementar linguagens de script como bibliotecas
+ para C impulsionou fortemente o desenvolvimento de aplicações extensíveis.
+\layout Standard
+
+O modelo de desenvolvimento baseado em duas linguagens não se limita a aplicaçõe
+s que permitem customizações através de scripts escritos pelo usuário.
+ Em muitos cenários, existe claramente uma distinção entre uma camada de
+ mais baixo nível onde desempenho é um fator crítico e outra de alto nível
+ que se caracteriza por operações de coordenação de elementos da camada
+ inferior.
+ Exemplos típicos são aplicações gráficas onde a interface é descrita por
+ linguagens de script controlando componentes implementados em C e jogos
+ onde a lógica é descrita em scripts e a 
+\emph on 
+engine
+\emph default 
+ de execução é implementada em linguagens de mais baixo nível.
+ Este aumento da importância das linguagens de script, onde elas deixam
+ de ser apenas um mecanismo de extensão de aplicações e passam a ter um
+ papel mais central na coordenação da execução do programa, promoveu também
+ um modelo inverso de interação entre linguagens, no qual a aplicação em
+ si é escrita usando linguagem de script e bibliotecas escritas em linguagens
+ de mais baixo nível são carregadas por este como módulos de extensão.
 \layout Chapter
 
 
@@ -1061,7 +1141,7 @@ o swig é o cara mais porrada nesse aspecto, porque segundo reza a lenda
 
 \end_inset 
 
-APIs de Linguagens de Script
+APIs de linguagens de script
 \layout Standard
 
 Interfaces providas por linguagens de script são usualmente compreendidas
@@ -1081,11 +1161,19 @@ APIs de extensão
  em linguagens como C e C++ são usados para acesso a bibliotecas externas
  ou implementação de partes onde o desempenho é crítico.
  O segundo cenário, via de regra, irá englobar também o primeiro, ao expor
- à máquina virtual ou interpetador embutido extensões que a permitam comunicar-s
-e com a aplicação hospedeira.
+ à máquina virtual embutida extensões que a permitam comunicar-se com a
+ aplicação hospedeira.
 \layout Standard
 
-As seções seguintes discutem as principais questões envolvidas na comunicação
+Ambos os cenários envolvem os mesmos problemas gerais: transferência de
+ dados entre uma linguagem e outra, incluindo como permitir à linguagem
+ de script manipular estruturas declaradas em C e vice-versa; tratar a diferença
+ entre os modelos de gerência de memória, mais especificamente a interação
+ entre a coleta de lixo na máquina virtual e a desalocação explícita em
+ C; a chamada de funções declaradas pela linguagem de script a partir de
+ C; e o registro de funções C para que possam ser invocadas a partir de
+ scripts.
+ As seções seguintes discutem as principais questões envolvidas na comunicação
  entre código C e de linguagens de script, e apresenta as abordagens empregadas
  pelas APIs de Python, Ruby, Java, Lua e Perl no tratamento destas questões.
 \layout Section
@@ -5197,7 +5285,7 @@ ores, o programador deve levar em consideração as diferenças entre os modelos
  dados desta -- é necessário indicar à linguagem como desalocar a memória
  da estrutura quando o coletor de lixo detectar que ela não está mais em
  uso.
- A forma como a FLI irá fornecer estas funcionalidades depende não só do
+ A forma como a API irá fornecer estas funcionalidades depende não só do
  projeto da API para C, mas também do modelo de coleta de lixo empregado
  pela implementação da linguagem.
 \layout Subsection
@@ -6981,7 +7069,7 @@ espaços
 \layout Standard
 
 Nesta seção serão discutidas as facilidades oferecidas por cada API para
- a invocação de funções para execução na máquina virtual ou interpretador.
+ a invocação de funções para execução na máquina virtual.
  As principais questões envolvidas são como referenciar a função a ser chamada,
  como passar argumentos a ela e como obter o valor de retorno, incluindo
  formas de notificação no caso de erros.
@@ -9217,7 +9305,7 @@ Registro de funções C
 \layout Standard
 
 Para permitir a invocação de funções C a partir de código da linguagem de
- script, a FLI deve fornecer uma forma de registrar estas funções no ambiente
+ script, a API deve fornecer uma forma de registrar estas funções no ambiente
  de execução.
  Em linguagens de tipagem estática como Java, para que seja possível chamar
  funções externas usando uma sintaxe igual à de funções nativas, o conjunto
@@ -11141,13 +11229,13 @@ s (o exemplo de função de inicialização incluído na documentação de Perl
 
 \end_inset 
 
-Estudo de Caso: LibScript
+Estudo de caso: LibScript
 \layout Standard
 
 No capítulo anterior, foram discutidas as principais questões envolvendo
  interfaces de linguagens para C e a forma como estas questões são tratadas
  pelas linguagens abordadas neste estudo.
- Neste capítulo, realizaremos uma comparação entre as FLIs através de um
+ Neste capítulo, realizaremos uma comparação entre as APIs através de um
  exemplo concreto, de modo a colocar implementações em cada uma das linguagens
  lado a lado.
  O exemplo consiste em uma biblioteca genérica para scripting, chamada LibScript
@@ -11158,43 +11246,31 @@ No capítulo anterior, foram discutidas as principais questões envolvendo
 LibScript
 \layout Standard
 
-LibScript é uma biblioteca projetada para permitir a extensibilidade a aplicaçõe
-s através de scripting de uma forma independente de linguagem.
+LibScript é uma biblioteca projetada para tornar aplicações extensíveis
+ através de scripting de uma forma independente de linguagem.
  Ela é baseada em uma arquitetura de 
 \emph on 
 plugins
 \emph default 
 , de modo a desacoplar a aplicação dos ambientes de execução providos pelas
  diversas linguagens.
- A biblioteca principal que provê uma API para scripting independente de
- linguagem, permitindo à aplicação registrar as suas funções e invocar código
- a ser executado.
+ A biblioteca principal provê uma API para scripting independente de linguagem,
+ permitindo a uma aplicação registrar as suas funções e disparar scripts
+ que as utilizem.
  Esta biblioteca então invoca o plugin da linguagem apropriada para rodar
- o código (por exemplo, LibScript-Python para código Python).
+ o script (por exemplo, LibScript-Python para código Python).
  Desta forma, o desenvolvedor da aplicação permite ao seu usuário utilizar
  diferentes linguagens para scripting sem adicionar todas elas como dependências
  do programa.
 \layout Standard
 
-A biblioteca principal oferece uma API para o registro de funções C por
- parte da aplicação e para a chamada destas funções por parte dos scripts,
- além de funções para a transferência de dados entre as duas partes.
+A biblioteca principal disponibiliza recursos para o registro de funções
+ C por parte da aplicação e para a chamada destas funções por parte dos
+ plugins (permitindo aos scripts acessar as funções), além de funções para
+ a transferência de dados entre as duas partes.
  É possível também invocar funções implementadas nas máquinas virtuais embutidas
  nos plugins, possibilitando assim que scripts escritos em diferentes linguagens
  possam interagir.
- Implementamos plugins para as linguagens Python, Ruby, Lua e Perl.
- Estes plugins serão discutidos na Seção 
-\begin_inset LatexCommand \ref{sec:Implementação-dos-plugins}
-
-\end_inset 
-
-.
- A API de LibScript é descrita por completo no Apêndice 
-\begin_inset LatexCommand \ref{cha:API-de-LibScript}
-
-\end_inset 
-
-.
 \layout Subsection
 
 Arquitetura de LibScript
@@ -11233,11 +11309,11 @@ LibScript é composta de uma biblioteca dinâmica principal,
 \family typewriter 
 libscript
 \family default 
-, e os 
+, e 
 \emph on 
 plugins
 \emph default 
- (Figura 
+ para diferentes linguagens (Figura 
 \begin_inset LatexCommand \ref{cap:Visão-geral}
 
 \end_inset 
@@ -11255,7 +11331,7 @@ plugins
 A aplicação pode registrar funções C na biblioteca principal (ilustrado
  pela função 
 \family typewriter 
-c
+c_fun
 \family default 
  na figura) e solicitar a ela que execute scripts que registram funções
  nas diferentes linguagens.
@@ -11266,27 +11342,27 @@ c
  O plugin irá executar o script em sua máquina virtual, o que pode registrar
  nela novas funções (ilustrado pelas funções 
 \family typewriter 
-py
+py_fun
 \family default 
 , 
 \family typewriter 
-r
+r_fun
 \family default 
 , 
 \family typewriter 
-l
+l_fun
 \family default 
  e 
 \family typewriter 
-pl
+pl_fun
 \family default 
  na figura).
 \layout Standard
 
 A biblioteca principal decide qual plugin carregar através de um identificador
  que especifica qual a linguagem do código a ser executado.
- Este identificador pode ser obtido a partir da extensão do arquivo, da
- linha de identificação 
+ Este identificador pode ser obtido a partir da extensão de arquivo de um
+ script carregado, da linha de identificação 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -11337,39 +11413,6 @@ libscript-perl
 \end_inset 
 
  ou mesmo passado explicitamente pela aplicação.
- Os plugins possuem, além de uma biblioteca dinâmica chamada 
-\family typewriter 
-libscript-
-\family default 
-\emph on 
-<linguagem>
-\emph default 
-, arquivos 
-\emph on 
-<identificador>
-\family typewriter 
-\emph default 
-.id
-\family default 
- que associam diferentes identificadores à biblioteca.
- Por exemplo, o plugin LibScript-Python inclui o arquivo 
-\family typewriter 
-py.id
-\family default 
-, contendo a string 
-\family typewriter 
-"python"
-\family default 
-.
- Desta forma, a execução de um arquivo de extensão 
-\family typewriter 
-.py
-\family default 
- via LibScript dispara a carga da biblioteca 
-\family typewriter 
-libscript-python
-\family default 
-.
 \layout Standard
 
 
@@ -11408,8 +11451,8 @@ ambiente virtual
 .
  A aplicação pode criar um ou mais ambientes na biblioteca principal, identifica
 ndo-os com um nome.
- Cada ambiente virtual ganhará um correspondente nos plugins, onde uma estrutura
- de dados específica da linguagem (classe, módulo, etc.) o representará.
+ Um ambiente virtual ganha em cada plugin uma estrutura de dados específica
+ da linguagem (classe, módulo, etc.) que o representará.
  No exemplo da Figura 
 \begin_inset LatexCommand \ref{cap:Ambientes-virtuais}
 
@@ -11428,21 +11471,21 @@ Y
  Em cada um destes ambientes, a aplicação registrou uma função C com o nome
  
 \family typewriter 
-c
+c_fun
 \family default 
  (que podem ou não corresponder à mesma função C).
  Scripts foram executados nestes ambientes, o que causou a carga dos plugins.
  No exemplo, estes scripts registraram algumas funções (
 \family typewriter 
-X.py
+X.py_fn
 \family default 
 , 
 \family typewriter 
-Y.py
+Y.py_fn
 \family default 
 , 
 \family typewriter 
-X.r
+X#r_fun
 \family default 
 , etc.).
 \layout Standard
@@ -11456,9 +11499,8 @@ X.r
  como Lua e Perl, isto indica também em qual estado o script deve executar.
 \layout Standard
 
-Quando um script declara uma função como elemento da estrutura que descreve
- o ambiente virtual, esta função passa a ser acessível através da API de
- LibScript.
+Quando um script declara uma função no ambiente virtual, esta função passa
+ a ser acessível através da API de LibScript.
  Por exemplo, no plugin Lua, o ambiente virtual é representado por uma tabela
  com o nome do ambiente; uma vez que um método Ruby 
 \family typewriter 
@@ -11477,26 +11519,26 @@ X
 \family default 
  só conste a função 
 \family typewriter 
-l
+l_fun
 \family default 
-, scripts Lua podem invocar as demais funções do ambiente virtual, como
- 
+, scripts Lua podem invocar as demais funções através do ambiente virtual,
+ como 
 \family typewriter 
-X.c
+X.c_fun
 \family default 
  e 
 \family typewriter 
-X.r
+X.r_fun
 \family default 
 .
  Estas chamadas serão tratadas pela biblioteca principal e resolvidas por
  ela, no caso de funções C como 
 \family typewriter 
-X.c
+X.c_fun
 \family default 
 , ou repassadas para o plugin apropriado, como no caso de 
 \family typewriter 
-X.r
+X.r_fun
 \family default 
 , realizando a chamada no plugin Ruby e passando os valores de retorno para
  o plugin Lua.
@@ -11518,7 +11560,7 @@ Na implementação dos plugins, utilizamos recursos oferecidos pelas linguagens
 
 \end_inset 
 
-A API da Biblioteca Principal
+A API da biblioteca principal
 \layout Standard
 
 A API oferecida por LibScript isola a aplicação das diferentes APIs oferecidas
@@ -11745,9 +11787,8 @@ script_env
 \family typewriter 
 script_new_function
 \family default 
-, que recebe como parâmetros o ambiente, a função a ser registrada (cujo
- formato discutiremos mais adiante) e o nome que a função terá no ambiente
- virtual.
+, que recebe como parâmetros o ambiente, a função a ser registrada e o nome
+ que a função terá no ambiente virtual.
  No código Lua, a função é acessada como um elemento 
 \family typewriter 
 hello
@@ -11760,7 +11801,7 @@ exemplo
 \layout Standard
 
 Para a chamada de funções, a aplicação deve passar os parâmetros de entrada
- e chamar 
+ (a forma será discutida mais adiante), e chamar 
 \family typewriter 
 script_call
 \family default 
@@ -11945,6 +11986,7 @@ script_err teste_lua(script_env* env) {
 
 
 \size footnotesize 
+\emph on 
    /* Sai da função com erro se algum script_get_* falhou */
 \layout LyX-Code
 
@@ -12111,7 +12153,7 @@ SCRIPT_ERRLANGRUN
 script_set_error_message
 \family default 
  da biblioteca principal.
- A mensagem armazenadaa por ela poderá ser posteriormente consultado pela
+ A mensagem armazenada por ela poderá ser posteriormente consultada pela
  aplicação com a função 
 \family typewriter 
 script_error_message
@@ -12157,15 +12199,16 @@ SCRIPT_ERRFNUNDEF
 \family default 
 .
  Parâmetros de entrada e valores de retorno são passados através do buffer
- de parâmetros, com as funções 
+ de parâmetros, usando as mesmas funções 
 \family typewriter 
 script_get_*
 \family default 
  e 
 \family typewriter 
-script_get_*
+script_put_*
 \family default 
- da biblioteca principal.
+ da biblioteca principal que são usadas para a passagem de dados entre a
+ aplicação e a biblioteca principal.
 \layout Standard
 
 A implementação da função 
@@ -12224,6 +12267,39 @@ Implementação dos plugins
 \end_inset 
 
 
+\layout Standard
+
+Nesta seção discutiremos os principais aspectos envolvidos na implementação
+ dos plugins desenvolvidos neste estudo de caso.
+ Implementamos plugins para as linguagens Python, Ruby, Lua e Perl.
+ Apresentaremos aqui como é feita a representação dos estados virtuais em
+ cada plugin (Seção 
+\begin_inset LatexCommand \ref{sub:Representação-de-estados}
+
+\end_inset 
+
+), questões envolvendo o encerramento de estados (Seção 
+\begin_inset LatexCommand \ref{sub:Encerramento-de-estados}
+
+\end_inset 
+
+), passagem de parâmetros entre a biblioteca principal e os plugins (
+\begin_inset LatexCommand \ref{sub:Passagem-de-parâmetros}
+
+\end_inset 
+
+), como a chamada de funções a partir de scripts é tratada pelos plugins
+ (
+\begin_inset LatexCommand \ref{sub:Resolução-de-funções}
+
+\end_inset 
+
+) e a captura de erros (Seção 
+\begin_inset LatexCommand \ref{sub:Captura-de-erros}
+
+\end_inset 
+
+).
 \layout Subsection
 
 Representação de estados
@@ -12364,21 +12440,21 @@ lua_State
 
 
 \size footnotesize 
-lua_pushlightuserdata(L, "LibScript.env"); 
+lua_pushstring(L, "LibScript.env"); 
 \emph on 
-/* Empilha o índice */
+  /* Empilha o índice */
 \layout LyX-Code
 
 
 \size footnotesize 
-lua_pushlightuserdata(L, env);             
+lua_pushlightuserdata(L, env);        
 \emph on 
 /* Empilha o ambiente LibScript */
 \layout LyX-Code
 
 
 \size footnotesize 
-lua_settable(L, LUA_REGISTRYINDEX);        
+lua_settable(L, LUA_REGISTRYINDEX);   
 \emph on 
 /* registro["LibScript.env"] = env */
 \layout Standard
@@ -12387,7 +12463,7 @@ O plugin cria neste
 \family typewriter 
 lua_State
 \family default 
- uma tabela que representará para scripts Lua o ambiente virtual.
+ uma tabela que representará o ambiente virtual para scripts Lua.
  Esta tabela é armazenada no 
 \family typewriter 
 lua_State
@@ -12443,8 +12519,7 @@ LibScript
 $LibScript::env
 \family default 
 .
- O pacote em que representa o ambiente virtual em si é criado pela função
- 
+ O pacote que representa o ambiente virtual é criado pela função 
 \family typewriter 
 script_plugin_init_perl
 \family default 
@@ -12962,15 +13037,24 @@ void script_plugin_done_python(script_python_state state) {
 }
 \layout Subsection
 
-Transferência de dados
+Passagem de parâmetros
+\begin_inset LatexCommand \label{sub:Passagem-de-parâmetros}
+
+\end_inset 
+
+
 \layout Standard
 
 A transferência de dados entre a biblioteca principal e os plugins é concentrada
  em duas operações: uma para passar o conteúdo do buffer de parâmetros de
  LibScript para o espaço de dados da máquina virtual e outra para realizar
  a operação inversa.
- Em cada plugin, procuramos isolar estas operações em um par de funções.
- 
+ A primeira é usada na passagem de parâmetros de entrada quando funções
+ da linguagem de script são chamadas por C e para a obtenção dos valores
+ de retorno quando a linguagem de script faz chamadas que são tratadas C.
+ A segunda operação, de forma complementar, é usada para os valores de retorno
+ quando C chama a linguagem de script e para os parâmetros de entrada quando
+ uma chamada feita pela linguagem de script é tratada por código C.
 \layout Standard
 
 Na implementação do plugin LibScript-Lua, a função 
@@ -13141,7 +13225,12 @@ Os valores de tipos desconhecidos são substituídos pelo valor zero, o que
  mantém a posição dos demais valores na lista de argumentos.
  Optamos por não sinalizar erro nesta situação para evitar aqui a geração
  de exceções, o que complicaria a exposição.
- A captura e propagação de erros serão vistas na Seção .
+ A captura e propagação de erros serão vistas na Seção 
+\begin_inset LatexCommand \ref{sub:Captura-de-erros}
+
+\end_inset 
+
+.
 \layout Standard
 
 A segunda função de transferência de dados de LibScript-Lua, 
@@ -13172,7 +13261,7 @@ static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
 
 
 \size footnotesize 
-   int len = script_buffer_size(env); 
+   int len = script_buffer_len(env); 
 \emph on 
 /* Número de elementos no buffer */
 \layout LyX-Code
@@ -13275,17 +13364,6 @@ static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
 }
 \layout Standard
 
-A API para implementação de funções em C a serem registradas em LibScript
- permite declarar funções com múltiplos valores de retorno.
- Em Lua, uma função pode retornar múltiplos valores através da pilha, como
- discutido na Seção 
-\begin_inset LatexCommand \ref{sub:Lua-chamada}
-
-\end_inset 
-
-.
-\layout Standard
-
 Em LibScript-Python, não foi possível concentrar as operações de transferência
  de dados em apenas duas funções.
  Cada operação teve que ser dividida em duas partes.
@@ -13332,12 +13410,6 @@ static void script_python_put_object(script_env* env, int i, PyObject* o)
 
 \size footnotesize 
    else if (PyLong_Check(o))
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-      /* Não existe PyLong_AS_DOUBLE */
 \layout LyX-Code
 
 
@@ -13596,7 +13668,7 @@ static PyObject* script_python_buffer_to_tuple(script_env* env) {
 
 
 \size footnotesize 
-   int len = script_buffer_size(env);
+   int len = script_buffer_len(env);
 \layout LyX-Code
 
 
@@ -13755,7 +13827,7 @@ err = script_call(env, fn_name);
 
 
 \size footnotesize 
-switch(script_buffer_size(env)) {
+switch(script_buffer_len(env)) {
 \layout LyX-Code
 
 
@@ -14154,7 +14226,7 @@ static VALUE script_ruby_buffer_to_array(script_env* env) {
 
 
 \size footnotesize 
-   int len = script_buffer_size(env);
+   int len = script_buffer_len(env);
 \layout LyX-Code
 
 
@@ -14278,7 +14350,7 @@ void script_perl_stack_to_buffer(pTHX_ int ax, script_env* env,
 
 
 \size footnotesize 
-      SV* o = ST(i+offset);
+      SV* o = ST(offset+i);
 \layout LyX-Code
 
 
@@ -14358,8 +14430,26 @@ aTHX_
 \family typewriter 
 pTHX_
 \family default 
- na declaração, para propagar a informação de estado do interpretador através
- de chamadas de função, e 
+ na declaração
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+A macro 
+\family typewriter 
+pTHX_
+\family default 
+ é usada sem a vírgula separando-a do argumento seguinte.
+ Quando ela é o único argumento, deve-se usar 
+\family typewriter 
+pTHX
+\family default 
+.
+\end_inset 
+
+, para propagar a informação de estado do interpretador através de chamadas
+ de função, e 
 \family typewriter 
 aTHX_
 \family default 
@@ -14404,22 +14494,23 @@ offset
 \family default 
 , são necessários devido às diferentes formas que as informações que eles
  representam são obtidas nos dois contextos onde esta função é usada.
- Na rotina chamadora de funções LibScript, implementada no arquivo XS, o
- tamanho da pilha (
+ Nos outros plugins, podemos obter a quantidade de elementos de entrada
+ de forma uniforme (consultando o número de elementos da tupla em Python,
+ por exemplo).
+ Em Perl, nas duas situações onde a função é chamada, o número de elementos
+ a serem lidos da pilha deve ser obtido de formas diferentes, e por isso
+ o passamos como parâmetro 
 \family typewriter 
 count
 \family default 
-) é obtido através de uma variável especial, 
+.
+ Na rotina chamadora de funções LibScript, implementada no arquivo XS, o
+ tamanho da pilha é obtido através de uma variável especial, 
 \family typewriter 
 items
 \family default 
-, e os parâmetros de entrada começam a partir da posição 2 da pilha (
-\family typewriter 
-offset
-\family default 
-), pois LibScript passa o ponteiro do ambiente e o nome da função nos dois
- primeiros argumentos.
- Na chamada de funções Perl, o valor de 
+.
+ Já na chamada de funções Perl, o valor de 
 \family typewriter 
 count
 \family default 
@@ -14427,7 +14518,19 @@ count
 \family typewriter 
 Perl_call_pv
 \family default 
-, e o valor de 
+.
+ 
+\layout Standard
+
+A posição inicial da pilha a partir da qual devemos obter os elementos (
+\family typewriter 
+offset
+\family default 
+) também varia.
+ Dentro da função XS, os parâmetros de entrada começam a partir da posição
+ 2, pois LibScript passa o ponteiro do ambiente e o nome da função nos dois
+ primeiros argumentos.
+ Na chamada de funções Perl, o valor de 
 \family typewriter 
 offset
 \family default 
@@ -14505,7 +14608,7 @@ SV** script_perl_buffer_to_stack(pTHX_ SV** sp, script_env* env) {
 
 
 \size footnotesize 
-   int len = script_buffer_size(env);
+   int len = script_buffer_len(env);
 \layout LyX-Code
 
 
@@ -14542,6 +14645,11 @@ sp
 \emph on 
 stack pointer
 \emph default 
+.
+ Esta variável é referenciada internamente pela macro 
+\family typewriter 
+xPUSHs
+\family default 
 .
  Além disso, como 
 \family typewriter 
@@ -14638,7 +14746,7 @@ case G_ARRAY:
 
 
 \size footnotesize 
-   len = script_buffer_size(env);
+   len = script_buffer_len(env);
 \layout LyX-Code
 
 
@@ -14780,14 +14888,14 @@ script_lua_make_caller
 \emph on 
 closure
 \emph default 
- C, que consiste de outra função C interna ao plugin, 
+ C, que consiste de outra função C interna ao plugin (
 \family typewriter 
 script_lua_caller
 \family default 
- e o nome da função solicitada.
+) e o nome da função solicitada.
  Esta closure é associada à entrada da tabela do ambiente.
- Assim, chamadas a funções não contidas na tabela serão finalmente resolvidas
- por 
+ Assim, chamadas a funções implementadas externamente serão resolvidas por
+ 
 \family typewriter 
 script_lua_caller
 \family default 
@@ -15027,6 +15135,11 @@ Perl_eval_pv(my_perl, code, TRUE);
 \layout Subsection
 
 Captura de erros
+\begin_inset LatexCommand \label{sub:Captura-de-erros}
+
+\end_inset 
+
+
 \layout Standard
 
 Os plugins devem capturar a ocorrência de erros na execução de strings de
@@ -15258,6 +15371,9 @@ VALUE
 ruby_errinfo
 \family default 
 .
+\layout Section
+
+Conclusões
 \layout Chapter
 
 
@@ -15265,7 +15381,7 @@ ruby_errinfo
 
 \end_inset 
 
-Considerações Finais
+Conclusões
 \layout Standard
 
 
@@ -15304,6 +15420,38 @@ conversores: aí a gente está falando de outro problema altogether, que é
 
 \layout Standard
 
+Falar de extending vs.
+ embedding.
+\layout Standard
+
+Embora os mesmos problemas gerais, como transferência de dados, registro
+ e chamada de funções, sejam tratados em ambos os cenários, aplicações embutindo
+ uma máquina virtual tendem a demandar mais da API do que bibliotecas implementa
+ndo módulos de extensão.
+ Este ponto é ilustrado pelas dificuldades impostas pela API de Python tanto
+ no acesso a variáveis como no registro de funções globais, e principalmente
+ pela complexidade da API de chamada de funções de Perl.
+\layout Itemize
+
+Python tem uma API extensa
+\layout Itemize
+
+O fato de que a API de Python dificulta o uso de variáveis e funções globais,
+ favorecendo o uso de módulos, pode ser justificado como uma forma de promover
+ um modelo de programação mais estruturada.
+ Isto é interessante para o uso da API no desenvolvimento de módulos de
+ extensão, uma vez que o uso de variáveis e funções globais é extremamente
+ prejudicial nestes casos, já que poluiria o espaço de nomes das aplicações
+ Python.
+ Já para o caso onde a linguagem é embutida para prover suporte a execução
+ de scripts em uma aplicação C, a ausência de uma forma conveniente para
+ de definir funções globais no espaço de nomes dos scripts é algo questionável.
+\layout Itemize
+
+Merece comentário também a disparidade entre as linguagens no que concerne
+ a disponibilidade a documentação disponível.
+\layout Standard
+
 
 \begin_inset LatexCommand \BibTeX[plain]{dissert}
 
@@ -15320,7 +15468,7 @@ conversores: aí a gente está falando de outro problema altogether, que é
 API de LibScript
 \layout Standard
 
-TODO: Revisar e sicronizar API com o código no SVN
+TODO: Revisar e sincronizar API com o código no SVN
 \layout Section
 
 Inicialização e Término
@@ -15425,7 +15573,7 @@ script_in_string
 \family typewriter 
 script_type script_in_type(script_env* env)
 \newline 
-int script_buffer_size(script_env* env)
+int script_buffer_len(script_env* env)
 \newline 
 
 \family default 
@@ -15441,7 +15589,7 @@ script_in_*
 \family default 
  e 
 \family typewriter 
-script_buffer_size
+script_buffer_len
 \family default 
  retorna o número de parâmetros disponíveis para consumo.
 \layout Itemize
