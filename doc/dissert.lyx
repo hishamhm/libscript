@@ -270,9 +270,10 @@ foreign language interface
  de tal interface estão as diferenças entre os sistemas de tipos, problemas
  de gerência de memória (como coleta de lixo e acesso direto a ponteiros)
  e modelos de concorrência.
- Além de lidar com diferenças semânticas, o projeto de uma interface envolve
- questões pragmáticas como o equilíbrio entre o isolamento seguro dos ambientes
- de execução, o desempenho e a simplicidade da API resultante.
+ Além de lidar com diferenças semânticas, o projeto de uma interface entre
+ linguagens envolve questões pragmáticas como o equilíbrio entre o isolamento
+ seguro dos ambientes de execução, o desempenho e a simplicidade da API
+ resultante.
 \layout Standard
 
 Pode-se observar nas implementações existentes de FLIs um número de abordagens
@@ -281,29 +282,39 @@ Pode-se observar nas implementações existentes de FLIs um número de abordagens
  de uma mesma linguagem) tendem a ser bastante distintas entre si.
  Ainda assim é possível traçar paralelos entre as técnicas utilizadas, uma
  vez que os problemas fundamentais que elas atacam são os mesmos.
- Além disso, em função da popularidade da linguagem C e do suporte oferecido
- a ela pelos sistemas operacionais mais utilizados, grande parte das implementaç
-ões de interfaces de acesso externo são, na prática, APIs para C, o que
- também facilita a sua comparação.
- Adicionalmente, C se tornou também uma popular 
-\begin_inset Quotes eld
-\end_inset 
+\layout Standard
 
-ponte
-\begin_inset Quotes erd
-\end_inset 
+Em função da popularidade da linguagem C e do suporte oferecido a ela pelos
+ sistemas operacionais mais utilizados, grande parte das implementações
+ de interfaces de acesso externo são, na prática, APIs para C.
+ Além disso, um modelo de interação entre linguagens que tem se mostrado
+ especialmente relevante na atualidade é o que se dá entre linguagens compiladas
+ tipadas estaticamente, como C, e linguagens interpretadas tipadas dinamicamente
+, tipicamente chamadadas de linguagens de script.
+\layout Standard
 
- na interação entre FLIs.
+Estas duas categorias de linguagens possuem objetivos fundamentalmente diferente
+s.
+ Linguagens estaticamente tipadas são usualmente implementadas visando alto
+ desempenho e possuem um enfoque de mais baixo nível.
+ Em contraste, linguagens de script tendem a ser implementadas como interpretado
+res ou máquinas virtuais e fazem uso extensivo de construções de alto nível
+ como tipos básicos, como listas e hashes.
+ Estas características complementares têm tornado popular o modelo de programaçã
+o baseado em duas linguagens, onde uma linguagem de mais baixo nível é usada
+ para o desenvolvimento de componentes que são conectados através de uma
+ linguagem de mais alto nível.
 \layout Section
 
 Objetivo
 \layout Standard
 
-Este trabalho realiza, a partir da pesquisa de implementações de FLIs, um
- estudo e comparação de interfaces entre diferentes linguagens de programação.
- Partindo de uma análise das abordagens gerais para interação entre linguagens,
- o estudo é baseado na análise de um conjunto de interfaces com C providas
- por linguagens de script.
+Este trabalho discute as principais questões envolvendo o projeto de APIs
+ para integração de ambientes de execução de linguagens de script em aplicações
+ C.
+ Apresentamos os principais problemas enfrentados na interação entre código
+ executando em um ambiente com características inerentemente dinâmicas como
+ o de uma linguagem de script com código C.
  Além de se tratar da classe de linguagens mais popular atualmente para
  desenvolvimento multi-linguagem, características típicas de linguagens
  de script como coleta de lixo e tipagem dinâmica, por não estarem presentes
@@ -318,8 +329,10 @@ Este trabalho realiza, a partir da pesquisa de implementações de FLIs, um
  causada tratamento de entrada e saída que todas elas enfrentam.
 \layout Standard
 
-O estudo consiste da análise em profundidade de um conjunto de FLIs -- especific
-amente, Python 
+O estudo consiste de duas partes.
+ Na primeira, realizaremos a análise em profundidade de um conjunto de APIs
+ para C providas por quatro linguagens de script -- especificamente, Python
+ 
 \begin_inset LatexCommand \cite{vanrossum06ref}
 
 \end_inset 
@@ -339,39 +352,29 @@ amente, Python
 
 \end_inset 
 
- e Java 
+ -- além da provida pela linguagem Java 
 \begin_inset LatexCommand \cite{gosling00java}
 
 \end_inset 
 
- -- e um estudo de caso onde estas FLIs são exercitadas em tarefas semelhantes.
- Diferentemente das demais, Java possui tipagem estática, mas com a sua
- biblioteca de reflexão, que oferece recursos de intercessão como carga
- de classes em tempo de execução e invocação dinâmica de métodos, é possível
- encará-la, para os fins de interação com código C, como uma linguagem dinâmica.
+.
+ Diferentemente das demais, Java possui tipagem estática, mas assim como
+ elas é baseada em um modelo de máquina virtual, possui gerência automática
+ de memória e permite carga dinâmica de código.
+ Isto nos permitirá observar também como a tipagem afeta do projeto da API.
 \layout Standard
 
-
-\begin_inset Note
-collapsed true
-
-\layout Standard
-
-
-\emph on 
-\color red
-[TODO: Continuar essa seção, botar um 
-\begin_inset Quotes eld
-\end_inset 
-
-fecho
-\begin_inset Quotes erd
-\end_inset 
-
- na coisa.]
-\end_inset 
-
-
+Na segunda parte, ilustraremos as diferenças das APIs destas linguagens
+ e o impacto destas no código resultante de uma aplicação C através de um
+ estudo de caso.
+ Realizaremos uma comparação entre as APIs das linguagens de script através
+ de um exemplo concreto, de modo a colocar implementações em cada uma das
+ linguagens lado a lado.
+ O exemplo consiste de uma biblioteca genérica para scripting, chamada LibScript
+, e uma série de plugins que realizam a interface com as diferentes linguagens.
+ Assim, o código de cada plugin permite observar de forma clara e isolada
+ os procedimentos adotados em cada linguagem para chamada de funções, registro
+ de funções C e conversão de dados entre os ambientes.
 \layout Section
 
 Estrutura do texto
@@ -383,17 +386,14 @@ O trabalho está organizado da seguinte forma.
 
 \end_inset 
 
-, é dada uma visão geral sobre as várias abordagens para interação entre
- código escrito em diferentes linguagens de progamação.
- A partir daí, o foco se concentra no método de interface externa mais comum
- nas linguagens da atualidade: interfaces com a linguagem C.
- São abordados no Capítulo 
-\begin_inset LatexCommand \ref{cha:Interfaces-com-C}
-
-\end_inset 
-
- os problemas comumente envolvidos na comunicação com código escrito em
+, são discutidas as várias abordagens para interação entre código escrito
+ em diferentes linguagens de progamação.
+ Partindo de uma visão geral, o foco se concentrará no método de interface
+ externa mais comum nas linguagens da atualidade: interfaces com a linguagem
  C.
+ Discutiremos os problemas comumente envolvidos na comunicação com código
+ C e os modelos de programação que surgiram com a popularização da sua integraçã
+o com linguagens de script.
  No Capítulo 
 \begin_inset LatexCommand \ref{cha:APIs-de-Máquinas}
 
@@ -402,15 +402,15 @@ O trabalho está organizado da seguinte forma.
  são apresentadas em detalhe APIs para C de um conjunto de linguagens de
  script.
  Ao discutir estas interfaces, as diferentes soluções empregadas para os
- problemas levantados no capítulo anterior são comparadas.
+ principais envolvendo interação entre C e ambientes dinâmicos são levantadas.
  O Capítulo 
 \begin_inset LatexCommand \ref{cha:Estudo-de-caso:}
 
 \end_inset 
 
  exercita estas diferentes APIs através de um estudo de caso: uma biblioteca
- baseada em plugins que oferece uma interface uniforme simplificada entre
- linguagens de script e C.
+ baseada em plugins que oferece uma interface uniforme simplificada para
+ linguagens de script.
  Ao examinar a implementação de cada plugin, podemos comparar as APIs de
  cada linguagem realizando operações equivalentes.
  Finalmente, no Capítulo 
@@ -418,7 +418,7 @@ O trabalho está organizado da seguinte forma.
 
 \end_inset 
 
-, são apresentadas as conclusões do trabalho, bem como apontados caminhos
+ são apresentadas as conclusões do trabalho, bem como apontados caminhos
  para trabalhos futuros.
 \layout Chapter
 
@@ -1176,6 +1176,9 @@ Ambos os cenários envolvem os mesmos problemas gerais: transferência de
  As seções seguintes discutem as principais questões envolvidas na comunicação
  entre código C e de linguagens de script, e apresenta as abordagens empregadas
  pelas APIs de Python, Ruby, Java, Lua e Perl no tratamento destas questões.
+ Cada seção conclui com uma comparação onde as diferentes características
+ apresentadas na exposição de cada linguagem são revistas lado a lado e
+ assim postas em perspectiva.
 \layout Section
 
 Transferência de dados
@@ -5251,9 +5254,9 @@ G_ARRAY
 Comparação
 \layout Standard
 
-O conjunto básico de funções para manipulação de dados é similar: todas
- elas possuem funções para converter valores de variáveis da linguagem para
- tipos básicos de C e vice-versa.
+O conjunto básico de funções para manipulação de dados nas cinco linguagens
+ discutidas é similar: todas elas possuem funções para converter valores
+ de variáveis da linguagem para tipos básicos de C e vice-versa.
  Todas oferecem ainda funções para a manipulação dos seus tipos estruturados
  fundamentais (tabelas em Lua, arrays em Java, arrays e hashes em Ruby e
  Perl, listas e dicionários em Python).
@@ -5267,14 +5270,17 @@ built-in
 \layout Standard
 
 Lua ganha destaque por possuir, com o seu modelo de pilha, a API para manipulaçã
-o de dados mais simples e ortogonal dentre as estudadas, mas muitas vezes
- o código resultante perde em legibilidade quando os índices da pilha são
- pouco óbvios no código.
+o de dados mais simples e ortogonal dentre as estudadas.
+ Entretanto, muitas vezes o código resultante perde em legibilidade quando
+ os índices da pilha são pouco óbvios.
  É comum ver código C usando a API de Lua comentado linha a linha, para
  evitar que o programador tenha que simular mentalmente o funcionamento
  da pilha ao ler o programa.
- Em Java, a tipagem estática reduz muito a necessidade de conversões de
- dados explícitas no código C, mas por outro lado o tratamento de 
+ 
+\layout Standard
+
+Em Java, a tipagem estática reduz muito a necessidade de conversões de dados
+ explícitas no código C, mas por outro lado o tratamento de 
 \emph on 
 multi-threading
 \emph default 
@@ -5321,7 +5327,7 @@ e e outras partes dinamicamente, sendo usualmente necessário definir três
 \layout Standard
 
 Outra tarefa comum ao interagir com C é a necessidade de armazenar ponteiros
- C no espaço de dados da linguagem de script.
+ no espaço de dados da linguagem de script.
  Python, Lua e Perl oferecem recursos para fazer isto de forma direta: criando
  um objeto 
 \family typewriter 
@@ -5335,8 +5341,9 @@ SV
 .
  Em Java e Ruby, a alternativa é converter os ponteiros e armazená-los como
  números.
- De fato, isto ocorre internamente na implementação de Ruby, cuja compilação
- falha se 
+ De fato, isto ocorre internamente na implementação de Ruby, e as limitações
+ de portabilidade desta abordagem são evidenciados pelo fato de que a compilação
+ de Ruby falha se 
 \family typewriter 
 sizeof(void*) != sizeof(long)
 \family default 
@@ -5364,8 +5371,8 @@ Por exemplo, conflitos deste tipo ocorreram nos bindings Ruby do sistema
 
 .
  Perl possui opções para desabilitar uma série de macros e forçar um prefixo
- comum em suas funções, mas este recurso é incompleto e prejudica a funcionalida
-de dos seus cabeçalhos
+ comum em suas funções, mas este recurso é incompleto e usá-lo prejudica
+ a funcionalidade dos seus cabeçalhos
 \begin_inset Foot
 collapsed true
 
@@ -7182,9 +7189,9 @@ Comparação
 
 Coleta de lixo tem por objetivo isolar, na medida do possível, o programador
  da gerência de memória.
- Desta forma, idealmente uma API deveria também ser o mais independente
- o possível do algoritmo de coleta de lixo utilizado pela implementação
- da máquina virtual.
+ Desta forma, idealmente uma API deveria também ser tão independente quanto
+ possível do algoritmo de coleta de lixo utilizado pela implementação da
+ máquina virtual.
  Perl e Python realizam coleta de lixo baseada em contagem de referências,
  e isto transparece nas operações de incremento e decremento de referências
  freqüentemente necessárias durante o uso de suas APIs.
@@ -7196,8 +7203,8 @@ Ruby utiliza um contador de referências baseado em mark-and-sweep.
  tipos Ruby em C, onde precisamos declarar uma função de marcação quando
  temos estruturas C que guardam referências para objetos Ruby.
  A API de Lua vai além ao isolar-se da implementação do coletor de lixo
- utilizado: o único ponto da API onde o uso do coletor de lixo incremental
- é aparente é na rotina de interação direta com o coletor, 
+ utilizado: o único ponto da API onde o emprego de um coletor de lixo incrementa
+l é aparente é na rotina de interação direta com o coletor, 
 \family typewriter 
 lua_gc
 \family default 
@@ -7258,7 +7265,7 @@ variáveis mortais
 \end_inset 
 
  em Perl).
- Referências locais têm gerência implícita (salvo alguns casos como discutido
+ Referências locais têm gerência implícita (salvo alguns casos, como discutido
  na Seção 
 \begin_inset LatexCommand \ref{sub:Coleta-Java}
 
@@ -9597,7 +9604,7 @@ Lua, em contraste, separa a rotina da chamada da função da passagem dos
 Em Lua e Python, a ocorrência de erros pode ser verificada com o valor de
  retorno da função.
  De forma similar, Perl permite detectar erros na chamada mais recente verifican
-do uma variável especial; Java, chamando uma função da API.
+do uma variável especial; em Java, isto é feito chamando uma função da API.
  Somente o tratamento de erros em Ruby é mais envolvido, pois estranhamente
  a API oferece uma função que permite invocar funções C em modo protegido,
  mas não uma equivalente que permita chamar funções Ruby.
@@ -11542,7 +11549,7 @@ Comparação
 Python e Ruby oferecem ao programador diferentes opções de assinaturas de
  função C reconhecidas pela API, o que é prático, uma vez que pode-se escolher
  assim diferentes representações em C para os parâmetros de entrada (agregados
- em um array, recebidos um a um, etc.).
+ em um array, recebidos um a um, etc.) conforme o seu uso na função.
  Lua oferece apenas uma assinatura de função possível para funções C a serem
  registradas na máquina virtual, mas isto é apropriado para o modelo de
  pilha usado por sua API.
@@ -11560,12 +11567,13 @@ javah
  estas verificações.
  As assinaturas de função em Perl são criadas apenas através da ferramenta
  XS, mas diferentemente de Java elas não são expostas ao programador.
- Isto traz a inconveniência de pré-processar o código C como uma extensão
- XS mesmo quando estamos embutindo Perl em uma aplicação.
+ Isto traz a inconveniência de termos que pré-processar o código C como
+ uma extensão XS mesmo quando estamos embutindo Perl em uma aplicação.
 \layout Standard
 
 O registro de funções em Ruby e Lua é simples.
- Em Lua, em particular, é uma atribuição igual à de qualquer outro objeto.
+ Em Lua, em particular, trata-se de uma atribuição igual à de qualquer outro
+ objeto.
  Já em Python, existem recursos para o registro de funções em lote, usando
  arrays 
 \family typewriter 
@@ -15733,13 +15741,77 @@ ruby_errinfo
 Conclusões
 \layout Standard
 
+O estudo de caso apresentado aqui ilustrou, através da implementação dos
+ plugins, o processo de embutir quatro linguagens de script realizando interface
+ com uma mesma API C.
+ Diversos aspectos da interação entre C e as linguagens de script foram
+ abordados, contemplando inicialização e encerramento do ambiente de execução,
+ passagem de dados e chamadas de função nos dois sentidos e a sinalização
+ de erros.
+ A partir disto, podemos fazer algumas observações sobre a aplicabilidade
+ destas linguagens como ambientes embutidos em aplicações.
 \layout Standard
 
-Mesmo em exemplos pequenos como os apresentados aqui, que exercitam apenas
+Em muitas aplicações é importante que haja isolamento entre os scripts executado
+s, como por exemplo, em scripts de diferentes clientes rodando em um servidor
+ web.
+ Como vimos, Lua e Perl permitem disparar múltiplos ambientes de execução,
+ o que garante isolamento.
+ Já Python e Ruby permitem apenas um estado, reduzindo sua aplicabilidade
+ para cenários onde os scripts devem executar isolados uns dos outros
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Em Python é possível alternar a tabela de globais durante a execução de
+ diferentes threads, o que oferece uma alternativa, um tanto mais trabalhosa,
+ para obter isolamento.
+ Ainda assim, o estado global compartilhado por módulos de extensão é o
+ mesmo.
+ 
+\end_inset 
+
+.
+ Estas duas linguagens trazem ainda outro problema: em alguns casos não
+ é possível trazer o seu espaço de dados de volta ao estado original durante
+ a execução de uma aplicação.
+ Em Python, módulos importados não podem ser descarregados.
+ Em Ruby, uma classe não pode ser redefinida (somente estendida) e 
+\family typewriter 
+ID
+\family default 
+s não são coletados.
+\layout Standard
+
+Na implementação do plugin de Perl fica evidente que a sua API não foi projetada
+ visando embutir o interpretador em aplicações.
+ Além de exigir o desenvolvimento de um módulo de extensão para que o código
+ Perl possa ter acesso a funções C, observamos aqui que a sua API é incompleta
+ no que diz respeito ao seu uso como linguagem embutida.
+ Muitas macros foram desenvolvidas assumindo que seriam sempre invocadas
+ a partir de código escrito em arquivos XS, ou mesmo por código gerado pelo
+ pré-processador XS.
+ Isto é confirmado pela necessidade de passar parâmetros adicionais não-document
+ados para que as macros funcionem, como pôde ser observado na Seção 
+\begin_inset LatexCommand \ref{sub:Passagem-de-parâmetros}
+
+\end_inset 
+
+.
+\layout Standard
+
+Lua, por sua vez, mostrou-se apropriada como linguagem embutida, não compartilha
+ndo das limitações aqui descritas sobre as outras linguagens.
+ Além disso, ela possui uma API simples, que trata as construções da linguagem
+ de forma completa e ortogonal, o que se deve tanto ao foco da implementação
+ de Lua como linguagem embutida, quanto ao projeto minimalista da linguagem
+ em si.
+ Mesmo em exemplos pequenos como os apresentados aqui, que exercitam apenas
  uma parte pequena das APIs, podemos observar que aspectos onde as linguagens
  definem tratamentos especiais ou possuem menor uniformidade transparecem
  nas APIs para C.
- Tanto em Python como Ruby, funções que retornam múltiplos valores geram
+ Tanto em Python como em Ruby, funções que retornam múltiplos valores geram
  conversões implícitas para tipos agregados (listas e arrays).
  De forma similar, múltiplos retornos são representados em Perl através
  de contextos do tipo array.
@@ -15807,9 +15879,6 @@ ndo módulos de extensão.
  pela complexidade da API de chamada de funções de Perl.
 \layout Itemize
 
-Python tem uma API extensa
-\layout Itemize
-
 O fato de que a API de Python dificulta o uso de variáveis e funções globais,
  favorecendo o uso de módulos, pode ser justificado como uma forma de promover
  um modelo de programação mais estruturada.
@@ -15839,6 +15908,14 @@ VALUE
 \family default 
 s em Ruby traz grande conveniência para o programador, mas reduz a portabilidade
  da implementação.
+\layout Itemize
+
+LibScript está disponível para download em 
+\begin_inset LatexCommand \url{http://libscript.sourceforge.net}
+
+\end_inset 
+
+.
 \layout Standard
 
 
