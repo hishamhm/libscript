@@ -5246,6 +5246,146 @@ G_SCALAR
 G_ARRAY
 \family default 
 .
+\layout Subsection
+
+Comparação
+\layout Standard
+
+O conjunto básico de funções para manipulação de dados é similar: todas
+ elas possuem funções para converter valores de variáveis da linguagem para
+ tipos básicos de C e vice-versa.
+ Todas oferecem ainda funções para a manipulação dos seus tipos estruturados
+ fundamentais (tabelas em Lua, arrays em Java, arrays e hashes em Ruby e
+ Perl, listas e dicionários em Python).
+ Python, em particular, define uma API extensa de funções para operações
+ sobre as suas classes 
+\emph on 
+built-in
+\emph default 
+; a maioria destas operações poderia ser realizada usando a API genérica
+ de invocação de métodos, mas é oferecida diretamente em C como conveniência.
+\layout Standard
+
+Lua ganha destaque por possuir, com o seu modelo de pilha, a API para manipulaçã
+o de dados mais simples e ortogonal dentre as estudadas, mas muitas vezes
+ o código resultante perde em legibilidade quando os índices da pilha são
+ pouco óbvios no código.
+ É comum ver código C usando a API de Lua comentado linha a linha, para
+ evitar que o programador tenha que simular mentalmente o funcionamento
+ da pilha ao ler o programa.
+ Em Java, a tipagem estática reduz muito a necessidade de conversões de
+ dados explícitas no código C, mas por outro lado o tratamento de 
+\emph on 
+multi-threading
+\emph default 
+ complica o acesso a tipos como strings e arrays.
+ Um ponto negativo na API de Ruby é a exposição de detalhes de implementação
+ dos campos da struct que implementam o seu tipo fundamental 
+\family typewriter 
+VALUE
+\family default 
+.
+ Isto restringe a flexibilidade da implementação da linguagem e é uma prática
+ de programação pouco segura.
+ Perl também expõe grande parte suas estruturas internas; não de forma tão
+ direta quanto Ruby, mas através de macros.
+ Tais macros, entretanto, assumem a aderência a protocolos tão estritos
+ de uso que na prática também limitam largamente as possiblidades de alterações
+ na implementação (um exemplo é a seqüência para chamada de funções, que
+ será apresentada na Seção 
+\begin_inset LatexCommand \ref{sub:Perl-call}
+
+\end_inset 
+
+).
+\layout Standard
+
+A criação de dados armazenados pela linguagem de script que contêm estruturas
+ C é uma tarefa fácil em Perl, Ruby e Lua: Perl permite criar 
+\family typewriter 
+SV
+\family default 
+s contendo blocos de memória arbitrários para uso em C; Ruby disponibiliza
+ a macro 
+\family typewriter 
+Data_Wrap_Struct
+\family default 
+ que gera um objeto Ruby que encapsula uma estrutura C; Lua define um tipo
+ básico na linguagem especialmente para este fim.
+ Já em Python, o processo é trabalhoso.
+ Criar uma classe Python a partir de C envolve declarar partes dela estaticament
+e e outras partes dinamicamente, sendo usualmente necessário definir três
+ structs C diferentes.
+ Em Java, não é possível criar novos tipos a partir de C, apenas carregar
+ classes.
+\layout Standard
+
+Outra tarefa comum ao interagir com C é a necessidade de armazenar ponteiros
+ C no espaço de dados da linguagem de script.
+ Python, Lua e Perl oferecem recursos para fazer isto de forma direta: criando
+ um objeto 
+\family typewriter 
+PyCObject
+\family default 
+ em Python; um light userdata em Perl; ou armazenando o ponteiro na área
+ de dados de um 
+\family typewriter 
+SV
+\family default 
+.
+ Em Java e Ruby, a alternativa é converter os ponteiros e armazená-los como
+ números.
+ De fato, isto ocorre internamente na implementação de Ruby, cuja compilação
+ falha se 
+\family typewriter 
+sizeof(void*) != sizeof(long)
+\family default 
+.
+\layout Standard
+
+Outro aspecto que merece nota é preocupação em não poluir o espaço de nomes
+ de C: Python, Java e Lua definem todas as suas funções e tipos C com prefixos
+ que visam evitar conflitos com nomes definidos pela aplicação.
+ Já Perl e Ruby definem nomes de forma desorganizada, o que ocasionalmente
+ causa problemas
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Por exemplo, conflitos deste tipo ocorreram nos bindings Ruby do sistema
+ de controle de versão Subversion em plataformas Win32 (
+\begin_inset LatexCommand \url{http://svn.haxx.se/dev/archive-2005-04/1789.shtml}
+
+\end_inset 
+
+).
+\end_inset 
+
+.
+ Perl possui opções para desabilitar uma série de macros e forçar um prefixo
+ comum em suas funções, mas este recurso é incompleto e prejudica a funcionalida
+de dos seus cabeçalhos
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+No estudo de caso apresentado no Capítulo 
+\begin_inset LatexCommand \ref{cha:Estudo-de-caso:}
+
+\end_inset 
+
+, ao utilizar a API de Perl procuramos utilizar somente as versões com prefixo
+ 
+\family typewriter 
+Perl_
+\family default 
+ das funções da API, mas diversas macros só estão disponíveis nas versões
+ sem o prefixo.
+\end_inset 
+
+.
 \layout Section
 
 Coleta de lixo
@@ -7035,6 +7175,118 @@ flags
 \emph default 
 , etc.) -- a partir de C, estas informações estão disponíveis diretamente
  já que as estruturas não são opacas.
+\layout Subsection
+
+Comparação
+\layout Standard
+
+Coleta de lixo tem por objetivo isolar, na medida do possível, o programador
+ da gerência de memória.
+ Desta forma, idealmente uma API deveria também ser o mais independente
+ o possível do algoritmo de coleta de lixo utilizado pela implementação
+ da máquina virtual.
+ Perl e Python realizam coleta de lixo baseada em contagem de referências,
+ e isto transparece nas operações de incremento e decremento de referências
+ freqüentemente necessárias durante o uso de suas APIs.
+ Ruby utiliza um contador de referências baseado em mark-and-sweep.
+ A sua API consegue abstrair bem este fato para a manipulação de objetos
+ nativos Ruby, mas a implementação do contador é evidente na criação de
+ tipos Ruby em C, onde precisamos declarar uma função de marcação quando
+ temos estruturas C que guardam referências para objetos Ruby.
+ A API de Lua vai além ao isolar-se da implementação do coletor de lixo
+ utilizado: o único ponto da API onde o uso do coletor de lixo incremental
+ é aparente é na rotina de interação direta com o coletor, 
+\family typewriter 
+lua_gc
+\family default 
+, onde pode-se configurar parâmetros deste.
+ Das cinco linguagens, a única cuja API abstrai totalmente a implementação
+ do coletor de lixo é Java, que provê uma única operação de interface com
+ o coletor, 
+\family typewriter 
+System.gc()
+\family default 
+, que não recebe parâmetros e não especifica como ou quando a coleta deve
+ ser feita
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+A documentação é propositalmente vaga, dizendo apenas que este método 
+\emph on 
+
+\begin_inset Quotes eld
+\end_inset 
+
+suggests that the Java Virtual Machine expend effort toward recycling unused
+ objects
+\begin_inset Quotes erd
+\end_inset 
+
+
+\emph default 
+ .
+\end_inset 
+
+.
+ De fato, as várias implementações da JVM utilizam algoritmos diferentes
+ de coleta de lixo.
+\layout Standard
+
+Na manipulação de dados através da API, Lua e Ruby são as linguagens que
+ menos demandam do programador preocupações com gerência de referências.
+ Ruby mantém o controle das referências retornadas a funções C varrendo
+ a pilha de C durante a coleta de lixo, detectando a presença de referências
+ armazenadas em variáveis locais.
+ Lua evita o problema como um todo, mantendo seus objetos na pilha virtual
+ e não retornando referências a eles ao código C.
+ O problema de referências armazenadas em variáveis locais de uma função
+ é tratado por Perl e Java de forma semelhante, definindo dois tipos de
+ referências, globais e locais (referências locais são chamadas de 
+\begin_inset Quotes eld
+\end_inset 
+
+variáveis mortais
+\begin_inset Quotes erd
+\end_inset 
+
+ em Perl).
+ Referências locais têm gerência implícita (salvo alguns casos como discutido
+ na Seção 
+\begin_inset LatexCommand \ref{sub:Coleta-Java}
+
+\end_inset 
+
+).
+ As funções da API de Java retornam referências locais por padrão, que podem
+ ser convertidas para globais com 
+\family typewriter 
+NewGlobalRef
+\family default 
+.
+ Em Perl ocorre o contrário, e as referências globais são convertidas para
+ locais com 
+\family typewriter 
+sv_2mortal
+\family default 
+.
+ O modelo de Java é mais interessante, pois normalmente são usadas mais
+ variáveis de escopo local do que global.
+ Valores armazenados globalmente têm sempre alguma forma de gerência explícita
+ associada a si, mesmo em Ruby e Lua, através de 
+\family typewriter 
+rb_global_variable
+\family default 
+ e 
+\family typewriter 
+luaL_ref
+\family default 
+/
+\family typewriter 
+luaL_unref
+\family default 
+.
 \layout Section
 
 Chamada de funções a partir de C
@@ -15450,6 +15702,21 @@ O fato de que a API de Python dificulta o uso de variáveis e funções globais,
 
 Merece comentário também a disparidade entre as linguagens no que concerne
  a disponibilidade a documentação disponível.
+\layout Itemize
+
+Ao comparar as APIs, consideramos apenas as suas interfaces, fazendo uma
+ análise qualitativa da usabilidade de cada uma da perspectiva do programador
+ C, e não uma análise quantitativa das suas implementações.
+ O custo de desempenho adicionado pelo código que realiza a ligação entre
+ duas linguagens, por exemplo, não pode ser desprezado.
+ Muitas decisões de projeto de uma API são influenciadas por requisitos
+ da implementação como restrições de portabilidade ou desempenho.
+ Por exemplo, o tratamento automático de controle de escopo de 
+\family typewriter 
+VALUE
+\family default 
+s em Ruby traz grande conveniência para o programador, mas reduz a portabilidade
+ da implementação.
 \layout Standard
 
 

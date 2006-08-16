@@ -1,75 +1,75 @@
 
 Espaço de nomes
 
-Python	+ espaço de nomes limpo e legível (Py, PyObject_, PyDict_, etc.)
-Ruby	- Espaço de nomes poluído (RSTRING, rb_funcall, VALUE, StringValuePtr...)
-Java	+ espaçó de nomes limpo (JVM_, j*, (*J)->)
-Lua	+ espaço de nomes limpo (lua_, luaL_, LUA_)
-Perl	- espaço de nomes poluído. há macros para limpá-lo, mas perde-se funcionalidade.
+	Python	+ espaço de nomes limpo e legível (Py, PyObject_, PyDict_, etc.)
+	Ruby	- Espaço de nomes poluído (RSTRING, rb_funcall, VALUE, StringValuePtr...)
+	Java	+ espaço de nomes limpo (JVM_, j*, (*J)->)
+	Lua	+ espaço de nomes limpo (lua_, luaL_, LUA_)
+	Perl	- espaço de nomes poluído. há macros para limpá-lo, mas perde-se funcionalidade.
 
 Manipulação de dados
 
-Python	+ API extensa: manipular dados é fácil, muitas funções de conveniência (GetItemString, CallFunctionObjArgs, etc)
-Ruby	- pouco consistente. API expõe detalhes de implementação dos tipos
-Java	+ tipagem estática evita muitas conversões
-Java	- threading complica o acesso a strings e arrays
-Lua	- construções simples, mas índices de pilha ficam pouco óbvios no código
-Perl	- conceitos complexos da linguagem se refletem na API: um SV é uma variável, não um valor; contextos
-Perl	+ referenciar objetos pelo caminho pacote::objeto é conveniente
+	Python	+ API extensa: manipular dados é fácil, muitas funções de conveniência (GetItemString, CallFunctionObjArgs, etc)
+	Ruby	- pouco consistente. API expõe detalhes de implementação dos tipos
+	Java	+ tipagem estática evita muitas conversões
+	Java	- threading complica o acesso a strings e arrays
+	Lua	- construções simples, mas índices de pilha ficam pouco óbvios no código
+	Perl	- conceitos complexos da linguagem se refletem na API: um SV é uma variável, não um valor; contextos
+	Perl	+ referenciar objetos pelo caminho pacote::objeto é conveniente
 
 
 Criação de tipos
 
-Python	- criar tipos em C é complicado. partes declaradas em C estaticamente, partes dinamicamente, 
-Ruby	+ criar tipos em C é fácil. tanto para tipos contendo dados C, como para tipos puramente Ruby
-Ruby	- sutilezas da linguagem: exige função que implementa cópia de objetos, código Ruby pode evitar o construtor
-Java	- não é possível criar tipos em Java via C, apenas carregar classes
-Lua	+ criar tipos em Lua é fácil. userdata são construções pensadas especificamente na interação com C
-Perl	+ armazenar dados arbitrários em um SV é simples. 
+	Python	- criar tipos em C é complicado. partes declaradas em C estaticamente, partes dinamicamente, 
+	Ruby	+ criar tipos em C é fácil. tanto para tipos contendo dados C, como para tipos puramente Ruby
+	Ruby	- sutilezas da linguagem: exige função que implementa cópia de objetos, código Ruby pode evitar o construtor
+	Java	- não é possível criar tipos em Java via C, apenas carregar classes
+	Lua	+ criar tipos em Lua é fácil. userdata são construções pensadas especificamente na interação com C
+	Perl	+ armazenar dados arbitrários em um SV é simples. 
 
 Armazenar ponteiros de C
 
-Python	+ PyCObject
-Java	- armazenar ponteiros de C em números
-Ruby	- armazenar ponteiros de C em números
-Lua	+ light userdata
-Perl	+ armazenar ponteiros em um SV é simples.
+	Python	+ PyCObject
+	Java	- armazenar ponteiros de C em números
+	Ruby	- armazenar ponteiros de C em números
+	Lua	+ light userdata
+	Perl	+ armazenar ponteiros em um SV é simples.
 
 Observações (transferência de dados)
 
 Python	- sub-linguagem para declaração de tipos estruturados (ParseTuple, BuildArg) pode ser pouco óbvia
 Java	- fieldIDs usa sub-linguagem para declaração de tipos nada óbvia
 Lua	- controlar tamanho da pilha com lua_checkstack
-Perl	- pré-processador simplifica a geração de bindings
+Perl	+ pré-processador simplifica a geração de bindings
 Ruby	- IDs nunca são coletados
 
 --------
 
 Tipo de coleta de lixo
 
-Python	- contagem de referências
-Ruby	+ mark and sweep
-Java	+ não especificado
-Lua	+ mark and sweep incremental
-Perl	- contagem de referências
+	Python	- contagem de referências
+	Ruby	+ mark and sweep
+	Java	+ não especificado
+	Lua	+ mark and sweep incremental
+	Perl	- contagem de referências
 
 Tipos de referências
 
-Python	- conferir tipo de referência de cada chamada (nova, emprestada, roubada)
-Ruby	+ um só tipo de referência, VALUE. 
-Java	+ locais e globais. locais a não ser que tornadas globais.
-Lua	+ não retorna referências
-Perl	- locais e globais. globais a não ser que tornadas locais
+	Python	- conferir tipo de referência de cada chamada (nova, emprestada, roubada)
+	Ruby	+ um só tipo de referência, VALUE. 
+	Java	+ locais e globais. locais a não ser que tornadas globais.
+	Lua	+ não retorna referências
+	Perl	- locais e globais. globais a não ser que tornadas locais
 
 Gerência de referências
 
-Python	- gerência explícita (exceto em casos especiais: refs emprestadas)
-Ruby	+ gerência implícita, basicamente transparente ao programador
-Ruby	- solução pouco portável
-Java	+ implícita para locais, explícita para globais
-Java	- em alguns casos locais precisam de gerência explícita
-Lua	+ totalmente implícita, ref/unref para globais
-Perl	+ implícita para locais, explícita para locais
+	Python	- gerência explícita (exceto em casos especiais: refs emprestadas)
+	Ruby	+ gerência implícita, basicamente transparente ao programador
+	Ruby	- solução pouco portável
+	Java	+ implícita para locais, explícita para globais
+	Java	- em alguns casos locais precisam de gerência explícita
+	Lua	+ totalmente implícita, ref/unref para globais
+	Perl	+ implícita para locais, explícita para locais
 
 Observações (coleta de lixo)
 
@@ -148,9 +148,37 @@ Python	- complicado, exige acessar módulo __main__
 Ruby	- simples
 Java	+ registro é implícito
 Lua	+ simples, como o registro de qualquer outro objeto. 
-Perl	- XS não prevê. necessário criar uma função de módulo e atribui-la numa global.
+Perl	- XS não prevê. necessário criar uma função de módulo e atribuí-la numa global.
 
 Observações (chamada de funções)
 
 Python	- diferença entre objetos método e objetos função (que não podem ser criados diretamente via API de C)
 Lua	+ C closures
+
+--------
+
+Implementações
+
+Múltiplos estados
+
+- Lua sim
+- Perl sim
+- Python não
+- Ruby não
+
+Embeddability
+
+- Lua alta
+- Ruby com restrições: único estado, cleanup incompleto
+- Python média: único estado, difícil registrar funções e var. globais
+- Perl baixa: exige módulo de extensão, API de embedding é incompleta (exige hacks como ax)
+
+Mesmo em exemplos pequenos como os deste estudo de caso, que exercitam apenas uma parte pequena das APIs,
+podemos observar que aspectos onde as linguagens definem tratamentos especiais ou possuem menor uniformidade
+transparecem nas APIs para C. Tanto em Python como Ruby, funções que retornam múltiplos valores geram 
+conversões implícitas para tipos agregados (listas e arrays). De forma similar, múltiplos
+retornos são representados em Perl através de contextos do tipo array. Nos seus respectivos plugins LibScript,
+estas características tiveram que ser tratadas de forma especial. No plugin Lua, o tratamento para um valor
+único de retorno é igual ao de valores múltiplos, assim como ocorre na linguagem. 
+
+O tratamento de erros 
