@@ -290,11 +290,15 @@ Em função da popularidade da linguagem C e do suporte oferecido a ela pelos
  Além disso, um modelo de interação entre linguagens que tem se mostrado
  especialmente relevante na atualidade é o que se dá entre linguagens compiladas
  tipadas estaticamente, como C, e linguagens interpretadas tipadas dinamicamente
-, tipicamente chamadadas de linguagens de script.
-\layout Standard
+, tipicamente chamadadas de linguagens de script, como defendido por Ousterhout
+ em 
+\begin_inset LatexCommand \cite{ousterhout98scripting}
 
-Estas duas categorias de linguagens possuem objetivos fundamentalmente diferente
-s.
+\end_inset 
+
+.
+ Estas duas categorias de linguagens possuem objetivos fundamentalmente
+ diferentes.
  Linguagens estaticamente tipadas são usualmente implementadas visando alto
  desempenho e possuem um enfoque de mais baixo nível.
  Em contraste, linguagens de script tendem a ser implementadas como interpretado
@@ -323,14 +327,14 @@ Este trabalho discute as principais questões envolvendo o projeto de APIs
  Linguagens com tipagem estática podem apresentar necessidades de conversão
  de tipos semelhantes, mas o problema tende a ser simplificado pela definição
  de tipos equivalentes na API e inferência em tempo de compilação (vide
- exemplos nas API com C de Ada e Fortran).
+ exemplos nas API de Ada e Fortran com C).
  Linguagens funcionais possuem preocupações adicionais com efeitos colaterais
  no código C, mas isto é equivalente ao problema de quebra do paradigma
- causada tratamento de entrada e saída que todas elas enfrentam.
+ causada pelo tratamento de entrada e saída que todas elas enfrentam.
 \layout Standard
 
-O estudo consiste de duas partes.
- Na primeira, realizaremos a análise em profundidade de um conjunto de APIs
+Este estudo consiste de duas partes.
+ Na primeira, realizamos a análise em profundidade de um conjunto de APIs
  para C providas por quatro linguagens de script -- especificamente, Python
  
 \begin_inset LatexCommand \cite{vanrossum06ref}
@@ -361,13 +365,13 @@ O estudo consiste de duas partes.
  Diferentemente das demais, Java possui tipagem estática, mas assim como
  elas é baseada em um modelo de máquina virtual, possui gerência automática
  de memória e permite carga dinâmica de código.
- Isto nos permitirá observar também como a tipagem afeta do projeto da API.
+ Isto nos permite observar também como a tipagem afeta o projeto da API.
 \layout Standard
 
-Na segunda parte, ilustraremos as diferenças das APIs destas linguagens
- e o impacto destas no código resultante de uma aplicação C através de um
+Na segunda parte, ilustramos as diferenças das APIs destas linguagens e
+ o impacto destas no código resultante de uma aplicação C através de um
  estudo de caso.
- Realizaremos uma comparação entre as APIs das linguagens de script através
+ Realizamos uma comparação entre as APIs das linguagens de script através
  de um exemplo concreto, de modo a colocar implementações em cada uma das
  linguagens lado a lado.
  O exemplo consiste de uma biblioteca genérica para scripting, chamada LibScript
@@ -402,7 +406,8 @@ o com linguagens de script.
  são apresentadas em detalhe APIs para C de um conjunto de linguagens de
  script.
  Ao discutir estas interfaces, as diferentes soluções empregadas para os
- principais envolvendo interação entre C e ambientes dinâmicos são levantadas.
+ principais problemas envolvendo interação entre C e ambientes dinâmicos
+ são levantadas.
  O Capítulo 
 \begin_inset LatexCommand \ref{cha:Estudo-de-caso:}
 
@@ -609,8 +614,8 @@ back-end
  6.
 \layout Standard
 
-Um tipo de comunicação que pode ser considerada ainda uma forma de ambiente
- de execução comum é a comunicação entre executáveis e bibliotecas nativos
+Um tipo de comunicação que pode ser considerado também uma forma de ambiente
+ de execução comum é a comunicação entre executáveis e bibliotecas nativas
  através de convenções de chamada: regras para a passagem de parâmetros
  na pilha de execução, uso de registradores e 
 \emph on 
@@ -621,7 +626,7 @@ mangling
  linguagens de mais baixo nível.
  Convenções de chamada, entretanto, são um recurso limitado de comunicação,
  já que assumem tipos de dados com representação em memória idêntica nas
- as duas linguagens.
+ duas linguagens.
  Tal compatibilidade dificilmente ocorre a não ser que uma das linguagens
  explicitamente considere este tipo de interação na sua definição: o padrão
  de Ada, por exemplo, requer que as suas implementações sejam compatíveis
@@ -632,11 +637,11 @@ mangling
 
 .
  De forma similar, C++ permite especificar funções com linkagem compatível
- com C (
+ com C, através da diretiva 
 \family typewriter 
 extern "C"
 \family default 
-).
+.
 \layout Section
 
 
@@ -710,7 +715,7 @@ Se por um lado a tarefa pode ser facilitada pelo fato de o modelo ter sido
 stubs
 \emph default 
 , objetos que dão uma aparência nativa uniforme aos dados, indepentemente
- da linguagem em que foram implementados e no caso de modelos distribuídos
+ da linguagem em que foram implementados e, no caso de modelos distribuídos
  como CORBA, da localização dos mesmos na rede.
  A correspondência entre os ciclos de vida dos 
 \emph on 
@@ -765,7 +770,7 @@ o.
 
  até os mais recentes ambientes de máquina virtual como .NET.
  Na prática, as necessidades que estes projetos visavam atender vêm sendo
- supridas ao longo dos anos de forma mais pragmática, ainda que menos ideal:
+ supridas ao longo dos anos de forma mais pragmática, ainda que menos ideal,
  usando C.
  Dois motivos fazem de C uma escolha comum como linguagem intermediária.
  Primeiro, a sua característica de linguagem de 
@@ -864,7 +869,8 @@ s e máquinas virtuais (as principais implementações de Perl, Python, Ruby,
 \end_inset 
 
 , que geram C a partir de Haskell e Eiffel, respectivamente).
- Isto faz com que a API para C seja um formato conveniente para uma FLI.
+ Isto faz com que a API para C seja um formato conveniente para uma interface
+ de acesso externo.
 \layout Standard
 
 Na grande maioria dos casos, a representação interna de código produzida
@@ -879,7 +885,9 @@ a.
  virtual.
  Para linguagens estáticas, normalmente é necessário criar uma biblioteca
  específica que realize a conversão das chamadas, como ocorre em interfaces
- C para APIs C++.
+ que expõem bibliotecas C++ para C.
+ Um exemplo disto é QtC, uma biblioteca de bindings C para o toolkit gráfico
+ Qt, que é implementado em C++.
 \layout Standard
 
 Para linguagens não imperativas, há ainda o problema de código C potencialmente
@@ -997,7 +1005,7 @@ bindings
 \layout Standard
 
 Os padrões que ocorrem na produção de bindings são tão comuns que deram
- origem a programas visam automatizar o processo.
+ origem a programas que visam automatizar o processo.
  Estes geradores de bindings costumam trabalhar a partir de alguma representação
  preparada para o seu uso, já que analisar os cabeçalhos C pode-se mostrar
  insuficiente: por exemplo, o programa muitas vezes não seria capaz de interpret
@@ -1011,8 +1019,8 @@ int**
 
 \end_inset 
 
- é uma popular ferramenta multi-linguagem para geração de bindings de biblioteca
-s C e C++ que utiliza um formato próprio para descrição de interfaces.
+ é uma ferramenta multi-linguagem para geração de bindings de bibliotecas
+ C e C++ popular que utiliza um formato próprio para descrição de interfaces.
  FLIs podem ainda utilizar geradores de 
 \emph on 
 stubs
@@ -5280,12 +5288,15 @@ o de dados mais simples e ortogonal dentre as estudadas.
 \layout Standard
 
 Em Java, a tipagem estática reduz muito a necessidade de conversões de dados
- explícitas no código C, mas por outro lado o tratamento de 
+ explícitas no código C.
+ Por outro lado, o tratamento de 
 \emph on 
 multi-threading
 \emph default 
  complica o acesso a tipos como strings e arrays.
- Um ponto negativo na API de Ruby é a exposição de detalhes de implementação
+\layout Standard
+
+Um ponto negativo na API de Ruby é a exposição de detalhes de implementação
  dos campos da struct que implementam o seu tipo fundamental 
 \family typewriter 
 VALUE
@@ -5306,8 +5317,8 @@ VALUE
 ).
 \layout Standard
 
-A criação de dados armazenados pela linguagem de script que contêm estruturas
- C é uma tarefa fácil em Perl, Ruby e Lua: Perl permite criar 
+A criação de dados que contêm estruturas C armazenados pela linguagem de
+ script é uma tarefa fácil em Perl, Ruby e Lua: Perl permite criar 
 \family typewriter 
 SV
 \family default 
@@ -5321,7 +5332,7 @@ Data_Wrap_Struct
  Já em Python, o processo é trabalhoso.
  Criar uma classe Python a partir de C envolve declarar partes dela estaticament
 e e outras partes dinamicamente, sendo usualmente necessário definir três
- structs C diferentes.
+ estruturas C diferentes.
  Em Java, não é possível criar novos tipos a partir de C, apenas carregar
  classes.
 \layout Standard
@@ -5333,12 +5344,12 @@ Outra tarefa comum ao interagir com C é a necessidade de armazenar ponteiros
 \family typewriter 
 PyCObject
 \family default 
- em Python; um light userdata em Perl; ou armazenando o ponteiro na área
+ em Python; um light userdata em Lua; ou armazenando o ponteiro na área
  de dados de um 
 \family typewriter 
 SV
 \family default 
-.
+ em Perl.
  Em Java e Ruby, a alternativa é converter os ponteiros e armazená-los como
  números.
  De fato, isto ocorre internamente na implementação de Ruby, e as limitações
@@ -5351,8 +5362,9 @@ sizeof(void*) != sizeof(long)
 \layout Standard
 
 Outro aspecto que merece nota é a preocupação em não poluir o espaço de
- nomes de C: Python, Java e Lua definem todas as suas funções e tipos C
- com prefixos que visam evitar conflitos com nomes definidos pela aplicação.
+ nomes de C.
+ Python, Java e Lua definem todas as suas funções e tipos C com prefixos
+ que visam evitar conflitos com nomes definidos pela aplicação.
  Já Perl e Ruby definem nomes de forma desorganizada, o que ocasionalmente
  causa problemas
 \begin_inset Foot
@@ -9605,7 +9617,7 @@ Em Lua e Python, a ocorrência de erros pode ser verificada com o valor de
  retorno da função.
  De forma similar, Perl permite detectar erros na chamada mais recente verifican
 do uma variável especial; em Java, isto é feito chamando uma função da API.
- Somente o tratamento de erros em Ruby é mais envolvido, pois estranhamente
+ Somente o tratamento de erros em Ruby é mais convoluto, pois estranhamente
  a API oferece uma função que permite invocar funções C em modo protegido,
  mas não uma equivalente que permita chamar funções Ruby.
  Torna-se necessário escrever uma função 
@@ -11563,8 +11575,8 @@ javah
  por Java são convertidos automaticamente pela JNI, o que é bastante conveniente
  uma vez que evita operações explícitas de conversão e verificação de tipos
  na função.
- Todas as demais linguagens oferecem funções na API específicas para realizar
- estas verificações.
+ Por terem tipagem dinâmica, as demais linguagens oferecem funções na API
+ específicas para realizar estas verificações.
  As assinaturas de função em Perl são criadas apenas através da ferramenta
  XS, mas diferentemente de Java elas não são expostas ao programador.
  Isto traz a inconveniência de termos que pré-processar o código C como
@@ -15748,7 +15760,7 @@ O estudo de caso apresentado aqui ilustrou, através da implementação dos
  abordados, contemplando inicialização e encerramento do ambiente de execução,
  passagem de dados e chamadas de função nos dois sentidos e a sinalização
  de erros.
- A partir disto, podemos fazer algumas observações sobre a aplicabilidade
+ A partir disto, podemos fazer algumas observações sobre a adequabilidade
  destas linguagens como ambientes embutidos em aplicações.
 \layout Standard
 
@@ -15847,7 +15859,7 @@ Este trabalho traçou um panorama dos problemas gerais enfrentados na interação
  Realizamos uma comparação prática do uso destas APIs através de um estudo
  de caso onde as linguagens de script foram embutidas em bibliotecas C exportand
 o uma mesma interface.
- Implementamos consiste de uma biblioteca genérica para scripting, chamada
+ A implementação consiste de uma biblioteca genérica para scripting, chamada
  LibScript, e uma série de plugins que realizam a interface com as diferentes
  linguagens.
  Pudemos assim observar como elas tratam aspectos importantes relativos
@@ -15861,7 +15873,7 @@ Embora os mesmos problemas gerais, como transferência de dados, registro
  API de linguagem de script, aplicações embutindo uma máquina virtual tendem
  a demandar mais da API do que bibliotecas implementando módulos de extensão.
  Este ponto é ilustrado pelas dificuldades impostas pela API de Python tanto
- no acesso a variáveis como no registro de funções globais, e principalmente
+ no acesso a variáveis como no registro de funções globais; e principalmente
  pela complexidade da API de chamada de funções de Perl.
 \layout Standard
 
@@ -15891,7 +15903,7 @@ A abordagem empregada por Perl, usando um pré-processador com o objetivo
 varargs
 \emph default 
  e a passagem de valores de retorno tratando múltiplos contextos de execução.
- Ambas exigiram manipulações de estruturas e construções de mais baixo nível
+ Ambas exigiram manipulações de estruturas e construções de mais baixo nível,
  que o pré-processador tem por objetivo ocultar.
 \layout Standard
 
@@ -15901,11 +15913,11 @@ Observações interessantes resultaram da comparação da API de Java com a
  uma linguagem de script.
  Enquanto a tipagem estática reduz bastante a necessidade de conversões
  de dados explícitas no código C para tipos primitivos da linguagem, na
- prática a verificação de tipos para objetos e o binding de campos e métodos
+ prática a verificação de tipos para objetos e a ligação de campos e métodos
  acontece de forma dinâmica, já que estes têm que ser realizados em tempo
  de execução pela JNI.
  Assim, no contexto da interação de uma máquina virtual com código C, as
- vantagens trazidas pela tipagem estática são bastante reduzidas.
+ vantagens trazidas pela tipagem estática são reduzidas.
  Além disso, a resolução dinâmica de campos e métodos faz com que a manipulação
  de objetos via C tenha diferenças sutis de comportamento em relação ao
  que ocorre em código Java, o que pode ser uma fonte de erros do programador.
@@ -15922,8 +15934,8 @@ Ao comparar as APIs, consideramos apenas as suas interfaces, fazendo uma
 \family typewriter 
 VALUE
 \family default 
-s em Ruby traz grande conveniência para o programador, mas reduz a portabilidade
- da implementação.
+s em Ruby, varrendo a pilha de C, traz grande conveniência para o programador,
+ mas reduz a portabilidade da implementação.
 \layout Standard
 
 O equilíbrio entre simplicidade e conveniência é outro tema recorrente ao
@@ -16023,8 +16035,9 @@ Como possibilidades de trabalhos futuros, este trabalho pode ser estendido
  Outro é a relação entre o projeto de uma máquina virtual e o de sua respectiva
  API.
  Além disso, outra perspectiva de trabalho é a continuação do desenvolvimento
- da biblioteca LibScript, adicionando novos plugins, revisando a sua API
- e exercitando-a embutindo a biblioteca em aplicações reais.
+ da biblioteca LibScript.
+ Possibilidades incluem adicionar novos plugins, revisar a sua API e exercitála-
+a embutindo a biblioteca em aplicações reais.
  LibScript e os quatro plugins implementados são software livre e estão
  disponíveis para download em 
 \begin_inset LatexCommand \url{http://libscript.sourceforge.net}
