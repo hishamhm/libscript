@@ -5256,7 +5256,7 @@ Comparação
 
 O conjunto básico de funções para manipulação de dados nas cinco linguagens
  discutidas é similar: todas elas possuem funções para converter valores
- de variáveis da linguagem para tipos básicos de C e vice-versa.
+ da linguagem para tipos básicos de C e vice-versa.
  Todas oferecem ainda funções para a manipulação dos seus tipos estruturados
  fundamentais (tabelas em Lua, arrays em Java, arrays e hashes em Ruby e
  Perl, listas e dicionários em Python).
@@ -5350,9 +5350,9 @@ sizeof(void*) != sizeof(long)
 .
 \layout Standard
 
-Outro aspecto que merece nota é preocupação em não poluir o espaço de nomes
- de C: Python, Java e Lua definem todas as suas funções e tipos C com prefixos
- que visam evitar conflitos com nomes definidos pela aplicação.
+Outro aspecto que merece nota é a preocupação em não poluir o espaço de
+ nomes de C: Python, Java e Lua definem todas as suas funções e tipos C
+ com prefixos que visam evitar conflitos com nomes definidos pela aplicação.
  Já Perl e Ruby definem nomes de forma desorganizada, o que ocasionalmente
  causa problemas
 \begin_inset Foot
@@ -15830,54 +15830,40 @@ ndo das limitações aqui descritas sobre as outras linguagens.
 Conclusões
 \layout Standard
 
-
-\begin_inset Note
-collapsed true
-
+A escolha de uma linguagem de script depende de uma série de fatores, varios
+ deles relativos à linguagem em si, outros relativos à sua implementação.
+ Quando lidamos com cenários de desenvolvimento multi-linguagem, um aspecto
+ que não deve ser negligenciado é o projeto das interfaces entre as linguagens.
+ Seja estendendo a linguagem de script através de código C, ou tornando
+ uma aplicação C extensível através de uma linguagem de script, a API oferecida
+ pela linguagem tem um papel fundamental, muitas vezes influenciando o projeto
+ da aplicação.
 \layout Standard
 
-
-\emph on 
-\color red
-[TODO: Concluir alguma coisa :-) ]
-\layout Standard
-
-as pessoas quando escolhem uma linguagem, tendem a olhar mais pra linguagem
- e esquecem de olhar pras apis.
-\layout Standard
-
-por isso que puxei a brasa pro lado do embedding mais do que do extending,
- um pouco
-\layout Standard
-
-as apis todas tornam escrever extensões algo fácil.
- lua bate elas na parte do embedding, imho
-\layout Standard
-
-conversores podem simplificar extensões, mas embedding tende a interagir
- mais diretamente com a API
-\layout Standard
-
-conversores: aí a gente está falando de outro problema altogether, que é
- "a difícil tarefa de entender código C".
- trabalho futuro, possibly.
-\end_inset 
-
-
-\layout Standard
-
-Falar de extending vs.
- embedding.
+Este trabalho traçou um panorama dos problemas gerais enfrentados na interação
+ entre código C e o ambiente de execução de uma linguagem de script.
+ Apresentamos as formas como as APIs de cinco linguagens tratam estes problemas,
+ apontando pontos positivos e negativos das diferentes abordagens utilizadas.
+ Realizamos uma comparação prática do uso destas APIs através de um estudo
+ de caso onde as linguagens de script foram embutidas em bibliotecas C exportand
+o uma mesma interface.
+ Implementamos consiste de uma biblioteca genérica para scripting, chamada
+ LibScript, e uma série de plugins que realizam a interface com as diferentes
+ linguagens.
+ Pudemos assim observar como elas tratam aspectos importantes relativos
+ a linguagens embutidas, como a passagem de dados, chamadas de funções entre
+ as duas linguagens, tratamento de erros e o isolamento dos ambientes de
+ execução em aplicações.
 \layout Standard
 
 Embora os mesmos problemas gerais, como transferência de dados, registro
- e chamada de funções, sejam tratados em ambos os cenários, aplicações embutindo
- uma máquina virtual tendem a demandar mais da API do que bibliotecas implementa
-ndo módulos de extensão.
+ e chamada de funções, sejam comuns aos diferentes cenários de uso de uma
+ API de linguagem de script, aplicações embutindo uma máquina virtual tendem
+ a demandar mais da API do que bibliotecas implementando módulos de extensão.
  Este ponto é ilustrado pelas dificuldades impostas pela API de Python tanto
  no acesso a variáveis como no registro de funções globais, e principalmente
  pela complexidade da API de chamada de funções de Perl.
-\layout Itemize
+\layout Standard
 
 O fato de que a API de Python dificulta o uso de variáveis e funções globais,
  favorecendo o uso de módulos, pode ser justificado como uma forma de promover
@@ -15889,11 +15875,41 @@ O fato de que a API de Python dificulta o uso de variáveis e funções globais,
  Já para o caso onde a linguagem é embutida para prover suporte a execução
  de scripts em uma aplicação C, a ausência de uma forma conveniente para
  de definir funções globais no espaço de nomes dos scripts é algo questionável.
-\layout Itemize
+\layout Standard
 
-Merece comentário também a disparidade entre as linguagens no que concerne
- a disponibilidade a documentação disponível.
-\layout Itemize
+A abordagem empregada por Perl, usando um pré-processador com o objetivo
+ de gerar automaticamente o código para a conversão de dados na passagem
+ de parâmetros e valores de retorno, se mostrou inadequado para o cenário
+ envolvendo interpretadores embutidos.
+ Embora o uso do pré-processador simplifique os casos simples de declaração
+ de funções C, a falta de uma API bem definida para tratar a transferência
+ de dados entre o interpretador Perl e o código C se faz perceber nos casos
+ mais elaborados.
+ Duas destas situações se fizeram presentes no estudo de caso: o recebimento
+ de parâmetros 
+\emph on 
+varargs
+\emph default 
+ e a passagem de valores de retorno tratando múltiplos contextos de execução.
+ Ambas exigiram manipulações de estruturas e construções de mais baixo nível
+ que o pré-processador tem por objetivo ocultar.
+\layout Standard
+
+Observações interessantes resultaram da comparação da API de Java com a
+ das demais quatro linguagens de script, uma vez que, embora possua diversas
+ características em comum com estas linguagens, Java não seja considerada
+ uma linguagem de script.
+ Enquanto a tipagem estática reduz bastante a necessidade de conversões
+ de dados explícitas no código C para tipos primitivos da linguagem, na
+ prática a verificação de tipos para objetos e o binding de campos e métodos
+ acontece de forma dinâmica, já que estes têm que ser realizados em tempo
+ de execução pela JNI.
+ Assim, no contexto da interação de uma máquina virtual com código C, as
+ vantagens trazidas pela tipagem estática são bastante reduzidas.
+ Além disso, a resolução dinâmica de campos e métodos faz com que a manipulação
+ de objetos via C tenha diferenças sutis de comportamento em relação ao
+ que ocorre em código Java, o que pode ser uma fonte de erros do programador.
+\layout Standard
 
 Ao comparar as APIs, consideramos apenas as suas interfaces, fazendo uma
  análise qualitativa da usabilidade de cada uma da perspectiva do programador
@@ -15908,9 +15924,109 @@ VALUE
 \family default 
 s em Ruby traz grande conveniência para o programador, mas reduz a portabilidade
  da implementação.
-\layout Itemize
+\layout Standard
 
-LibScript está disponível para download em 
+O equilíbrio entre simplicidade e conveniência é outro tema recorrente ao
+ compararmos as APIs.
+ A extensa API de Python, contendo 656 funções públicas, contrasta com as
+ 113 funções expostas pela API de Lua (79 na API 
+\emph on 
+core
+\emph default 
+, 34 na API auxiliar)
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Como referência, Ruby exporta 530 funções em seu cabeçalho e Perl 1209.
+ Como apenas uma pequena fração destas é documentada, torna-se difícil avaliar
+ o tamanho real da 
+\begin_inset Quotes eld
+\end_inset 
+
+API pública
+\begin_inset Quotes erd
+\end_inset 
+
+ destas linguagens e quantas destas funções são apenas funções para uso
+ interno expostas nos seus cabeçalhos.
+ A API de Java é exportada como uma estrutura contendo ponteiros para função;
+ 228 funções ao todo são exportadas nesta estrutura.
+\end_inset 
+
+.
+ Em diversas situações, funções na API de Python abreviam duas, três ou
+ até mais chamadas, como no caso de funções poderosas como 
+\family typewriter 
+Py_BuildValue
+\family default 
+ e 
+\family typewriter 
+PyObject_CallFunction
+\family default 
+, tornando o código C sucinto e legível.
+ A abordagem defendida por Lua é o de uma API minimalista, oferecendo mecanismos
+ sobre os quais funcionalidades mais elaboradas possam ser construídas.
+ De fato, em 
+\begin_inset LatexCommand \cite{ierusalimschy06pil2}
+
+\end_inset 
+
+ é apresentada uma função C equivalente a 
+\family typewriter 
+PyObject_CallFunction
+\family default 
+ usando a API de Lua.
+\layout Standard
+
+Outro aspecto que pôde ser observado neste trabalho é que a consistência
+ da API depende largamente da consistência da linguagem que ela expõe.
+ Construções onde a linguagem tem pouca ortogonalidade, como o tratamento
+ de blocos em Ruby ou as diferenças nos tratamentos de valores escalares
+ e arrays em Perl, acabam por aumentar a complexidade da API da linguagem
+ e demandam tratamento específico por parte do programador no código C.
+\layout Standard
+
+Merece comentário também a disparidade entre as linguagens no que concerne
+ à disponibilidade de documentação.
+ Java, Python e Lua possuem extensa documentação, tanto para a linguagem
+ como para as suas APIs para C.
+ Para estas linguagens, pudemos basear largamente nosso estudo e a implementação
+ dos exemplos para o estudo de caso na documentação fornecida.
+ A documentação de Ruby relativa à sua API de C é mais escassa; em 
+\begin_inset LatexCommand \cite{thomas04ruby}
+
+\end_inset 
+
+ é coberta apenas parte da API pública.
+ Precisamos fazer uso de funções não documentadas para tarefas fundamentais
+ como liberar referências globais registradas via C.
+ Durante o desenvolvimento do plugin Ruby no estudo de caso, consultamos
+ freqüentemente o código-fonte de Ruby para compreender os aspectos que
+ não são cobertos pela documentação do comportamento das suas funções públicas.
+ A documentação da API de C de Perl também é incompleta, espalhada através
+ de diversas 
+\emph on 
+man pages
+\emph default 
+ incluídas na sua distribuição e em certos casos desatualizada.
+ Para compreender os diversos protocolos envolvidos no uso prático da API
+ de Perl, precisamos recorrer ao código-fonte de aplicações que fazem uso
+ dela.
+\layout Standard
+
+Como possibilidades de trabalhos futuros, este trabalho pode ser estendido
+ através do estudo de outros aspectos de APIs de linguagens de script.
+ Um foco possível é o impacto de desempenho de diferentes projetos de API
+ em aplicações multi-linguagem.
+ Outro é a relação entre o projeto de uma máquina virtual e o de sua respectiva
+ API.
+ Além disso, outra perspectiva de trabalho é a continuação do desenvolvimento
+ da biblioteca LibScript, adicionando novos plugins, revisando a sua API
+ e exercitando-a embutindo a biblioteca em aplicações reais.
+ LibScript e os quatro plugins implementados são software livre e estão
+ disponíveis para download em 
 \begin_inset LatexCommand \url{http://libscript.sourceforge.net}
 
 \end_inset 
