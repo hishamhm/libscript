@@ -73,7 +73,7 @@ INLINE static VALUE script_ruby_get_value(script_env* env, int i) {
 
 INLINE static VALUE script_ruby_buffer_to_array(script_env* env) {
    int i;
-   int len = script_buffer_size(env);
+   int len = script_buffer_len(env);
    VALUE ret = rb_ary_new2(len);
    for (i = 0; i < len; i++) {
       VALUE o = script_ruby_get_value(env, i);
@@ -96,7 +96,7 @@ static VALUE script_ruby_method_missing(VALUE self, VALUE args) {
    if (err != SCRIPT_OK)
       /* Raises exception and longjmps away from this function. */
       rb_raise(rb_eRuntimeError, script_error_message(env));
-   switch (script_buffer_size(env)) {
+   switch (script_buffer_len(env)) {
    case 0:
       return Qnil;
    case 1:

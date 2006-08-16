@@ -51,7 +51,7 @@ INLINE static PyObject* script_python_get_object(script_env* env, int i) {
 
 INLINE static PyObject* script_python_buffer_to_tuple(script_env* env) {
    int i;
-   int len = script_buffer_size(env);
+   int len = script_buffer_len(env);
    PyObject* ret = PyTuple_New(len);
    for(i = 0; i < len; i++) {
       PyObject* o = script_python_get_object(env, i);
@@ -77,7 +77,7 @@ static PyObject* script_python_caller(script_python_object *obj, PyObject *args,
       PyErr_SetString(PyExc_RuntimeError, "No such function");
       Py_RETURN_NONE;
    }
-   switch(script_buffer_size(env)) {
+   switch(script_buffer_len(env)) {
    case 0: Py_RETURN_NONE;
    case 1: return script_python_get_object(env, 0);
    default: return script_python_buffer_to_tuple(env);

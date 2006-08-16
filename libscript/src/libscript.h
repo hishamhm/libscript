@@ -62,7 +62,7 @@ const char* script_namespace(script_env* env);
 const char* script_fn_name(script_env* env);
 
 /* data.c */
-int script_buffer_size(script_env* env);
+int script_buffer_len(script_env* env);
 void script_reset_buffer(script_env* env);
 script_type script_get_type(script_env* env, int i);
 char* script_get_string(script_env* env, int i);

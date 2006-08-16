@@ -35,7 +35,7 @@ INLINE static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
 
 INLINE static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
    int i; char* s;
-   int len = script_buffer_size(env);
+   int len = script_buffer_len(env);
    for (i = 0; i < len; i++) {
       script_type type = script_get_type(env, i);
       switch (type) {

@@ -18,7 +18,7 @@ SV* script_perl_get_sv(pTHX_ script_env* env, int i) {
 
 SV** script_perl_buffer_to_stack(pTHX_ SV** sp, script_env* env) {
    int i;
-   int len = script_buffer_size(env);
+   int len = script_buffer_len(env);
    for (i = 0; i < len; i++) {
       XPUSHs(sv_2mortal(script_perl_get_sv(aTHX_ env, i)));
    }
@@ -62,7 +62,7 @@ script_perl_caller(env_i, name, ...)
 			break;
 		case G_ARRAY:
 			{
-				int len = script_buffer_size(env);
+				int len = script_buffer_len(env);
 				int i;
 				RETVAL = (SV*)newAV();
 				sv_2mortal((SV*)RETVAL);

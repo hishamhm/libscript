@@ -15,7 +15,7 @@
 #endif
 
 void script_reset_buffer(script_env* env) {
-   int size = env->buffer_size;
+   int size = env->buffer_len;
    int i;
    for (i = 0; i < size; i++) {
       script_data* data = &(env->buffer[i]);
@@ -23,18 +23,18 @@ void script_reset_buffer(script_env* env) {
          free(data->u.string_value);
       }
    }
-   env->buffer_size = 0;
+   env->buffer_len = 0;
    env->next_get = 0;
 }
 
-int script_buffer_size(script_env* env) {
-   return env->buffer_size;
+int script_buffer_len(script_env* env) {
+   return env->buffer_len;
 }
 
 script_type script_get_type(script_env* env, int i) {
    script_data* data;
    assert (i == env->next_get);
-   if (i >= env->buffer_size) return SCRIPT_NONE;
+   if (i >= env->buffer_len) return SCRIPT_NONE;
    data = &(env->buffer[i]);
    return data->type;
 }
@@ -42,7 +42,7 @@ script_type script_get_type(script_env* env, int i) {
 INLINE static script_data* script_get_data(script_env* env, int i, script_type type) {
    script_data* data;
    assert (i == env->next_get);
-   script_check_ret(i >= env->buffer_size, SCRIPT_ERRPARMISSING, NULL);
+   script_check_ret(i >= env->buffer_len, SCRIPT_ERRPARMISSING, NULL);
    data = &(env->buffer[i]);
    script_check_ret(data->type != type, SCRIPT_ERRPARTYPE, NULL);
    env->next_get++;
@@ -52,14 +52,14 @@ INLINE static script_data* script_get_data(script_env* env, int i, script_type t
 static script_data* script_put_data(script_env* env, int i, script_type type) {
    script_data* data;
 
-   if (i == 0 && env->buffer_size > 0)
+   if (i == 0 && env->buffer_len > 0)
       script_reset_buffer(env);
-   assert(i == env->buffer_size);
-   script_check_ret(i != env->buffer_size, SCRIPT_ERRPAREXCESS, NULL);
+   assert(i == env->buffer_len);
+   script_check_ret(i != env->buffer_len, SCRIPT_ERRPAREXCESS, NULL);
    script_check_ret(i >= SCRIPT_BUFFER_MAXSIZE, SCRIPT_ERRPAREXCESS, NULL);
    data = &(env->buffer[i]);
    data->type = type;
-   env->buffer_size = i + 1;
+   env->buffer_len = i + 1;
    return data;
 }
 

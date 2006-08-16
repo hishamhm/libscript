@@ -26,7 +26,7 @@ struct script_env_ {
    ht* plugins;
    ht* functions;
    script_data* buffer;
-   int buffer_size;
+   int buffer_len;
    int next_get;
    int error;
    char error_message[SCRIPT_ERROR_MESSAGE_LEN];
