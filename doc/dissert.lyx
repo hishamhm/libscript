@@ -7188,7 +7188,9 @@ Coleta de lixo tem por objetivo isolar, na medida do possível, o programador
  Perl e Python realizam coleta de lixo baseada em contagem de referências,
  e isto transparece nas operações de incremento e decremento de referências
  freqüentemente necessárias durante o uso de suas APIs.
- Ruby utiliza um contador de referências baseado em mark-and-sweep.
+\layout Standard
+
+Ruby utiliza um contador de referências baseado em mark-and-sweep.
  A sua API consegue abstrair bem este fato para a manipulação de objetos
  nativos Ruby, mas a implementação do contador é evidente na criação de
  tipos Ruby em C, onde precisamos declarar uma função de marcação quando
@@ -7200,14 +7202,16 @@ Coleta de lixo tem por objetivo isolar, na medida do possível, o programador
 lua_gc
 \family default 
 , onde pode-se configurar parâmetros deste.
- Das cinco linguagens, a única cuja API abstrai totalmente a implementação
- do coletor de lixo é Java, que provê uma única operação de interface com
- o coletor, 
+\layout Standard
+
+Das cinco linguagens, a única cuja API abstrai totalmente a implementação
+ do coletor de lixo é Java.
+ A única operação de interface com o coletor que a linguagem provê, 
 \family typewriter 
 System.gc()
 \family default 
-, que não recebe parâmetros e não especifica como ou quando a coleta deve
- ser feita
+, não recebe parâmetros e não especifica como ou quando a coleta deve ser
+ feita
 \begin_inset Foot
 collapsed true
 
@@ -7241,7 +7245,9 @@ Na manipulação de dados através da API, Lua e Ruby são as linguagens que
  armazenadas em variáveis locais.
  Lua evita o problema como um todo, mantendo seus objetos na pilha virtual
  e não retornando referências a eles ao código C.
- O problema de referências armazenadas em variáveis locais de uma função
+\layout Standard
+
+O problema de referências armazenadas em variáveis locais de uma função
  é tratado por Perl e Java de forma semelhante, definindo dois tipos de
  referências, globais e locais (referências locais são chamadas de 
 \begin_inset Quotes eld
@@ -9551,6 +9557,60 @@ LEAVE
 \family default 
  decrementam a contagem de referências dos valores mortais.
  
+\layout Subsection
+
+Comparação
+\layout Standard
+
+Em Python, Lua e Perl, funções podem ser acessadas como objetos da linguagem
+ e invocadas.
+ Em Ruby e Java, a API define tipos especiais usados para referenciar métodos.
+ Como na manipulação de dados, Python oferece uma API extensa, com diversas
+ funções de conveniência permitindo passar argumentos como tuplas Python,
+ objetos Python passados como 
+\emph on 
+varargs
+\emph default 
+, valores C a serem convertidos pela função de chamada, etc.
+ Java também oferece um grande número de funções para invocação de métodos
+ e, devido à tipagem estática da linguagem, os parâmetros de entrada podem
+ ser passados como 
+\emph on 
+varargs
+\emph default 
+ de forma bastante simples, sem precisar especificar a forma como a conversão
+ deles deve ser realizada.
+ Ruby também oferece algumas variantes de funções de chamada.
+\layout Standard
+
+Lua, em contraste, separa a rotina da chamada da função da passagem dos
+ parâmetros, que é feita anteriormente através da pilha.
+ Isto é uma solução bastante simples, mas o código resultante é menos claro
+ que as chamadas equivalentes em linguagens como Ruby e Python.
+ Perl também faz chamadas de função utilizando um modelo de pilha, mas ao
+ contrário de Lua o seu uso é demasiadamente complexo, por exigir um protocolo
+ de macros que expõem o funcionamento interno do interpretador.
+ Outro complicador é o tratamento de valores de retorno, pois estes variam
+ de comportamento conforme o contexto Perl em que a função é chamada.
+\layout Standard
+
+Em Lua e Python, a ocorrência de erros pode ser verificada com o valor de
+ retorno da função.
+ De forma similar, Perl permite detectar erros na chamada mais recente verifican
+do uma variável especial; Java, chamando uma função da API.
+ Somente o tratamento de erros em Ruby é mais envolvido, pois estranhamente
+ a API oferece uma função que permite invocar funções C em modo protegido,
+ mas não uma equivalente que permita chamar funções Ruby.
+ Torna-se necessário escrever uma função 
+\emph on 
+wrapper
+\emph default 
+ nestes casos, o que será ilustrado na Seção 
+\begin_inset LatexCommand \ref{sub:Captura-de-erros}
+
+\end_inset 
+
+.
 \layout Section
 
 Registro de funções C
@@ -11474,6 +11534,51 @@ s (o exemplo de função de inicialização incluído na documentação de Perl
 \end_inset 
 
  está desatualizado).
+\layout Subsection
+
+Comparação
+\layout Standard
+
+Python e Ruby oferecem ao programador diferentes opções de assinaturas de
+ função C reconhecidas pela API, o que é prático, uma vez que pode-se escolher
+ assim diferentes representações em C para os parâmetros de entrada (agregados
+ em um array, recebidos um a um, etc.).
+ Lua oferece apenas uma assinatura de função possível para funções C a serem
+ registradas na máquina virtual, mas isto é apropriado para o modelo de
+ pilha usado por sua API.
+\layout Standard
+
+Em Java, as assinaturas de função são criadas através da ferramenta 
+\family typewriter 
+javah
+\family default 
+ -- devido à tipagem estática, os tipos dos parâmetros de entrada passados
+ por Java são convertidos automaticamente pela JNI, o que é bastante conveniente
+ uma vez que evita operações explícitas de conversão e verificação de tipos
+ na função.
+ Todas as demais linguagens oferecem funções na API específicas para realizar
+ estas verificações.
+ As assinaturas de função em Perl são criadas apenas através da ferramenta
+ XS, mas diferentemente de Java elas não são expostas ao programador.
+ Isto traz a inconveniência de pré-processar o código C como uma extensão
+ XS mesmo quando estamos embutindo Perl em uma aplicação.
+\layout Standard
+
+O registro de funções em Ruby e Lua é simples.
+ Em Lua, em particular, é uma atribuição igual à de qualquer outro objeto.
+ Já em Python, existem recursos para o registro de funções em lote, usando
+ arrays 
+\family typewriter 
+PyMethodDef
+\family default 
+ (Lua oferece recurso similar com 
+\family typewriter 
+luaL_register
+\family default 
+), mas não há uma forma simples de registrar uma única função.
+ Tanto em Java como em Perl o registro de funções é feito de forma implícita,
+ e em nenhuma das duas APIs há funções para registrar novas funções C durante
+ a execução do programa.
 \layout Chapter
 
 
@@ -15626,6 +15731,23 @@ ruby_errinfo
 \layout Section
 
 Conclusões
+\layout Standard
+
+\layout Standard
+
+Mesmo em exemplos pequenos como os apresentados aqui, que exercitam apenas
+ uma parte pequena das APIs, podemos observar que aspectos onde as linguagens
+ definem tratamentos especiais ou possuem menor uniformidade transparecem
+ nas APIs para C.
+ Tanto em Python como Ruby, funções que retornam múltiplos valores geram
+ conversões implícitas para tipos agregados (listas e arrays).
+ De forma similar, múltiplos retornos são representados em Perl através
+ de contextos do tipo array.
+ Nos seus respectivos plugins LibScript, estas características tiveram que
+ ser tratadas de forma especial.
+ No plugin Lua, em contraste, o tratamento para um valor único de retorno
+ é igual ao de valores múltiplos, assim como ocorre na linguagem.
+ 
 \layout Chapter
 
 

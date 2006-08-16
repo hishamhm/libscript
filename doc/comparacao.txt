@@ -84,30 +84,30 @@ Chamada de funções
 
 Como obter/referenciar função
 
-Python	+ é um objeto como outro qualquer
-Ruby	- não são de primeira classe, usam IDs
-Java	- não são objetos na API C, usam jmethodIDs
-Lua	+ é um objeto como outro qualquer
-Perl	+ pode ser referenciada pelo nome (possivelmente qualificado) ou pelo objeto
+	Python	+ é um objeto como outro qualquer
+	Ruby	- não são de primeira classe, usam IDs
+	Java	- não são objetos na API C, usam jmethodIDs
+	Lua	+ é um objeto como outro qualquer
+	Perl	+ pode ser referenciada pelo nome (possivelmente qualificado) ou pelo objeto
 
 Como invocar funções, passar argumentos
 
-Python	+ API extensa: diversas opções para passar argumentos
-Ruby	+ funções vararg convenientes
-Ruby	- complicado chamar funções passando blocos
-Java	+ API extensa: diversas opções. tipagem estática simplifica passagem de argumentos
-Lua	- API simples, mas pode ser menos legível
-Perl	- muito complicada, expõe a implementação do interpretador
-Perl	- baseada em pilha como Lua, menos óbvia que vararg
-Perl	- valores de retorno variam de comportamento conforme o contexto Perl
+	Python	+ API extensa: diversas opções para passar argumentos
+	Ruby	+ funções vararg convenientes
+	Ruby	- complicado chamar funções passando blocos
+	Java	+ API extensa: diversas opções. tipagem estática simplifica passagem de argumentos
+	Lua	- API simples, mas pode ser menos legível
+	Perl	- muito complicada, expõe a implementação do interpretador
+	Perl	- baseada em pilha como Lua, menos óbvia que vararg
+	Perl	- valores de retorno variam de comportamento conforme o contexto Perl
 
 Tratamento de erros
 
-Python	+ valor de retorno indica erro, propagam exceções
-Ruby	- capturar erros com rb_protect, precisa de wrapper C para chamar funções Ruby
-Java	+ exceções podem ser capturadas e tratadas, ou propagadas para Java
-Lua	+ forma simples: lua_pcall captura erros
-Perl	+ simples. sinaliza uma variável especial.
+	Python	+ valor de retorno indica erro, propagam exceções
+	Ruby	- capturar erros com rb_protect, precisa de wrapper C para chamar funções Ruby
+	Java	+ exceções podem ser capturadas e tratadas, ou propagadas para Java
+	Lua	+ forma simples: lua_pcall captura erros
+	Perl	+ simples. sinaliza uma variável especial.
 
 Observações (chamada de funções)
 
