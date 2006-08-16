@@ -10076,8 +10076,8 @@ Questões específicas: métodos native
 
 \layout Standard
 
-Métodos Java que não são implementados na própria linguagem devem ser declarados
- através de um protótipo incluindo o modificador 
+Métodos declarados em Java que não são implementados na própria linguagem
+ devem ser declarados através de um protótipo incluindo o modificador 
 \family typewriter 
 native
 \family default 

@@ -14,7 +14,9 @@ Ruby	- pouco consistente. API expõe detalhes de implementação dos tipos
 Java	+ tipagem estática evita muitas conversões
 Java	- threading complica o acesso a strings e arrays
 Lua	- construções simples, mas índices de pilha ficam pouco óbvios no código
-Perl	- 
+Perl	- conceitos complexos da linguagem se refletem na API: um SV é uma variável, não um valor; contextos
+Perl	+ referenciar objetos pelo caminho pacote::objeto é conveniente
+
 
 Criação de tipos
 
@@ -23,6 +25,7 @@ Ruby	+ criar tipos em C é fácil. tanto para tipos contendo dados C, como para ti
 Ruby	- sutilezas da linguagem: exige função que implementa cópia de objetos, código Ruby pode evitar o construtor
 Java	- não é possível criar tipos em Java via C, apenas carregar classes
 Lua	+ criar tipos em Lua é fácil. userdata são construções pensadas especificamente na interação com C
+Perl	+ armazenar dados arbitrários em um SV é simples. 
 
 Armazenar ponteiros de C
 
@@ -30,13 +33,124 @@ Python	+ PyCObject
 Java	- armazenar ponteiros de C em números
 Ruby	- armazenar ponteiros de C em números
 Lua	+ light userdata
+Perl	+ armazenar ponteiros em um SV é simples.
 
-Observações
+Observações (transferência de dados)
 
 Python	- sub-linguagem para declaração de tipos estruturados (ParseTuple, BuildArg) pode ser pouco óbvia
 Java	- fieldIDs usa sub-linguagem para declaração de tipos nada óbvia
 Lua	- controlar tamanho da pilha com lua_checkstack
-
-Problemas
-
+Perl	- pré-processador simplifica a geração de bindings
 Ruby	- IDs nunca são coletados
+
+--------
+
+Tipo de coleta de lixo
+
+Python	- contagem de referências
+Ruby	+ mark and sweep
+Java	+ não especificado
+Lua	+ mark and sweep incremental
+Perl	- contagem de referências
+
+Tipos de referências
+
+Python	- conferir tipo de referência de cada chamada (nova, emprestada, roubada)
+Ruby	+ um só tipo de referência, VALUE. 
+Java	+ locais e globais. locais a não ser que tornadas globais.
+Lua	+ não retorna referências
+Perl	- locais e globais. globais a não ser que tornadas locais
+
+Gerência de referências
+
+Python	- gerência explícita (exceto em casos especiais: refs emprestadas)
+Ruby	+ gerência implícita, basicamente transparente ao programador
+Ruby	- solução pouco portável
+Java	+ implícita para locais, explícita para globais
+Java	- em alguns casos locais precisam de gerência explícita
+Lua	+ totalmente implícita, ref/unref para globais
+Perl	+ implícita para locais, explícita para locais
+
+Observações (coleta de lixo)
+
+Python	- trashcan
+Java	- referências fracas, problemáticas
+Java	- questões de threading da API afetam a coleta de lixo
+Perl	- não detecta ciclos
+
+-------
+
+Chamada de funções
+
+Como obter/referenciar função
+
+Python	+ é um objeto como outro qualquer
+Ruby	- não são de primeira classe, usam IDs
+Java	- não são objetos na API C, usam jmethodIDs
+Lua	+ é um objeto como outro qualquer
+Perl	+ pode ser referenciada pelo nome (possivelmente qualificado) ou pelo objeto
+
+Como invocar funções, passar argumentos
+
+Python	+ API extensa: diversas opções para passar argumentos
+Ruby	+ funções vararg convenientes
+Ruby	- complicado chamar funções passando blocos
+Java	+ API extensa: diversas opções. tipagem estática simplifica passagem de argumentos
+Lua	- API simples, mas pode ser menos legível
+Perl	- muito complicada, expõe a implementação do interpretador
+Perl	- baseada em pilha como Lua, menos óbvia que vararg
+Perl	- valores de retorno variam de comportamento conforme o contexto Perl
+
+Tratamento de erros
+
+Python	+ valor de retorno indica erro, propagam exceções
+Ruby	- capturar erros com rb_protect, precisa de wrapper C para chamar funções Ruby
+Java	+ exceções podem ser capturadas e tratadas, ou propagadas para Java
+Lua	+ forma simples: lua_pcall captura erros
+Perl	+ simples. sinaliza uma variável especial.
+
+Observações (chamada de funções)
+
+Java	- methodIDs usa sub-linguagem para declaração de tipos nada óbvia, diferente de fieldIDs
+Java	- binding dinâmico de métodos via C é diferente do que ocorre em Java
+
+-------
+
+Registro de funções
+
+Assinatura de funções
+
+Python	+ diferentes opções, conveniente
+Ruby	+ flexível em relação a argumentos
+Java	+ gerada via javah. tipagem estática já coloca os tipos certos
+Lua	+ simples, apropriado para o modelo de pilha da API
+Perl	- apenas criadas via XS, força a criação de extensões mesmo quando embutindo Perl
+
+Funções para registro
+
+Python	- arrays PyMethodDef para registro em lote, muito chato registrar uma única função
+Ruby	+ simples
+Java	+ registro é implícito
+Lua	+ simples, como o registro de qualquer outro objeto. Oferece recurso para registro em lote
+Perl	- apenas registradas via XS, força a criação de extensões mesmo quando embutindo Perl
+
+Verificar valores de entrada
+
+Python	+ função de conveniência ParseTuple: verifica e converte valores
+Ruby	+ função de conveniência rb_scan_args, mas não verifica tipos
+Java	+ tipagem estática simplifica significativamente
+Lua	+ funções luaL_check*, convenientes
+Perl	+ implícito via XS (exceto para varargs)
+
+Registrar global
+
+Python	- complicado, exige acessar módulo __main__
+Ruby	- simples
+Java	+ registro é implícito
+Lua	+ simples, como o registro de qualquer outro objeto. 
+Perl	- XS não prevê. necessário criar uma função de módulo e atribui-la numa global.
+
+Observações (chamada de funções)
+
+Python	- diferença entre objetos método e objetos função (que não podem ser criados diretamente via API de C)
+Lua	+ C closures
