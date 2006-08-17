@@ -49,12 +49,11 @@ typedef script_err (*script_fn)(script_env*);
 
 /* libscript.c */
 script_env* script_init(const char* namespace);
+script_err script_done(script_env* env);
+script_err script_new_function(script_env* env, script_fn fn, const char* name);
 script_err script_run(script_env* env, const char* language, const char* code);
 script_err script_run_file(script_env* env, const char* name);
-script_err script_done(script_env* env);
 script_err script_call(script_env* env, const char* fn);
-script_err script_new_function(script_env* env, script_fn fn, const char* name);
-script_fn  script_function(script_env* env, const char* name);
 script_err script_error(script_env* env);
 const char* script_error_message(script_env* env);
 void script_set_error_message(script_env* env, const char* message);
@@ -62,17 +61,17 @@ const char* script_namespace(script_env* env);
 const char* script_fn_name(script_env* env);
 
 /* data.c */
-int script_buffer_len(script_env* env);
-void script_reset_buffer(script_env* env);
-script_type script_get_type(script_env* env, int i);
 char* script_get_string(script_env* env, int i);
 double script_get_double(script_env* env, int i);
 int script_get_int(script_env* env, int i);
 int script_get_bool(script_env* env, int i);
+script_type script_get_type(script_env* env, int i);
+int script_buffer_len(script_env* env);
 void script_put_string(script_env* env, int i, const char* value);
 void script_put_double(script_env* env, int i, double value);
 void script_put_int(script_env* env, int i, int value);
 void script_put_bool(script_env* env, int i, int value);
+void script_reset_buffer(script_env* env);
 #define SCRIPT_CHECK_INPUTS(env) do { script_err err = script_error(env); if (err) return err; } while (0)
 
 #endif

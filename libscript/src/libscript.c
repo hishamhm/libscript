@@ -71,17 +71,6 @@ script_err script_new_function(script_env* env, script_fn fn, const char* name) 
    return SCRIPT_OK;
 }
 
-script_fn script_function(script_env* env, const char* name) {
-   script_fn fn;
-   ht_key key;
-
-   key.str = (char*) name;
-   fn = ht_get(env->functions, key);
-   script_check_ret(!fn, SCRIPT_ERRFNUNDEF, NULL);
-   env->error = SCRIPT_OK;
-   return fn;
-}
-
 script_err script_run(script_env* env, const char* language, const char* code) {
    script_plugin* plugin = script_plugin_load(env, language);
    script_check_err(!plugin);
