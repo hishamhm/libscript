@@ -99,6 +99,26 @@ Estudo sobre APIs de linguagens de script
 \added_space_bottom bigskip 
 Hisham H.
  Muhammad
+\newline 
+
+\newline 
+
+\newline 
+
+\size normal 
+Orientador: Roberto Ierusalimschy
+\newline 
+
+\newline 
+
+\newline 
+
+\newline 
+Pontifícia Universidade Católica do Rio de Janeiro
+\newline 
+Centro Técnico Científico
+\newline 
+Departamento de Informática
 \layout Standard
 \added_space_bottom bigskip \align center 
 Resumo
@@ -143,20 +163,7 @@ Ilustramos as diferenças das APIs destas linguagens e o impacto destas no
  os procedimentos adotados em cada linguagem para chamada de funções, registro
  de funções C e conversão de dados entre os ambientes.
 \layout Standard
-
-
-\begin_inset ERT
-status Open
-
-\layout Standard
-
-\backslash 
-pagebreak
-\end_inset 
-
-
-\layout Standard
-\added_space_bottom bigskip \align center 
+\added_space_bottom bigskip \pagebreak_top \align center 
 
 \lang english
 Abstract
@@ -1477,6 +1484,18 @@ if (PyObject_TypeCheck(s, PyString_Type)) printf("Sim.
 n");
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Para o retorno de dados de Python para C, um conjunto complementar de funções
  é oferecido, mapeando os tipos básicos de Python de volta a tipos de C.
  Alguns exemplos destas funções que recebem um ponteiro para um 
@@ -1556,6 +1575,18 @@ for (int i = 0; i < 5; i++, s+=10)
 
 \size footnotesize 
    snprintf(s, 11, "[%-8d]", random());
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Para alguns de seus tipos básicos que não possuem correspondente direto
@@ -1700,6 +1731,18 @@ PyObject* builtins = PyModule_GetDict(builtins_module);
 PyObject* str = PyDict_GetItemString(builtins, "str");
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Em Python, 
 \family typewriter 
 str
@@ -1746,6 +1789,18 @@ obj
 
 \size footnotesize 
 PyObject* result = PyObject_CallFunctionObjArgs(str, obj, NULL);
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 O armazenamento de dados de C no espaço de objetos de Python pode ser feito
@@ -1815,6 +1870,18 @@ typedef struct {
 } point;
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 A macro 
 \family typewriter 
 PyObject_HEAD
@@ -1859,6 +1926,18 @@ PyObject* point_distance(point* p) {
 }
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 A função é definida com tipo de retorno 
 \family typewriter 
 PyObject
@@ -1890,6 +1969,18 @@ static PyMethodDef point_methods[] = {
 
 \size footnotesize 
 };
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Para que os atributos do tipo sejam visíveis a partir de Python, precisamos
@@ -1936,6 +2027,18 @@ PyObject* point_getattr(PyObject* self, char* name) {
 
 \size footnotesize 
 } 
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Uma vez registrada na descrição do tipo, esta função será responsável por
@@ -2035,6 +2138,18 @@ static PyTypeObject point_type = {
 
 \size footnotesize 
 };
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Novamente, uma macro foi usada no início da definição do tipo para garantir
@@ -2207,6 +2322,18 @@ print 'P.y = ' + str(P.y)
 
 \size footnotesize 
 print 'd   = ' + str(P.distance())
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 A API de Python possui um grande número de funções para manipulação de tipos
@@ -2560,6 +2687,18 @@ n", s);
 }
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Sob a justificativa de aumentar o desempenho no acesso, alguns outros tipos
  de Ruby como 
 \family typewriter 
@@ -2627,6 +2766,18 @@ typedef struct {
 
 \size footnotesize 
 } point;
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Funções de alocação (
@@ -2699,6 +2850,18 @@ VALUE point_alloc(VALUE point_class) {
 }
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Note que 
 \family typewriter 
 Data_Wrap_Struct
@@ -2759,6 +2922,18 @@ VALUE point_class = rb_define_class("Point", rb_cObject);
 rb_define_alloc_func(point_class, point_alloc);
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Como em código Ruby, a declaração de atributos de objetos é feita no método
  
 \family typewriter 
@@ -2802,6 +2977,18 @@ VALUE point_initialize(VALUE self, VALUE x, VALUE y) {
 }
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 O método é registrado na classe em tempo de execução com a função 
 \family typewriter 
 rb_define_method
@@ -2817,6 +3004,18 @@ rb_define_method
 
 \size footnotesize 
 rb_define_method(point_class, "initialize", point_initialize, 2);
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Para que a cópia de objetos através dos métodos Ruby 
@@ -2924,6 +3123,18 @@ parte C
 }
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Completemos o exemplo implementando uma função C implementando o método
  
 \family typewriter 
@@ -2973,6 +3184,18 @@ rb_define_method(point_class, "initialize_copy", point_initialize_copy,
 
 \size footnotesize 
 rb_define_method(point_class, "distance", point_distance, 0);
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 A função 
@@ -3112,6 +3335,18 @@ rb_iv_set(obj, "x", x);
 
 \size footnotesize 
 rb_gv_set("x", INT2NUM(0));
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 
@@ -3927,7 +4162,7 @@ SetFloatArrayRegion
 
 \end_inset 
 
-, apesar dos problemas de portabilidade em que tal abordagem incorre .
+, apesar dos problemas de portabilidade em que tal abordagem incorre.
 \layout Subsection
 
 Lua
@@ -4004,6 +4239,18 @@ lua_setglobal(L, "foo");
 foo
 \emph on 
  */
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 A maioria das funções de consulta, entretanto, permitem especificar um índice
@@ -4208,6 +4455,18 @@ n", p->x, p->y);
 lua_pop(L, 1);
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Assumindo que a global 
 \family typewriter 
 Ponto
@@ -4233,6 +4492,18 @@ lua_pushnil(L);
 
 \size footnotesize 
 lua_setglobal(L, "PontoFull");
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 A área de armazenamento da pilha não se ajusta dinamicamente e as funções
@@ -4352,6 +4623,18 @@ lua_pushinteger(L, 12345);
 
 \size footnotesize 
 lua_settable(L, -3);
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Diversos conceitos de Lua são representados através de tabelas -- ambiente
@@ -4564,6 +4847,18 @@ printf("a = %d
 n", SvIV(get_sv("a", FALSE)));
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 A flag passada como segundo parâmetro de 
 \family typewriter 
 get_sv
@@ -4605,6 +4900,18 @@ binding
 
 \size footnotesize 
 AV* arr = get_av("arr", TRUE);
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Um 
@@ -4703,6 +5010,18 @@ ele será uma variável opaca (seu conteúdo não será acessível via Perl).
 p->x = 100; p->y = 200;
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Valores são atribuídos a 
 \family typewriter 
 SV
@@ -4785,6 +5104,18 @@ SV* ponto = get_sv("ponto", TRUE);
 
 \size footnotesize 
 sv_setsv(ponto, v);
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 O tipo dos dados armazenados em 
@@ -4974,6 +5305,18 @@ for (int i = 2; i < 10; i++) {
 }
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Uma vez criado este 
 \family typewriter 
 AV
@@ -5089,6 +5432,18 @@ n", chave, valor);
 
 \size footnotesize 
 }
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Cuidados especiais devem ser tomados ao utilizar os valores 
@@ -7527,6 +7882,18 @@ PyObject* split = PyObject_GetAttrString(uma_string, "split");
 PyObject* ret = PyObject_CallFunction(split, "s", " ");
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 É interessante notar que quando um método é chamado como função, o argumento
  
 \family typewriter 
@@ -7866,6 +8233,18 @@ VALUE val_result = rb_funcall(Qnil, teste, 2, rb_str_new2("entrada"), INT2NUM(2)
 long result = NUM2LONG(val_result);
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Diferentemente de Python, não é necessário obter uma referência para a função,
  bastando passar o nome desta na forma de 
 \family typewriter 
@@ -8046,6 +8425,18 @@ n")
 end
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 A função espera que um bloco de código seja passado para que seja invocado
  via o comando 
 \family typewriter 
@@ -8073,7 +8464,19 @@ n");
 } 
 \layout Standard
 
-A conversão objetos 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
+A conversão de objetos 
 \family typewriter 
 Proc
 \family default 
@@ -8127,6 +8530,18 @@ VALUE um_proc = rb_proc_new(a_C_block, Qnil);
 
 \size footnotesize 
 VALUE resultado = rb_funcall(Qnil, uma_funcao_ruby, 1, um_proc);
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 As únicas formas de invocar um método Ruby passando um bloco de código são
@@ -8215,6 +8630,18 @@ rb_eval_string("$resultado = uma_funcao_ruby(&$um_proc)");
 VALUE resultado = rb_gv_get("$resultado");
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 A segunda abordagem explora o fato de que a única função da API de C capaz
  de produzir blocos de código diretamente é 
 \family typewriter 
@@ -8299,6 +8726,18 @@ VALUE chama_uma_funcao_ruby() {
 
 \size footnotesize 
 VALUE resultado = rb_iterate(chama_uma_funcao_ruby, Qnil, um_bloco_C, Qnil);
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Note que nenhum argumento é passado em 
@@ -10052,6 +10491,18 @@ PyObject* teste_obj = Py_FindMethod(teste_def, NULL, "teste");
 PyDict_SetItemString(globals, "teste", teste_obj);
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Note que foi passado 
 \family typewriter 
 NULL
@@ -10135,7 +10586,8 @@ rb_define_global_function
 \family default 
  ou 
 \family typewriter 
-rb_define_singleton_method
+rb_define_singleton\SpecialChar \-
+_method
 \family default 
 .
  O número de parâmetros passado indica a assinatura esperada para a função
@@ -11130,6 +11582,17 @@ lua_setglobal
 luaL_register(L, "teste", teste_lua);
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+\end_inset 
+
+
+\layout Standard
+
 Usando a função 
 \family typewriter 
 lua_pushcclosure
@@ -11521,6 +11984,18 @@ print $ret .
  "
 \backslash 
 n";
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Para expor funções de uma aplicação C a um interpretador Perl embutido nela,
@@ -12150,6 +12625,18 @@ script_new_function(env, hello, "hello");
 script_run(env, "lua", "exemplo.hello()");
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 O ambiente virtual é declarado com a função 
 \family typewriter 
 script_init
@@ -12162,7 +12649,8 @@ script_env
 , um ponteiro opaco que representa um ambiente virtual.
  A função C é registrada usando a função 
 \family typewriter 
-script_new_function
+script_new_\SpecialChar \-
+function
 \family default 
 , que recebe como parâmetros o ambiente, a função a ser registrada e o nome
  que a função terá no ambiente virtual.
@@ -12269,6 +12757,18 @@ script_call("teste");
 
 \size footnotesize 
 resultado = script_get_int(env, 0);   /* retorna índice 0 */
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Chamadas de função são disponibilizadas como uma operação primitiva pois
@@ -12399,6 +12899,18 @@ n", entrada, n);
 
 \size footnotesize 
 }
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Em LibScript as strings retornadas por 
@@ -12836,6 +13348,18 @@ lua_settable(L, LUA_REGISTRYINDEX);
 /* registro["LibScript.env"] = env */
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 O plugin cria neste 
 \family typewriter 
 lua_State
@@ -12982,6 +13506,18 @@ PyObject* globals = PyModule_GetDict(PyImport_AddModule("__builtin__"));
 PyDict_SetItemString(globals, namespace, module);
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 O tipo 
 \family typewriter 
 script_plugin_state
@@ -12998,7 +13534,8 @@ PyObject*
  O objeto retornado pela função de inicialização é o dicionário de elementos
  do módulo, obtido com 
 \family typewriter 
-PyModule_GetDict(module)
+PyModule_GetDict\SpecialChar \-
+(module)
 \family default 
 .
  Neste dicionário, armazenamos o ponteiro do ambiente virtual como o atributo
@@ -13142,6 +13679,18 @@ void script_plugin_done_lua(script_plugin_state state) {
 }
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Em Perl, o processo, embora um tanto mais elaborado, é essencialmente similar:
 \layout LyX-Code
 
@@ -13245,6 +13794,17 @@ estado atual
 }
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+\end_inset 
+
+
+\layout Standard
+
 Em Python e Ruby, o plugin precisa manter o controle do número de estados
  ativos para desalocar a máquina virtual somente quando este chegar a zero.
  Além disso, tanto em Ruby como em Python não há recursos nas APIs (ou nas
@@ -13336,6 +13896,18 @@ None
 
 \size footnotesize 
 'hello' 
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Assim, as estruturas de dados referentes aos estados LibScript não são encerrado
@@ -13568,6 +14140,18 @@ static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
 }
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Assumimos em LibScript strings no formato de C: a função 
 \family typewriter 
 script_put_string
@@ -13741,6 +14325,18 @@ static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
 }
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Em LibScript-Python, não foi possível concentrar as operações de transferência
  de dados em apenas duas funções.
  Cada operação teve que ser dividida em duas partes.
@@ -13827,6 +14423,18 @@ static void script_python_put_object(script_env* env, int i, PyObject* o)
 
 \size footnotesize 
 }
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 É importante notar que os tipos Python 
@@ -13942,6 +14550,18 @@ static void script_python_tuple_to_buffer(script_env* env, PyObject* tuple)
 }
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 A operação inversa, de transferência de dados do buffer LibScript para Python,
  também é implementada em duas funções, uma tratando objetos individualmente
  e outra tratando tuplas.
@@ -14026,6 +14646,18 @@ static PyObject* script_python_get_object(script_env* env, int i) {
 }
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 A função 
 \family typewriter 
 script_python_buffer_to_tuple
@@ -14083,10 +14715,23 @@ static PyObject* script_python_buffer_to_tuple(script_env* env) {
 }
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Assim, estes dois pares de funções realizam funções equivalentes às que
  
 \family typewriter 
-script_lua_stack_to_buffer
+script_lua_\SpecialChar \-
+stack_to_buffer
 \family default 
  e 
 \family typewriter 
@@ -14178,6 +14823,18 @@ else
 /* Insira-o como único elemento */
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 No tratador de chamadas a funções externas do plugin, a comunicação no sentido
  inverso emprega uma lógica similar:
 \layout LyX-Code
@@ -14252,6 +14909,18 @@ default:
 
 \size footnotesize 
 }
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Assim como em Python, funções em Ruby retornam múltiplos valores encapsulando-os
@@ -14348,6 +15017,18 @@ static void script_ruby_put_value(script_env* env, int i, VALUE arg) {
 
 \size footnotesize 
 }
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Aqui, alguns problemas da API de Ruby são aparentes.
@@ -14641,6 +15322,18 @@ static VALUE script_ruby_buffer_to_array(script_env* env) {
 }
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 De forma similar ao plugin Python, a implementação da chamada de funções
  Ruby a partir de LibScript usa a função 
 \family typewriter 
@@ -14778,6 +15471,18 @@ void script_perl_stack_to_buffer(pTHX_ int ax, script_env* env,
 
 \size footnotesize 
 }
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Os parâmetros de entrada desta função merecem comentário.
@@ -15011,6 +15716,18 @@ SV** script_perl_buffer_to_stack(pTHX_ SV** sp, script_env* env) {
 
 \size footnotesize 
 }
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
 \layout Standard
 
 Novamente, uma variável criada internamente por Perl teve que ser propagada
@@ -15724,6 +16441,18 @@ if (error) {
 }
 \layout Standard
 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
 Como a função 
 \family typewriter 
 rb_protect
@@ -15938,68 +16667,6 @@ s em Ruby, varrendo a pilha de C, traz grande conveniência para o programador,
  mas reduz a portabilidade da implementação.
 \layout Standard
 
-O equilíbrio entre simplicidade e conveniência é outro tema recorrente ao
- compararmos as APIs.
- A extensa API de Python, contendo 656 funções públicas, contrasta com as
- 113 funções expostas pela API de Lua (79 na API 
-\emph on 
-core
-\emph default 
-, 34 na API auxiliar)
-\begin_inset Foot
-collapsed true
-
-\layout Standard
-
-Como referência, Ruby exporta 530 funções em seu cabeçalho e Perl 1209.
- Como apenas uma pequena fração destas é documentada, torna-se difícil avaliar
- o tamanho real da 
-\begin_inset Quotes eld
-\end_inset 
-
-API pública
-\begin_inset Quotes erd
-\end_inset 
-
- destas linguagens e quantas destas funções são apenas funções para uso
- interno expostas nos seus cabeçalhos.
- A API de Java é exportada como uma estrutura contendo ponteiros para função;
- 228 funções ao todo são exportadas nesta estrutura.
-\end_inset 
-
-.
- Em diversas situações, funções na API de Python abreviam duas, três ou
- até mais chamadas, como no caso de funções poderosas como 
-\family typewriter 
-Py_BuildValue
-\family default 
- e 
-\family typewriter 
-PyObject_CallFunction
-\family default 
-, tornando o código C sucinto e legível.
- A abordagem defendida por Lua é o de uma API minimalista, oferecendo mecanismos
- sobre os quais funcionalidades mais elaboradas possam ser construídas.
- De fato, em 
-\begin_inset LatexCommand \cite{ierusalimschy06pil2}
-
-\end_inset 
-
- é apresentada uma função C equivalente a 
-\family typewriter 
-PyObject_CallFunction
-\family default 
- usando a API de Lua.
-\layout Standard
-
-Outro aspecto que pôde ser observado neste trabalho é que a consistência
- da API depende largamente da consistência da linguagem que ela expõe.
- Construções onde a linguagem tem pouca ortogonalidade, como o tratamento
- de blocos em Ruby ou as diferenças nos tratamentos de valores escalares
- e arrays em Perl, acabam por aumentar a complexidade da API da linguagem
- e demandam tratamento específico por parte do programador no código C.
-\layout Standard
-
 Merece comentário também a disparidade entre as linguagens no que concerne
  à disponibilidade de documentação.
  Java, Python e Lua possuem extensa documentação, tanto para a linguagem
@@ -16026,6 +16693,81 @@ man pages
  Para compreender os diversos protocolos envolvidos no uso prático da API
  de Perl, precisamos recorrer ao código-fonte de aplicações que fazem uso
  dela.
+\layout Standard
+
+O equilíbrio entre simplicidade e conveniência é outro tema recorrente ao
+ compararmos as APIs.
+ A extensa API de Python, contendo 656 funções públicas, contrasta com as
+ 113 funções expostas pela API de Lua (79 na API 
+\emph on 
+core
+\emph default 
+, 34 na API auxiliar).
+ Em diversas situações, funções na API de Python abreviam duas, três ou
+ até mais chamadas, como no caso de funções poderosas como 
+\family typewriter 
+Py_BuildValue
+\family default 
+ e 
+\family typewriter 
+PyObject_CallFunction
+\family default 
+, tornando o código C sucinto e legível.
+ A abordagem defendida por Lua é o de uma API minimalista, oferecendo mecanismos
+ sobre os quais funcionalidades mais elaboradas possam ser construídas.
+ De fato, em 
+\begin_inset LatexCommand \cite{ierusalimschy06pil2}
+
+\end_inset 
+
+ é apresentada uma função C equivalente a 
+\family typewriter 
+PyObject_CallFunction
+\family default 
+ usando a API de Lua.
+\layout Standard
+
+Ruby exporta 530 funções em seu cabeçalho e Perl 1209, mas como apenas uma
+ pequena fração destas é documentada, torna-se difícil avaliar o tamanho
+ da 
+\begin_inset Quotes eld
+\end_inset 
+
+API pública
+\begin_inset Quotes erd
+\end_inset 
+
+ destas linguagens e quantas destas são apenas funções para uso interno
+ expostas nos seus cabeçalhos
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Algumas funções são marcadas como sendo de uso interno, mas a maioria não
+ possui qualquer indicação.
+\end_inset 
+
+.
+ Isto mostra também que a documentação não é relevante apenas enquanto material
+ de apoio para o desenvolvimento, mas também indica o quão bem definida
+ é uma API.
+\layout Standard
+
+A API de Java é bem documentada como a de Python e Lua, mas o número de
+ funções exportadas não é um bom parâmetro para comparações com as demais
+ APIs porque, em função dos tipos estaticamente definidos, muitas funções
+ possuem uma variante para cada tipo primitivo.
+ Java exporta sua API como uma estrutura contendo ponteiros para função;
+ 228 funções ao todo são exportadas nesta estrutura.
+\layout Standard
+
+Outro aspecto que pôde ser observado neste trabalho é que a consistência
+ da API depende largamente da consistência da linguagem que ela expõe.
+ Construções onde a linguagem tem pouca ortogonalidade, como o tratamento
+ de blocos em Ruby ou as diferenças nos tratamentos de valores escalares
+ e arrays em Perl, acabam por aumentar a complexidade da API da linguagem
+ e demandam tratamento específico por parte do programador no código C.
 \layout Standard
 
 Como possibilidades de trabalhos futuros, este trabalho pode ser estendido
@@ -16061,9 +16803,6 @@ a embutindo a biblioteca em aplicações reais.
 \end_inset 
 
 API de LibScript
-\layout Standard
-
-TODO: Revisar e sincronizar API com o código no SVN
 \layout Section
 
 Inicialização e Término
@@ -16075,24 +16814,13 @@ script_env* script_init(const char* namespace)
 \family default 
 
 \newline 
-Inicializa LibScript e retorna um ambiente.
- Um ambiente define um espaço de funções a serem expostas à biblioteca e
- de 
-\begin_inset Quotes eld
-\end_inset 
-
-estados
-\begin_inset Quotes erd
-\end_inset 
-
- de plugins carregados.
- Assim, várias máquinas virtuais podem estar carregadas em um ambiente.
+Inicializa LibScript e retorna um ponteiro para o ambiente virtual.
  O parâmetro 
 \family typewriter 
 namespace
 \family default 
- refere-se ao identificador a ser inicializado no espaço de nomes da máquina
- virtual para armazenar as funções expostas.
+ indica o nome a ser usado nas estruturas a serem criadas no espaço de nomes
+ das máquinas virtuais para representar o ambiente virtual.
 \layout Itemize
 
 
@@ -16101,7 +16829,7 @@ void script_done(script_env* env)
 \family default 
 
 \newline 
-Encerra o ambiente.
+Encerra o ambiente virtual.
 \layout Section
 
 Registro de Funções
@@ -16113,8 +16841,9 @@ typedef script_err (*script_fn)(script_env*)
 \family default 
 
 \newline 
-Tipo de funções a serem registradas no ambiente.
- Tipicamente será uma função 
+Tipo das funções C a serem registradas no ambiente virtual.
+ Ao expor uma API existente para LibScript, a função tipicamente será uma
+ função 
 \emph on 
 wrapper
 \emph default 
@@ -16129,26 +16858,31 @@ script_err script_new_function(script_env* env, script_fn fn, const char*
 \family default 
 
 \newline 
-Registra uma função no ambiente.
+Registra uma função no ambiente virtual.
+\layout Section
+
+Buffer de parâmetros
 \layout Itemize
 
 
 \family typewriter 
-double script_in_double(script_env* env)
+double script_get_double(script_env* env, int index)
 \newline 
-int script_in_int(script_env* env)
+int script_get_int(script_env* env, int index)
 \newline 
-const char* script_in_string(script_env* env)
+int script_get_bool(script_env* env, int index)
+\newline 
+const char* script_get_string(script_env* env, int index)
 \family default 
 
 \newline 
-Obtêm parâmetros do ambiente.
+Obtêm dados do buffer.
  Estas funções devem ser chamadas ao início das funções 
 \emph on 
 wrapper
 \emph default 
 .
- Para cada parâmetro de entrada, uma chamada deve ser realizada, em ordem.
+ Para cada parâmetro de entrada, uma chamada deve ser realizada.
  Ao fim, pode-se invocar a macro 
 \family typewriter 
 SCRIPT_CHECK_INPUTS(env)
@@ -16158,15 +16892,15 @@ SCRIPT_CHECK_INPUTS(env)
  (A API não realiza conversões automáticas entre strings e números).
  Em 
 \family typewriter 
-script_in_string
+script_get_string
 \family default 
-, é retornada uma referência que pertence ao ambiente.
- O código deve realizar uma cópia caso queira modificar a string.
+, a string retornada pertence ao chamador, que passa a ser responsável por
+ desalocá-la.
 \layout Itemize
 
 
 \family typewriter 
-script_type script_in_type(script_env* env)
+script_type script_get_type(script_env* env, int index)
 \newline 
 int script_buffer_len(script_env* env)
 \newline 
@@ -16176,63 +16910,43 @@ Estas funções permitem escrever funções em C que realizam verificação de
  tipo e número de parâmetros em tempo de execução.
  A função 
 \family typewriter 
-script_in_type
+script_get_type
 \family default 
- obtém o tipo do próximo parâmetro a ser obtido com a função 
-\family typewriter 
-script_in_*
-\family default 
- e 
+ obtém o tipo do elemento do buffer solicitado e 
 \family typewriter 
 script_buffer_len
 \family default 
- retorna o número de parâmetros disponíveis para consumo.
+ retorna o número de parâmetros no buffer.
 \layout Itemize
 
 
 \family typewriter 
-void script_out_double(script_env* env, double value)
+void script_put_double(script_env* env, int index, double value)
 \newline 
-void script_out_int(script_env* env, int value)
+void script_put_int(script_env* env, int index, int value)
 \newline 
-void script_out_string(script_env* env, const char* value)
+void script_put_bool(script_env* env, int index, int value)
+\newline 
+void script_put_string(script_env* env, int index, const char* value)
 \newline 
 
 \family default 
-Inserem parâmetros no ambiente.
- Estas funções permitem retornar os valores de saída.
- Ao final de uma função 
-\emph on 
-wrapper
-\emph default 
-, os valores de retorno da função devem ser passados com chamadas a estas
- funções e um código de erro 
+Inserem dados no buffer.
+ Ao final de uma função, os valores de retorno devem ser passados com chamadas
+ a estas funções e um código de erro 
 \family typewriter 
 SCRIPT_OK
 \family default 
  como retorno da função C.
-\layout Standard
+\layout Itemize
 
-As funções 
+
 \family typewriter 
-script_{in,out}_*
+void script_reset_buffer(script_env* env)
 \family default 
- também devem são utilizadas na implementação dos plugins, de maneira inversa:
- antes de chamar o 
-\emph on 
-wrapper
-\emph default 
-, o plugin registra no ambiente os valores de entrada (devidamente convertidos
- para C) usando as funções 
-\family typewriter 
-out
-\family default 
-, e após a chamada, repassa o retorno para a máquina virtual obtendo os
- valores usando as funções 
-\family typewriter 
-in
-\family default 
-.
+
+\newline 
+Esvazia o buffer.
 \layout Section
 
 Executando Código
@@ -16273,14 +16987,14 @@ Requisita a execução de uma função em algum dos plugins cadastrados.
  Os parâmetros de entrada devem ser passados anteriormente com chamadas
  às funções 
 \family typewriter 
-script_out_*
+script_put_*
 \family default 
 ; valores de retorno podem ser obtidos com 
 \family typewriter 
-script_in_*
+script_get_*
 \family default 
 .
- Inicialmente, a tabela de funções C é consultada.
+ Inicialmente, a tabela de funções C do ambiente virtual é consultada.
  Não havendo uma função definida em C, os plugins são consultados na seqüência
  em que foram inicializados implicitamente via 
 \family typewriter 
@@ -16290,8 +17004,9 @@ script_run
 \family typewriter 
 script_run_file
 \family default 
-: funções registradas no namespace definido para a LibScript na máquina
- virtual da linguagem (isto é, no nome criado com 
+: funções registradas na representação do ambiente virtual definido para
+ a LibScript na máquina virtual da linguagem (isto é, no nome criado com
+ 
 \family typewriter 
 script_init
 \family default 
@@ -16307,9 +17022,11 @@ script_call
 script_err script_error(script_env* env)
 \newline 
 const char* script_error_message(script_env* env)
-\family default 
-
 \newline 
+void script_set_error_message(script_env* env, const char* message)
+\newline 
+
+\family default 
 Obtém o código e a mensagem de erro mais recentes do ambiente.
  Após uma chamada a script_error, o código de erro é zerado de volta para
  
@@ -16318,48 +17035,13 @@ SCRIPT_OK
 \family default 
 .
  A mensagem de erro, por sua vez, não é zerada.
-\layout Section
-
-Funções para Implementação de Plugins
-\layout Itemize
-
-
+ A função 
 \family typewriter 
-script_fn script_get_function(script_env* env, const char* name)
+script_set_error_message
 \family default 
-
-\newline 
-Localiza uma função no ambiente.
- Na implementação atual, todos os plugins estão fazendo o registro de funções
- na máquina virtual sob demanda: na inicialização, um objeto é criado com
- o nome do 
-\emph on 
-namespace
-\emph default 
- do ambiente (uma tabela em Lua, um módulo em Python e Ruby) e acessos a
- funções deste objeto são resolvidas chamando esta função.
-\layout Itemize
-
-
-\family typewriter 
-void script_set_error_message(script_env* env, const char* message)
-\family default 
-
-\newline 
-Define um novo valor para a mensagem de erro do ambiente.
+ define um novo valor para a mensagem de erro do ambiente.
  Permite ao plugin propagar à aplicação as mensagens de erro da máquina
  virtual.
-\layout Itemize
-
-
-\family typewriter 
-void script_reset_buffer(script_env* env)
-\family default 
-
-\newline 
-Usada para zerar a lista interna de parâmetros de entrada e saída.
- Deve ser usada na implementação da chamada de funções para garantir que
- parâmetros que não tenham sido consumidos sejam removidos.
 \layout Itemize
 
 
@@ -16386,29 +17068,33 @@ As chamadas aos plugins que implementam interfaces com as várias máquinas
 
 \family typewriter 
 script_plugin_state script_plugin_init_
+\family default 
 \emph on 
-lang
+linguagem
+\family typewriter 
 \emph default 
 (script_env* env)
 \family default 
 
 \newline 
 Responsável por inicializar o plugin.
- Durante a inicialização, o espaço de nomes do ambiente deve ser exposto
- à máquina virtual de alguma forma apropriada para a linguagem (como uma
- tabela em Lua, ou um módulo em Python, ou ainda uma classe em Ruby).
+ Durante a inicialização, o espaço de nomes do ambiente virtual deve ser
+ exposto à máquina virtual de alguma forma apropriada para a linguagem (como
+ uma tabela em Lua, ou um módulo em Python, ou ainda uma classe em Ruby).
  A rotina de inicialização pode retornar um handle que será passado de volta
  a ele nas chamadas subseqüentes.
- Tipicamente, o estado da máquina virtual e o ponteiro para o ambiente LibScript
- devem ser armazenados de modo a ser posteriormente acessíveis a partir
- deste handle.
+ O estado da máquina virtual e o ponteiro para o ambiente LibScript devem
+ ser armazenados de modo a ser posteriormente acessíveis a partir deste
+ handle.
 \layout Itemize
 
 
 \family typewriter 
 script_err script_plugin_run_
+\family default 
 \emph on 
-lang
+linguagem
+\family typewriter 
 \emph default 
 (script_plugin_state st, char* text)
 \family default 
@@ -16447,8 +17133,10 @@ script_set_error_message
 
 \family typewriter 
 script_err script_plugin_call_
+\family default 
 \emph on 
-lang
+linguagem
+\family typewriter 
 \emph default 
 (script_plugin_state st, char* fn)
 \family default 
@@ -16470,11 +17158,11 @@ SCRIPT_ERRFNUNDEF
  Caso contrário, ela deve ser executada, com parâmetros de entrada obtidos
  através de 
 \family typewriter 
-script_in_*
+script_get_*
 \family default 
  e valores de retorno enviados com 
 \family typewriter 
-script_out_*
+script_put_*
 \family default 
 , e os valores 
 \family typewriter 
@@ -16491,8 +17179,10 @@ SCRIPT_ERRLANGRUN
 
 \family typewriter 
 void script_plugin_done_
+\family default 
 \emph on 
-lang
+linguagem
+\family typewriter 
 \emph default 
 (script_plugin_state st)
 \family default 
