@@ -120,7 +120,21 @@ Centro Técnico Científico
 \newline 
 Departamento de Informática
 \layout Standard
-\added_space_bottom bigskip \align center 
+\pagebreak_top 
+\SpecialChar ~
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+thispagestyle{empty}
+\end_inset 
+
+
+\layout Standard
+\added_space_bottom bigskip \pagebreak_top \align center 
 Resumo
 \layout Standard
 
