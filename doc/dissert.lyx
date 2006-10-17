@@ -323,7 +323,7 @@ Em função da popularidade da linguagem C e do suporte oferecido a ela pelos
  Além disso, um modelo de interação entre linguagens que tem se mostrado
  especialmente relevante na atualidade é o que se dá entre linguagens compiladas
  tipadas estaticamente, como C, e linguagens interpretadas tipadas dinamicamente
-, tipicamente chamadadas de linguagens de script, como defendido por Ousterhout\SpecialChar ~
+, tipicamente chamadas de linguagens de script, como defendido por Ousterhout\SpecialChar ~
 
 \begin_inset LatexCommand \cite{ousterhout98scripting}
 
@@ -3767,7 +3767,7 @@ C específico para evitar o
 \family typewriter 
 ID
 \family default 
-s que são simplesmente strings internalizadas, em Java os identificdadores
+s que são simplesmente strings internalizadas, em Java os identificadores
  de campo, do tipo 
 \family typewriter 
 jfieldID
@@ -6006,7 +6006,7 @@ emprestam
 \emph default 
  referências; o código que recebe uma referência deste tipo não precisa
  decrementá-la ao terminar de utilizá-la, mas a validade do objeto está
- atrelado à validade da referência no objeto que a retornou ao código C.
+ atrelada à validade da referência no objeto que a retornou ao código C.
  Por exemplo, 
 \family typewriter 
 PyList_GetItem
@@ -6026,7 +6026,7 @@ propriedade
 \family typewriter 
 Py_INCREF
 \family default 
-: a validade do ponteiro passa a ser independente o objeto 
+: a validade do ponteiro passa a ser independente do objeto 
 \emph on 
 container
 \emph default 
@@ -6612,21 +6612,12 @@ VALUE
 \family typewriter 
 rb_global_variable
 \family default 
-
-\begin_inset Foot
-collapsed true
-
-\layout Standard
-
-Embora a documentação não informe, é possível desmarcar um valor global
+ (Embora a documentação não informe, é possível desmarcar um valor global
  com 
 \family typewriter 
 rb_gc_unregister_address
 \family default 
-.
-\end_inset 
-
-\SpecialChar ~
+)\SpecialChar ~
 
 \begin_inset LatexCommand \cite{thomas04ruby}
 
@@ -16826,7 +16817,7 @@ O fato de que a API de Python dificulta o uso de variáveis e funções globais,
  extensão, uma vez que o uso de variáveis e funções globais é extremamente
  prejudicial nestes casos, já que poluiria o espaço de nomes das aplicações
  Python.
- Já para o caso onde a linguagem é embutida para prover suporte a execução
+ Já para o caso onde a linguagem é embutida para prover suporte à execução
  de scripts em uma aplicação C, a ausência de uma forma conveniente para
  definir funções globais no espaço de nomes dos scripts é questionável.
 \layout Standard
