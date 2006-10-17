@@ -156,26 +156,32 @@ foreign language interface
 \layout Standard
 
 Este trabalho discute as principais questões envolvendo o projeto de APIs
- para integração de ambientes de execução de linguagens em aplicações C.
+ para integração de ambientes de execução de linguagens em aplicações\SpecialChar ~
+C.
  Apresentamos os principais problemas enfrentados na interação entre código
  executando em um ambiente com características inerentemente dinâmicas como
- o de uma linguagem de script com código C.
+ o de uma linguagem de script com código\SpecialChar ~
+C.
  Comparamos aqui as abordagens empregadas por cinco linguagens no tratamento
- da comunicação entre os espaços de dados de C e do ambiente de execução
+ da comunicação entre os espaços de dados de\SpecialChar ~
+C e do ambiente de execução
  embutido e as conseqüências destas abordagens no gerenciamento de memória,
- bem como no compartilhamento de código entre a aplicação C e o da linguagem
+ bem como no compartilhamento de código entre a aplicação\SpecialChar ~
+C e o da linguagem
  de script.
  
 \layout Standard
 
 Ilustramos as diferenças das APIs destas linguagens e o impacto destas no
- código resultante de uma aplicação C através de um estudo de caso.
+ código resultante de uma aplicação\SpecialChar ~
+C através de um estudo de caso.
  Diferentes linguagens de script são embutidas como plugins de uma mesma
  biblioteca, que por sua vez expõe a aplicações clientes uma API genérica
  de scripting.
  Assim, o código de cada plugin permite observar de forma clara e isolada
  os procedimentos adotados em cada linguagem para chamada de funções, registro
- de funções C e conversão de dados entre os ambientes.
+ de funções\SpecialChar ~
+C e conversão de dados entre os ambientes.
 \layout Standard
 \added_space_bottom bigskip \pagebreak_top \align center 
 
@@ -198,25 +204,30 @@ Applications written in two programming languages, in order to optimize
 
 \lang english
 This work discusses the main issues involving the design of APIs for the
- integration of language environments within C applications.
+ integration of language environments within C\SpecialChar ~
+applications.
  We present the main problems faced in the interaction between code executed
  in an environment with inherently dynamic characteristics such as a scripting
- language and C code.
+ language and C\SpecialChar ~
+code.
  We compare the approaches employed by five languages when handling communicatio
 n between the data spaces of C and the embedded runtime environment and
  the consequences of these approaches in memory management, as well as sharing
- of code between the C application and that from the scripting language.
+ of code between the C\SpecialChar ~
+application and that from the scripting language.
 \layout Standard
 
 
 \lang english
 We illustrate the differences of the APIs of those languages and their impact
- in the resulting code of a C application through a case study.
+ in the resulting code of a C\SpecialChar ~
+application through a case study.
  Different scripting languages were embedded as plugins for a library, which
  on its turn exposes to client applications a generic scripting API.
  This way, the code of each plugin allows us to observe in a clear and isolated
  way the procedures adopted by each language for function calls, registration
- of C functions and conversion of data between the environments.
+ of C\SpecialChar ~
+functions and conversion of data between the environments.
 \layout Standard
 
 
@@ -281,7 +292,8 @@ Independentemente da finalidade, a comunicação entre programas escritos
 foreign language interface
 \emph default 
 , FLI) que permita ao programador receber e enviar tanto chamadas como dados
- para outra linguagem 
+ para outra linguagem\SpecialChar ~
+
 \begin_inset LatexCommand \cite{finne98haskellfli}
 
 \end_inset 
@@ -311,8 +323,8 @@ Em função da popularidade da linguagem C e do suporte oferecido a ela pelos
  Além disso, um modelo de interação entre linguagens que tem se mostrado
  especialmente relevante na atualidade é o que se dá entre linguagens compiladas
  tipadas estaticamente, como C, e linguagens interpretadas tipadas dinamicamente
-, tipicamente chamadadas de linguagens de script, como defendido por Ousterhout
- em 
+, tipicamente chamadadas de linguagens de script, como defendido por Ousterhout\SpecialChar ~
+
 \begin_inset LatexCommand \cite{ousterhout98scripting}
 
 \end_inset 
@@ -356,28 +368,32 @@ Este trabalho discute as principais questões envolvendo o projeto de APIs
 
 Este estudo consiste de duas partes.
  Na primeira, realizamos a análise em profundidade de um conjunto de APIs
- para C providas por quatro linguagens de script -- especificamente, Python
- 
+ para C providas por quatro linguagens de script -- especificamente, Python\SpecialChar ~
+
 \begin_inset LatexCommand \cite{vanrossum06ref}
 
 \end_inset 
 
-, Perl 
+, Perl\SpecialChar ~
+
 \begin_inset LatexCommand \cite{wall00perl}
 
 \end_inset 
 
-, Ruby 
+, Ruby\SpecialChar ~
+
 \begin_inset LatexCommand \cite{thomas04ruby}
 
 \end_inset 
 
-, Lua 
+, Lua\SpecialChar ~
+
 \begin_inset LatexCommand \cite{ierusalimschy06pil2}
 
 \end_inset 
 
- -- além da provida pela linguagem Java 
+ -- além da provida pela linguagem Java\SpecialChar ~
+
 \begin_inset LatexCommand \cite{gosling00java}
 
 \end_inset 
@@ -406,7 +422,8 @@ Estrutura do texto
 \layout Standard
 
 O trabalho está organizado da seguinte forma.
- No Capítulo 
+ No Capítulo\SpecialChar ~
+
 \begin_inset LatexCommand \ref{cha:Interação-entre-linguagens}
 
 \end_inset 
@@ -419,7 +436,8 @@ O trabalho está organizado da seguinte forma.
  Discutiremos os problemas comumente envolvidos na comunicação com código
  C e os modelos de programação que surgiram com a popularização da sua integraçã
 o com linguagens de script.
- No Capítulo 
+ No Capítulo\SpecialChar ~
+
 \begin_inset LatexCommand \ref{cha:APIs-de-Máquinas}
 
 \end_inset 
@@ -429,7 +447,8 @@ o com linguagens de script.
  Ao discutir estas interfaces, as diferentes soluções empregadas para os
  principais problemas envolvendo interação entre C e ambientes dinâmicos
  são levantadas.
- O Capítulo 
+ O Capítulo\SpecialChar ~
+
 \begin_inset LatexCommand \ref{cha:Estudo-de-caso:}
 
 \end_inset 
@@ -439,7 +458,8 @@ o com linguagens de script.
  linguagens de script.
  Ao examinar a implementação de cada plugin, podemos comparar as APIs de
  cada linguagem realizando operações equivalentes.
- Finalmente, no Capítulo 
+ Finalmente, no Capítulo\SpecialChar ~
+
 \begin_inset LatexCommand \ref{cha:Considerações-Finais}
 
 \end_inset 
@@ -477,19 +497,22 @@ Permitir o uso de duas linguagens diferentes em um programa traduzindo o
  de origem, simulá-las pode ser custoso.
 \layout Standard
 
-Um exemplo típico é a complexidade adicionada pela simulação de funções
- de alta ordem e recursão final ao traduzir-se o código de linguagens funcionais
- para outra que não possui estes recursos.
- Em 
+Um exemplo típico de problema enfrentado em ferramentas de tradução de código
+ é a complexidade adicionada pela simulação de funções de alta ordem e recursão
+ final ao traduzir-se o código de linguagens funcionais para outra que não
+ possui estes recursos.
+ Tarditi et al.\SpecialChar ~
+
 \begin_inset LatexCommand \cite{tarditi92mlc}
 
 \end_inset 
 
- é descrito o desenvolvimento de um tradutor de Standard ML para ANSI C.
+ descrevem o desenvolvimento de um tradutor de Standard ML para ANSI C.
  Medições evidenciaram o custo de adaptação destes recursos de ML para C,
  resultando em código em média 2 vezes mais lento que o gerado pelo compilador
  ML nativo.
- Em 
+ Em\SpecialChar ~
+
 \begin_inset LatexCommand \cite{tolmach98mlada}
 
 \end_inset 
@@ -510,13 +533,16 @@ aplainadas
 
 Além de problemas como este, diferenças na representação dos dados ainda
  é algo a ser tratado no processo de tradução de uma linguagem para outra.
- No caso particular de C, as facilidades de baixo nível para manipulação
+ No caso particular de\SpecialChar ~
+C, as facilidades de baixo nível para manipulação
  de memória permitem a descrição de estruturas de dados de linguagens de
  mais alto nível sem maiores problemas.
- Isto faz de C uma candidata freqüente para uso como representação de baixo
+ Isto faz de\SpecialChar ~
+C uma candidata freqüente para uso como representação de baixo
  nível portável.
  O compilador de Haskell GHC oferece, como alternativa à geração de código
- nativo, geração de código C para uso com o GCC 
+ nativo, geração de código C para uso com o GCC\SpecialChar ~
+
 \begin_inset LatexCommand \cite{jones93glasgow}
 
 \end_inset 
@@ -533,7 +559,8 @@ bootstrapping
 \emph on 
 lingua franca
 \emph default 
- entre diferentes linguagens, como será visto na Seção 
+ entre diferentes linguagens, como será visto na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Linguagens-intermediárias}
 
 \end_inset 
@@ -544,24 +571,27 @@ lingua franca
 Compartilhamento de máquinas virtuais
 \layout Standard
 
-Outra abordagem envolve o uso de um ambiente de execução comum, como uma
- máquina virtual.
+Outra abordagem para a interação entre linguagens envolve o uso de um ambiente
+ de execução comum, como uma máquina virtual.
  O código das diferentes linguagens é compilado de modo a produzir representaçõe
 s compatíveis entre si, de acordo com os tipos de dados oferecidos pelo
  ambiente de execução.
- Diversas implementações utilizam a Java Virtual Machine 
+ Diversas implementações utilizam a Java Virtual Machine\SpecialChar ~
+
 \begin_inset LatexCommand \cite{lindholm99jvm}
 
 \end_inset 
 
  com essa finalidade.
- Jython 
+ Jython\SpecialChar ~
+
 \begin_inset LatexCommand \cite{hugunin97python}
 
 \end_inset 
 
  é uma implementação da linguagem Python que produz bytecodes Java.
- SMLj 
+ SMLj\SpecialChar ~
+
 \begin_inset LatexCommand \cite{benton99interlanguage}
 
 \end_inset 
@@ -583,7 +613,8 @@ arrays
  com semântica diferente menos eficientes.
 \layout Standard
 
-O .NET Framework 
+O .NET Framework\SpecialChar ~
+
 \begin_inset LatexCommand \cite{box02net}
 
 \end_inset 
@@ -591,7 +622,8 @@ O .NET Framework
  é um ambiente de execução baseado em máquina virtual que vem sendo indicado
  pela Microsoft como plataforma de programação preferencial em sistemas
  Windows.
- Apesar de com ele ter sido introduzida a linguagem C# 
+ Apesar de com ele ter sido introduzida a linguagem C#\SpecialChar ~
+
 \begin_inset LatexCommand \cite{csharp06spec}
 
 \end_inset 
@@ -604,14 +636,16 @@ O .NET Framework
  .NET: A versão .NET de Visual Basic inclui alterações na linguagem de modo
  a tornar a sua semântica mais similar à de C#; um novo dialeto de C++,
  C++/CLI, foi introduzido adaptando o modelo de gerenciamento de memória
- ao do CLR 
+ ao do CLR\SpecialChar ~
+
 \begin_inset LatexCommand \cite{cppcli05spec}
 
 \end_inset 
 
 ; de forma similar, foi desenvolvido um novo dialeto de ML chamado F#, para,
  entre outros motivos, proporcionar melhor integração com componentes .NET
- desenvolvidos em outras linguagens 
+ desenvolvidos em outras linguagens\SpecialChar ~
+
 \begin_inset LatexCommand \cite{syme06fsharp}
 
 \end_inset 
@@ -620,7 +654,8 @@ O .NET Framework
 \layout Standard
 
 Outra implementação de uma máquina virtual para múltiplas linguagens vem
- sendo feita pelo projeto Parrot 
+ sendo feita pelo projeto Parrot\SpecialChar ~
+
 \begin_inset LatexCommand \cite{randal04perl6}
 
 \end_inset 
@@ -651,7 +686,8 @@ mangling
  Tal compatibilidade dificilmente ocorre a não ser que uma das linguagens
  explicitamente considere este tipo de interação na sua definição: o padrão
  de Ada, por exemplo, requer que as suas implementações sejam compatíveis
- com as convenções de C, COBOL e Fortran 
+ com as convenções de C, COBOL e Fortran\SpecialChar ~
+
 \begin_inset LatexCommand \cite{ada95manual}
 
 \end_inset 
@@ -686,7 +722,8 @@ interface description language
 \emph on 
 Common Object Request Broker Architecture
 \emph default 
-) 
+)\SpecialChar ~
+
 \begin_inset LatexCommand \cite{omg02corba}
 
 \end_inset 
@@ -755,12 +792,14 @@ bindings
 
 Outras abordagens de mais alto nível têm sido propostas para a integração
  de aplicações desenvolvidas em múltiplas linguagens.
- Linguagens de coordenação como Linda 
+ Linguagens de coordenação como Linda\SpecialChar ~
+
 \begin_inset LatexCommand \cite{gelernter85linda}
 
 \end_inset 
 
- e Opus 
+ e Opus\SpecialChar ~
+
 \begin_inset LatexCommand \cite{chapman97opus}
 
 \end_inset 
@@ -779,12 +818,14 @@ C como linguagem intermediária
 
 O desejo de uma linguagem intermediária universal é antigo no mundo da computaçã
 o.
- Diversas propostas surgiram ao longo dos anos, desde o projeto UNCOL 
+ Diversas propostas surgiram ao longo dos anos, desde o projeto UNCOL\SpecialChar ~
+
 \begin_inset LatexCommand \cite{conway58uncol}
 
 \end_inset 
 
- às linguagens de sintaxe extensível da década de 70 
+ às linguagens de sintaxe extensível da década de 70\SpecialChar ~
+
 \begin_inset LatexCommand \cite{metzner79extensible}
 
 \end_inset 
@@ -826,13 +867,15 @@ ponte
 .
  A integração entre Python e Fortran se dá através de um módulo Python escrito
  em C que acessa uma biblioteca Fortran, que por sua vez expõe funções com
- convenção de chamada compatível com C 
+ convenção de chamada compatível com C\SpecialChar ~
+
 \begin_inset LatexCommand \cite{peterson01fortranpy}
 
 \end_inset 
 
 .
- LunaticPython 
+ LunaticPython\SpecialChar ~
+
 \begin_inset LatexCommand \cite{niemeyer06lunaticpython}
 
 \end_inset 
@@ -844,7 +887,18 @@ ponte
 
 Todavia, linguagens intermediárias genéricas continuam a ser propostas como
  alternativas a C.
- C-- 
+ C-
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+hspace{1pt}
+\end_inset 
+
+-\SpecialChar ~
+
 \begin_inset LatexCommand \cite{jones99cminusminus}
 
 \end_inset 
@@ -862,7 +916,8 @@ back-ends
 \emph on 
 front-ends
 \emph default 
- 
+\SpecialChar ~
+
 \begin_inset LatexCommand \cite{dvorak05gcc}
 
 \end_inset 
@@ -884,7 +939,8 @@ A linguagem C tem, na atualidade, um papel especial no mundo das linguagens
 s e máquinas virtuais (as principais implementações de Perl, Python, Ruby,
  e Lua são apenas alguns exemplos), é também usada em compiladores como
  formato de saída na geração de código portável (dois exemplos notáveis
- são os compiladores GHC e SmartEiffel 
+ são os compiladores GHC e SmartEiffel\SpecialChar ~
+
 \begin_inset LatexCommand \cite{collin97smalleiffel}
 
 \end_inset 
@@ -907,8 +963,14 @@ a.
  Para linguagens estáticas, normalmente é necessário criar uma biblioteca
  específica que realize a conversão das chamadas, como ocorre em interfaces
  que expõem bibliotecas C++ para C.
- Um exemplo disto é QtC, uma biblioteca de bindings C para o toolkit gráfico
- Qt, que é implementado em C++.
+ Um exemplo disto é QtC\SpecialChar ~
+
+\begin_inset LatexCommand \cite{kdebindings}
+
+\end_inset 
+
+, uma biblioteca de bindings C para o toolkit gráfico Qt, que é implementado
+ em C++.
 \layout Standard
 
 Para linguagens não imperativas, há ainda o problema de código C potencialmente
@@ -975,7 +1037,8 @@ multithreading
 \emph on 
 Java Native Interface
 \emph default 
-) 
+)\SpecialChar ~
+
 \begin_inset LatexCommand \cite{liang99jni}
 
 \end_inset 
@@ -997,7 +1060,8 @@ nto.
 yield
 \emph default 
  caso haja uma função C na sua pilha, uma vez que não há uma forma portável
- de alternar entre múltiplas pilhas em C 
+ de alternar entre múltiplas pilhas em C\SpecialChar ~
+
 \begin_inset LatexCommand \cite{moura04colua}
 
 \end_inset 
@@ -1035,7 +1099,8 @@ ar a intenção de uma construção como
 int**
 \family default 
 .
- SWIG 
+ SWIG\SpecialChar ~
+
 \begin_inset LatexCommand \cite{beazley96swig}
 
 \end_inset 
@@ -1049,14 +1114,16 @@ stubs
  para poupar o programador de escrever código C repetitivo ou não portável.
  Java possui um gerador de cabeçalhos C contendo os protótipos dos métodos
  nativos a serem implementados.
- Pyrex 
+ Pyrex\SpecialChar ~
+
 \begin_inset LatexCommand \cite{ewing06pyrex}
 
 \end_inset 
 
  é um gerador de módulos C para Python a partir de uma sintaxe baseada na
  própria linguagem Python.
- Outro exemplo é toLua++ 
+ Outro exemplo é toLua++\SpecialChar ~
+
 \begin_inset LatexCommand \cite{manzur06tolua}
 
 \end_inset 
@@ -1073,7 +1140,8 @@ Um modelo de interação entre linguagens que tem se mostrado especialmente
  relevante na atualidade é o que se dá entre linguagens compiladas tipadas
  estaticamente, como C e C++, e linguagens interpretadas tipadas dinamicamente,
  como Perl e Python.
- Em 
+ Em\SpecialChar ~
+
 \begin_inset LatexCommand \cite{ousterhout98scripting}
 
 \end_inset 
@@ -1121,7 +1189,8 @@ A integração de programas desenvolvidos em linguagens de programação de
  onde construções como pipes (que conectam a saída de um processo à entrada
  de outro) permitem realizar tarefas combinando uma série de programas implement
 ados em outras linguagens, ou mesmo outros scripts.
- Com o surgimento de Tcl 
+ Com o surgimento de Tcl\SpecialChar ~
+
 \begin_inset LatexCommand \cite{ousterhout94tcl}
 
 \end_inset 
@@ -1303,8 +1372,6 @@ Para tipos como strings, o tamanho dos valores traz ainda preocupações com
  que a usada em C, então uma opção é simplesmente passar ao código C um
  ponteiro para o endereço onde a string está armazenada, o que evita a cópia
  de dados, sob risco de permitir ao programa C modificar o conteúdo da string.
- Isto é uma possível fonte de erros, especialmente em linguagens como Lua,
- onde strings são internalizadas.
  Expor ao código C ponteiros para endereços de memória dentro do ambiente
  de execução da outra linguagem pode trazer ainda problemas de concorrência,
  caso o ambiente em questão utilize múltiplas 
@@ -1336,7 +1403,8 @@ A alternativa para permitir que código C opere sobre dados estruturados,
  necessário ao programador gerenciar explicitamente a sincronia entre os
  ponteiros e o ciclo de vida dos objetos, que podem estar sujeitos a coleta
  de lixo.
- A Seção 
+ A Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sec:Coleta-de-lixo}
 
 \end_inset 
@@ -1357,7 +1425,8 @@ Todos os valores na máquina virtual de Python são representados como objetos,
 \family typewriter 
 PyObject
 \family default 
- 
+\SpecialChar ~
+
 \begin_inset LatexCommand \cite{vanrossum06extpy}
 
 \end_inset 
@@ -1469,19 +1538,34 @@ PyObject
 \family default 
 .
  Strings passadas são copiadas por Python.
- O exemplo a seguir ilustra a criação de objetos Python através da conversão
- de objetos C e a verificação de tipo:
+ O exemplo a seguir ilustra a criação um objeto Python através da conversão
+ de um valor C:
 \layout LyX-Code
 
 
 \size footnotesize 
 PyObject* s = PyString_FromString("hello");
-\layout LyX-Code
+\layout Standard
 
 
-\size footnotesize 
-\emph on 
-/* As duas linhas abaixo são equivalentes: */
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(parágrafo)
+\end_inset 
+
+
+\layout Standard
+
+Os dois exemplos abaixo, equivalentes, ilustram a verificação de tipo através
+ da API, primeiro através de uma função de conveniência, e depois explicitamente
+, comparando o tipo da string Python com 
+\family typewriter 
+PyString_Type
+\family default 
+:
 \layout LyX-Code
 
 
@@ -1542,7 +1626,8 @@ tamanho
 \emph default 
 )
 \family default 
- 
+\SpecialChar ~
+
 \begin_inset LatexCommand \cite{vanrossum06api}
 
 \end_inset 
@@ -1819,7 +1904,7 @@ collapsed true
 
 O armazenamento de dados de C no espaço de objetos de Python pode ser feito
  de duas formas.
- Uma maneira consiste em criar um objeto do tipo 
+ Uma maneira é criar um objeto do tipo 
 \family typewriter 
 CObject
 \family default 
@@ -1836,7 +1921,8 @@ CObject
 CObject
 \family default 
 s têm como objetivo principal permitir a passagem de dados em C de um módulo
- de extensão para outro 
+ de extensão para outro\SpecialChar ~
+
 \begin_inset LatexCommand \cite{vanrossum06api}
 
 \end_inset 
@@ -1844,9 +1930,9 @@ s têm como objetivo principal permitir a passagem de dados em C de um módulo
 .
 \layout Standard
 
-A outra forma consiste em declarar novos tipos Python através de estruturas
- em C.
- Em C, um tipo Python é descrito em duas partes: um tipo 
+A outra forma é declarar novos tipos Python através de estruturas em C.
+ Em\SpecialChar ~
+C, um tipo Python é descrito em duas partes: um tipo 
 \emph on 
 struct,
 \emph default 
@@ -1861,7 +1947,8 @@ PyTypeObject
 \family typewriter 
 point
 \family default 
-, que será o tipo C das instâncias dos objetos:
+, que será o tipo\SpecialChar ~
+C das instâncias dos objetos:
 \layout LyX-Code
 
 
@@ -2070,7 +2157,8 @@ collapsed false
 
 \layout Standard
 
-O registro de funções Python será discutido em detalhe na Seção 
+O registro de funções Python será discutido em detalhe na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Python-Registro}
 
 \end_inset 
@@ -2167,7 +2255,7 @@ collapsed true
 \layout Standard
 
 Novamente, uma macro foi usada no início da definição do tipo para garantir
- equivalência entrutural.
+ equivalência estrutural.
  
 \family typewriter 
 PyTypeObject
@@ -2248,7 +2336,8 @@ point_type
 \family typewriter 
 PyType_GenericNew
 \family default 
-, por razões de portabilidade 
+, por razões de portabilidade\SpecialChar ~
+
 \begin_inset LatexCommand \cite{vanrossum06extpy}
 
 \end_inset 
@@ -2360,12 +2449,14 @@ Tuplas
  e C, pois são usadas em diversos contextos: na passagem de parâmetros em
  chamadas a funções Python a partir de C, no recebimento dos parâmetros
  de entrada em funções C e também na passagem e recebimento de múltiplos
- valores de retorno, como será visto nas Seções 
+ valores de retorno, como será visto nas Seções\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Python-Chamada}
 
 \end_inset 
 
- e 
+ e\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Python-Registro}
 
 \end_inset 
@@ -2421,15 +2512,17 @@ int*
 \family typewriter 
 "iiO!|(dd)"
 \family default 
- indica que a função espera dois endereços de inteiros (
+ indica que a função espera dois endereços de inteiros\SpecialChar ~
+(
 \family typewriter 
 "ii"
 \family default 
 ), seguido do endereço de um ponteiro 
 \family typewriter 
-PyObject
+PyObject\SpecialChar ~
+
 \family default 
- (
+(
 \family typewriter 
 "O"
 \family default 
@@ -2437,11 +2530,13 @@ PyObject
 \family typewriter 
 PyTypeObject
 \family default 
- a ser usado na verificação do tipo do objeto recebido (
+ a ser usado na verificação do tipo do objeto recebido\SpecialChar ~
+(
 \family typewriter 
 "!"
 \family default 
-) e opcionalmente (
+) e opcionalmente\SpecialChar ~
+(
 \family typewriter 
 "|"
 \family default 
@@ -2449,7 +2544,8 @@ PyTypeObject
 \family typewriter 
 double
 \family default 
- passados via Python através de uma outra tupla (
+ passados via Python através de uma outra tupla\SpecialChar ~
+(
 \family typewriter 
 "(dd)"
 \family default 
@@ -2759,7 +2855,8 @@ Data_Wrap_Struct
 Point
 \family default 
 , similar ao tipo definido em Python na seção anterior.
- Inicialmente definiremos um tipo C:
+ Inicialmente definiremos um tipo\SpecialChar ~
+C:
 \layout LyX-Code
 
 
@@ -3007,7 +3104,8 @@ O método é registrado na classe em tempo de execução com a função
 \family typewriter 
 rb_define_method
 \family default 
- (o registro de funções C em Ruby será discutido em detalhe na Seção 
+ (o registro de funções C em Ruby será discutido em detalhe na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Ruby-Registro}
 
 \end_inset 
@@ -3544,7 +3642,8 @@ GetStringUTFRegion
 GetStringCritical
 \family default 
  permite obter o ponteiro para o buffer interno da JVM, mas isto envolve
- cuidados especiais em relação à coleta de lixo, discutidos na Seção 
+ cuidados especiais em relação à coleta de lixo, discutidos na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Coleta-Java}
 
 \end_inset 
@@ -3661,8 +3760,9 @@ GetIntField
 GetStaticIntField
 \family default 
 .
- Assim como Ruby, a API de Java define um tipo C específico para evitar
- o uso freqüente de strings C na descrição de campos.
+ Assim como Ruby, a API de Java define um tipo\SpecialChar ~
+C específico para evitar o
+ uso freqüente de strings C na descrição de campos.
  Todavia, enquanto Ruby utiliza 
 \family typewriter 
 ID
@@ -3756,7 +3856,8 @@ JNIEnv
 , que por sua vez é propagada nas chamadas.
  O objetivo destes dois níveis de indireção é desacoplar a ligação das chamadas
  no código C e a biblioteca que implementa a JNI, permitindo ligar o código
- em tempo de execução a diferentes implementações da JVM 
+ em tempo de execução a diferentes implementações da JVM\SpecialChar ~
+
 \begin_inset LatexCommand \cite{stepanian05inliningjava}
 
 \end_inset 
@@ -4010,7 +4111,8 @@ Código C implementando um método Java
 \layout Standard
 
 O acesso a atributos Java em código C é ilustrado através do seguinte exemplo.
- Inicialmente, na Figura 
+ Inicialmente, na Figura\SpecialChar ~
+
 \begin_inset LatexCommand \ref{cap:Classe-Java}
 
 \end_inset 
@@ -4046,8 +4148,8 @@ A implementação de
 \family typewriter 
 segundoElemento
 \family default 
- é mostrada na Fig.
- 
+ é mostrada na Fig.\SpecialChar ~
+
 \begin_inset LatexCommand \ref{cap:Acesso-JNI}
 
 \end_inset 
@@ -4171,7 +4273,8 @@ SetFloatArrayRegion
  Para os demais tipos, não há uma provisão específica para o armazenamento
  de dados de C no espaço de objetos de Java.
  Nestes casos, a documentação sugere o armazenamento de ponteiros em tipos
- numéricos 
+ numéricos\SpecialChar ~
+
 \begin_inset LatexCommand \cite{liang99jni}
 
 \end_inset 
@@ -4281,9 +4384,11 @@ lua_tonumber
 lua_tolstring
 \family default 
 , que recebem um índice da pilha, convertem o valor no índice para o tipo
- Lua especificado se necessário, e retornam o valor convertido para o tipo
- C equivalente.
- Números têm o tipo C 
+ Lua especificado se necessário, e retornam o valor convertido para o tipo\SpecialChar ~
+C
+ equivalente.
+ Números têm o tipo\SpecialChar ~
+C 
 \family typewriter 
 lua_Number
 \family default 
@@ -4305,7 +4410,8 @@ char*
 \family default 
 .
  Para tornar mais eficiente a construção em etapas de strings Lua a partir
- de C, a biblioteca auxiliar define um tipo C 
+ de C, a biblioteca auxiliar define um tipo\SpecialChar ~
+C 
 \family typewriter 
 luaL_Buffer
 \family default 
@@ -4364,7 +4470,8 @@ lua_pushlightuserdata
 \family typewriter 
 point
 \family default 
- definida na página 
+ definida na página\SpecialChar ~
+
 \begin_inset LatexCommand \pageref{struct-point}
 
 \end_inset 
@@ -4829,7 +4936,8 @@ get_hv
 "pacote::variavel"
 \family default 
 ).
- O conteúdo de valores escalares é convertido de volta para um tipo C com
+ O conteúdo de valores escalares é convertido de volta para um tipo\SpecialChar ~
+C com
  as macros 
 \family typewriter 
 Sv
@@ -5347,7 +5455,7 @@ get_av
 newAV
 \family default 
 .
- A utilidede de 
+ A utilidade de 
 \family typewriter 
 AV
 \family default 
@@ -5515,7 +5623,8 @@ AV
 \family typewriter 
 HV
 \family default 
- 
+\SpecialChar ~
+
 \begin_inset LatexCommand \cite{okamoto06perlguts}
 
 \end_inset 
@@ -5544,7 +5653,8 @@ AV
 HV
 \family default 
  como parâmetro (as duas funções diferem entre si no que tange à contagem
- de referências, que será abordada na Seção 
+ de referências, que será abordada na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Perl-GC}
 
 \end_inset 
@@ -5597,7 +5707,8 @@ s; isto é análogo ao conceito de
 contextos
 \emph default 
  de Perl, onde um mesmo valor pode ser tratado como lista (array ou hash)
- ou escalar dependendo da expressão onde ele é inserido 
+ ou escalar dependendo da expressão onde ele é inserido\SpecialChar ~
+
 \begin_inset LatexCommand \cite{marquess06perlcall}
 
 \end_inset 
@@ -5609,7 +5720,8 @@ o com
 wantarray
 \family default 
 .
- Em C, o contexto pode ser verificado com a macro 
+ Em\SpecialChar ~
+C, o contexto pode ser verificado com a macro 
 \family typewriter 
 GIMME_V
 \family default 
@@ -5653,7 +5765,6 @@ o de dados mais simples e ortogonal dentre as estudadas.
  É comum ver código C usando a API de Lua comentado linha a linha, para
  evitar que o programador tenha que simular mentalmente o funcionamento
  da pilha ao ler o programa.
- 
 \layout Standard
 
 Em Java, a tipagem estática reduz muito a necessidade de conversões de dados
@@ -5678,7 +5789,8 @@ VALUE
  Tais macros, entretanto, assumem a aderência a protocolos tão estritos
  de uso que na prática também limitam largamente as possiblidades de alterações
  na implementação (um exemplo é a seqüência para chamada de funções, que
- será apresentada na Seção 
+ será apresentada na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Perl-call}
 
 \end_inset 
@@ -5731,7 +5843,8 @@ sizeof(void*) != sizeof(long)
 \layout Standard
 
 Outro aspecto que merece nota é a preocupação em não poluir o espaço de
- nomes de C.
+ nomes de\SpecialChar ~
+C.
  Python, Java e Lua definem todas as suas funções e tipos C com prefixos
  que visam evitar conflitos com nomes definidos pela aplicação.
  Já Perl e Ruby definem nomes de forma desorganizada, o que ocasionalmente
@@ -5803,12 +5916,15 @@ ores, o programador deve levar em consideração as diferenças entre os modelos
  ele.
  Todavia, o mesmo não vale para o ambiente C: a presença de um ponteiro
  apontando para um objeto não garante que ele não será coletado, uma vez
- que o coletor de lixo não gerencia os ponteiros do código C.
+ que o coletor de lixo não gerencia os ponteiros do código\SpecialChar ~
+C.
 \layout Standard
 
-É preciso, então, indicar a partir do código C que os dados que continuam
+É preciso, então, indicar a partir do código\SpecialChar ~
+C que os dados que continuam
  acessíveis por ele não devem ser coletados.
- De forma complementar, ao transferir o controle de objetos C para o domínio
+ De forma complementar, ao transferir o controle de objetos\SpecialChar ~
+C para o domínio
  da outra linguagem -- por exemplo, para armazená-los em uma estrutura de
  dados desta -- é necessário indicar à linguagem como desalocar a memória
  da estrutura quando o coletor de lixo detectar que ela não está mais em
@@ -6074,12 +6190,14 @@ PyObject
 \layout Standard
 
 A interação com o contador de referências pode ser bastante sutil.
- O exemplo da Figura 
+ O exemplo da Figura\SpecialChar ~
+
 \begin_inset LatexCommand \ref{cap:python-gc}
 
 \end_inset 
 
-, extraído da documentação de Python 
+, extraído da documentação de Python\SpecialChar ~
+
 \begin_inset LatexCommand \cite{vanrossum06extpy}
 
 \end_inset 
@@ -6272,9 +6390,9 @@ O modelo de coleta de lixo utilizando contagem de referências traz consigo
  referências entre si mantém a contagem de cada um dos seus elementos acima
  de zero, mesmo que eles não sejam alcançáveis a partir de nenhum outro
  objeto.
- Python inclui um detector de ciclos, mas provisões especiais devem ser
- tomadas para que tipos implementados em C se comportem corretamente caso
- possam gerar ciclos.
+ Python inclui um detector de ciclos, mas cuidados especiais devem ser tomadas
+ para que tipos implementados em C se comportem corretamente caso possam
+ gerar ciclos.
  Deve-se implementar uma função para percorrer referências contidas no objeto
  e uma função que decremente a contagem destas referências.
  Estas funções devem ser registradas nos campos 
@@ -6463,7 +6581,8 @@ Ruby utiliza um coletor de lixo
 \emph on 
 mark-and-sweep
 \emph default 
- 
+\SpecialChar ~
+
 \begin_inset LatexCommand \cite{wilson92gc}
 
 \end_inset 
@@ -6476,7 +6595,7 @@ mark-and-sweep
 
 Objetos alcançáveis a partir do espaço de objetos de Ruby -- atribuídos
  a uma variável global Ruby ou inseridos em alguma estrutura de dados alcançável
- em Ruby -- não estarão, a princípio, sujeitos à coleta de lixo.
+ em Ruby -- não estarão sujeitos à coleta de lixo.
  Além destes, temos ainda os objetos retornados por Ruby para o espaço de
  C, já que muitas funções de API retornam 
 \family typewriter 
@@ -6495,7 +6614,7 @@ rb_global_variable
 \family default 
 
 \begin_inset Foot
-collapsed false
+collapsed true
 
 \layout Standard
 
@@ -6507,7 +6626,8 @@ rb_gc_unregister_address
 .
 \end_inset 
 
- 
+\SpecialChar ~
+
 \begin_inset LatexCommand \cite{thomas04ruby}
 
 \end_inset 
@@ -6577,7 +6697,8 @@ VALUE
  que tenham sido otimizadas pelo compilador deixem de ser verificadas.
 \layout Standard
 
-Conforme visto na Seção 
+Conforme visto na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Ruby-dados}
 
 \end_inset 
@@ -6804,7 +6925,8 @@ GlobalRef
  uma função, por exemplo, em variáveis globais ou estáticas.
 \layout Standard
 
-A Figura 
+A Figura\SpecialChar ~
+
 \begin_inset LatexCommand \ref{cap:JNI-global-ref}
 
 \end_inset 
@@ -6879,7 +7001,8 @@ PopLocalFrame
  permite, através de um parâmetro adicional, transferir uma referência local
  do conjunto que está sendo desempilhado para o escopo exterior de referências
  locais, criando assim uma nova referência.
- Para o exemplo da Figura 
+ Para o exemplo da Figura\SpecialChar ~
+
 \begin_inset LatexCommand \ref{cap:JNI-global-ref}
 
 \end_inset 
@@ -7089,11 +7212,13 @@ IsSameObject
 multi-threaded
 \emph default 
 , o coletor de lixo pode invalidar a referência entre o teste e a instrução
- seguinte no código C.
+ seguinte no código\SpecialChar ~
+C.
  A documentação revisada avisa sobre esta limitação e recomenda o uso de
  referências globais, além de alertar sobre comportamentos indefinidos nas
  relações entre referências globais fracas em C e os tipos de referências
- fracas definidos em Java 
+ fracas definidos em Java\SpecialChar ~
+
 \begin_inset LatexCommand \cite{jni1503spec}
 
 \end_inset 
@@ -7107,9 +7232,9 @@ multi-threaded
 \emph default 
  de Java com a exposição de referências a objetos da máquina virtual ao
  código C.
- Para reduzir a quantidade de cópia de dados entre Java e C, a JNI oferece
- algumas funções que retornam e liberam ponteiros para a representação interna
- de strings e arrays de tipos pri\SpecialChar \-
+ Para reduzir o volume de cópia de dados entre Java e C, a JNI oferece algumas
+ funções que retornam e liberam ponteiros para a representação interna de
+ strings e arrays de tipos pri\SpecialChar \-
 mi\SpecialChar \-
 ti\SpecialChar \-
 vos: 
@@ -7131,7 +7256,8 @@ ReleasePrimitiveArrayCritical
 .
  O uso destas funções, porém, possui importantes restrições.
  A API especifica que, uma vez obtido um ponteiro através destas funções,
- o código C não deve chamar outras funções da JNI ou realizar chamadas que
+ o código\SpecialChar ~
+C não deve chamar outras funções da JNI ou realizar chamadas que
  possam bloquear a thread atual e fazer com que ela espere por outra thread
  Java, sob o risco de causar um 
 \emph on 
@@ -7168,7 +7294,8 @@ System.gc()
 , que solicita à máquina virtual que dispare tão logo quanto possível a
  thread de coleta para que esta desaloque objetos não alcançáveis.
  Não há uma função C equivalente na JNI, mas este método pode ser invocado
- a partir de C com 
+ a partir de\SpecialChar ~
+C com 
 \family typewriter 
 CallStaticVoidMethod
 \family default 
@@ -7196,15 +7323,6 @@ Embora ponteiros para objetos não sejam manipulados na API, algumas funções
  retornam ponteiros para estruturas gerenciadas por Lua: 
 \family typewriter 
 lua_newuserdata
-\family default 
-, 
-\family typewriter 
-lua_\SpecialChar \-
-push
-\family default 
-*
-\family typewriter 
-string
 \family default 
 , 
 \family typewriter 
@@ -7252,7 +7370,8 @@ registro
 \emph default 
 .
  O registro é uma tabela disponibilizada pela API de Lua para o armazenamento
- de valores Lua a partir de C; esta tabela não é acessível a partir de Lua.
+ de valores Lua a partir de C; esta tabela não é normalmente acessível a
+ partir de Lua.
  Como a tabela que implementa o registro é parte do 
 \emph on 
 root set
@@ -7519,7 +7638,8 @@ sv_2mortal
 \family typewriter 
 FREETMPS
 \family default 
- ao término da função, conforme será visto na Seção 
+ ao término da função, conforme será visto na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Perl-call}
 
 \end_inset 
@@ -7542,7 +7662,7 @@ SV
 
 A API de Perl não possui facilidades de interface com o coletor de lixo,
  mas possui algumas funções para auxílio em depuração que reportam informações
- sobre o status da coleta de lixo.
+ sobre o estado da coleta de lixo.
  A função 
 \family typewriter 
 sv_report_used
@@ -7623,7 +7743,7 @@ suggests that the Java Virtual Machine expend effort toward recycling unused
 
 .
  De fato, as várias implementações da JVM utilizam algoritmos diferentes
- de coleta de lixo.
+ para coleta de lixo.
 \layout Standard
 
 Na manipulação de dados através da API, Lua e Ruby são as linguagens que
@@ -7647,7 +7767,8 @@ variáveis mortais
 
  em Perl).
  Referências locais têm gerência implícita (salvo alguns casos, como discutido
- na Seção 
+ na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Coleta-Java}
 
 \end_inset 
@@ -7696,13 +7817,15 @@ espaços
 \begin_inset Quotes erd
 \end_inset 
 
-, conforme visto na Seção 
+, conforme visto na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sec:Dados}
 
 \end_inset 
 
  e as implicações que isto traz sobre o tempo de vida dos objetos, abordadas
- na Seção 
+ na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sec:Coleta-de-lixo}
 
 \end_inset 
@@ -7756,7 +7879,8 @@ Para chamar uma função Python a partir de C, deve-se inicialmente obter
 \family typewriter 
 PyObject
 \family default 
- correspondente à função, como visto na Seção 
+ correspondente à função, como visto na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Dados-Python}
 
 \end_inset 
@@ -7816,7 +7940,8 @@ PyObject_CallFunction
 \family typewriter 
 Py_BuildValue
 \family default 
- (vista na Seção 
+ (vista na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Dados-Python}
 
 \end_inset 
@@ -7942,7 +8067,8 @@ PyObject
 .
  Assim como ocorre em código Python, quando funções Python retornam múltiplos
  valores, estes são encapsulados em uma tupla.
- Para funções que não retornam valor, as funções C devem retornar 
+ Para funções que não retornam valor, as funções\SpecialChar ~
+C devem retornar 
 \family typewriter 
 Py_None
 \family default 
@@ -8298,7 +8424,8 @@ Controle das refs.
 
 \layout Standard
 
-Conforme discutido na Seção 
+Conforme discutido na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Ruby-GC}
 
 \end_inset 
@@ -8400,9 +8527,11 @@ Proc
 \layout Standard
 
 O status especial dos blocos de código complica a sua manipulação a partir
- de código C, e em particular a invocação de métodos que os esperam como
+ de código\SpecialChar ~
+C, e em particular a invocação de métodos que os esperam como
  parâmetro.
- Digamos que queremos invocar o seguinte método Ruby a partir de C:
+ Digamos que queremos invocar o seguinte método Ruby a partir de\SpecialChar ~
+C:
 \layout LyX-Code
 
 
@@ -8697,7 +8826,8 @@ rb_funcall
 \family typewriter 
 rb_funcall
 \family default 
- que recebe uma função C como bloco de código.
+ que recebe uma função\SpecialChar ~
+C como bloco de código.
 \layout LyX-Code
 
 
@@ -8896,7 +9026,8 @@ jclass
 \family default 
 ) e duas strings, uma com o nome do método e outra com a assinatura do método.
  A sintaxe que descreve assinaturas de métodos é similar à de descritores
- de campos discutida na Seção 
+ de campos discutida na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Dados-Java}
 
 \end_inset 
@@ -9254,7 +9385,8 @@ J
 \family typewriter 
 JNIEnv
 \family default 
-, será discutido na Seção 
+, será discutido na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Java-Registro}
 
 \end_inset 
@@ -9335,7 +9467,8 @@ Lua
 
 Tanto em funções C disparadas por Lua como em chamadas de funções Lua realizadas
  a partir de código C, os parâmetros de entrada e os valores de retorno
- são passados através da pilha virtual apresentada na Seção 
+ são passados através da pilha virtual apresentada na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Lua-dados}
 
 \end_inset 
@@ -9468,8 +9601,9 @@ rb_protect
 \family typewriter 
 lua_pcall
 \family default 
-, sendo às vezes necessário encapsular a chamada de funções Ruby em funções
- C que obedeçam à assinatura esperada por 
+, sendo às vezes necessário encapsular a chamada de funções Ruby em funções\SpecialChar ~
+C
+ que obedeçam à assinatura esperada por 
 \family typewriter 
 rb_protect
 \family default 
@@ -9535,7 +9669,8 @@ L
 \family typewriter 
 lua_State
 \family default 
-, que será explicado mais adiante na Seção 
+, que será explicado mais adiante na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Lua-Registro}
 
 \end_inset 
@@ -9619,8 +9754,12 @@ teste
 lua_call
 \family default 
 , indicando dois parâmetros de entrada e um de saída.
- O valor de retorno, no topo da pilha (índice -1) é convertido para C com
- 
+ O valor de retorno, no topo da pilha (índice\SpecialChar ~
+
+\begin_inset Formula $-1$
+\end_inset 
+
+) é convertido para C com 
 \family typewriter 
 lua_tointeger
 \family default 
@@ -10077,7 +10216,8 @@ do uma variável especial; em Java, isto é feito chamando uma função da API.
 \emph on 
 wrapper
 \emph default 
- nestes casos, o que será ilustrado na Seção 
+ nestes casos, o que será ilustrado na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Captura-de-erros}
 
 \end_inset 
@@ -10091,7 +10231,7 @@ Registro de funções C
 Para permitir a invocação de funções C a partir de código da linguagem de
  script, a API deve fornecer uma forma de registrar estas funções no ambiente
  de execução.
- Em linguagens de tipagem estática como Java, para que seja possível chamar
+ Em linguagens de tipagem estática, como Java, para que seja possível chamar
  funções externas usando uma sintaxe igual à de funções nativas, o conjunto
  de funções externas deve ser declarado 
 \emph on 
@@ -10272,7 +10412,8 @@ PyErr_SetObject
 Py_None
 \family default 
 , lembrando das questões de contagem de referência de valores retornados
- discutidas na Seção 
+ discutidas na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Python-GC}
 
 \end_inset 
@@ -10310,7 +10451,8 @@ chamável
 \end_inset 
 
  e o objeto ou classe a que ele deve se referir.
- Como visto na Seção 
+ Como visto na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Python-Chamada}
 
 \end_inset 
@@ -10604,8 +10746,8 @@ rb_define_singleton\SpecialChar \-
 _method
 \family default 
 .
- O número de parâmetros passado indica a assinatura esperada para a função
- C.
+ O número de parâmetros passado indica a assinatura esperada para a função\SpecialChar ~
+C.
  Ruby suporta explicitamente funções C com até 15 argumentos; como alternativa,
  os valores especiais -1 e -2 indicam, respectivamente, que a função C irá
  receber os parâmetros na forma de um array C de 
@@ -10623,13 +10765,15 @@ De forma similar à função
 \family typewriter 
 PyArg_ParseTuple
 \family default 
- discutida na Seção 
+ discutida na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Dados-Python}
 
 \end_inset 
 
 , Ruby possui uma função projetada para simplificar o processamento dos
- valores de entrada em funções C: 
+ valores de entrada em funções\SpecialChar ~
+C: 
 \family typewriter 
 rb_scan_args
 \family default 
@@ -10966,7 +11110,8 @@ jobject
 jclass
 \family default 
  para métodos estáticos) e os demais parâmetros da função Java em suas represent
-ações C, discutidas na Seção 
+ações C, discutidas na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Dados-Java}
 
 \end_inset 
@@ -10983,10 +11128,12 @@ javah
 , já declaram os tipos corretos.
 \layout Standard
 
-O tipo de retorno corresponde ao tipo C equivalente ao tipo de retorno do
+O tipo de retorno corresponde ao tipo\SpecialChar ~
+C equivalente ao tipo de retorno do
  método Java.
  O valor retornado pode ser uma referência local ou global.
- Além de tratar ou propagar erros como discutido na Seção 
+ Além de tratar ou propagar erros como discutido na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Java-Chamada}
 
 \end_inset 
@@ -11227,7 +11374,8 @@ static
  função.
  Os demais parâmetros correspondem aos parâmetros do método Java, e são
  dados nos tipos equivalentes da JNI.
- Conforme discutido na Seção 
+ Conforme discutido na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Dados-Java}
 
 \end_inset 
@@ -11506,7 +11654,7 @@ n", entrada, n);
 }
 \layout Standard
 
-A função tem assinatura compatível com 
+A função tem assinatura idêntica à definição de 
 \family typewriter 
 lua_CFunction
 \family default 
@@ -11587,13 +11735,17 @@ lua_pushcclosure
 \family typewriter 
 lua_setglobal
 \family default 
-, mas a biblioteca auxiliar possui uma macro que encapsula estas duas chamadas.
+, mas o arquivo de cabeçalho 
+\family typewriter 
+lua.h
+\family default 
+ possui uma macro que encapsula estas duas chamadas.
  Assim, a função pode ser registrada simplesmente com:
 \layout LyX-Code
 
 
 \size footnotesize 
-luaL_register(L, "teste", teste_lua);
+lua_register(L, "teste", teste_lua);
 \layout Standard
 
 
@@ -11675,7 +11827,8 @@ Questões específicas
 
 \layout Standard
 
-Como discutido na Seção 
+Como discutido na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Perl-Dados}
 
 \end_inset 
@@ -11683,12 +11836,14 @@ Como discutido na Seção
 , a interface entre Perl e C foi projetada tendo em mente que a ligação
  entre as funções C e o interpretador Perl é feita através de código gerado
  a partir de uma descrição feita em uma linguagem de mais alto nível, XS.
- Código XS consiste de declarações de assinaturas de função com uma sintaxe
+ Código\SpecialChar ~
+XS consiste de declarações de assinaturas de função com uma sintaxe
  especial, indicando regras para conversão dos parâmetros de entrada e saída,
  e código C descrevendo a implementação das funções.
  XS é projetada para o desenvolvimento de extensões Perl incluindo funções
  implementadas em C: o resultado final da compilação do código gerado pelas
- ferramentas XS (
+ ferramentas\SpecialChar ~
+XS (
 \family typewriter 
 h2xs
 \family default 
@@ -11720,8 +11875,8 @@ Existe uma API pública para manipulação de dados Perl no código C, mas esta
  consiste basicamente das estruturas internas da implementação do interpretador
  expostas para uso pelo pré-processador XS, acrescida de macros para maior
  conveniência do programador.
- De fato, Perl não expõe uma API documentada para o registro de funções
- 
+ De fato, Perl não expõe uma API documentada para o registro de funções\SpecialChar ~
+
 \begin_inset LatexCommand \cite{okamoto06perlapi}
 
 \end_inset 
@@ -11888,7 +12043,8 @@ xsubpp
  O código C para a conversão dos parâmetros de entrada e saída é gerado
  automaticamente.
  Em alguns casos, entretanto, precisamos manipular os valores da pilha de
- Perl explicitamente, como descrito na Seção 
+ Perl explicitamente, como descrito na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Perl-Dados}
 
 \end_inset 
@@ -12035,8 +12191,8 @@ xsinit
 xsinit
 \family default 
  é a melhor abordagem, já que a inicialização depende de rotinas não documentada
-s (o exemplo de função de inicialização incluído na documentação de Perl
- 
+s (o exemplo de função de inicialização incluído na documentação de Perl\SpecialChar ~
+
 \begin_inset LatexCommand \cite{maceachern06perlembed}
 
 \end_inset 
@@ -12048,7 +12204,8 @@ Comparação
 \layout Standard
 
 Python e Ruby oferecem ao programador diferentes opções de assinaturas de
- função C reconhecidas pela API, o que é prático, uma vez que pode-se escolher
+ função\SpecialChar ~
+C reconhecidas pela API, o que é prático, uma vez que pode-se escolher
  assim diferentes representações em C para os parâmetros de entrada (agregados
  em um array, recebidos um a um, etc.) conforme o seu uso na função.
  Lua oferece apenas uma assinatura de função possível para funções C a serem
@@ -12179,15 +12336,16 @@ libscript
 \emph on 
 plugins
 \emph default 
- para diferentes linguagens (Figura 
+ para diferentes linguagens (Figura\SpecialChar ~
+
 \begin_inset LatexCommand \ref{cap:Visão-geral}
 
 \end_inset 
 
 ).
  A biblioteca principal é ligada a uma aplicação, e expõe a ela uma API
- de scripting independente de linguagem, que permite executar strings de
- código e invocar funções.
+ de scripting independente de linguagem, que permite executar arquivos,
+ strings de código e invocar funções.
  Esta biblioteca é uma fina camada que encaminha estas operações para os
  plugins, que são bibliotecas dinâmicas auxiliares, carregadas em tempo
  de execução pela biblioteca principal.
@@ -12319,7 +12477,8 @@ ambiente virtual
 ndo-os com um nome.
  Um ambiente virtual ganha em cada plugin uma estrutura de dados específica
  da linguagem (classe, módulo, etc.) que o representará.
- No exemplo da Figura 
+ No exemplo da Figura\SpecialChar ~
+
 \begin_inset LatexCommand \ref{cap:Ambientes-virtuais}
 
 \end_inset 
@@ -12368,7 +12527,8 @@ X#r_fun
 Quando um script declara uma função no ambiente virtual, esta função passa
  a ser acessível através da API de LibScript.
  Por exemplo, no plugin Lua, o ambiente virtual é representado por uma tabela
- com o nome do ambiente; uma vez que um método Ruby 
+ com o nome do ambiente; uma vez que um método Ruby\SpecialChar ~
+
 \family typewriter 
 r
 \family default 
@@ -12413,7 +12573,8 @@ X.r_fun
 Na implementação dos plugins, utilizamos recursos oferecidos pelas linguagens
  para tratar acessos a elementos inexistentes nas estruturas, capturando
  estes acessos e repassando-os para a biblioteca principal.
- Estes recursos serão discutidos na Seção 
+ Estes recursos serão discutidos na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Resolução-de-funções}
 
 \end_inset 
@@ -12463,7 +12624,8 @@ Outra abordagem é, ao invés de expor a API da linguagem à aplicação, expor
  A aplicação interage com a máquina virtual enviando strings de código a
  ser executado e obtém resultados de volta quando o script passa parâmetros
  ao chamar funções da aplicação.
- Esta abordagem é proposta em 
+ Esta abordagem é proposta em\SpecialChar ~
+
 \begin_inset LatexCommand \cite{thomas02ltn004}
 
 \end_inset 
@@ -12476,7 +12638,8 @@ very high level layer
 \begin_inset Quotes erd
 \end_inset 
 
- 
+\SpecialChar ~
+
 \begin_inset LatexCommand \cite{vanrossum06extpy,vanrossum06ref}
 
 \end_inset 
@@ -12499,7 +12662,8 @@ rb_eval_string
 \family typewriter 
 perl_eval_sv
 \family default 
- em Perl 
+ em Perl\SpecialChar ~
+
 \begin_inset LatexCommand \cite{maceachern06perlembed}
 
 \end_inset 
@@ -12575,7 +12739,8 @@ handles
  de alto nível para os objetos.
 \layout Standard
 
-A Figura 
+A Figura\SpecialChar ~
+
 \begin_inset LatexCommand \ref{fig:API-para-execução}
 
 \end_inset 
@@ -12697,12 +12862,14 @@ Por este motivo, procuramos usar uma API para transferência de dados genérica,
  a ser usada tanto na entrada como na saída de dados, tanto na comunicação
  entre a aplicação e a biblioteca principal como entre a biblioteca principal
  e os plugins.
- Optamos por uma abordagem similar às empregadas em Lua (Seção 
+ Optamos por uma abordagem similar às empregadas em Lua (Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Lua-chamada}
 
 \end_inset 
 
-) e Perl (Seção 
+) e Perl (Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Perl-call}
 
 \end_inset 
@@ -12792,7 +12959,11 @@ Chamadas de função são disponibilizadas como uma operação primitiva pois
  O primeiro é que assim programas C embutindo LibScript podem acessar a
  funcionalidade de scripts carregados sem precisar incluir no seu código
  strings de texto em alguma linguagem específica, por exemplo, inserindo
- em seu código uma chamada a uma função de callback a ser definida via script.
+ em seu código uma chamada a uma função de 
+\emph on 
+callback
+\emph default 
+ a ser definida via script.
  Note que no exemplo acima, não é especificada a linguagem em que a função
  
 \family typewriter 
@@ -13016,7 +13187,8 @@ script_plugin_state
  Tipicamente, o estado da máquina virtual e o ponteiro para o ambiente LibScript
  devem ser armazenados de modo a ser posteriormente acessíveis a partir
  deste handle.
- Na Seção 
+ Na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Representação-de-estados}
 
 \end_inset 
@@ -13156,7 +13328,8 @@ script_done
  Dependendo da representação interna usada no plugin, a finalização de um
  estado pode ou não implicar na finalização da máquina virtual.
  Preferencialmente, esta função deve remover a estrutura que descreve o
- ambiente virtual, mas como veremos na seção 
+ ambiente virtual, mas, como veremos na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Encerramento-de-estados}
 
 \end_inset 
@@ -13176,28 +13349,33 @@ Nesta seção discutiremos os principais aspectos envolvidos na implementação
  dos plugins desenvolvidos neste estudo de caso.
  Implementamos plugins para as linguagens Python, Ruby, Lua e Perl.
  Apresentaremos aqui como é feita a representação dos estados virtuais em
- cada plugin (Seção 
+ cada plugin (Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Representação-de-estados}
 
 \end_inset 
 
-), questões envolvendo o encerramento de estados (Seção 
+), questões envolvendo o encerramento de estados (Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Encerramento-de-estados}
 
 \end_inset 
 
-), passagem de parâmetros entre a biblioteca principal e os plugins (
+), passagem de parâmetros entre a biblioteca principal e os plugins (Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Passagem-de-parâmetros}
 
 \end_inset 
 
 ), como a chamada de funções a partir de scripts é tratada pelos plugins
- (
+ (Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Resolução-de-funções}
 
 \end_inset 
 
-) e a captura de erros (Seção 
+) e a captura de erros (Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Captura-de-erros}
 
 \end_inset 
@@ -13264,7 +13442,8 @@ This is a hard-to-fix bug that will be addressed in a future release.
 \begin_inset Quotes erd
 \end_inset 
 
- 
+\SpecialChar ~
+
 \begin_inset LatexCommand \cite{vanrossum99api,vanrossum06api}
 
 \end_inset 
@@ -13318,7 +13497,8 @@ Em LibScript-Lua, estados são implementados como
 \family typewriter 
 lua_State
 \family default 
-s (Seção 
+s (Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Lua-Registro}
 
 \end_inset 
@@ -13409,7 +13589,8 @@ PerlInterpreter
 *.
 \layout Standard
 
-Como discutido na seção 
+Como discutido na seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Perl-registro}
 
 \end_inset 
@@ -14200,7 +14381,8 @@ Os valores de tipos desconhecidos são substituídos pelo valor zero, o que
  mantém a posição dos demais valores na lista de argumentos.
  Optamos por não sinalizar erro nesta situação para evitar aqui a geração
  de exceções, o que complicaria a exposição.
- A captura e propagação de erros serão vistas na Seção 
+ A captura e propagação de erros serão vistas na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Captura-de-erros}
 
 \end_inset 
@@ -15570,9 +15752,10 @@ pTHX_
  Tivemos então que propagar esta variável (que é citada na documentação,
  mas apenas como 
 \emph on 
-"the 'ax' variable"
+"the 'ax' variable"\SpecialChar ~
+
 \emph default 
- 
+
 \begin_inset LatexCommand \cite{okamoto06perlapi}
 
 \end_inset 
@@ -15631,7 +15814,8 @@ offset
 offset
 \family default 
  é zero pois, como visto no protocolo de chamada de funções Perl discutido
- na Seção 
+ na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Perl-call}
 
 \end_inset 
@@ -15773,7 +15957,8 @@ sp
 SV
 \family default 
 s, o registro destes como variáveis mortais e o seu empilhamento ocorre
- da forma usual, já apresentada na Seção 
+ da forma usual, já apresentada na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Perl-call}
 
 \end_inset 
@@ -15960,7 +16145,8 @@ o, podemos avaliar alguns recursos de meta-programação oferecidos por cada
  linguagem e a sua disponibilidade através das suas APIs.
 \layout Standard
 
-Como vimos na Seção 
+Como vimos na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Representação-de-estados}
 
 \end_inset 
@@ -15973,11 +16159,12 @@ Como vimos na Seção
 script_plugin_init_lua
 \family default 
 .
- O índice 
+ O campo 
 \family typewriter 
 __index
 \family default 
- da metatabela aponta para uma função C interna ao plugin, 
+ da metatabela aponta para uma função\SpecialChar ~
+C interna ao plugin, 
 \family typewriter 
 script_lua_
 \family default 
@@ -15996,7 +16183,9 @@ script_lua_make_caller
 \emph on 
 closure
 \emph default 
- C, que consiste de outra função C interna ao plugin (
+\SpecialChar ~
+C, que consiste de outra função\SpecialChar ~
+C interna ao plugin (
 \family typewriter 
 script_lua_caller
 \family default 
@@ -16015,7 +16204,11 @@ script_call
 \layout Standard
 
 No plugin Python, ao chamar uma função no módulo do ambiente virtual, o
- callback 
+ 
+\emph on 
+callback
+\emph default 
+ 
 \family typewriter 
 __getattro
 \family default 
@@ -16037,7 +16230,11 @@ __getattro
  Este tipo de dado é declarado no plugin como uma classe Python, cujas instância
 s contêm um ponteiro para o ambiente virtual e uma string C com o nome da
  função que eles representam.
- Estes objetos possuem o seu callback 
+ Estes objetos possuem o seu 
+\emph on 
+callback
+\emph default 
+ 
 \family typewriter 
 __call
 \family default 
@@ -16343,7 +16540,8 @@ rb_funcall
 \family typewriter 
 rb_protect
 \family default 
-, não recebe como parâmetro um método Ruby, mas sim uma função C.
+, não recebe como parâmetro um método Ruby, mas sim uma função\SpecialChar ~
+C.
  Para chamar métodos Ruby de forma protegida, precisamos escrever uma função
  C que encapsula a chamada:
 \layout LyX-Code
@@ -16548,7 +16746,8 @@ Na implementação do plugin de Perl fica evidente que a sua API não foi projetada
  a partir de código escrito em arquivos XS, ou mesmo por código gerado pelo
  pré-processador XS.
  Isto é confirmado pela necessidade de passar parâmetros adicionais não-document
-ados para que as macros funcionem, como pôde ser observado na Seção 
+ados para que as macros funcionem, como pôde ser observado na Seção\SpecialChar ~
+
 \begin_inset LatexCommand \ref{sub:Passagem-de-parâmetros}
 
 \end_inset 
@@ -16629,12 +16828,12 @@ O fato de que a API de Python dificulta o uso de variáveis e funções globais,
  Python.
  Já para o caso onde a linguagem é embutida para prover suporte a execução
  de scripts em uma aplicação C, a ausência de uma forma conveniente para
- de definir funções globais no espaço de nomes dos scripts é algo questionável.
+ definir funções globais no espaço de nomes dos scripts é questionável.
 \layout Standard
 
 A abordagem empregada por Perl, usando um pré-processador com o objetivo
  de gerar automaticamente o código para a conversão de dados na passagem
- de parâmetros e valores de retorno, se mostrou inadequado para o cenário
+ de parâmetros e valores de retorno, se mostrou inadequada para o cenário
  envolvendo interpretadores embutidos.
  Embora o uso do pré-processador simplifique os casos simples de declaração
  de funções C, a falta de uma API bem definida para tratar a transferência
@@ -16687,7 +16886,8 @@ Merece comentário também a disparidade entre as linguagens no que concerne
  como para as suas APIs para C.
  Para estas linguagens, pudemos basear largamente nosso estudo e a implementação
  dos exemplos para o estudo de caso na documentação fornecida.
- A documentação de Ruby relativa à sua API de C é mais escassa; em 
+ A documentação de Ruby relativa à sua API de C é mais escassa; em\SpecialChar ~
+
 \begin_inset LatexCommand \cite{thomas04ruby}
 
 \end_inset 
@@ -16727,9 +16927,10 @@ Py_BuildValue
 PyObject_CallFunction
 \family default 
 , tornando o código C sucinto e legível.
- A abordagem defendida por Lua é o de uma API minimalista, oferecendo mecanismos
+ A abordagem defendida por Lua é a de uma API minimalista, oferecendo mecanismos
  sobre os quais funcionalidades mais elaboradas possam ser construídas.
- De fato, em 
+ De fato, em\SpecialChar ~
+
 \begin_inset LatexCommand \cite{ierusalimschy06pil2}
 
 \end_inset 
@@ -16792,10 +16993,11 @@ Como possibilidades de trabalhos futuros, este trabalho pode ser estendido
  API.
  Além disso, outra perspectiva de trabalho é a continuação do desenvolvimento
  da biblioteca LibScript.
- Possibilidades incluem adicionar novos plugins, revisar a sua API e exercitála-
-a embutindo a biblioteca em aplicações reais.
+ Possibilidades incluem adicionar novos plugins, revisar a sua API e exercitá-la
+ embutindo a biblioteca em aplicações reais.
  LibScript e os quatro plugins implementados são software livre e estão
- disponíveis para download em 
+ disponíveis para download em\SpecialChar ~
+
 \begin_inset LatexCommand \url{http://libscript.sourceforge.net}
 
 \end_inset 
