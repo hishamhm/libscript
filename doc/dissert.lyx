@@ -335,8 +335,8 @@ Em função da popularidade da linguagem C e do suporte oferecido a ela pelos
  Linguagens estaticamente tipadas são usualmente implementadas visando alto
  desempenho e possuem um enfoque de mais baixo nível.
  Em contraste, linguagens de script tendem a ser implementadas como interpretado
-res ou máquinas virtuais e fazem uso extensivo de construções de alto nível
- como tipos básicos, como listas e hashes.
+res ou máquinas virtuais e fazem uso extensivo de construções de alto nível,
+ tais como listas e hashes, como sendo tipos básicos.
  Estas características complementares têm tornado popular o modelo de programaçã
 o baseado em duas linguagens, onde uma linguagem de mais baixo nível é usada
  para o desenvolvimento de componentes que são conectados através de uma
@@ -429,7 +429,7 @@ O trabalho está organizado da seguinte forma.
 \end_inset 
 
 , são discutidas as várias abordagens para interação entre código escrito
- em diferentes linguagens de progamação.
+ em diferentes linguagens de programação.
  Partindo de uma visão geral, o foco se concentrará no método de interface
  externa mais comum nas linguagens da atualidade: interfaces com a linguagem
  C.
@@ -1320,6 +1320,9 @@ Outra abordagem envolve realizar algum tipo de conversão dos dados do sistema
  Finalmente, a linguagem de origem pode explicitamente oferecer facilidades
  na linguagem de destino para a manipulação destes dados, ou seja, uma linguagem
  oferecer uma API para a outra.
+ A diferença entre esta abordagem e a primeira é que, enquanto naquela o
+ conteúdo do dado se mantém opaco, nesta a própria API define uma forma
+ de manipular o seu conteúdo.
 \layout Standard
 
 C, por ser orientada à manipulação de ponteiros e estruturas, possui um
@@ -1489,7 +1492,7 @@ PyObject
 .
  Cada tipo Python possui um 
 \family typewriter 
-PyObject
+PyTypeObject
 \family default 
  pré-definido na API, como 
 \family typewriter 
@@ -5784,8 +5787,8 @@ VALUE
 .
  Isto restringe a flexibilidade da implementação da linguagem e é uma prática
  de programação pouco segura.
- Perl também expõe grande parte suas estruturas internas; não de forma tão
- direta quanto Ruby, mas através de macros.
+ Perl também expõe grande parte de suas estruturas internas; não de forma
+ tão direta quanto Ruby, mas através de macros.
  Tais macros, entretanto, assumem a aderência a protocolos tão estritos
  de uso que na prática também limitam largamente as possiblidades de alterações
  na implementação (um exemplo é a seqüência para chamada de funções, que
@@ -12559,6 +12562,14 @@ X.r_fun
 \family default 
 , realizando a chamada no plugin Ruby e passando os valores de retorno para
  o plugin Lua.
+ A biblioteca principal localiza a função a ser executada consultando os
+ plugins, conforme será explicado na Seção\SpecialChar ~
+
+\begin_inset LatexCommand \ref{sub:A-API-de-plugins}
+
+\end_inset 
+
+.
 \layout Standard
 
 Na implementação dos plugins, utilizamos recursos oferecidos pelas linguagens
@@ -12923,7 +12934,7 @@ script_put_int(env, 1, 2);            /* índice 1: 2 */
 
 
 \size footnotesize 
-script_call("teste");
+script_call(env, "teste");
 \layout LyX-Code
 
 
@@ -13103,6 +13114,11 @@ script_get_string
 \layout Subsection
 
 A API de plugins
+\begin_inset LatexCommand \label{sub:A-API-de-plugins}
+
+\end_inset 
+
+
 \layout Standard
 
 Um plugin que embute uma linguagem de script deve implementar quatro operações:
