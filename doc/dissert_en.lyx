@@ -5,7 +5,7 @@
 \usepackage{a4wide}
 \usepackage{indentfirst}
 \end_preamble
-\language brazil
+\language english
 \inputencoding auto
 \fontscheme default
 \graphics default
@@ -25,7 +25,7 @@
 \quotes_language english
 \quotes_times 2
 \papercolumns 1
-\papersides 1
+\papersides 2
 \paperpagestyle default
 
 \layout Standard
@@ -136,12 +136,18 @@ thispagestyle{empty}
 \layout Standard
 \added_space_bottom bigskip \pagebreak_top \align center 
 
-\lang english
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+setcounter{page}{1}
+\end_inset 
+
 Abstract
 \layout Standard
 
-
-\lang english
 Applications written in two programming languages, in order to optimize
  parts where performance is critical or to obtain extensibility through
  user-written scripts, are commonplace nowadays.
@@ -152,8 +158,6 @@ Applications written in two programming languages, in order to optimize
  
 \layout Standard
 
-
-\lang english
 This work discusses the main issues involving the design of APIs for the
  integration of language environments within C\SpecialChar ~
 applications.
@@ -168,8 +172,6 @@ n between the data spaces of C and the embedded runtime environment and
 application and that from the scripting language.
 \layout Standard
 
-
-\lang english
 We illustrate the differences of the APIs of those languages and their impact
  in the resulting code of a C\SpecialChar ~
 application through a case study.
@@ -2430,23 +2432,19 @@ Ruby
 
 \layout Standard
 
-Para a comunicação de dados entre Ruby e C, a API de Ruby define um tipo
- de dados em C chamado 
+For the communication of data between Ruby and C, the Ruby API defines a
+ C data type called 
 \family typewriter 
 VALUE
 \family default 
-, que representa um objeto Ruby.
+, which represents a Ruby object.
  
 \family typewriter 
 VALUE
 \family default 
- pode representar tanto uma referência para um objeto (isto é, um ponteiro
- para a 
-\emph on 
-heap
-\emph default 
- de Ruby) como um valor imediato.
- Em particular, as constantes 
+ may represent both a reference to an object (that is, a pointer to the
+ Ruby heap) as well as an immediate value.
+ In particular, the constants 
 \family typewriter 
 Qtrue
 \family default 
@@ -2454,16 +2452,16 @@ Qtrue
 \family typewriter 
 Qfalse
 \family default 
- e 
+ and 
 \family typewriter 
 Qnil
 \family default 
- são definidas como valores imediatos, permitindo a comparação destas em
- C usando o operador 
+ are defined as immediate values, allowing them to be compared in C using
+ the 
 \family typewriter 
 ==
 \family default 
-.
+ operator.
 \layout Standard
 
 Para a verificação de tipos, Ruby disponibiliza as macros 
