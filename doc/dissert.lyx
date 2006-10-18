@@ -960,7 +960,7 @@ a.
  Em ambientes de máquina virtual, esta biblioteca de funções normalmente
  é genérica, oferecendo facilidades para comunicação com a própria máquina
  virtual.
- Para linguagens estáticas, normalmente é necessário criar uma biblioteca
+ Para linguagens estáticas, usualmente é necessário criar uma biblioteca
  específica que realize a conversão das chamadas, como ocorre em interfaces
  que expõem bibliotecas C++ para C.
  Um exemplo disto é QtC\SpecialChar ~
@@ -1272,7 +1272,7 @@ Ambos os cenários envolvem os mesmos problemas gerais: transferência de
  C; e o registro de funções C para que possam ser invocadas a partir de
  scripts.
  As seções seguintes discutem as principais questões envolvidas na comunicação
- entre código C e de linguagens de script, e apresenta as abordagens empregadas
+ entre código C e de linguagens de script, e apresentam as abordagens empregadas
  pelas APIs de Python, Ruby, Java, Lua e Perl no tratamento destas questões.
  Cada seção conclui com uma comparação onde as diferentes características
  apresentadas na exposição de cada linguagem são revistas lado a lado e
@@ -1615,8 +1615,9 @@ AsStringAndSize
 \family default 
 .
  Diferentemente das funções de entrada, nas fun\SpecialChar \-
-ções de saída as strings
- retornadas são ponteiros para a área armazenada internamente por Python.
+ções de saída não há cópia
+ de strings: as strings retornadas são ponteiros para a área armazenada
+ internamente por Python.
  A documentação recomenda não modificar o conteúdo da string exceto no caso
  de esta área de memória haver sido retornada por uma chamada a 
 \family typewriter 
@@ -2502,9 +2503,9 @@ string
 \family typewriter 
 Unicode
 \family default 
- e que dois parâmetros devem ser passados à função C, de tipos const 
+ e que dois parâmetros devem ser passados à função C, de tipos 
 \family typewriter 
-char**
+const char**
 \family default 
  e 
 \family typewriter 
