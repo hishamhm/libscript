@@ -1050,8 +1050,8 @@ These two categories of languages have fundamentally different goals.
  interfaces, which makes the reuse of components harder.
 \layout Standard
 
-Ousterhouts points out that, in a model integrating these two kinds of languages
-, the tendency is that systems programming languages will no longer be used
+Ousterhout points out that, in a model integrating these two kinds of languages,
+ the tendency is that systems programming languages will no longer be used
  to write whole applications, but will instead be used in the implementation
  of components, which are then connected through code written with scripting
  languages.
@@ -1682,30 +1682,6 @@ collapsed true
 
 \layout Standard
 
-Em Python, 
-\family typewriter 
-str
-\family default 
- é um objeto chamável, que atua como a função de conversão para strings.
- Assim, uma vez que obtivemos uma referência para o 
-\family typewriter 
-PyObject
-\family default 
- correspondente a 
-\family typewriter 
-str
-\family default 
-, a chamada seguinte equivale a chamar 
-\family typewriter 
-PyObject_Str
-\family default 
- sobre um objeto Python qualquer 
-\family typewriter 
-obj
-\family default 
-:
-\layout Standard
-
 In Python, 
 \family typewriter 
 str
@@ -1890,7 +1866,7 @@ collapsed true
 
 \layout Standard
 
-The function is defined with a 
+This function was defined with a 
 \family typewriter 
 PyObject
 \family default 
@@ -2499,7 +2475,7 @@ rb_class_of
 .
 \layout Standard
 
-For transferring numeric values, the conversion between C and Ruby is made
+When transferring numeric values, the conversion between C and Ruby is made
  through macros such as 
 \family typewriter 
 INT2NUM
@@ -3075,7 +3051,7 @@ collapsed true
 
 \layout Standard
 
-We well complete the example with a C function implementing the 
+We will complete the example with a C function implementing the 
 \family typewriter 
 distance
 \family default 
@@ -3551,103 +3527,6 @@ Get
 /
 \family typewriter 
 SetObjectArrayElement
-\family default 
-.
-\layout Standard
-
-A obtenção de valores de atributos se dá através de métodos como 
-\family typewriter 
-GetObjectField
-\family default 
- e 
-\family typewriter 
-GetStaticField
-\family default 
-, que retornam referências do tipo 
-\family typewriter 
-jobject
-\family default 
-.
- Para cada um dos tipos primitivos existe uma chamada equivalente, como
- 
-\family typewriter 
-GetIntField
-\family default 
- e 
-\family typewriter 
-GetStaticIntField
-\family default 
-.
- Assim como Ruby, a API de Java define um tipo\SpecialChar ~
-C específico para evitar o
- uso freqüente de strings C na descrição de campos.
- Todavia, enquanto Ruby utiliza 
-\family typewriter 
-ID
-\family default 
-s que são simplesmente strings internalizadas, em Java os identificadores
- de campo, do tipo 
-\family typewriter 
-jfieldID
-\family default 
-, contêm informação de tipo e são específicos para o campo de uma determinada
- classe.
- Estes valores são obtidos com uma chamada a 
-\family typewriter 
-GetFieldID
-\family default 
-, que recebe entre seus parâmetros uma string chamada de 
-\begin_inset Quotes eld
-\end_inset 
-
-descritor de campo JNI
-\begin_inset Quotes erd
-\end_inset 
-
- com uma sintaxe especial.
- Por exemplo, o tipo Java 
-\family typewriter 
-int[][]
-\family default 
- é descrito com 
-\family typewriter 
-"[[I"
-\family default 
- e o tipo 
-\family typewriter 
-java.lang.String
-\family default 
- como 
-\family typewriter 
-"Ljava/lang/String;"
-\family default 
-
-\begin_inset Foot
-collapsed true
-
-\layout Standard
-
-Este é outro ponto onde detalhes da implementação transparecem na API.
- Não por coincidência, esta sintaxe é a mesma usada na representação interna
- de tipos em 
-\emph on 
-bytecodes
-\emph default 
- da JVM.
-\end_inset 
-
-.
- É possível ainda obter um 
-\family typewriter 
-jfieldID
-\family default 
- a partir de um objeto 
-\family typewriter 
-java.lang.reflect.Field
-\family default 
- usando a função 
-\family typewriter 
-FromReflectedField
 \family default 
 .
 \layout Standard
@@ -4335,53 +4214,6 @@ luaL_pushresult
  the Lua API.
 \layout Standard
 
-Lua define dois tipos de dados específicos para o armazenamento de dados
- para C, 
-\emph on 
-full userdata
-\emph default 
- e 
-\emph on 
-light userdata
-\emph default 
-.
- 
-\emph on 
-Full userdata
-\emph default 
- descrevem blocos de memória gerenciados por Lua e utilizados por código
- C.
- Eles existem em Lua como objetos opacos, e são criados por 
-\family typewriter 
-lua_newuserdata
-\family default 
-, que insere o novo objeto na pilha de Lua e retorna a C um ponteiro com
- a área de memória do tamanho requisitado.
- Objetos do tipo 
-\emph on 
-light userdata
-\emph default 
-, criados através de 
-\family typewriter 
-lua_pushlightuserdata
-\family default 
-, permitem armazenar ponteiros de C em Lua; a alocação e gerência do bloco
- de memória ficam a cargo do código C.
- O seguinte exemplo ilustra o uso de userdata, assumindo a mesma struct
- 
-\family typewriter 
-point
-\family default 
- definida na página\SpecialChar ~
-
-\begin_inset LatexCommand \pageref{struct-point}
-
-\end_inset 
-
-.
- O userdata é criado da seguinte forma:
-\layout Standard
-
 Lua defines two specific data types for storing C data, 
 \emph on 
 full userdata
@@ -4851,51 +4683,6 @@ SV
 GV
 \family default 
  type, which represents any type representable through a Perl variable.
-\layout Standard
-
-Variáveis do espaço de Perl são acessadas com 
-\family typewriter 
-get_sv
-\family default 
-, 
-\family typewriter 
-get_av
-\family default 
- e 
-\family typewriter 
-get_hv
-\family default 
-.
- Estas funções recebem uma string C com o nome da variável (possivelmente
- qualificado da forma 
-\family typewriter 
-"pacote::variavel"
-\family default 
-).
- O conteúdo de valores escalares é convertido de volta para um tipo\SpecialChar ~
-C com
- as macros 
-\family typewriter 
-Sv
-\family default 
-*: 
-\family typewriter 
-SvIV
-\family default 
- retorna um inteiro, 
-\family typewriter 
-SvPV
-\family default 
- retorna um 
-\family typewriter 
-char*
-\family default 
- e o comprimento da string no segundo parâmetro, etc.
- O seguinte código C exibe o conteúdo da variável Perl 
-\family typewriter 
-$a
-\family default 
-, assumindo que ela contenha um valor inteiro:
 \layout Standard
 
 Variables from the Perl data space are accessed with 
@@ -5808,7 +5595,7 @@ sizeof(void*) != sizeof(long)
 .
 \layout Standard
 
-Another aspect that deserves being mentioned is the concern on not polluting
+Finally, an aspect that deserves being mentioned is the concern on not polluting
  the C namespace.
  Python, Java and Lua define all its functions and C types with prefixes
  that aim to avoid conflicts with names defined by the application.
