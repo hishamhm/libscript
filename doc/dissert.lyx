@@ -2940,7 +2940,7 @@ VALUE point_alloc(VALUE point_class) {
 
 \size footnotesize 
 \emph on 
-   /* O segundo corresponde à função de marcação para coleta de lixo
+   /* O segundo argumento é a função de marcação para coleta de lixo
 \layout LyX-Code
 
 
@@ -3251,8 +3251,7 @@ collapsed true
 
 \layout Standard
 
-Completemos o exemplo implementando uma função C implementando o método
- 
+Completemos o exemplo com uma função C implementando o método 
 \family typewriter 
 distance
 \family default 
@@ -3404,11 +3403,11 @@ símbolo
  de Ruby, que na prática são strings imutáveis.
  O seguinte exemplo obtém o valor de uma variável global 
 \family typewriter 
-x
+g
 \family default 
  e a atribui ao campo 
 \family typewriter 
-x
+c
 \family default 
  de um objeto, e depois altera o valor da variável global para zero:
 \layout LyX-Code
@@ -3421,13 +3420,13 @@ x
 
 
 \size footnotesize 
-VALUE x = rb_gv_get("x");
+VALUE g = rb_gv_get("g");
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-/* Atribui ao campo x do objeto obj */
+/* Atribui ao campo c do objeto obj */
 \layout LyX-Code
 
 
@@ -3437,9 +3436,9 @@ VALUE obj = rb_gv_get("obj");
 
 
 \size footnotesize 
-rb_iv_set(obj, "x", x);
+rb_iv_set(obj, "c", g);
 \emph on 
- /* Equivale a: rb_ivar_set(obj, rb_intern("x"), x); */
+ /* Equivale a: rb_ivar_set(obj, rb_intern("c"), g); */
 \layout LyX-Code
 
 
@@ -3450,7 +3449,7 @@ rb_iv_set(obj, "x", x);
 
 
 \size footnotesize 
-rb_gv_set("x", INT2NUM(0));
+rb_gv_set("g", INT2NUM(0));
 \layout Standard
 
 
@@ -3741,7 +3740,7 @@ SetObjectArrayElement
 .
 \layout Standard
 
-A obtenção de valores de atributos se dá através de métodos como 
+A obtenção de valores de atributos se dá através de funções como 
 \family typewriter 
 GetObjectField
 \family default 
@@ -4520,7 +4519,7 @@ full_p->x = 100; full_p->y = 200;
 \emph on 
 /* Atribui o objeto à variável global Lua 
 \emph default 
-PontoFull
+Ponto
 \emph on 
  */
 \layout LyX-Code
@@ -4616,7 +4615,7 @@ lua_pushnil(L);
 
 
 \size footnotesize 
-lua_setglobal(L, "PontoFull");
+lua_setglobal(L, "Ponto");
 \layout Standard
 
 
@@ -4730,13 +4729,13 @@ lua_pushinteger(L, 12345);
 
 \size footnotesize 
 \emph on 
-/* lua_settable insere na tabela especificada como argumento
+/* lua_settable insere o item no topo da pilha
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-   o item localizado no topo da pilha,
+    na tabela especificada como argumento,
 \layout LyX-Code
 
 
@@ -5759,7 +5758,7 @@ O conjunto básico de funções para manipulação de dados nas cinco linguagens
 built-in
 \emph default 
 ; a maioria destas operações poderia ser realizada usando a API genérica
- de invocação de métodos, mas é oferecida diretamente em C como conveniência.
+ de invocação de métodos, mas são oferecidas diretamente em C como conveniência.
 \layout Standard
 
 Lua ganha destaque por possuir, com o seu modelo de pilha, a API para manipulaçã
@@ -5781,7 +5780,7 @@ multi-threading
 \layout Standard
 
 Um ponto negativo na API de Ruby é a exposição de detalhes de implementação
- dos campos da struct que implementam o seu tipo fundamental 
+ dos campos da struct que descreve o seu tipo fundamental 
 \family typewriter 
 VALUE
 \family default 
@@ -6065,8 +6064,10 @@ PyList_SetItem
 PyTuple_SetItem
 \family default 
 .
- A referência passada, que deve pertencer ao chamador, passa então a ser
- uma referência emprestada após a chamada.
+ A referência passada, que pertencia ao chamador, passa então a pertencer
+ à lista ou tupla.
+ No contexto do chamador, ele passa a ser uma referência emprestada, que
+ não precisa mais ser decrementada.
  O objetivo disto é permitir chamadas de função aninhadas onde, por exemplo,
  o parâmetro de 
 \family typewriter 
@@ -6438,9 +6439,9 @@ Py_TPFLAGS_HAVE_GC
 \family typewriter 
 tp_flags
 \family default 
- de
+ de 
 \family typewriter 
- PyTypeObject
+PyTypeObject
 \family default 
 .
 \layout Standard
@@ -6464,8 +6465,11 @@ PyObject_New
 PyObject_NewVar
 \family default 
 .
- Durante a construção do objeto, após os campos a serem visitados por tp_travers
-e terem sido preenchidos, é necessário ainda chamar uma função de notificação
+ Durante a construção do objeto, após os campos a serem visitados por 
+\family typewriter 
+tp_traverse
+\family default 
+ terem sido preenchidos, é necessário ainda chamar uma função de notificação
  
 \family typewriter 
 PyObject_GC_Track
@@ -6548,7 +6552,7 @@ disable
 \family typewriter 
 collect
 \family default 
- para executar uma coleta; 
+, para executar uma coleta; 
 \family typewriter 
 get_objects
 \family default 
