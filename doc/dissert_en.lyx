@@ -991,7 +991,7 @@ int**
  FLIs may as well use stubs generators to save the programmer from having
  to write repetitive or non-portable C\SpecialChar ~
 code.
- Java features a generator for C headeres containing prototypes for native
+ Java features a generator for C headers containing prototypes for native
  methods to be implemented.
  Pyrex\SpecialChar ~
 
@@ -3526,7 +3526,8 @@ Get
 \family default 
 /
 \family typewriter 
-SetObjectArrayElement
+SetObject\SpecialChar \-
+ArrayElement
 \family default 
 .
 \layout Standard
@@ -6175,7 +6176,8 @@ PyObject_GC_New
 \family default 
  or 
 \family typewriter 
-PyObject_GC_NewVar
+PyObject_\SpecialChar \-
+GC_NewVar
 \family default 
  instead of the usual functions 
 \family typewriter 
@@ -6298,160 +6300,146 @@ Ruby
 
 \layout Standard
 
-Ruby utiliza um coletor de lixo 
-\emph on 
-mark-and-sweep
-\emph default 
-\SpecialChar ~
+Ruby uses a mark-and-sweep garbage collector\SpecialChar ~
 
 \begin_inset LatexCommand \cite{wilson92gc}
 
 \end_inset 
 
 .
- Esta técnica evita o problema de referências cíclicas enfrentado por Python,
- bastando que os objetos válidos possam ser corretamente indicados como
- alcançáveis.
+ This technique avoids the problem of cyclic references faced by Python;
+ having valid objects correctly indicated as reachable is sufficient.
 \layout Standard
 
-Objetos alcançáveis a partir do espaço de objetos de Ruby -- atribuídos
- a uma variável global Ruby ou inseridos em alguma estrutura de dados alcançável
- em Ruby -- não estarão sujeitos à coleta de lixo.
- Além destes, temos ainda os objetos retornados por Ruby para o espaço de
- C, já que muitas funções de API retornam 
+Objects that are reachable from the Ruby data space -- assigned to a Ruby
+ global variable or inserted in some data structure reachable in Ruby --
+ will not be subjected to garbage collection.
+ In addition, we have objects returned by Ruby to the C space, since many
+ API functions return 
 \family typewriter 
 VALUE
 \family default 
 s.
- A documentação alerta que, para armazenar objetos Ruby em C, seja em variáveis
- globais ou estruturas de dados, é necessário notificar à máquina virtual
- que o 
+ The documentation warns that, to store Ruby objects in C, either in global
+ variables or in data structures, it is necessary to notify the virtual
+ machine that the 
 \family typewriter 
 VALUE
 \family default 
- não deve ser coletado usando 
+ must not be collected using the 
 \family typewriter 
 rb_global_variable
 \family default 
- (Embora a documentação não informe, é possível desmarcar um valor global
- com 
-\family typewriter 
-rb_gc_unregister_address
-\family default 
-)\SpecialChar ~
+ function\SpecialChar ~
 
 \begin_inset LatexCommand \cite{thomas04ruby}
 
 \end_inset 
 
-.
+ (although not mentioned in the documentation, it is possible to unmark
+ a global value with 
+\family typewriter 
+rb_gc_unregister_address
+\family default 
+).
 \layout Standard
 
-Objetos de escopo local a uma função C, entretanto, não precisam ser notificados.
- A forma como Ruby garante a validade de 
+Objects in the local scope of a C function, however, do not need to be notified.
+ The way how Ruby ensures the validity of local 
 \family typewriter 
 VALUE
 \family default 
-s locais é bastante peculiar: ao realizar a fase de marcação, o coletor
- de lixo varre a pilha de C em busca de valores que se pareçam com endereços
- de 
+s is remarkably peculiar: when performing the mark phase, the garbage collector
+ scans the C stack looking for values that look like 
 \family typewriter 
 VALUE
 \family default 
-s, isto é, seqüências numéricas que correspondam a endereços de 
+ addresses, that is, numeric sequences that correspond to valid 
 \family typewriter 
 VALUE
 \family default 
-s válidos.
- Estes endereços podem ser identificados pois objetos são sempre alocados
- dentro de 
-\emph on 
-heaps
-\emph default 
- mantidas pelo interpretador Ruby.
- Cada 
+ addresses.
+ These addresses can be identified because objects are always allocated
+ within heaps maintained by the Ruby interpreter.
+ Each 
 \family typewriter 
 VALUE
 \family default 
- encontrado na pilha é então marcado.
- Isto garante que nenhum 
+ found in the stack is then marked.
+ This ensures that any 
 \family typewriter 
 VALUE
 \family default 
- localmente alcançável por código C seja invalidado, mas pode gerar 
+ locally accessible by C code becomes invalidated, but may generate 
 \begin_inset Quotes eld
 \end_inset 
 
-falsos positivos
+false positives
 \begin_inset Quotes erd
 \end_inset 
 
- evitando que dados que poderiam ser coletados o sejam.
+ stopping data that could be collected from being so.
 \layout Standard
 
-Apesar da conveniência para o programador, tal abortagem é extremamente
- não-portável.
- A implementação do coletor de lixo em Ruby 1.8.2 possui 
+In spite of programmer convenience, such approach is extremely non-portable.
+ The implementation of the garbage collector in Ruby 1.8.2 has 
 \family typewriter 
 #ifdef
 \family default 
-s para IA-64, DJGPP, FreeBSD, Win32, Cygwin, GCC, Atari ST, AIX, MS-DOS,
- Human68k, Windows CE, SPARC e Motorola 68000.
- Além disso, o coletor força a descarga dos registradores para a pilha usando
+s for IA-64, DJGPP, FreeBSD, Win32, Cygwin, GCC, Atari ST, AIX, MS-DOS,
+ Human68k, Windows CE, SPARC and Motorola 68000.
+ Besides, the collector forces the discharge of registers to the stack using
  
 \family typewriter 
 setjmp
 \family default 
-, para evitar que variáveis do tipo 
+, to prevent variables of the 
 \family typewriter 
 VALUE
 \family default 
- que tenham sido otimizadas pelo compilador deixem de ser verificadas.
+ type that may have been optimized into registers by the compiler from being
+ missed.
 \layout Standard
 
-Conforme visto na Seção\SpecialChar ~
+As we have seen in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Ruby-dados}
 
 \end_inset 
 
-, objetos Ruby criados com 
+, Ruby objects created with 
 \family typewriter 
 Data_Wrap_Struct
 \family default 
- contêm structs C, que podem conter referências a 
+ contain C structs, and those may contain references to Ruby 
 \family typewriter 
 VALUE
 \family default 
-s Ruby.
- A struct encapsulada, entretanto, é opaca para o universo Ruby.
- Então, para garantir que estes 
+s.
+ The encapsulated struct, however, is opaque to the Ruby universe.
+ So, to ensure that these 
 \family typewriter 
 VALUE
 \family default 
-s sejam marcados como alcançáveis durante a coleta de lixo é necessário
- fazer isto via código C.
+s are marked as reachable during garbage collection this has to be done
+ through C code.
  
 \family typewriter 
 Data_Wrap_Struct
 \family default 
- recebe, além da struct a encapsular, dois ponteiros, um para uma função
- de marcação e outra para uma função de desalocação.
- Quando o coletor de lixo visita o objeto na fase de marcação, ele invoca
- a função registrada, que deve chamar 
+ accepts, beside the struct to be wrapped, pointers to a mark function and
+ to a deallocation function.
+ When the garbage collector visits the object in the mark phase, it invokes
+ the registered function, which must call 
 \family typewriter 
 rb_gc_mark
 \family default 
- em cada um dos 
+ on each 
 \family typewriter 
 VALUE
 \family default 
-s armazenados na 
-\emph on 
-struct
-\emph default 
- do objeto, informando assim que os objetos são alcançáveis.
- Quando um objeto encapsulado via 
+ stored in the object's struct, informing thus that these objects are reachable.
+ When an object wrapped with 
 \family typewriter 
 Data_
 \family default 
@@ -6459,40 +6447,40 @@ Data_
 \family typewriter 
 _Struct
 \family default 
- for dado como não alcançável, a função de desalocação registrada é chamada.
- Para estruturas que não armazenam outros 
+ is considered unreachable, its deallocation function is called.
+ On structures that do not store other 
 \family typewriter 
 VALUE
 \family default 
-s, pode-se definir a função de marcação como 
+s, the mark function can be set to 
 \family typewriter 
 NULL
 \family default 
- e a de desalocação como 
+ and the deallocation function to 
 \family typewriter 
 free
 \family default 
 .
 \layout Standard
 
-Ruby possui um módulo 
+Ruby has a 
 \family typewriter 
 GC
 \family default 
- que disponibiliza funções para ativar e desativar o coletor (
+ module featuring functions to turn the collector on and off (
 \family typewriter 
 GC.enable
 \family default 
- e 
+ and 
 \family typewriter 
 GC.disable
 \family default 
-), bem como disparar uma coleta imediatamente (
+), as well as to launch a collection immediately (
 \family typewriter 
 GC.start
 \family default 
 ).
- Na API em C há funções equivalentes: 
+ There are equivalent functions in the C API: 
 \family typewriter 
 rb_gc_enable
 \family default 
@@ -6505,49 +6493,38 @@ rb_gc_disable
 rb_gc_start
 \family default 
 .
- A API de C inclui ainda uma função que insere um objeto imediatamente na
- lista de objetos a serem reciclados pelo alocador de memória de Ruby, 
+ The C API includes also a function that inserts an object immediately in
+ the list of objects to be recycled by Ruby's memory allocator, 
 \family typewriter 
 rb_gc_force_recycle
 \family default 
 .
- Esta função deve ser usada com cuidado, já que se houverem outras referências
- apontando ao objeto elas passarão a apontar para outro objeto quando a
- área de memória for reutilizada pelo alocador de Ruby.
+ This function should be used with caution, since if there are still any
+ references pointing to the recycled object, they will point to the new
+ object when the memory area is reclaimed by the Ruby allocator.
 \layout Standard
 
-Ruby oferece ainda como conveniência para o programador C alguns 
-\emph on 
-wrappers
-\emph default 
- para as funções 
-\family typewriter 
-malloc
-\family default 
- e 
-\family typewriter 
-realloc
-\family default 
- que interagem com o coletor de lixo, forçando a execução do coletor durante
- alocações grandes
+Ruby also offers as a convenience to the C programmer some wrappers to the
+ malloc and realloc functions that interact with the garbage collector,
+ forcing its execution during large allocations
 \begin_inset Foot
 collapsed false
 
 \layout Standard
 
-O limite para definir 
+The definition of 
 \begin_inset Quotes eld
 \end_inset 
 
-grande
+large
 \begin_inset Quotes erd
 \end_inset 
 
- se ajusta de acordo com o funcionamento do coletor e com as alocações realizada
-s anteriormente.
+ is adjusted dynamically, based on the execution of the collector and previously
+ performed allocations.
 \end_inset 
 
- ou em situações de pouca memória disponível.
+ or in low-memory situations.
 \layout Subsection
 
 Java
@@ -6558,121 +6535,114 @@ Java
 
 \layout Standard
 
-Assim como Python e Ruby, a API de Java retorna referências a objetos da
- máquina virtual que podem ser armazenados em variáveis C.
- A JNI define três tipos de referências, 
+Like in Python and Ruby, the Java API returns references to objects from
+ the virtual machine that can be stored in C variables.
+ The JNI defines three types of references, 
 \emph on 
-locais
+local
 \emph default 
 , 
 \emph on 
-globais
+global
 \emph default 
- e 
+ and 
 \emph on 
-globais fracas
+weak global
 \emph default 
-, para auxiliar no controle do tempo de vida destas e a sua interação com
- o coletor de lixo.
+ references, to aid in controlling their lifetime and their interaction
+ with the garbage collector.
 \layout Standard
 
-Referências locais são retornadas pela maioria das funções da JNI e são
- válidas até o retorno da função C que a obteve.
- Não é necessário desalocar explicitamente uma referência local: durante
- a execução de uma função C, a JVM mantém uma lista de referências locais
- passadas à função e libera todas elas quando o controle retorna à máquina
- virtual.
- Isto faz com que, de maneira geral, o programador não precise se preocupar
- com o coletor de lixo enquanto manipula valores retornados durante uma
- função.
- Por outro lado, em código que pode utilizar uma grande quantidade de referência
-s locais é mais eficiente desalocar referências locais explicitamente, usando
- 
+Most functions of the JNI return local references, which are valid until
+ the return of the C function that has obtained them.
+ It is not necessary to deallocate a local reference explicitly: during
+ the execution of a C function, the JVM maintains a list of local references
+ passed to the function and frees them all when control returns to the virtual
+ machine.
+ This way, in general, the programmer does not need to worry about garbage
+ collection when manipulating values returned during a function.
+ On the other hand, in code that may use a large number of local references
+ it is more efficient to free local references explicitly, using 
 \family typewriter 
 DeleteLocalRef
 \family default 
 .
- A partir da versão 1.2 de Java, funções foram adicionadas para permitir
- a gerência de referências locais em blocos.
+ In Java version 1.2, functions were added to manage local references in
+ blocks.
  
 \family typewriter 
 PushLocalFrame
 \family default 
- e 
+ and 
 \family typewriter 
 PopLocalFrame
 \family default 
- permitem criar escopos aninhados de referências locais, que são desalocados
- de uma só vez.
+ allow one to create nested scopes of local references, which are freed
+ all at once.
  
 \family typewriter 
 PushLocalFrame
 \family default 
- recebe ainda um parâmetro indicando um número de 
-\emph on 
-slots
-\emph default 
- a serem pré-alocados, como otimização.
- Esse valor pode ser configurado também com 
+ receives also an argument indicating a number of slots to be pre-allocated,
+ as an optimization.
+ This value can also be configured with 
 \family typewriter 
 EnsureLocalCapacity
 \family default 
 .
 \layout Standard
 
-Referências globais são geradas a partir de referências locais usando 
+Global references are generated from local references using 
 \family typewriter 
 NewGlobalRef
 \family default 
 .
- Referências deste tipo mantêm-se válidas até serem explicitamente desalocadas
- com 
+ References of this kind remain valid until they are explicitly deallocated
+ with 
 \family typewriter 
-Delete\SpecialChar \-
-GlobalRef
+DeleteGlobalRef
 \family default 
 .
- Uma referência global impede o objeto de ser coletado, podendo assim, ser
- utilizada para armazenar objetos Java no espaço de C além da duração de
- uma função, por exemplo, em variáveis globais ou estáticas.
+ A global reference stops the object from being collected; it can therefore
+ be used to store Java objcets in C space beyond the duration of a function,
+ for example, in global or static variables.
 \layout Standard
 
-A Figura\SpecialChar ~
+Figure\SpecialChar ~
 
 \begin_inset LatexCommand \ref{cap:JNI-global-ref}
 
 \end_inset 
 
- mostra um exemplo do tipo de gerência de referências necessário quando
- se tem um laço criando referências temporárias sobre um número arbitrário
- de objetos.
+ shows an example of the kind of reference management that is needed when
+ a loop creates temporary references for an arbitrary number of objects.
 \layout Standard
 
-No exemplo, a função 
+In the example, the 
 \family typewriter 
-Java_Exemplo_concatArray
+Java_Example_concatArray
 \family default 
- (equivalente, portanto, ao método 
+ function (equivalent, therefore to the 
 \family typewriter 
 concatArray
 \family default 
- de uma classe 
+ method from class 
 \family typewriter 
-Exemplo
+Example
 \family default 
-) converte os elementos de um array para strings usando 
+) converts the elements of an array to strings using 
 \family typewriter 
 Object.toString
 \family default 
- e os concatena usando 
+ and concatenates them using 
 \family typewriter 
 String.concat
 \family default 
 .
- Note que, como o número de vezes que o laço executa depende do tamanho
- do array passado, deve-se evitar que o número de referências cresça em
- cada iteração.
- Para isso, as opções seriam ou usar 
+ Notice that, as the number of iterations of the loop depends on the size
+ of the given array, one should prevent the number of references from increasing
+ on each iteration.
+ For that, the options would be either to use 
 \family typewriter 
 Push
 \family default 
@@ -6680,12 +6650,12 @@ Push
 \family typewriter 
 PopLocalFrame
 \family default 
-, ou destruir as referências uma a uma com 
+, or to destroy references one by one with 
 \family typewriter 
 DeleteLocalRef
 \family default 
 .
- Se usássemos 
+ If we used 
 \family typewriter 
 Push
 \family default 
@@ -6693,38 +6663,37 @@ Push
 \family typewriter 
 PopLocalFrame
 \family default 
- no exemplo, teríamos que manter a string concatenada até o momento em uma
- referência global.
- Além disso, esta referência teria que ser destruída e recriada a cada iteração,
- já que strings são imutáveis em Java.
- Como o número de locais é pequeno, é mais conveniente neste caso controlá-las
- explicitamente com 
+ in the example, we would have to keep the temporary string holding the
+ concatenation in a global reference.
+ Further, this reference would have to be destroyed and recreated on each
+ iteration, since strings are immutable in Java.
+ As the number of locals is small, it is more convenient in this case to
+ control them explicitly with 
 \family typewriter 
 DeleteLocalRef
 \family default 
- do que recorrer a referências globais.
- 
+ than resorting to global references.
 \layout Standard
 
 
 \family typewriter 
 PopLocalFrame
 \family default 
- permite, através de um parâmetro adicional, transferir uma referência local
- do conjunto que está sendo desempilhado para o escopo exterior de referências
- locais, criando assim uma nova referência.
- Para o exemplo da Figura\SpecialChar ~
+ allows, through an additional argument, transferring a local reference
+ from the set that is being popped to the external scope of local reference,
+ creating this way a new reference.
+ For the example of Figure\SpecialChar ~
 
 \begin_inset LatexCommand \ref{cap:JNI-global-ref}
 
 \end_inset 
 
-, isto ainda não evitaria a necessidade de liberar referências locais explicitam
-ente a cada iteração do laço, já que cada 
+, this would still not avoid the need of freeing references explicitly on
+ each iteration of the loop, since each 
 \family typewriter 
 PopLocalFrame
 \family default 
- criaria uma referência local nova.
+ would create a new local reference.
 \layout Standard
 
 
@@ -6745,19 +6714,19 @@ static jmethodID concat = NULL, toString = NULL;
 
 \size footnotesize 
 \emph on 
-/* Fazer o caching de jmethodIDs em código C é uma técnica comum.
+/* Caching jmethodIDs in C code is a common technique.
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-   Vale lembrar que jmethodIDs não são objetos Java, e portanto
+   It's worth mentioning that jmethodIDs are not Java objects,
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-   não estão sujeitos a coleta de lixo.
+   and are therefore not subjected to garbage collection.
  */
 \layout LyX-Code
 
@@ -6813,7 +6782,7 @@ JNIEXPORT jstring JNICALL
 
 
 \size footnotesize 
-Java_Exemplo_concatArray(JNIEnv* J, jobject this, jobjectArray a) {
+Java_Example_concatArray(JNIEnv* J, jobject this, jobjectArray a) {
 \layout LyX-Code
 
 
@@ -6901,35 +6870,30 @@ Java_Exemplo_concatArray(JNIEnv* J, jobject this, jobjectArray a) {
 
 \end_inset 
 
-Rotina para concatenar os elementos de um array representados como strings.
+Routine for concatenating elements of an array represented as strings.
 \end_inset 
 
 
 \layout Standard
 
-A partir da versão 1.2, a JNI inclui referências globais fracas, com o objetivo
- de oferecer uma forma simplificada das referências fracas de Java (
+Since Java 1.2, the JNI includes weak global references, with the goal of
+ offering a simplified version of Java's weak references (
 \family typewriter 
 java.lang.ref
 \family default 
-) -- um objeto que esteja sendo apontado apenas por referências globais
- fracas pode ser coletado.
- Originalmente, a API incluiu a função 
+) -- an object pointed only by weak global references can be collected.
+ Originally, the API defined the 
 \family typewriter 
 IsSameObject
 \family default 
- como forma de verificar a validade de uma referência fraca, mas evidentemente
- este método é insuficiente: como Java é 
-\emph on 
-multi-threaded
-\emph default 
-, o coletor de lixo pode invalidar a referência entre o teste e a instrução
- seguinte no código\SpecialChar ~
-C.
- A documentação revisada avisa sobre esta limitação e recomenda o uso de
- referências globais, além de alertar sobre comportamentos indefinidos nas
- relações entre referências globais fracas em C e os tipos de referências
- fracas definidos em Java\SpecialChar ~
+ function as a way to check the validity of a weak reference, but evidently
+ this method is insufficient: since Java is multi-threaded, the garbage
+ collector may invalidate the reference between the test and the following
+ instruction in C code.
+ The revised documentation warns about this limitation and recommends the
+ use of global references, as well as alerting on undefined behaviors in
+ the relationship between weak global references in C and Java's own weak
+ reference types\SpecialChar ~
 
 \begin_inset LatexCommand \cite{jni1503spec}
 
@@ -6938,18 +6902,11 @@ C.
 .
 \layout Standard
 
-Além desta, outras questões surgem a partir da combinação do modelo 
-\emph on 
-multi-threaded
-\emph default 
- de Java com a exposição de referências a objetos da máquina virtual ao
- código C.
- Para reduzir o volume de cópia de dados entre Java e C, a JNI oferece algumas
- funções que retornam e liberam ponteiros para a representação interna de
- strings e arrays de tipos pri\SpecialChar \-
-mi\SpecialChar \-
-ti\SpecialChar \-
-vos: 
+More issues arise from the combination of Java's multi-threaded model with
+ the exposure of references of virtual machine objects to C code.
+ To reduce the volume of data copying between Java and C, the JNI offers
+ some functions that return and release pointers to the internal representation
+ of strings and arrays of primitive types: 
 \family typewriter 
 Get
 \family default 
@@ -6957,7 +6914,7 @@ Get
 \family typewriter 
 ReleaseStringCritical
 \family default 
- e 
+ and 
 \family typewriter 
 Get
 \family default 
@@ -6966,48 +6923,41 @@ Get
 ReleasePrimitiveArrayCritical
 \family default 
 .
- O uso destas funções, porém, possui importantes restrições.
- A API especifica que, uma vez obtido um ponteiro através destas funções,
- o código\SpecialChar ~
-C não deve chamar outras funções da JNI ou realizar chamadas que
- possam bloquear a thread atual e fazer com que ela espere por outra thread
- Java, sob o risco de causar um 
-\emph on 
-deadlock
-\emph default 
-.
- Recomenda-se não manter blocos de memória bloqueados usando estas funções
- por muito tempo já que uma das técnicas possíveis para a implementação
- desta 
+ The use of these functions, however, has important restrictions.
+ The API specifies that, once a pointer is obtained through these functions,
+ the C code must not call other JNI functions or perform calls that may
+ block the current thread and make it wait for another Java thread, under
+ risk of a deadlock.
+ It is recommended that memory blocks held using these functions are not
+ retained for a long time, since one of the possible techniques fro implementing
+ this 
 \begin_inset Quotes eld
 \end_inset 
 
-região crítica
+critical section
 \begin_inset Quotes erd
 \end_inset 
 
- consiste em desabilitar o coletor de lixo da JVM.
- É importante notar ainda que referências locais e o ponteiro para o ambiente
- JNI passado para funções nativas são válidos apenas na thread onde foram
- criados; referências globais podem ser compartilhadas entre threads.
+ consists in disabling the garbage collector.
+ It is also important to note that local references and the pointer to the
+ JNI environment passed to native functions are valid only in the thread
+ where they were created; global references can be shared among threads.
 \layout Standard
 
-Além do mecanismo de referências fracas fornecido pelas classes do pacote
- 
+Besides the weak reference mechanism provided by the 
 \family typewriter 
 java.lang.\SpecialChar \-
 ref
 \family default 
-, a única forma oferecida por Java para interagir de maneira mais direta
- com o coletor de lixo é através da chamada 
+ package, the only way provided by Java to interact in a more direct way
+ with the garbage collector is through the 
 \family typewriter 
 System.gc()
 \family default 
-, que solicita à máquina virtual que dispare tão logo quanto possível a
- thread de coleta para que esta desaloque objetos não alcançáveis.
- Não há uma função C equivalente na JNI, mas este método pode ser invocado
- a partir de\SpecialChar ~
-C com 
+ call, which asks the virtual machine to launch the collection thread as
+ soon as possible so that it deallocate unreachable objects.
+ There is no equivalent C function in the JNI, but this method can be invoked
+ from C with 
 \family typewriter 
 CallStaticVoidMethod
 \family default 
@@ -7022,17 +6972,17 @@ Lua
 
 \layout Standard
 
-Por não retornar referências explícitas a objetos Lua ao código C, a interação
- do código nativo com o coletor de lixo é bastante simplificada.
- Operações sobre objetos Lua são sempre especificadas através de índices
- da pilha virtual.
- Assim, a máquina virtual mantém o controle sobre quais os objetos são acessívei
-s a partir de C em qualquer dado momento.
- 
+The interaction of native C code with the Lua garbage collector is greatly
+ simplified by the fact that the Lua API does not return explicit references
+ to Lua objects to the C space.
+ Operations on Lua objects are always specified through indices of the virtual
+ stack.
+ This way, the virtual machine retains all control over which objects are
+ accessible from C at any given moment.
 \layout Standard
 
-Embora ponteiros para objetos não sejam manipulados na API, algumas funções
- retornam ponteiros para estruturas gerenciadas por Lua: 
+Although pointers to objects are not manipulated in the API, some functions
+ return pointers to structures managed by Lua: 
 \family typewriter 
 lua_newuserdata
 \family default 
@@ -7044,192 +6994,154 @@ lua_to
 \family typewriter 
 string
 \family default 
- e 
+ and 
 \family typewriter 
 lua_touserdata
 \family default 
 .
- A validade dos ponteiros retornados por estas funções é dependente do tempo
- de vida do objeto correspondente a eles; para strings em particular, o
- ponteiro retornado só é garantidamente válido enquanto a string estiver
- na pilha.
- Lua oferece ainda a função 
+ The validity of pointers returned by these functions is dependent on the
+ lifetime of the object they correspond to; for strings in particular, a
+ returned pointer is only decidedly valid as long as the string is in the
+ stack.
+ Lua offers still the 
 \family typewriter 
 lua_topointer
 \family default 
-, que permite obter ponteiros para alguns tipos de objetos (
-\emph on 
-userdata
-\emph default 
-, tabelas, 
-\emph on 
-threads
-\emph default 
- e funções), mas somente com o objetivo de obter informação para depuração,
- já que não é possível converter o ponteiro de volta para um valor Lua.
- 
+ function, which returns pointers to some kinds of objects (userdata, tables,
+ threads and functions), but only with the intention of providing debugging
+ information, as it is not possible to convert such pointers back into Lua
+ values.
 \layout Standard
 
-O conteúdo da pilha virtual é zerado quando a função C retorna o controle
- à máquina virtual de Lua.
- Dessa forma, não é possível reter ponteiros retornados por Lua para uso
- posterior em variáveis globais ou estruturas de C.
- Por outro lado, a API oferece um mecanismo para armazenar valores Lua em
- uma localização conhecida por código C que não pode ser alterada via código
- Lua: o 
-\emph on 
-registro
-\emph default 
-.
- O registro é uma tabela disponibilizada pela API de Lua para o armazenamento
- de valores Lua a partir de C; esta tabela não é normalmente acessível a
- partir de Lua.
- Como a tabela que implementa o registro é parte do 
-\emph on 
-root set
-\emph default 
- do coletor de lixo, a inclusão de um objeto nesta tabela o impede de ser
- coletado, mantendo-o no registro até que seja explicitamente removido via
- código C.
+The virtual stack is emptied when the C function returns control to the
+ Lua virtual machine.
+ This way, it is not possible to retain pointers returned by Lua for later
+ use in global variables or C structures.
+ Alternatively, the API offers a mechanism for storing Lua values in a location
+ that is known to C code and that cannot be altered by Lua code: the registry.
+ The registry is a table made available through the Lua API for the storage
+ of Lua values from C; this table is not normally accessible from Lua.
+ Since the table that implements the registry is part of the root set of
+ the garbage collector, the inclusion of an object in this table prevents
+ it from being collected, keeping it in the registry until it is explicitly
+ removed through C code.
 \layout Standard
 
-Usando o registro, uma forma possível de descrever dados do espaço de Lua
- em estruturas de dados em C é armazenar os dados no registro e armazenar
- os índices usados na estrutura C.
- A biblioteca auxiliar de Lua encapsula tal idioma através de duas funções,
+Using the registry, a possible way to describe data from the Lua space in
+ C data structures is to store data in the registry and store the used indices
+ in the C structure.
+ Lua's auxiliary library encapsulates such idiom through two functions,
  
 \family typewriter 
 luaL_ref
 \family default 
- e 
+ and 
 \family typewriter 
 luaL_unref
 \family default 
 .
- A função 
+ The 
 \family typewriter 
 luaL_ref
 \family default 
- associa o valor Lua passado a uma chave numérica inteira no registro, e
- retorna este número.
- Este valor então ser visto como um 
-\emph on 
-handle
-\emph default 
- de alto nível para o objeto: o código C pode armazená-lo em variáveis ou
- estruturas e utilizá-lo para referenciar o objeto através do campo no registro.
- A função 
+ function associates the given Lua value to an integer numeric key in the
+ registry, and returns this number.
+ This value can then be seen as a high-level handle to the object: C code
+ can store it in variables and structures and use it to refer to the object
+ through its registry field.
+ The 
 \family typewriter 
 luaL_unref
 \family default 
- remove o valor Lua do registro e libera o índice para reuso.
- Para o bom funcionamento deste mecanismo, chaves inteiras não devem ser
- utilizadas diretamente pelo programador para armazenar dados no registro.
+ function removes the Lua value from the registry and frees the index for
+ reuse.
+ To ensure this mechanism works properly, integer keys should not be used
+ directly be the programmer to store data in the registry.
 \layout Standard
 
-A API permite associar a objetos do tipo 
-\emph on 
-full userdata
-\emph default 
- uma função de desalocação, 
+The API allows associating a deallocation function, 
 \family typewriter 
 __gc
 \family default 
-, na sua metatabela.
- Quando presente, esta função será tipicamente implementada em C, realizando
- a finalização de recursos.
- Por exemplo, o metamétodo 
+, to the metatable of full userdata objects.
+ When present, this function will be typically implemented in C, performing
+ resource finalization.
+ For example, the 
 \family typewriter 
 __gc
 \family default 
- de objetos retornados pela função Lua 
+ metamethod of objects returned by the 
 \family typewriter 
 io.open
 \family default 
- é uma função C que fecha o descritor de arquivo correspondente com a função
- C 
+ Lua function is a C function that closes the corresponding file descriptor
+ using the 
 \family typewriter 
 fclose
 \family default 
-.
- 
+ function.
 \layout Standard
 
-A princípio, o fato de que é possível obter e modificar a metatabela de
- um userdata via código Lua pode parecer problemático, já que pode-se substituir
- o seu finalizador em 
+In principle, the fact that its possible to obtain and modify the metatable
+ of userdata through Lua code may seem problematic, as one could replace
+ its finalizer in 
 \family typewriter 
 __gc
 \family default 
 .
- Entretanto, funções de coleta implementadas em C tipicamente validam o
- userdata recebido verificando o seu 
+ However, collection functions implemented in C typically validate received
+ userdata checking its 
 \begin_inset Quotes eld
 \end_inset 
 
-tipo
+type
 \begin_inset Quotes erd
 \end_inset 
 
-, identificado através da metatabela.
- Assim, mesmo que código Lua manipule a metatabela, uma função de coleta
- implementada em C que use 
+, identified through its metatable.
+ So, even if Lua code manipulates the table, a collection function implemented
+ in C which uses 
 \family typewriter 
 luaL_checkudata
 \family default 
- não será levada a operar sobre um 
-\emph on 
-userdata
-\emph default 
- de tipo incorreto.
- Para impedir o código Lua de alterar a função de coleta de um objeto 
-\emph on 
-userdata
-\emph default 
-, pode-se atribuir um valor qualquer, como 
-\family typewriter 
-false
-\family default 
-, ao campo 
+ will not be made to operate on userdata of incorrect type.
+ To stop Lua code from modifying the collection function of a userdata object,
+ one can assign some value, such as false, to the 
 \family typewriter 
 __metatable
 \family default 
- da metatabela, que passa a ser retornado no lugar da metatabela, tornando
- a metatabela em si inacessível.
+ field of the metatable; this will be returned in place of the metatable,
+ making the metatable itself unaccessible.
 \layout Standard
 
-Outro recurso relacionado à gerência de memória oferecido por Lua é a possibilid
-ade de configurar, em tempo de execução, a função de alocação de memória
- a ser usada pela máquina virtual.
- Na criação de um novo estado Lua, passa-se como parâmetro uma função de
- alocação que deve oferecer funcionalidade similar às funções C 
+Another resource related to memory management provided by Lua is the possiblity
+ of configuring, at runtime, the allocation function to be used by the virtual
+ machine.
+ In the creation of a new Lua state, an allocation function is passed as
+ a its first argument.
+ This function must offer functionality similar to the C functions 
 \family typewriter 
 free
 \family default 
- e 
+ and 
 \family typewriter 
 realloc
 \family default 
-, dependendo se o tamanho de bloco passado for igual ou maior do que zero.
- 
+, depending if the given block size is equal or greater than zero.
 \layout Standard
 
-Lua oferece uma interface com o coletor de lixo através das funções 
+Lua offers an interface to the garbage collector through the 
 \family typewriter 
 lua_gc
 \family default 
- em C e 
+ function in C and 
 \family typewriter 
 collectgarbage
 \family default 
- em Lua.
- O coletor de Lua implementa 
-\emph on 
-mark-and-sweep
-\emph default 
- incremental e permite ao programador configurar parâmetros relacionados
- aos intervalos de coleta, bem como ativar, desativar, disparar ciclos completos
- e executar passos do coletor.
+ in Lua.
+ The collector implements incremental mark-and-sweep and allows the programmer
+ to configure parameters related to collection intervals, as well as enable,
+ disable, launch full cycles and executing collection steps.
 \layout Subsection
 
 Perl
@@ -7240,8 +7152,8 @@ Perl
 
 \layout Standard
 
-Como Python, Perl realiza coleta de lixo baseada em contagem de referências.
- A API provê funções para o controle explícito da contagem: 
+Like Python, Perl performs garbage collection based on reference counting.
+ The API provides functions for explicit control of reference counts: 
 \family typewriter 
 SvREFCNT_inc
 \family default 
@@ -7249,82 +7161,73 @@ SvREFCNT_inc
 \family typewriter 
 SvREFCNT_dec
 \family default 
- para incremento e decremento e um 
-\emph on 
-getter
-\emph default 
-, 
+ and a getter, 
 \family typewriter 
 SvREFCNT
 \family default 
 .
- Outra forma de alterar a contagem de referências de um valor é atribuindo-o
- a uma referência Perl com 
+ Another way to modify the reference count of a value is to assign it to
+ a Perl reference with 
 \family typewriter 
 newRV_inc
 \family default 
 .
- A contagem do valor referenciado será incrementada, fazendo com que --
- salvo tenha sua contagem alterada explicitamente -- este se mantenha válido
- enquanto for referenciado pelo 
+ The count of the referenced value will be incremented, keeping it valid
+ -- unless it has its count altered explicitly -- as long as it is referenced
+ by the 
 \family typewriter 
 RV
 \family default 
 .
- É importante notar, porém, que as funções da API que criam valores, como
- 
+ It is important to note, however, that API functions that create values,
+ such as 
 \family typewriter 
 newSViv
 \family default 
-, inicializam os seus contadores de referências com 1.
- Isto tem o efeito de que se um valor é criado em uma função C, armazenado
- em um 
+, initialize their reference counts with 1.
+ This has the effect that if a value is created in a C function, stored
+ in an 
 \family typewriter 
 RV
 \family default 
- com 
+ with 
 \family typewriter 
 newRV_inc
 \family default 
- e esta referência é retornada a Perl, o valor nunca será coletado, pois
- o seu contador não retornará a 0 quando a referência for destruída.
- A forma correta, então, é usar 
+ and this reference is returned to Perl, the value will never be collected,
+ because its counter will not reach 0 when the reference is destroyed.
+ The correct form, then, is to use 
 \family typewriter 
 newRV_noinc
 \family default 
- para 
-\family typewriter 
-RV
-\family default 
-s contendo valores recém-criados e 
+ for RVs containing newly-created values and 
 \family typewriter 
 newRV_inc
 \family default 
- quando um 
+ when an 
 \family typewriter 
 RV
 \family default 
- deve manter válido um valor já existente.
+ needs to retain an already existing value.
 \layout Standard
 
-A inicialização da contagem de referências em 1 garante que valores criados
- continuarão válidos durante a execução de uma função C sem que seja necessário
- armazenar o valor no espaço de Perl.
- Estes valores podem também ser armazenados em variáveis globais e estruturas
- de dados de C e se manterão válidos até que a sua contagem de referências
- seja decrementada.
- Para valores cujo tempo de vida é restrito a uma função, a API de Perl
- define o conceito de valores 
+Initializing reference counts with 1 ensures that values created will remain
+ valid during the execution of a C function without storing the value in
+ Perl space.
+ These values can also be stored in C global variables and data structures
+ and will remain valid until their reference count is decremented.
+ For values with a lifetime restricted to a single function, the Perl API
+ defines the concept of 
 \begin_inset Quotes eld
 \end_inset 
 
-mortais
+mortal
 \begin_inset Quotes erd
 \end_inset 
 
- como uma forma de permitir desalocar todos os valores temporários de uma
- função de uma só vez.
- Um 
+ variables as a way of deallocating all temporary values of a function at
+ once.
+ An 
 \family typewriter 
 SV
 \family default 
@@ -7332,112 +7235,109 @@ SV
 \family typewriter 
 AV
 \family default 
- ou 
+ or 
 \family typewriter 
 HV
 \family default 
- pode ser criado com 
+ can be created with 
 \family typewriter 
 sv_newmortal
 \family default 
- ou, mais comumente, convertido para mortal com 
+ or, more commonly, converted to a mortal with 
 \family typewriter 
 sv_2mortal
 \family default 
 .
- Na prática, marcar um valor como mortal corresponde a indicar que ele deve
- ter a sua contagem de referências decrementada na chamada da macro 
+ In practice, marking a value as mortal corresponds to indicating that it
+ should have its reference count decremented by the 
 \family typewriter 
 FREETMPS
 \family default 
- ao término da função, conforme será visto na Seção\SpecialChar ~
+ macro by the end of a function, as we will see in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Perl-call}
 
 \end_inset 
 
 .
- Algumas funções da API retornam valores mortais: por exemplo, 
+ Some functions of the API return mortal values: for example, 
 \family typewriter 
 hv_delete
 \family default 
- remove um elemento de uma hash e, caso a flag 
+ removes an element of a hash and, unless the 
 \family typewriter 
 G_DISCARD
 \family default 
- não seja passada, retorna o elemento removido como um 
+ is passed, returns the removed element as a mortal 
 \family typewriter 
 SV
 \family default 
- mortal.
+.
 \layout Standard
 
-A API de Perl não possui facilidades de interface com o coletor de lixo,
- mas possui algumas funções para auxílio em depuração que reportam informações
- sobre o estado da coleta de lixo.
- A função 
+The Perl API does not provide facilites for interfacing with the garbage
+ collector, but features some debugging support functions that report informatio
+n about the state of garbage collection.
+ The 
 \family typewriter 
 sv_report_used
 \family default 
- exibe o conteúdo de todos os 
+ function displays the contents of every 
 \family typewriter 
 SV
 \family default 
-s do interpretador.
- O módulo 
+ stored in the interpreter.
+ The 
 \family typewriter 
 Devel::Peek
 \family default 
- permite examinar a partir de Perl o conteúdo de valores (contagem de referência
-s, 
-\emph on 
-flags
-\emph default 
-, etc.) -- a partir de C, estas informações estão disponíveis diretamente
- já que as estruturas não são opacas.
+ module allows examining from Perl the content of values (reference counts,
+ flags, etc.) -- from C, these informations are directly available, since
+ their structures are not opaque.
 \layout Subsection
 
-Comparação
+Comparison
 \layout Standard
 
-Coleta de lixo tem por objetivo isolar, na medida do possível, o programador
- da gerência de memória.
- Desta forma, idealmente uma API deveria também ser tão independente quanto
- possível do algoritmo de coleta de lixo utilizado pela implementação da
- máquina virtual.
- Perl e Python realizam coleta de lixo baseada em contagem de referências,
- e isto transparece nas operações de incremento e decremento de referências
- freqüentemente necessárias durante o uso de suas APIs.
+Garbage collection aims to isolate, as much as possible, the programmer
+ from memory management.
+ This way, ideally an API should also be as independent as possible from
+ the garbage collection algorithm used in the implementation of the virtual
+ machine.
+ Perl and Python perform garbage collection based on reference counting,
+ and this shows through in the reference increment and decrement operations
+ frequently needed during the use of their APIs.
 \layout Standard
 
-Ruby utiliza um contador de referências baseado em mark-and-sweep.
- A sua API consegue abstrair bem este fato para a manipulação de objetos
- nativos Ruby, mas a implementação do contador é evidente na criação de
- tipos Ruby em C, onde precisamos declarar uma função de marcação quando
- temos estruturas C que guardam referências para objetos Ruby.
- A API de Lua vai além ao isolar-se da implementação do coletor de lixo
- utilizado: o único ponto da API onde o emprego de um coletor de lixo incrementa
-l é aparente é na rotina de interação direta com o coletor, 
+Ruby uses a mark-and-sweep garbage collector.
+ Its API manages to abstract this fact well for manipulation of native Ruby
+ objects, but the implementation of the collector is evident in the creation
+ of Ruby types in C, where we need to declare a mark function when there
+ are C structures that store reference to Ruby objects.
+ The Lua API goes further when isolating itself from the implementation
+ of the garbage collector: the only point of the API where the use of an
+ incremental garbage collection is apparent is in the routine for direct
+ interaction with the collector, 
 \family typewriter 
 lua_gc
 \family default 
-, onde pode-se configurar parâmetros deste.
+, where its parameters can be configured.
 \layout Standard
 
-Das cinco linguagens, a única cuja API abstrai totalmente a implementação
- do coletor de lixo é Java.
- A única operação de interface com o coletor que a linguagem provê, 
+Of the five languages studied, the only whose API abstracts entirely the
+ implementation of the garbage collector is Java.
+ The only intarfacing operation provided by the language, 
 \family typewriter 
 System.gc()
 \family default 
-, não recebe parâmetros e não especifica como ou quando a coleta deve ser
- feita
+, does not receive any arguments and does not specify how or when the collection
+ should be done
 \begin_inset Foot
 collapsed true
 
 \layout Standard
 
-A documentação é propositalmente vaga, dizendo apenas que este método 
+The documentation is purposely vague, stating only that this method 
 \emph on 
 
 \begin_inset Quotes eld
@@ -7454,58 +7354,58 @@ suggests that the Java Virtual Machine expend effort toward recycling unused
 \end_inset 
 
 .
- De fato, as várias implementações da JVM utilizam algoritmos diferentes
- para coleta de lixo.
+ In fact, the various implementations of the JVM use different algorithms
+ for garbage collection.
 \layout Standard
 
-Na manipulação de dados através da API, Lua e Ruby são as linguagens que
- menos demandam do programador preocupações com gerência de referências.
- Ruby mantém o controle das referências retornadas a funções C varrendo
- a pilha de C durante a coleta de lixo, detectando a presença de referências
- armazenadas em variáveis locais.
- Lua evita o problema como um todo, mantendo seus objetos na pilha virtual
- e não retornando referências a eles ao código C.
+For manipulating data through the API, Lua and Ruby are the languages that
+ demand the least concerns from the programmer about managing references.
+ Ruby keeps control of references returned to C functions scanning the C
+ stack during garbage collection, detecting the presence of references stored
+ in local variables.
+ Lua avoids the problem altogether, by keeping its objects in the virtual
+ stack and not returning references to C code.
 \layout Standard
 
-O problema de referências armazenadas em variáveis locais de uma função
- é tratado por Perl e Java de forma semelhante, definindo dois tipos de
- referências, globais e locais (referências locais são chamadas de 
+The issue of references stored in local variables is handled by Perl and
+ Java in a similar way, by defining two types of references, global and
+ local (local references are called 
 \begin_inset Quotes eld
 \end_inset 
 
-variáveis mortais
+mortal variables
 \begin_inset Quotes erd
 \end_inset 
 
- em Perl).
- Referências locais têm gerência implícita (salvo alguns casos, como discutido
- na Seção\SpecialChar ~
+ in Perl).
+ Local references have implicit management (save a few cases, as discussed
+ in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Coleta-Java}
 
 \end_inset 
 
 ).
- As funções da API de Java retornam referências locais por padrão, que podem
- ser convertidas para globais com 
+ API functions in Java return local references by default, which can be
+ converted to global ones with 
 \family typewriter 
 NewGlobalRef
 \family default 
 .
- Em Perl ocorre o contrário, e as referências globais são convertidas para
- locais com 
+ In Perl, the opposite happens, and global references can be converted to
+ local ones with 
 \family typewriter 
 sv_2mortal
 \family default 
 .
- O modelo de Java é mais interessante, pois normalmente são usadas mais
- variáveis de escopo local do que global.
- Valores armazenados globalmente têm sempre alguma forma de gerência explícita
- associada a si, mesmo em Ruby e Lua, através de 
+ Java's approach is more interesting, as normally more locally-scoped than
+ globally-scoped variables are used.
+ Values stored globally always need to have some for of explicit management
+ to them, even in Ruby and Lua, through 
 \family typewriter 
 rb_global_variable
 \family default 
- e 
+ and 
 \family typewriter 
 luaL_ref
 \family default 
@@ -7516,54 +7416,54 @@ luaL_unref
 .
 \layout Section
 
-Chamada de funções a partir de C
+Calling functions from C
 \layout Standard
 
-A API deve prover uma forma de invocar a partir de C funções a serem executadas
- pela linguagem de script.
- Isto envolve a passagem de dados entre estes dois 
+The API must provide a form of invoking from C functions to be executed
+ by the scripting language.
+ This involves passing data between these two 
 \begin_inset Quotes eld
 \end_inset 
 
-espaços
+spaces
 \begin_inset Quotes erd
 \end_inset 
 
-, conforme visto na Seção\SpecialChar ~
+, as seen in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sec:Dados}
 
 \end_inset 
 
- e as implicações que isto traz sobre o tempo de vida dos objetos, abordadas
- na Seção\SpecialChar ~
+ and the implications that this brings about the objects' lifetime, discussed
+ in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sec:Coleta-de-lixo}
 
 \end_inset 
 
 .
- Devido à tipagem estática de C, não é possível usar uma sintaxe transparente
- para chamada de funções registradas em tempo de execução.
- É necessário então que a API defina funções para realizar chamadas na linguagem
- de script.
+ Because of the static typing of C, it is not possible to use a transparent
+ syntax for calling functions registered at runtime.
+ It is therefore necessary for the API to define functions for performing
+ calls to the scripting language.
 \layout Standard
 
-Nesta seção serão discutidas as facilidades oferecidas por cada API para
- a invocação de funções para execução na máquina virtual.
- As principais questões envolvidas são como referenciar a função a ser chamada,
- como passar argumentos a ela e como obter o valor de retorno, incluindo
- formas de notificação no caso de erros.
- Para fins de ilustração, será apresentado em cada linguagem um exemplo
- de chamada de uma função simples.
- Assume-se que tenha sido definida no espaço de cada linguagem de script
- uma função 
+In this section, we will discuss the facilities provided by each API for
+ invoking functions to be executed by its virtual machine.
+ The main issues involved are how to reference the function to be called,
+ how to pass arguments to it and how to obtain the return value, including
+ forms of notification in case of errors.
+ For illustration purposes, for each language we will present an example
+ of a simple function call.
+ Assume that in the space of each scripting language a 
 \family typewriter 
-teste
+test
 \family default 
-, que recebe um inteiro e uma string como parâmetros e retorna um inteiro
- como resultado.
- Para maior brevidade, a verificação de erros será omitida nos exemplos.
+ function was defined, which receives an integer and a string as arguments
+ and returns an integer as a result.
+ For brevity, error handling will be omitted in the examples.
+ 
 \layout Subsection
 
 Python
@@ -7586,32 +7486,32 @@ Como obter/referenciar uma função
 
 \layout Standard
 
-Para chamar uma função Python a partir de C, deve-se inicialmente obter
- um ponteiro para o 
+When calling a Python function from C, one should initially obtain a pointer
+ to the 
 \family typewriter 
 PyObject
 \family default 
- correspondente à função, como visto na Seção\SpecialChar ~
+ corresponding to the function, as seen in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Dados-Python}
 
 \end_inset 
 
 .
- Além de funções implementadas em Python e funções C registradas a partir
- da API, qualquer tipo de dado que implemente o método 
+ Besides functions implemented in Python and C functions registered through
+ the Python API, any data type that implements the 
 \family typewriter 
 __call__
 \family default 
- (ou declare uma função no campo 
+ method (or declares a function in the 
 \family typewriter 
 tp_call
 \family default 
- de sua estrutura 
+ field of its 
 \family typewriter 
 PyTypeObject
 \family default 
-) pode ser chamado como uma função.
+ structure) can be called as a function.
 \layout Standard
 
 
@@ -7629,46 +7529,34 @@ Passando argumentos
 
 \layout Standard
 
-A API de Python oferece diversas funções para realização de chamadas a partir
- de C.
- A função mais geral, 
+The Python API offers several functions for performing calls from C.
+ The most general function, 
 \family typewriter 
 PyObject_Call
 \family default 
-, recebe como parâmetros o objeto a ser chamado, uma tupla Python contendo
- os parâmetros a serem passados e opcionalmente um dicionário de argumentos
- 
-\emph on 
-keyword
-\emph default 
-.
- Como conveniência, outras funções permitem passar os argumentos de outras
- formas.
- Por exemplo, 
+, receives as arguments the object to be called, a Python tuple containing
+ the arguments to be passed and optionally a dictionary of keyword arguments.
+ As a convenience, other functions allow passing arguments in other ways.
+ For example, 
 \family typewriter 
 PyObject_CallFunction
 \family default 
- encapsula a chamada a 
+ ncapsulates the call to 
 \family typewriter 
 Py_BuildValue
 \family default 
- (vista na Seção\SpecialChar ~
+ (seen in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Dados-Python}
 
 \end_inset 
 
-), aceitando diretamente a string de formato desta e os valores a serem
- convertidos diretamente.
+), accepting directly the format string and the value to be converted.
  
 \family typewriter 
 PyObject_CallFunctionObjArgs
 \family default 
- é uma função 
-\emph on 
-vararg
-\emph default 
- que aceita uma seqüência de ponteiros para 
+ is a vararg function that accepts a sequence of pointers to 
 \family typewriter 
 PyObject
 \family default 
@@ -7688,26 +7576,24 @@ Função vs.
 
 \layout Standard
 
-Existem também funções de conveniência para a invocação de métodos.
- A função 
+There are also many convenience functions for method invocation.
+ The 
 \family typewriter 
 PyObject_CallMethod
 \family default 
- é uma variante de 
+ is a variant of 
 \family typewriter 
 PyObject_CallFunction
 \family default 
- que recebe como parâmetros um 
+ that receives as arguments a 
 \family typewriter 
 PyObject
 \family default 
- e uma string C contendo o nome do método.
- Assim, por exemplo, as duas formas abaixo são equivalentes à chamada Python
-\size footnotesize 
+ and a C string containing the method name.
+ So, for example, both forms below are equivalent to the Python statement
  
 \family typewriter 
-\size default 
-ret = uma_string.split(" ")
+ret = some_string.split(" ")
 \family default 
 :
 \layout LyX-Code
@@ -7715,17 +7601,17 @@ ret = uma_string.split(" ")
 
 \size footnotesize 
 \emph on 
-/* "s" indica que o parâmetro seguinte é do tipo string.
+/* "s" indicates that the next parameter is a string.
  */
 \layout LyX-Code
 
 
 \size footnotesize 
-PyObject* ret = PyObject_CallMethod(uma_string, "split", "s", " ");
+PyObject* ret = PyObject_CallMethod(some_string, "split", "s", " ");
 \newline 
  
 \newline 
-PyObject* split = PyObject_GetAttrString(uma_string, "split");
+PyObject* split = PyObject_GetAttrString(some_string, "split");
 \layout LyX-Code
 
 
@@ -7745,13 +7631,12 @@ collapsed true
 
 \layout Standard
 
-É interessante notar que quando um método é chamado como função, o argumento
+It is interesting to note that when a method is called as a function, the
  
 \family typewriter 
 self
 \family default 
- não é passado explicitamente.
- 
+ argument is not passed explicitly.
 \layout Standard
 
 
@@ -7772,29 +7657,28 @@ Verificação da ocorrência de erros
 
 \layout Standard
 
-O valor de retorno em todas as funções de chamada é um ponteiro para 
+The return value in all invocation functions is a 
 \family typewriter 
 PyObject
 \family default 
-.
- Assim como ocorre em código Python, quando funções Python retornam múltiplos
- valores, estes são encapsulados em uma tupla.
- Para funções que não retornam valor, as funções\SpecialChar ~
-C devem retornar 
+ pointer.
+ As it happens in Python code, when Python functions return multiple values,
+ they are encapsulated in a tuple.
+ For functions that do not return a value, C functions must return 
 \family typewriter 
 Py_None
 \family default 
 .
- Em caso de erro na chamada, as funções retornam 
+ In case of errors in the call, these functions return 
 \family typewriter 
 NULL
 \family default 
 .
- A ocorrência de exceções pode então ser verificada com a função 
+ The occurrence of exceptions can then be verified with the 
 \family typewriter 
 PyErr_Occurred
 \family default 
-.
+ function.
 \layout Standard
 
 
@@ -7809,12 +7693,12 @@ Exemplo de chamada de função
 
 \layout Standard
 
-Uma forma típica para chamar uma função Python 
+A typical way of calling a Python function called 
 \family typewriter 
-teste
+test
 \family default 
-, incluindo a obtenção da função e a conversão dos valores de entrada e
- saída entre Python e C, é exibida a seguir:
+, including retrieval of the function and conversion of input and output
+ values between Python and C, is shown below:
 \layout LyX-Code
 
 
@@ -7824,24 +7708,24 @@ PyObject* globals = PyModule_GetDict(PyImport_AddModule("__main__"));
 
 
 \size footnotesize 
-PyObject* teste = PyDict_GetItemString(globals, "teste");
+PyObject* test = PyDict_GetItemString(globals, "test");
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-/* "si" indica que seguem parâmetros string e inteiro */
+/* "si" indicates string and integer arguments */
 \layout LyX-Code
 
 
 \size footnotesize 
-PyObject* obj_result = PyObject_CallFunction(teste, "si", "entrada", 2);
+PyObject* obj_result = PyObject_CallFunction(test, "si", "foo", 2);
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-/* Converte o valor para C */
+/* Converts the value to C */
 \layout LyX-Code
 
 
@@ -7852,7 +7736,7 @@ long result = PyInt_AsLong(obj_result);
 
 \size footnotesize 
 \emph on 
-/* Libera o PyObject temporário retornado.
+/* Frees the temporary PyObject that was returned.
  */
 \layout LyX-Code
 
@@ -7873,26 +7757,25 @@ Controle das referências no exemplo
 
 \layout Standard
 
-Uma função global é obtida através do dicionário do módulo 
+A global function is obtain through the dictionary in the 
 \family typewriter 
 __main__
 \family default 
-.
- A conversão dos dados de entrada de C para Python é feita através da string
- de formato recebida por 
+ module.
+ The conversion of input data from C to Python is made through a format
+ string received by 
 \family typewriter 
 PyObject_CallFunction
 \family default 
 .
- Esta chamada equivale a 
+ This call is equivalent to 
 \family typewriter 
-obj_result = teste("entrada", 2)
+obj_result = test("foo", 2)
 \family default 
- em Python.
- O valor de retorno é retornado como uma nova referência a um objeto Python
- e, desta forma, precisa ter a contagem de referências decrementada após
- o seu uso.
- As funções 
+ in Python.
+ The output value is returned as a new reference to a Python object and,
+ as such, needs to have its reference count decremented after its use.
+ The 
 \family typewriter 
 PyImport_AddModule
 \family default 
@@ -7900,16 +7783,26 @@ PyImport_AddModule
 \family typewriter 
 PyModule_GetDict
 \family default 
- e 
+ and 
 \family typewriter 
 PyDict_GetItemString
 \family default 
- retornam referências emprestadas, portanto a contagem de referências dos
- PyObjects retornados por elas não precisam ser decrementadas após o seu
- uso.
- Todavia, após a chamada da função Python, não há garantia de que os ponteiros
- globals e teste ainda apontem para objetos válidos -- precisaríamos ter
- incrementado a sua contagem de referências caso quiséssemos usá-los novamente.
+ return borrowed references, therefore the reference count of 
+\family typewriter 
+PyObject
+\family default 
+s returned by them do not need to be decremented after their use.
+ However, after calling the Python function, there is no guarantee that
+ the 
+\family typewriter 
+globals
+\family default 
+ and 
+\family typewriter 
+test
+\family default 
+ pointers still point to valid objects -- we would have to have incremented
+ their reference counts if we wanted to use them again.
 \layout Subsection
 
 Ruby
@@ -7935,28 +7828,27 @@ Funções para chamar funções
 
 \layout Standard
 
-Como métodos não são valores de primeira classe em Ruby, eles não são representa
-dos como 
+Since methods are not first-class values in Ruby, they are not represented
+ as 
 \family typewriter 
 VALUE
 \family default 
-s na sua API de C.
- Para a chamada de métodos Ruby em C, a API oferece a função 
+s in their C API.
+ For calling Ruby methods in C, the API offers the 
 \family typewriter 
 rb_funcall
 \family default 
- e algumas variantes.
- Em comum, todas recebem como parâmetro o 
+ function and some variations.
+ In common, all of them receive as an argument the 
 \family typewriter 
 VALUE
 \family default 
- referente ao objeto sobre o qual o método se refere, um 
+ indicating to the object the method refers to, an 
 \family typewriter 
 ID
 \family default 
- referente à string internalizada contendo o nome do método e um inteiro
- indicando o número de argumentos.
- 
+ referring to the interned string containing the method name and an integer
+ informing the number of arguments.
 \layout Standard
 
 
@@ -7977,40 +7869,31 @@ Múltiplos valores de retorno
 
 \layout Standard
 
-Como em Python, as funções da API para invocação de métodos diferem na forma
- como os argumentos são passados.
- Por exemplo, a função 
-\family typewriter 
-rb_funcall
-\family default 
- recebe os argumentos na forma de 
+Like in Python, the API functions for method invocation differ in how arguments
+ are passed.
+ For example, rb_funcall receives arguments as 
 \family typewriter 
 VALUE
 \family default 
-s passados como varargs C; 
+s passed as C varargs; 
 \family typewriter 
 rb_funcall2
 \family default 
- recebe um array C de 
+ receives a C array of 
 \family typewriter 
 VALUE
 \family default 
-s; 
-\family typewriter 
-rb_apply
-\family default 
- recebe um 
+s; rb_apply receives a 
 \family typewriter 
 VALUE
 \family default 
- que deve ser um array Ruby contendo os parâmetros.
- Todas elas retornam um 
+ that must be a Ruby array containing arguments.
+ All of them return a 
 \family typewriter 
 VALUE
 \family default 
- como parâmetro.
- Assim como em código Ruby, múltiplos valores de retorno são representados
- como um array Ruby.
+ as an argument.
+ Like in Ruby code, multiple return values are represented as a Ruby array.
 \layout Standard
 
 
@@ -8026,26 +7909,26 @@ Função vs.
 
 \layout Standard
 
-Todas as rotinas de chamada de função na API se referem a métodos, precisando
- assim especificar um objeto sobre o qual o método deve ser aplicado.
- Funções globais em Ruby são definidas como métodos do módulo 
+All function call routines from the API refer to methods, expecting thus
+ an object on which the method should be applied.
+ Global functions are defined in Ruby as methods of the 
 \family typewriter 
 Kernel
 \family default 
-, que é incluído pela classe 
+ module, which is included by the class 
 \family typewriter 
 Object
 \family default 
- e são, assim, acessíveis a partir de qualquer objeto, incluindo 
+ and are, therefore, accessible from every object, including 
 \family typewriter 
 nil
 \family default 
 .
- Desta forma, pode-se invocar funções globais passando a constante C 
+ This way, one can invoke global functions passing the C constant 
 \family typewriter 
 Qnil
 \family default 
- como o objeto alvo do método.
+ as the method's target object.
 \layout Standard
 
 
@@ -8060,24 +7943,22 @@ Exemplo de chamada de função
 
 \layout Standard
 
-A seguir, é apresentada a forma típica para chamar uma função global Ruby
- 
+Below, we present the typical way a Ruby global function 
 \family typewriter 
-teste
+test
 \family default 
-, novamente incluindo a conversão dos valores de entrada e saída entre C
- e o interpretador.
+ is called from C, again including conversion of input and output values
+ between C and the interpreter.
 \layout LyX-Code
 
 
 \size footnotesize 
-ID teste = rb_intern("teste");
+ID test = rb_intern("test");
 \layout LyX-Code
 
 
 \size footnotesize 
-VALUE val_result = rb_funcall(Qnil, teste, 2, rb_str_new2("entrada"), INT2NUM(2)
-);
+VALUE val_result = rb_funcall(Qnil, test, 2, rb_str_new2("foo"), INT2NUM(2));
 \layout LyX-Code
 
 
@@ -8097,26 +7978,25 @@ collapsed true
 
 \layout Standard
 
-Diferentemente de Python, não é necessário obter uma referência para a função,
- bastando passar o nome desta na forma de 
+Unlike it happens in Python, it is not necessary to obtain a reference to
+ the function, sufficing to pass its name as an 
 \family typewriter 
 ID
 \family default 
- e o objeto a que ela se refere (no caso, 
+ and the object it refers to (in this case, 
 \family typewriter 
 Qnil
 \family default 
-, indicando uma função global).
- A conversão dos dados de entrada de C para Ruby é feita através da função
- 
+, indicating a global function).
+ Conversion of input data from C to Ruby is done through the 
 \family typewriter 
 rb_str_new2
 \family default 
- e da macro 
+ function and the 
 \family typewriter 
 INT2NUM
 \family default 
-, que criam 
+ macro, which return 
 \family typewriter 
 VALUE
 \family default 
@@ -8136,44 +8016,43 @@ Controle das refs.
 
 \layout Standard
 
-Conforme discutido na Seção\SpecialChar ~
+As discussed in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Ruby-GC}
 
 \end_inset 
 
-, o controle da validade de 
+, the control of validity of 
 \family typewriter 
 VALUE
 \family default 
-s é feito implicitamente.
- Assim, pode-se fazer a chamada de funções que criam 
+s is done implicitly.
+ So, we can call functions that create 
 \family typewriter 
 VALUE
 \family default 
-s diretamente na passagem de parâmetros de 
+s directly when passing parameters to 
 \family typewriter 
 rb_funcall
 \family default 
 .
- De fato, as três linhas acima poderiam ter sido condensadas, passando a
- chamada 
+ In fact, all three lines above could have been condensed, passing 
 \family typewriter 
 rb_funcall
 \family default 
- como parâmetro para 
+ as a parameter to 
 \family typewriter 
 NUM2LONG
 \family default 
- e a chamada 
+ and 
 \family typewriter 
 rb_intern
 \family default 
- como segundo parâmetro de 
+ as the second argument of 
 \family typewriter 
 rb_funcall
 \family default 
-, tendo sido separadas apenas para maior legibilidade.
+; they were separated here for greater readability.
 \layout Standard
 
 
@@ -8188,72 +8067,67 @@ Questões específicas da linguagem: blocos Ruby
 
 \layout Standard
 
-Um tipo de dados que possui um tratamento um tanto irregular em Ruby é o
- de blocos de código.
- A sintaxe em Ruby para a declaração de blocos é especial: blocos só podem
- ser definidos como o último argumento de uma chamada de método.
- Assim, eles não são valores de primeira classe, não podendo ser, por exemplo,
- declarados em uma atribuição a variável.
- Eles podem, no entanto, ser promovidos a valores de primeira classe, na
- forma de objetos da classe 
+A data type that is treated in a quite irregular way in Ruby is that from
+ code blocks.
+ Ruby features special syntax for declaring blocks: they can only be defined
+ as the last argument of a method call.
+ This way, they are not first-class values and cannot be, for example, declared
+ in a variable assignment.
+ They can, however, be promoted to first-class values, as objects of the
+ 
 \family typewriter 
 Proc
 \family default 
-.
- Isto pode ser feito de duas formas: explicitamente, passando um bloco para
- o método 
+ class.
+ This can be done in two ways: explicitly, passing a block to the 
 \family typewriter 
 Proc.new
 \family default 
-, ou implicitamente, quando o bloco for passado para um método que declara
- um último parâmetro formal precedido de 
+ method, or implicitly, when a block is passed to a method that declares
+ a final formal argument preceded by 
 \family typewriter 
 &
 \family default 
 .
- Esta variável conterá o bloco convertido para um 
+ This variable will contain the block converted to a 
 \family typewriter 
 Proc
 \family default 
 .
- Na chamada de funções que esperam blocos, 
+ When calling functions that expect blocks, 
 \family typewriter 
 &
 \family default 
- converte o 
+ converts a 
 \family typewriter 
 Proc
 \family default 
- para um bloco.
- Objetos 
-\family typewriter 
-Proc
-\family default 
- podem ser manipulados através da API de C como qualquer outro objeto Ruby,
- mas não há correspondente na API de C para a funcionalidade do operador
+ to a block.
  
 \family typewriter 
+Proc
+\family default 
+ objects can be manipulated through the C API as any other Ruby object,
+ but there is no match in the C API to the functionality of the 
+\family typewriter 
 &
 \family default 
- em chamadas de função.
+ operator in function calls.
 \layout Standard
 
-O status especial dos blocos de código complica a sua manipulação a partir
- de código\SpecialChar ~
-C, e em particular a invocação de métodos que os esperam como
- parâmetro.
- Digamos que queremos invocar o seguinte método Ruby a partir de\SpecialChar ~
-C:
+The special status of code blocks complicates their use from C code, and
+ in particular the invocation of methods that expect them as a parameter.
+ Say we want to invoke the following Ruby method from C:
 \layout LyX-Code
 
 
 \size footnotesize 
-def uma_funcao_ruby()
+def a_ruby_function()
 \layout LyX-Code
 
 
 \size footnotesize 
-   print("uma_funcao_ruby vai invocar o bloco.
+   print("a_ruby_function will invoke the block.
 \backslash 
 n")
 \layout LyX-Code
@@ -8265,7 +8139,7 @@ n")
 
 
 \size footnotesize 
-   print("uma_funcao_ruby encerrou.
+   print("a_ruby_function is done.
 \backslash 
 n")
 \layout LyX-Code
@@ -8292,24 +8166,24 @@ collapsed true
 
 \layout Standard
 
-A função espera que um bloco de código seja passado para que seja invocado
- via o comando 
+This function expects a code block to be passed to it, so it can be invoked
+ by the 
 \family typewriter 
 yield
 \family default 
-.
- Como vamos invocar a função a partir de C, queremos também passar código
- C como um bloco, representado na seguinte função: 
+ command.
+ Since we will invoke the function from C, we also want to pass C code as
+ a block, represented by the following function:
 \layout LyX-Code
 
 
 \size footnotesize 
-VALUE um_bloco_C() {
+VALUE a_C_block() {
 \layout LyX-Code
 
 
 \size footnotesize 
-   fprintf(stderr, "um_bloco_C está rodando.
+   fprintf(stderr, "a_C_block is running.
 \backslash 
 n");
 \layout LyX-Code
@@ -8331,60 +8205,60 @@ collapsed true
 
 \layout Standard
 
-A conversão de objetos 
+The conversion of 
 \family typewriter 
 Proc
 \family default 
- para blocos proporcionada pelo operador 
+ objects to blocks performed by the 
 \family typewriter 
 &
 \family default 
- em Ruby não possui equivalente na API C.
- Assim, 
+ operator in Ruby has no equivalent in the C API.
+ Therefore, 
 \family typewriter 
 rb_funcall
 \family default 
- não é capaz de passar 
+ is unable to pass 
 \family typewriter 
 Proc
 \family default 
-s para funções que aceitam blocos.
- A forma intuitiva de fazer a chamada de funções Ruby a partir de C, neste
- caso, então, não funciona:
+s to functions expecting blocks.
+ The intuitive way of doing Ruby function calls from C, in this case then,
+ does not work:
 \layout LyX-Code
 
 
 \size footnotesize 
-ID uma_funcao_ruby = rb_intern("uma_funcao_ruby");
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-/* O segundo parâmetro é um argumento adicional a ser
+ID a_ruby_function = rb_intern("a_ruby_function");
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-   opcionalmente passado na invocação de um Proc */
-\layout LyX-Code
-
-
-\size footnotesize 
-VALUE um_proc = rb_proc_new(a_C_block, Qnil);
+/* The second argument is an additional argument to be
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-/* Não funciona! Um Proc não é um bloco de código.
+   optionally passed when invoking a Proc */
+\layout LyX-Code
+
+
+\size footnotesize 
+VALUE a_proc = rb_proc_new(a_C_block, Qnil);
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+/* Doesn't work! A Proc is not a code block.
  */
 \layout LyX-Code
 
 
 \size footnotesize 
-VALUE resultado = rb_funcall(Qnil, uma_funcao_ruby, 1, um_proc);
+VALUE result = rb_funcall(Qnil, a_ruby_function, 1, a_proc);
 \layout Standard
 
 
@@ -8399,90 +8273,83 @@ collapsed true
 
 \layout Standard
 
-As únicas formas de invocar um método Ruby passando um bloco de código são
- através de 
+The only ways of invoking a Ruby method passing a code block are through
+ 
 \family typewriter 
 rb_eval_string
 \family default 
- e 
+ and 
 \family typewriter 
 rb_iterate
 \family default 
 .
- A primeira abordagem, além do custo de desempenho causado pelo 
-\emph on 
-parsing
-\emph default 
- da string de código, tem a inconveniência de exigir o uso de variáveis
- temporárias para que se possa obter os valores de retorno de volta ao espaço
- de C.
- No modelo usando 
+ The first approach, besides the performance penalty caused by parsing a
+ string of code, has the inconvenience of requiring temporary variables
+ so that one can obtain return values back to the C data space.
+ In the model using 
 \family typewriter 
 rb_eval_string
 \family default 
-, a função C que atuará como bloco deve ser declarada no espaço de Ruby.
- Há duas alternativas de como fazer isto: registrando o método em Ruby e
- invocando-o em um bloco 
-\emph on 
-wrapper
-\emph default 
- declarado no texto da string Ruby:
+, the C function that will act as a block must be declared in the Ruby space.
+ There are two alternatives on how to do this: registering the method in
+ Ruby and invoking it in a wrapper block declared in the string of Ruby
+ code:
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-/* Declara uma função global com 0 parâmetros de entrada */
+/* Declares a global function with 0 input parameters */
 \layout LyX-Code
 
 
 \size footnotesize 
-rb_define_global_function("um_bloco_C", um_bloco_C, 0);
+rb_define_global_function("a_C_block", a_C_block, 0);
 \layout LyX-Code
 
 
 \size footnotesize 
-rb_eval_string("$resultado = uma_funcao_ruby { um_bloco_C() }");
+rb_eval_string("$result = a_ruby_function { a_C_block() }");
 \layout LyX-Code
 
 
 \size footnotesize 
-VALUE resultado = rb_gv_get("$resultado");
+VALUE result = rb_gv_get("$result");
 \layout Standard
 
-Ou encapsulando a função em um objeto 
+Or encapsulating the function in a 
 \family typewriter 
 Proc
 \family default 
- a partir de C com 
+ object from C with 
 \family typewriter 
 rb_proc_new
 \family default 
- e então usando a notação 
+ and then using the 
 \family typewriter 
 &
 \family default 
- na string de código Ruby avaliada:
+ notation in the string of Ruby code:
 \layout LyX-Code
 
 
 \size footnotesize 
-VALUE um_proc = rb_proc_new(um_bloco_C, Qnil);
+VALUE a_proc = rb_proc_new(a_C_block, Qnil);
 \layout LyX-Code
 
 
 \size footnotesize 
-rb_gv_set("$um_proc", um_proc);
+rb_gv_set("$a_proc", a_proc);
 \layout LyX-Code
 
 
 \size footnotesize 
-rb_eval_string("$resultado = uma_funcao_ruby(&$um_proc)");
+rb_eval_string("$result = a_ruby_function(&$a_proc)");
 \layout LyX-Code
 
 
 \size footnotesize 
-VALUE resultado = rb_gv_get("$resultado");
+VALUE result = rb_gv_get("$result");
 \layout Standard
 
 
@@ -8497,64 +8364,57 @@ collapsed true
 
 \layout Standard
 
-A segunda abordagem explora o fato de que a única função da API de C capaz
- de produzir blocos de código diretamente é 
+The second approach makes use of the fact that the only API function that
+ is capable of producing code blocks directly is 
 \family typewriter 
 rb_iterate
 \family default 
 .
- Esta função recebe dois ponteiros de função, um para a função a ser invocada
- e outro para a função que atuará como o bloco de código; chamadas a 
+ This function receives two function pointers, one to the function to be
+ invoked and another to the function that will act as a block; calls to
+ 
 \family typewriter 
 yield
 \family default 
- dentro da primeira função invocarão a segunda.
- O bloco pode quebrar o fluxo de execução com 
+ withing the first function will invoke the second one.
+ The block may break the flow of execution with 
 \family typewriter 
 rb_iter_break
 \family default 
 .
- Passando como 
+ By passing as a 
 \begin_inset Quotes eld
 \end_inset 
 
-função de iteração
+iteration function
 \begin_inset Quotes erd
 \end_inset 
 
- para 
-\family typewriter 
-rb_iterate
-\family default 
- uma função 
-\emph on 
-wrapper
-\emph default 
- que simplesmente chama o método Ruby desejado com 
+ to rb_iterate a wrapper function that simply calls the desired Ruby method
+ with 
 \family typewriter 
 rb_funcall
 \family default 
-, é possível simular uma chamada a 
+, it is possible to simulate a call to 
 \family typewriter 
 rb_funcall
 \family default 
- que recebe uma função\SpecialChar ~
-C como bloco de código.
+ that receives a C function as a code block.
 \layout LyX-Code
 
 
 \size footnotesize 
-VALUE chama_uma_funcao_ruby() {
+VALUE call_a_ruby_function() {
 \layout LyX-Code
 
 
 \size footnotesize 
-   ID uma_funcao_ruby = rb_intern("uma_funcao_ruby");
+   ID a_ruby_function = rb_intern("a_ruby_function");
 \layout LyX-Code
 
 
 \size footnotesize 
-   return rb_funcall(Qnil, uma_funcao_ruby, 0);
+   return rb_funcall(Qnil, a_ruby_function, 0);
 \layout LyX-Code
 
 
@@ -8570,18 +8430,19 @@ VALUE chama_uma_funcao_ruby() {
 
 \size footnotesize 
 \emph on 
-/* Os argumentos Qnil indicam que não há parâmetros
+/* The Qnil arguments indicate that there are no parameters
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-   nem para a função nem para o bloco */
+   to be passed to either function.
+ */
 \layout LyX-Code
 
 
 \size footnotesize 
-VALUE resultado = rb_iterate(chama_uma_funcao_ruby, Qnil, um_bloco_C, Qnil);
+VALUE result = rb_iterate(call_a_ruby_function, Qnil, a_C_block, Qnil);
 \layout Standard
 
 
@@ -8596,71 +8457,62 @@ collapsed true
 
 \layout Standard
 
-Note que nenhum argumento é passado em 
+Notice that no arguments are passed to 
 \family typewriter 
 rb_funcall
 \family default 
- -- a função 
+ -- 
 \family typewriter 
 rb_iterate
 \family default 
- define 
+ defines 
 \family typewriter 
-um_bloco_C
+a_C_block
 \family default 
- como sendo o 
+ as the 
 \begin_inset Quotes eld
 \end_inset 
 
-bloco de código atual
+current code block
 \begin_inset Quotes erd
 \end_inset 
 
- e esta definição é herdada implicitamente por 
+ and this definition is inherited implicitly by 
 \family typewriter 
 rb_funcall
 \family default 
 .
 \layout Standard
 
-Para o caso comum de realizar iterações sobre o método 
+For the common case of performing iteration on the 
 \family typewriter 
 each
 \family default 
- de coleções, Ruby oferece uma função 
-\emph on 
-wrapper
-\emph default 
- 
+ method of collections, Ruby offers a wrapper function, 
 \family typewriter 
 rb_each
 \family default 
 .
- Esta função foi projetada para ser passada como primeiro argumento de 
+ This function was designed to be passed as a first argument to 
 \family typewriter 
 rb_iterate
 \family default 
 .
- Funções C executando como bloco de código podem quebrar o fluxo de execução
- com 
+ C functions executing as a code block can break the control flow with 
 \family typewriter 
 rb_iter_break
 \family default 
 .
- O mecanismo de 
-\emph on 
-yield
-\emph default 
-, tanto para código C quanto para chamadas nativas em Ruby, é implementado
- usando as funções C 
+ The yielding mechanism, for both C code and native Ruby calls, is implemented
+ using the 
 \family typewriter 
 setjmp
 \family default 
- e 
+ and 
 \family typewriter 
 longjmp
 \family default 
-.
+ C functions.
 \layout Standard
 
 
@@ -8675,31 +8527,25 @@ Verificação da ocorrência de erros.
 
 \layout Standard
 
-Para o correto tratamento de erros, funções C que realizam chamadas a funções
- Ruby devem ser encapsuladas em uma chamada 
+For correct error handling, C functions that perform calls to Ruby functions
+ must be encapsulated by a 
 \family typewriter 
 rb_protect
 \family default 
- ou em uma de suas variantes, 
+ call or one of its variants, 
 \family typewriter 
 rb_ensure
 \family default 
- e 
+ and 
 \family typewriter 
 rb_rescue
 \family default 
 .
- Esta função captura exceções disparadas por código Ruby (ou código C usando
- 
-\family typewriter 
-rb_raise
-\family default 
-).
- Caso o programa não use 
+ If a program does not use 
 \family typewriter 
 rb_protect
 \family default 
-, exceções em Ruby resultarão em erros fatais.
+, Ruby exceptions will result in fatal errors.
 \layout Subsection
 
 Java
