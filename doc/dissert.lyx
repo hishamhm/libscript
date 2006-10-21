@@ -6616,22 +6616,22 @@ s.
 \family typewriter 
 VALUE
 \family default 
- não deve ser coletado usando 
+ não deve ser coletado usando a função 
 \family typewriter 
 rb_global_variable
 \family default 
- (Embora a documentação não informe, é possível desmarcar um valor global
- com 
-\family typewriter 
-rb_gc_unregister_address
-\family default 
-)\SpecialChar ~
+\SpecialChar ~
 
 \begin_inset LatexCommand \cite{thomas04ruby}
 
 \end_inset 
 
-.
+ (Embora a documentação não informe, é possível desmarcar um valor global
+ com 
+\family typewriter 
+rb_gc_unregister_address
+\family default 
+).
 \layout Standard
 
 Objetos de escopo local a uma função C, entretanto, não precisam ser notificados.
@@ -6676,7 +6676,7 @@ falsos positivos
  evitando que dados que poderiam ser coletados o sejam.
 \layout Standard
 
-Apesar da conveniência para o programador, tal abortagem é extremamente
+Apesar da conveniência para o programador, tal abordagem é extremamente
  não-portável.
  A implementação do coletor de lixo em Ruby 1.8.2 possui 
 \family typewriter 
@@ -7699,9 +7699,9 @@ Coleta de lixo tem por objetivo isolar, na medida do possível, o programador
 
 Ruby utiliza um contador de referências baseado em mark-and-sweep.
  A sua API consegue abstrair bem este fato para a manipulação de objetos
- nativos Ruby, mas a implementação do contador é evidente na criação de
- tipos Ruby em C, onde precisamos declarar uma função de marcação quando
- temos estruturas C que guardam referências para objetos Ruby.
+ nativos Ruby, mas a implementação do coletor é evidente na criação de tipos
+ Ruby em C, onde precisamos declarar uma função de marcação quando temos
+ estruturas C que guardam referências para objetos Ruby.
  A API de Lua vai além ao isolar-se da implementação do coletor de lixo
  utilizado: o único ponto da API onde o emprego de um coletor de lixo incrementa
 l é aparente é na rotina de interação direta com o coletor, 
@@ -7946,7 +7946,7 @@ Py_BuildValue
 \end_inset 
 
 ), aceitando diretamente a string de formato desta e os valores a serem
- convertidos diretamente.
+ convertidos.
  
 \family typewriter 
 PyObject_CallFunctionObjArgs
@@ -8176,7 +8176,7 @@ PyObject_CallFunction
 obj_result = teste("entrada", 2)
 \family default 
  em Python.
- O valor de retorno é retornado como uma nova referência a um objeto Python
+ O valor de saída é retornado como uma nova referência a um objeto Python
  e, desta forma, precisa ter a contagem de referências decrementada após
  o seu uso.
  As funções 
@@ -8192,11 +8192,22 @@ PyModule_GetDict
 PyDict_GetItemString
 \family default 
  retornam referências emprestadas, portanto a contagem de referências dos
- PyObjects retornados por elas não precisam ser decrementadas após o seu
- uso.
+ 
+\family typewriter 
+PyObject
+\family default 
+s retornados por elas não precisam ser decrementadas após o seu uso.
  Todavia, após a chamada da função Python, não há garantia de que os ponteiros
- globals e teste ainda apontem para objetos válidos -- precisaríamos ter
- incrementado a sua contagem de referências caso quiséssemos usá-los novamente.
+ 
+\family typewriter 
+globals
+\family default 
+ e 
+\family typewriter 
+teste
+\family default 
+ ainda apontem para objetos válidos -- precisaríamos ter incrementado a
+ sua contagem de referências caso quiséssemos usá-los novamente.
 \layout Subsection
 
 Ruby
@@ -8237,12 +8248,12 @@ rb_funcall
 \family typewriter 
 VALUE
 \family default 
- referente ao objeto sobre o qual o método se refere, um 
+ indicando ao objeto sobre o qual o método se refere, um 
 \family typewriter 
 ID
 \family default 
  referente à string internalizada contendo o nome do método e um inteiro
- indicando o número de argumentos.
+ informando o número de argumentos.
  
 \layout Standard
 
@@ -8347,8 +8358,8 @@ Exemplo de chamada de função
 
 \layout Standard
 
-A seguir, é apresentada a forma típica para chamar uma função global Ruby
- 
+A seguir, é apresentada a forma típica para chamar em C uma função global
+ Ruby 
 \family typewriter 
 teste
 \family default 
@@ -8659,7 +8670,7 @@ ID uma_funcao_ruby = rb_intern("uma_funcao_ruby");
 
 
 \size footnotesize 
-VALUE um_proc = rb_proc_new(a_C_block, Qnil);
+VALUE um_proc = rb_proc_new(um_bloco_C, Qnil);
 \layout LyX-Code
 
 
@@ -8713,7 +8724,7 @@ rb_eval_string
 \emph on 
 wrapper
 \emph default 
- declarado no texto da string Ruby:
+ declarado na string de código Ruby:
 \layout LyX-Code
 
 
