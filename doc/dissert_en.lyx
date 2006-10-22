@@ -657,7 +657,7 @@ language independent
 \begin_inset Quotes erd
 \end_inset 
 
- model for data or objects, however, are similar to those in the design
+ model for data or objects, however, are not unlike those in the design
  of an interface between any two languages, since this model too describes
  a type system.
  When implementing bindings for any of those object models, it is necessary
@@ -2376,7 +2376,7 @@ Py_BuildValue
  and dictionaries, in a single call.
  This function is frequently used both in the construction of the argument
  tuple when calling functions and in the construction of return values.
- The syntax of the parameter string is similar to that of 
+ The syntax of the parameter string resembles that of 
 \family typewriter 
 PyArg_ParseTuple
 \family default 
@@ -3480,12 +3480,11 @@ Set
 \SpecialChar \-
 ArrayRegion
 \family default 
-), functions that return pointers to the array that may or may not perform
- copies, similarly to 
+), functions akin to 
 \family typewriter 
 GetStringChars
 \family default 
- (
+ that return pointers to the array that may or may not perform copies (
 \family typewriter 
 Get
 \family default 
@@ -5713,8 +5712,8 @@ PyObject*
 Py_INCREF
 \family default 
  macro to increment its reference count and so prevent it from being collected.
- Once the value is no longer needed, the reference count is similarly decremente
-d with 
+ Once the value is no longer needed, the reference count should be accordingly
+ decremented with 
 \family typewriter 
 Py_DECREF
 \family default 
@@ -7119,7 +7118,7 @@ Another resource related to memory management provided by Lua is the possiblity
  machine.
  In the creation of a new Lua state, an allocation function is passed as
  a its first argument.
- This function must offer functionality similar to the C functions 
+ This function must offer functionality like that from the C functions 
 \family typewriter 
 free
 \family default 
@@ -8273,7 +8272,7 @@ collapsed true
 
 \layout Standard
 
-The only ways of invoking a Ruby method passing a code block are through
+The only ways for invoking a Ruby method passing a code block are through
  
 \family typewriter 
 rb_eval_string
@@ -8568,60 +8567,58 @@ Como obter/referenciar uma função
 
 \layout Standard
 
-De forma similar ao acesso a atributos, na chamada de métodos em Java deve-se
- inicialmente obter um identificador para o método, do tipo 
+Like in attribute access, when calling Java methods from C one must initially
+ obtain a method identifier, of the 
 \family typewriter 
 jmethodID
 \family default 
-.
- Estes identificadores são tipicamente obtidos com a função 
+ type.
+ These identifiers are typically obtained with the 
 \family typewriter 
 GetMethodID
 \family default 
-, que recebe como parâmetros a classe (instância de 
-\family typewriter 
-jclass
-\family default 
-) e duas strings, uma com o nome do método e outra com a assinatura do método.
- A sintaxe que descreve assinaturas de métodos é similar à de descritores
- de campos discutida na Seção\SpecialChar ~
+ function, which receives as arguments the class (an instance of jclass)
+ and two strings, one with the method name and the other with the method
+ signature.
+ The syntax for describing method signatures is similar to that of field
+ descriptors discussed in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Dados-Java}
 
 \end_inset 
 
 .
- Parâmetros são listados entre parênteses, seguidos do tipo de retorno.
- Por exemplo, 
+ Arguments are listed in parentheses, followed by the return type.
+ For example, 
 \family typewriter 
 "([Ljava/lang/String;II)V"
 \family default 
- indica uma função com parâmetros 
+ describes a function with 
 \family typewriter 
 String[], int, int
 \family default 
- e retorno 
+ arguments and 
 \family typewriter 
 void
 \family default 
-.
- Alternativamente ao uso de 
+ return.
+ Alternatively to 
 \family typewriter 
 GetMethodID
 \family default 
-, a partir de Java 1.2 é possível obter um 
+, since Java 1.2 it is possible to obtain a 
 \family typewriter 
 jmethodID
 \family default 
- correspondente a um método aplicando a função 
+ corresponding to a method by applying the 
 \family typewriter 
 FromReflectedMethod
 \family default 
- sobre um objeto Java do tipo 
+ function on a Java object of the 
 \family typewriter 
 Method
 \family default 
- -- isto é, um método reificado através da API de reflexão de Java.
+ class -- that is, a method reified through Java's reflection API.
 \layout Standard
 
 
@@ -8636,12 +8633,8 @@ Funções da API para invocar funções
 
 \layout Standard
 
-Uma vez obtido o 
-\family typewriter 
-jmethodID
-\family default 
-, um método pode ser invocado através de alguma das 90 funções da família
- 
+Once a jmethodID was obtained, a method can be invoked through some of the
+ 90 functions of the 
 \family typewriter 
 Call
 \family default 
@@ -8649,8 +8642,8 @@ Call
 \family typewriter 
 Method
 \family default 
-*.
- Os nomes das funções seguem a forma
+* family.
+ Function names follow this format:
 \layout LyX-Code
 
 
@@ -8658,13 +8651,13 @@ Method
 Call
 \family roman 
 \emph on 
-<tipo><retorno>
+<type><return>
 \family default 
 \emph default 
 Method
 \family roman 
 \emph on 
-<argumentos>
+<arguments>
 \layout Standard
 
 
@@ -8679,39 +8672,39 @@ Valor de retorno
 
 \layout Standard
 
-O 
+Here, 
 \emph on 
-<tipo>
+<type>
 \emph default 
- pode ser 
+ may be 
 \family typewriter 
 Static
 \family default 
- para funções estáticas, passando na chamada uma 
+ for static functions, passing a 
 \family typewriter 
 jclass
 \family default 
- como parâmetro; 
+ as an argument in calls; 
 \family typewriter 
 Nonvirtual
 \family default 
- para invocar implementações de um método em uma classe específica sobre
- um determinado objeto, passando uma 
+ when invoking implementations of a method from a specific class on a given
+ object, passing a 
 \family typewriter 
 jclass
 \family default 
- e um 
+ and a 
 \family typewriter 
 jobject
 \family default 
- como parâmetros; ou omitido para métodos de instância, passando o 
+ as parameters; or omitted for instance methods, passing the 
 \family typewriter 
 jobject
 \family default 
- sobre o qual o método será aplicado.
- O tipo de retorno é indicado em 
+ on which the method will be applied.
+ Return type is indicated in 
 \emph on 
-<retorno>
+<return>
 \emph default 
 : 
 \family typewriter 
@@ -8740,41 +8733,38 @@ Passando argumentos
 
 \layout Standard
 
-Os argumentos do método podem ser passados de três formas: como 
-\emph on 
-varargs
-\emph default 
-, como um array C de 
+Method arguments can be passed in three ways: as varargs, as a C array of
+ 
 \family typewriter 
 jvalue
 \family default 
-s, ou propagando uma 
+s, or propagating a received 
 \family typewriter 
 va_list
 \family default 
- recebida.
- Por exemplo, na forma mais simples, um método de instância sem retorno
- e sem parâmetros é invocado com 
+.
+ For example, in its simplest form, an instance method without input or
+ output values is invoked with 
 \family typewriter 
 CallVoidMethod
 \family default 
 .
- Já 
+ 
 \family typewriter 
 CallStaticIntMethodA
 \family default 
- chama um método estático que retorna um 
+, in contrast, invokes a static method which returns a 
 \family typewriter 
 jint
 \family default 
- com a lista de parâmetros passada em um array de 
+ and has its argument list passed in an array of 
 \family typewriter 
 jvalue
 \family default 
 s.
- Como Java é uma linguagem estaticamente tipada, não é preciso especificar
- o número ou o tipo dos parâmetros passados nas funções de chamada de métodos.
- Estas informações já estão especificadas nos 
+ Since Java is a statically typed language, it is not necessary to specify
+ the number of type of arguments passed in functions for method invocation.
+ This information is already specified in 
 \family typewriter 
 jmethodID
 \family default 
@@ -8794,92 +8784,80 @@ Questões específicas da linguagem: escopo léxico vs.
 
 \layout Standard
 
-É importante notar que, ao obter identificadores de métodos e campos fazendo
- a resolução a partir do 
+It is important to point out that, when obtaining method and field identifiers
+ resolving them based on the 
 \family typewriter 
 jobject
 \family default 
- recebido na variável 
-\family typewriter 
-this
-\family default 
- e do nome do método ou campo, com 
+ obtained in the this variable and the method or field name, with 
 \family typewriter 
 GetObjectClass
 \family default 
- e 
+ and 
 \family typewriter 
 GetFieldID
 \family default 
-, estamos efetivamente resolvendo nomes através de escopo dinâmico.
- Isto implica que, por exemplo, caso um método 
+, we are effectively resolving names through dynamic scoping.
+ This implies that, for example, if a method called 
 \family typewriter 
-Pai.metodo
+Parent.method
 \family default 
- implementado em C acesse um atributo privado 
+ implemented in C accesses a private attribute 
 \family typewriter 
-umAtributo
+anAttribute
 \family default 
- e uma subclasse 
+ and a 
 \family typewriter 
-Filho
+Child
 \family default 
- também defina um atributo privado 
+ subclass also defines a private attribute with the same name, a call to
+ this method in an instance 
 \family typewriter 
-umAtributo
+c
 \family default 
-, a chamada a esse método em uma instância 
+ of 
 \family typewriter 
-f
+Child
 \family default 
- de 
+ would end up accessing 
 \family typewriter 
-Filho
+Child.anAttribute
 \family default 
- acabaria por acessar 
+ and not 
 \family typewriter 
-Filho.umAtributo
-\family default 
- e não 
-\family typewriter 
-Pai.umAtributo
+Parent.anAttribute
 \family default 
 .
- Este comportamento é diferente do que ocorreria se 
+ This behavior differs from what would happen if 
 \family typewriter 
-Pai.metodo
+Parent.method
 \family default 
- fosse implementado em Java, onde o 
-\emph on 
-binding
-\emph default 
- de membros privados é definido lexicamente.
- Para garantir à implementação em C de 
+ was implemented in Java, where binding of private members is defined lexically.
+ To ensure to the C implementation of 
 \family typewriter 
-Pai.metodo
+Parent.method
 \family default 
- que o atributo 
+ that the 
 \family typewriter 
-umAtributo
+anAttribute
 \family default 
- acessado é realmente 
+ it is accessing is really 
 \family typewriter 
-Pai.umAtributo
+Parent.anAttribute
 \family default 
-, deve-se armazenar no espaço de C o identificador do campo obtido a partir
- da 
+, one must store in C space the field identifier from 
+\family typewriter 
+Parent
+\family default 
+'s 
 \family typewriter 
 jclass
 \family default 
- de 
-\family typewriter 
-Pai
-\family default 
- -- obtida, por exemplo, em uma função 
+ -- obtained, for example, in a 
 \family typewriter 
 static native
 \family default 
-.
+ function.
 \layout Standard
 
 
@@ -8894,19 +8872,16 @@ Verificação da ocorrência de erros
 
 \layout Standard
 
-O código C pode verificar a ocorrência de exceções através de 
+C code may verify the ocurrence of exceptions through 
 \family typewriter 
 ExceptionCheck
 \family default 
- e optar por tratá-la, obtendo uma referência local da exceção com 
-\family typewriter 
-ExceptionOccurred
-\family default 
- e posteriormente zerando-a com 
+ and choose to handle it, obtaining a local reference of the exception with
+ ExceptionOccurred and later clearing it with 
 \family typewriter 
 ExceptionClear
 \family default 
-, ou então mantê-la ativa de modo que seja propagada ao código Java.
+; or keep it active so that it propagates to Java code.
 \layout Standard
 
 
@@ -8925,25 +8900,29 @@ Função vs.
 
 \layout Standard
 
-Para realizar o exemplo da função 
+For the example of the 
 \family typewriter 
-teste
+test
 \family default 
-, já que Java não possui funções globais, vamos assumir que teste é um método
- estático de uma classe chamada 
+ function, since Java does not have global functions, we will assume that
+ 
 \family typewriter 
-Exemplo
+test
 \family default 
- e que estamos rodando o código C a seguir em um contexto onde possuímos
- uma referência a um ambiente de execução Java chamado 
+ is a static method of a class called 
+\family typewriter 
+Example
+\family default 
+ and that we are running the following C code in a context where we have
+ a reference to a Java runtime environment called 
 \family typewriter 
 J
 \family default 
- (este ponteiro, do tipo 
+ (this pointer, of 
 \family typewriter 
 JNIEnv
 \family default 
-, será discutido na Seção\SpecialChar ~
+ type, will be discussed in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Java-Registro}
 
@@ -8954,27 +8933,27 @@ JNIEnv
 
 
 \size footnotesize 
-jclass exemplo = (*J)->FindClass(J, "Exemplo");
+jclass exemple = (*J)->FindClass(J, "Exemple");
 \layout LyX-Code
 
 
 \size footnotesize 
-jmethodID teste = (*J)->GetStaticMethodID(J, exemplo,
+jmethodID test = (*J)->GetStaticMethodID(J, exemple,
 \layout LyX-Code
 
 
 \size footnotesize 
-                        "teste", "(Ljava/lang/String;I)I");
+                       "test", "(Ljava/lang/String;I)I");
 \layout LyX-Code
 
 
 \size footnotesize 
-jstring entrada = (*J)->NewStringUTF(J, "entrada");
+jstring foo = (*J)->NewStringUTF(J, "foo");
 \layout LyX-Code
 
 
 \size footnotesize 
-long result = (*J)->CallStaticIntMethod(J, exemplo, teste, entrada, (jint)2);
+long result = (*J)->CallStaticIntMethod(J, exemple, test, foo, (jint)2);
 \layout Standard
 
 
@@ -8989,30 +8968,29 @@ Controle das referências no exemplo
 
 \layout Standard
 
-Inicialmente, é obtida uma referência à classe 
+Initially, we get a reference to the 
 \family typewriter 
-Exemplo
+Example
 \family default 
-, a partir da qual é obtido o identificador do método desejado, baseado
- no seu nome e assinatura.
- Como em Ruby, a string passada como parâmetro deve ser convertida para
- um tipo da máquina virtual.
- Já para o segundo argumento e para o valor de retorno, exploramos o fato
- de que o tipo 
+ class, from which we obtain the identifier of the desired method, based
+ on its name and signature.
+ Like in Ruby, the string passed as a parameter must be converted to a virtual
+ machine type, but for the second argument and for the return value we explore
+ the fact that 
 \family typewriter 
 jint
 \family default 
-, correspondente ao tipo Java 
+, corresponding to the Java type 
 \family typewriter 
 int
 \family default 
- (inteiro de 32 bits), é compatível com o tipo 
+ (32-bit integer) is compatible with the C type 
 \family typewriter 
 long
 \family default 
- de C (inteiro de pelo menos 32 bits).
- Todas estas funções da API retornam referências locais, que serão liberadas
- automaticamente ao final da função C onde as chamadas à API foram feitas.
+ (defined as an integer of at least 32 bits).
+ All these API functions return local references, which will be freed automatica
+lly by the end of the C function where the API calls were made.
 \layout Subsection
 
 Lua
@@ -9023,9 +9001,9 @@ Lua
 
 \layout Standard
 
-Tanto em funções C disparadas por Lua como em chamadas de funções Lua realizadas
- a partir de código C, os parâmetros de entrada e os valores de retorno
- são passados através da pilha virtual apresentada na Seção\SpecialChar ~
+Both in C functions launched by Lua and in Lua function calls performed
+ from C code, input arguments and return values are passed through the virtual
+ stack presented in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Lua-dados}
 
@@ -9055,30 +9033,30 @@ Passando argumentos
 
 \layout Standard
 
-Para chamar uma função Lua a partir de C, devemos inicalmente empilhar o
- objeto Lua referente a ela: para funções globais, obtendo-a com 
+To call a Lua function from C, we must initially push to the stack the Lua
+ object referring to it: for global functions, obtaining it with 
 \family typewriter 
 lua_getglobal
 \family default 
-, para funções armazenadas em tabelas, com 
+, for functions stored in tables, with 
 \family typewriter 
 lua_gettable
 \family default 
 .
- A seguir, empilhamos os seus parâmetros e então invocamos 
+ Afterwards, we push its arguments and then invoke 
 \family typewriter 
 lua_call
 \family default 
- ou 
+ or 
 \family typewriter 
 lua_pcall
 \family default 
-, indicando quantos valores da pilha devem ser passados como parâmetro.
- A diferença entre as duas funções está no tratamento de erros: 
+, indicating how many stack values are to be passed as a parameter.
+ The difference between these two functions is in error handling: 
 \family typewriter 
 lua_call
 \family default 
- propaga os erros sinalizados, usando 
+ propagates any signalled errors, using 
 \family typewriter 
 longjmp
 \family default 
@@ -9086,11 +9064,7 @@ longjmp
 \family typewriter 
 lua_pcall
 \family default 
- captura os erros, retornando um código de 
-\emph on 
-status
-\emph default 
- e a mensagem de erro na pilha.
+ captures errors, returning a status code and the error message in the stack.
 \layout Standard
 
 
@@ -9108,60 +9082,51 @@ Múltiplos valores de retorno
 
 \layout Standard
 
-No caso de execução sem erros, a pilha conterá os valores de retorno da
- função chamada.
- O número de valores de retorno pode ser explicitamente requisitado na chamada
- de 
-\family typewriter 
-lua_call
-\family default 
- ou 
-\family typewriter 
-lua_pcall
-\family default 
-, ou ser definido em tempo de execução, requisitando o valor especial 
+When no errors occur, the stack will contain any values returned by the
+ called function.
+ The number of return values can be explicitly requested with lua_call or
+ lua_pcall, or be defined at runtime, requesting the special value 
 \family typewriter 
 LUA_MULTRET
 \family default 
 .
- Se um número de valores de retorno for solicitado e este não for passado
- pela função chamada, o número de valores será ajustado adicionando elementos
+ If a specific number of return values is requested and these are not passed
+ by the called function, the number of values will be adjusted by adding
  
 \family typewriter 
 nil
 \family default 
- ou descartando valores em excesso.
- Para chamadas com 
+ elements or discarding excessive values.
+ For calls with 
 \family typewriter 
 LUA_MULTRET
 \family default 
-, todos os valores são empilhados.
- Nesse caso, a única forma de descobrir quantos valores foram retornados
- é comparando o tamanho da pilha antes e depois da chamada.
+, all values are pushed.
+ In this case, the only way to find out how many values were returned is
+ comparing the size of the stack before and after the call.
 \layout Standard
 
-A função 
+The 
 \family typewriter 
 lua_cpcall
 \family default 
- permite chamar funções C realizando captura de erros de forma similar a
- 
+ function allows calling C functions performing error capture like that
+ which takes place on 
 \family typewriter 
 lua_pcall
 \family default 
- sem precisar registrá-las como valores Lua.
- Esta funcionalidade é similar à oferecida por 
+ without having to register them as Lua values.
+ This functionality is similar to that offered by 
 \family typewriter 
 rb_protect
 \family default 
- em Ruby.
- Ruby, todavia, não oferece função análoga a 
+ in Ruby.
+ Ruby, however, does not offer any function analogous to 
 \family typewriter 
 lua_pcall
 \family default 
-, sendo às vezes necessário encapsular a chamada de funções Ruby em funções\SpecialChar ~
-C
- que obedeçam à assinatura esperada por 
+, being sometimes necessary to wrap Ruby function calls in C functions that
+ follow the signature expected by 
 \family typewriter 
 rb_protect
 \family default 
@@ -9181,25 +9146,23 @@ Função vs.
 
 \layout Standard
 
-Lua não possui distinção entre funções e métodos, mas possui açúcar sintático
- que permite invocar funções armazenadas em tabelas com uma sintaxe de chamada
- de métodos: 
+Lua does not have a distinction between functions and methods, but features
+ syntactic sugar that allows one to invoke functions stored in tables with
+ a method-call-style syntax: 
 \family typewriter 
 t:m(x)
 \family default 
- significa 
+ means 
 \family typewriter 
 t.m(t,x)
 \family default 
 .
- Todavia, não há na API de C uma chamada específica para replicar esta abreviaçã
-o.
- Para funções armazenadas em tabela, a função deve ser obtida com 
+ Still, there is no specific call in the C API to replicate this abbreviation.
+ For functions stored in tables, the function must be obtained with 
 \family typewriter 
 lua_gettable
 \family default 
- e a tabela deve ser empilhada explicitamente juntamente com os demais parâmetro
-s.
+ and the table has to be pushed explicitly alongside the other parameters.
 \layout Standard
 
 
@@ -9214,20 +9177,26 @@ Exemplo de chamada de função
 
 \layout Standard
 
-O exemplo da chamada da função 
+The example of the 
 \family typewriter 
-teste
+test
 \family default 
- demonstra a disciplina de pilha adotada na API de Lua.
- De forma similar a Java, iremos assumir a existência de um ponteiro 
-\family typewriter 
-L
-\family default 
- do tipo 
+ function call demonstrates the stack discipline adopted by the Lua API.
+ Similarly to the Java example of Section\SpecialChar ~
+
+\begin_inset LatexCommand \ref{sub:Java-Chamada}
+
+\end_inset 
+
+, we will assume the existence of a 
 \family typewriter 
 lua_State
 \family default 
-, que será explicado mais adiante na Seção\SpecialChar ~
+ pointer called 
+\family typewriter 
+L
+\family default 
+, which will be explained later on in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Lua-Registro}
 
@@ -9239,50 +9208,50 @@ lua_State
 
 
 \size footnotesize 
-lua_getglobal(L, "teste");           
+lua_getglobal(L, "test");            
 \emph on 
-/* Empilha a função teste */
+/* Pushes the function test */
 \layout LyX-Code
 
 
 \size footnotesize 
-lua_pushstring(L, "entrada");        
+lua_pushstring(L, "foo");            
 \emph on 
-/* Empilha a string "entrada" */
+/* Pushes the string "foo" */
 \layout LyX-Code
 
 
 \size footnotesize 
 lua_pushinteger(L, 2);               
 \emph on 
-/* Empilha o número 2 */
+/* Pushes the number 2 */
 \layout LyX-Code
 
 
 \size footnotesize 
 lua_call(L, 2, 1);                   
 \emph on 
-/* Chama a função com 2 parâmetros,
+/* Calls the function with 2 arguments,
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-                                        e espera 1 como retorno */
+                                        expect 1 as the result */
 \layout LyX-Code
 
 
 \size footnotesize 
-long result = lua_tointeger(L, -1);  
+long result = lua_tointeger(L, -1); 
 \emph on 
-/* Obtém o resultado no topo da pilha (-1) */
+ /* Get the result at the top (-1) */
 \layout LyX-Code
 
 
 \size footnotesize 
 lua_pop(L, 1);                       
 \emph on 
-/* Remove-o da pilha */
+/* Remove it off the stack */
 \layout Standard
 
 
@@ -9297,39 +9266,39 @@ Controle das refs no exemplo
 
 \layout Standard
 
-Com 
+With 
 \family typewriter 
 lua_getglobal
 \family default 
-, é empilhada a função global 
+, we push the global function 
 \family typewriter 
-teste
+test
 \family default 
 .
- Em seguida, os dois argumentos de entrada são empilhados.
- A função é então invocada com 
+ Then, two input arguments are pushed.
+ The function is invoked with 
 \family typewriter 
 lua_call
 \family default 
-, indicando dois parâmetros de entrada e um de saída.
- O valor de retorno, no topo da pilha (índice\SpecialChar ~
+, indicating two input arguments and requesting one output value.
+ The return value, at the top of the stack (index\SpecialChar ~
 
 \begin_inset Formula $-1$
 \end_inset 
 
-) é convertido para C com 
+) is converted to C with 
 \family typewriter 
 lua_tointeger
 \family default 
 .
- Esta última função não remove o valor da pilha: para retorná-la ao seu
- estado inicial, precisamos removê-lo explicitamente com 
+ This last function does not pop the value off the stack: to return it to
+ its initial state, we need to remove it explicitly with 
 \family typewriter 
 lua_pop
 \family default 
 .
- Como em nenhum momento a API retorna ponteiros para objetos Lua, não há
- preocupações com coleta de lixo.
+ As the API never returns pointers to Lua objects, there are no concerns
+ related to garbage collection.
 \layout Subsection
 
 Perl
@@ -9359,11 +9328,11 @@ Funções vs.
 
 \layout Standard
 
-A chamada de funções Perl a partir de C se dá através de uma disciplina
- de pilha, como em Lua.
- Parâmetros de entrada são especificados através de operações de empilhamento
- e valores de retorno são obtidos na pilha após a chamada da função.
- As funções 
+Calling Perl functions from C is done through a stack discipline, like in
+ Lua.
+ Input parameters are specified through push operations and return values
+ are obtained from the stack after the function call.
+ The call functions 
 \family typewriter 
 call_sv
 \family default 
@@ -9371,24 +9340,24 @@ call_sv
 \family typewriter 
 call_pv
 \family default 
- e 
+ and 
 \family typewriter 
 call_method
 \family default 
- variam apenas na forma como a função a ser chamada é especificada: através
- de um 
+ vary only in the way how the function to be called is specified: through
+ an 
 \family typewriter 
 SV
 \family default 
-, de uma string C ou de uma string C descrevendo o nome de um método de
- algum objeto ou classe inserido na pilha.
- A função 
+, a C string, or a C string describing the name of a method in some object
+ or class previously inserted in the stack.
+ The 
 \family typewriter 
 call_argv
 \family default 
-, como conveniência, recebe como um argumento adicional um array C contendo
- strings C representando parâmetros a serem empilhados.
- Todas retornam o número de valores de retorno disponíveis na pilha.
+ function, as a convenience, receives as an additional argument a C array
+ containing C strings representing arguments to be pushed.
+ All of them return the number of return values available in the stack.
 \layout Standard
 
 
@@ -9403,13 +9372,13 @@ Questões específicas da linguagem: contextos Perl
 
 \layout Standard
 
-As funções 
+All 
 \family typewriter 
 call_
 \family default 
-* possuem um argumento indicando flags a serem passadas que indicam a forma
- que a função deve ser chamada e como tratar os argumentos e valores de
- retorno.
+* functions receive an argument with flags to be passed that indicate how
+ the function should be called and how to handle input arguments and return
+ values.
  
 \family typewriter 
 G_VOID
@@ -9418,38 +9387,38 @@ G_VOID
 \family typewriter 
 G_SCALAR
 \family default 
- e 
+ and 
 \family typewriter 
 G_ARRAY
 \family default 
- especificam o contexto como a função deve ser chamada.
- Em contextos escalares, por exemplo, somente um escalar é retornado na
- pilha; se a função chamada retornar uma lista, somente o último elemento
- desta estará disponível na pilha.
+ indicate the context how the function should be called.
+ In scalar contexts, for example, only one scalar is returned in the stack;
+ if the called function returns a list, only its last element will be available
+ on the stack.
  
 \family typewriter 
 G_DISCARD
 \family default 
- indica que os valores de retorno devem ser automaticamente descartados;
- 
+ specifies that return values should be automatically discarded; 
 \family typewriter 
 G_NOARGS
 \family default 
- indica que o array padrão de parâmetros 
+ indicates that the default array of parameters, 
 \family typewriter 
 @_
 \family default 
- não deve ser construído
+, should not be constructed
 \begin_inset Foot
 collapsed true
 
 \layout Standard
 
-Isto tem o efeito colateral de que a função chamada herda o valor de 
+This has the side effect that the called function inherits the value of
+ 
 \family typewriter 
 @_
 \family default 
- da função chamadora.
+ from its caller.
 \end_inset 
 
 .
@@ -9467,42 +9436,40 @@ Verificação da ocorrência de erros.
 
 \layout Standard
 
-O precedimento para verificação de erros depende do contexto e das flags
- passadas, que afetam como situações de erro são reportadas no valor de
- retorno das funções 
+The procedure for error checking depends on the context and given flags,
+ which affect how error situations are reported to the return value of 
 \family typewriter 
 call_
 \family default 
-* e nos valores retornados na pilha.
- A flag 
+* functions and to values returned on the stack.
+ The 
 \family typewriter 
 G_EVAL
 \family default 
- encapsula a chamada em um bloco 
+ flag encapsulates the call in an 
 \family typewriter 
 eval
 \family default 
-, capturando erros.
- Assim, a ocorrência de erros pode ser verificada através da macro 
+ block, capturing errors.
+ So, the occurrence of errors can be checked through the 
 \family typewriter 
 ERRSV
 \family default 
-, que retorna o 
+ macro, which returns an 
 \family typewriter 
 SV
 \family default 
- contendo a mensagem de erro.
- Acrescentando a flag 
+ containing the error message.
+ By adding the 
 \family typewriter 
 G_KEEPERR
 \family default 
-, mensagens de erro não sobrescrevem a variável especial 
+ flag, error messages do not overwrite the special variable 
 \family typewriter 
 $@
 \family default 
-, mas são concatenadas a ela, acumulando seqüências de erros em níveis de
- chamada diferentes.
- 
+, but concatenate to it, accumulating sequences of errors in diferent call
+ levels.
 \layout Standard
 
 
@@ -9517,14 +9484,14 @@ Exemplo de chamada de função
 
 \layout Standard
 
-Uma série de macros descrevem um protocolo para a chamada de funções e a
- manipulação de parâmetros de entrada e saída.
- As principais serão explicadas a seguir, na apresentação da versão Perl
- da chamada da função 
+A series of macros describe a protocol for calling functions and manipulating
+ input and output parameters.
+ The main ones will be explained below, as we present the Perl version of
+ the 
 \family typewriter 
-teste
+test
 \family default 
-:
+ function call:
 \layout LyX-Code
 
 
@@ -9549,7 +9516,7 @@ PUSHMARK(SP);
 
 
 \size footnotesize 
-XPUSHs(sv_2mortal(newSVpv("entrada", 0)));
+XPUSHs(sv_2mortal(newSVpv("foo", 0)));
 \layout LyX-Code
 
 
@@ -9564,7 +9531,7 @@ PUTBACK;
 
 
 \size footnotesize 
-call_pv("teste", G_SCALAR);
+call_pv("test", G_SCALAR);
 \layout LyX-Code
 
 
@@ -9607,54 +9574,54 @@ Controle de referências no exemplo
 
 \layout Standard
 
-Inicialmente 
+First, 
 \family typewriter 
 dSP
 \family default 
- declara uma cópia local do ponteiro da pilha de Perl.
- Em seguida, 
+ declares a local copy of Perl's stack pointer.
+ Then, 
 \family typewriter 
 ENTER
 \family default 
- e 
+ and 
 \family typewriter 
 SAVETMPS
 \family default 
- criam um escopo para valores mortais.
+ create a scope for mortal values.
  
 \family typewriter 
 PUSHMARK
 \family default 
- inicia a contagem de parâmetros a serem passados para a função.
- Estes parâmetros são então empilhados com 
+ starts the count of parameters to be passed to the function.
+ These parameters are then pushed with 
 \family typewriter 
 XPUSHs
 \family default 
 .
- Os valores criados com 
+ Values created with 
 \family typewriter 
 newSVpv
 \family default 
- e 
+ and 
 \family typewriter 
 newSViv
 \family default 
- são convertidos para valores mortais com 
+ are converted to mortal values with 
 \family typewriter 
 sv_2mortal
 \family default 
-, para que não tenham que ter sua contagem de referências decrementada explicita
-mente após a chamada da função.
+, so that they do not need to have their reference counts decremented explicitly
+ after the function call.
  
 \family typewriter 
 PUTBACK
 \family default 
- encerra a contagem de parâmetros.
- É feita então a chamada da função global Perl 
+ finishes counting parameters.
+ Then, we call the global Perl function 
 \family typewriter 
-teste
+test
 \family default 
-, em contexto escalar, com 
+, in scalar context, with 
 \family typewriter 
 call_pv
 \family default 
@@ -9673,108 +9640,95 @@ Valores de retorno
 
 \layout Standard
 
-Após o retorno desta função, a memória da pilha de Perl pode ter sido realocada,
- mudando o endereço do ponteiro de pilha obtido inicialmente com 
+After this function returns, memory in Perl's stack may have been reallocated,
+ changing the address of the stack pointer obtained with 
 \family typewriter 
 dSP
 \family default 
 .
- Para certificar-se que o seu valor está correto, deve-se chamar 
+ To make sure its value is correct, one must call 
 \family typewriter 
 SPAGAIN
 \family default 
- após funções 
+ after 
 \family typewriter 
 call_
 \family default 
-*.
- A função 
+* functions.
+ The 
 \family typewriter 
 POPl
 \family default 
- desempilha um valor e o converte para 
+ function pops a value and converts it to 
 \family typewriter 
 long
 \family default 
- (há funções similares para outros tipos, como 
+ (there are similar functions for other types, such as 
 \family typewriter 
 POPs
 \family default 
- para 
+ for 
 \family typewriter 
 SV
 \family default 
-s e 
+s and 
 \family typewriter 
 POPpx
 \family default 
- para strings).
- Estas operações desempilham valores atualizando a cópia local do ponteiro
- de pilha.
- Assim, 
+ for strings).
+ These operations pop values updating the local copy of the stack pointer.
+ Thus, 
 \family typewriter 
 PUTBACK
 \family default 
- deve ser chamado novamente para atualizar o ponteiro global.
- Finalmente, 
+ must be called again to update the global pointer.
+ Finally, 
 \family typewriter 
 FREETMPS
 \family default 
- e 
+ and 
 \family typewriter 
 LEAVE
 \family default 
- decrementam a contagem de referências dos valores mortais.
- 
+ decrement the reference count of mortal values.
 \layout Subsection
 
-Comparação
+Comparison
 \layout Standard
 
-Em Python, Lua e Perl, funções podem ser acessadas como objetos da linguagem
- e invocadas.
- Em Ruby e Java, a API define tipos especiais usados para referenciar métodos.
- Como na manipulação de dados, Python oferece uma API extensa, com diversas
- funções de conveniência permitindo passar argumentos como tuplas Python,
- objetos Python passados como 
-\emph on 
-varargs
-\emph default 
-, valores C a serem convertidos pela função de chamada, etc.
- Java também oferece um grande número de funções para invocação de métodos
- e, devido à tipagem estática da linguagem, os parâmetros de entrada podem
- ser passados como 
-\emph on 
-varargs
-\emph default 
- de forma bastante simples, sem precisar especificar a forma como a conversão
- deles deve ser realizada.
- Ruby também oferece algumas variantes de funções de chamada.
+In Python, Lua and Perl, functions can be accessed as language objects and
+ invoked.
+ In Ruby and Java, the API defines special types used to reference methods.
+ Like in data manipulation, Python offers an extensive API, with several
+ convenience functions allowing parameters to be passed as Python tuples,
+ Python objects given as varargs, C values to be converted by the invocation
+ function, etc.
+ Java also offers a large number of method invocation functions and, due
+ to static typing, input parameters can be passed as varargs in a direct
+ way, without having to specify how their conversion should be made.
+ Ruby also offers some variants for call functions.
 \layout Standard
 
-Lua, em contraste, separa a rotina da chamada da função da passagem dos
- parâmetros, que é feita anteriormente através da pilha.
- Isto é uma solução bastante simples, mas o código resultante é menos claro
- que as chamadas equivalentes em linguagens como Ruby e Python.
- Perl também faz chamadas de função utilizando um modelo de pilha, mas ao
- contrário de Lua o seu uso é demasiadamente complexo, por exigir um protocolo
- de macros que expõem o funcionamento interno do interpretador.
- Outro complicador é o tratamento de valores de retorno, pois estes variam
- de comportamento conforme o contexto Perl em que a função é chamada.
+Lua, in contrast, separates the function call routine from argument passing,
+ which is done previously through the stack.
+ This is a very simple solution, but the resulting code is less clear than
+ the equivalent calls in languages such as Ruby and Python.
+ Perl also features function calls using a stack model, but unlike Lua its
+ use is exceedingly complex, demanding a macro protocol to be followed which
+ exposes the internal workings of the interpreter.
+ Another complicating factor is the handling of return values, for these
+ vary according to the Perl context in which the function is called.
 \layout Standard
 
-Em Lua e Python, a ocorrência de erros pode ser verificada com o valor de
- retorno da função.
- De forma similar, Perl permite detectar erros na chamada mais recente verifican
-do uma variável especial; em Java, isto é feito chamando uma função da API.
- Somente o tratamento de erros em Ruby é mais convoluto, pois estranhamente
- a API oferece uma função que permite invocar funções C em modo protegido,
- mas não uma equivalente que permita chamar funções Ruby.
- Torna-se necessário escrever uma função 
-\emph on 
-wrapper
-\emph default 
- nestes casos, o que será ilustrado na Seção\SpecialChar ~
+In Lua and Python, the occurrence of errors can be checked through the function'
+s return value.
+ In a similar way, Perl allows detecting errors in the most recent call
+ checking a special variable; in Java, this is done calling an API function.
+ In Ruby, error handling is more convoluted: strangely, the API offers a
+ function for invoking C functions in protected mode, but lacks an equivalent
+ for calling Ruby functions.
+ It is necessary to write a wrapper function in those cases, which will
+ be illustrated in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Captura-de-erros}
 
@@ -9783,45 +9737,45 @@ wrapper
 .
 \layout Section
 
-Registro de funções C
+Registering C functions
 \layout Standard
 
-Para permitir a invocação de funções C a partir de código da linguagem de
- script, a API deve fornecer uma forma de registrar estas funções no ambiente
- de execução.
- Em linguagens de tipagem estática, como Java, para que seja possível chamar
- funções externas usando uma sintaxe igual à de funções nativas, o conjunto
- de funções externas deve ser declarado 
+To allow the invocation of C functions from code written in a scripting
+ language, its API must provide a way to register these functions in the
+ execution environment.
+ In statically typed languages, such as Java, to make it possible to call
+ external functions using the same syntax as native calls, the set of external
+ functions must be declared 
 \emph on 
 a priori
 \emph default 
- de alguma forma.
- Já em linguagens com tipagem dinâmica, como é o caso de Python, Lua, Ruby
- e Perl, as funções podem ser usadas diretamente, bastando que sejam definidas
- em algum momento da execução antes de sua chamada.
- Assim, pode-se declarar as funções externas em tempo de execução através
- de código C usando a API da linguagem de script.
+ in some way.
+ On the other hand, in dynamically typed languages, as it is the case with
+ Python, Lua, Ruby and Perl, functions can be used directly; defining them
+ at some point in time before their call is sufficient.
+ This way, one can declare external functions at runtime through C code
+ using the scripting language API.
 \layout Standard
 
-Também nesta seção, a apresentação de cada linguagem encerrará com o exemplo
- de função C a ser registrada, que assim como nos exemplos da seção anterior,
- recebe um inteiro e uma string e retorna um inteiro.
- Será apresentada também, para cada linguagem, a forma de registrar a função
- como a global
+Again in this section, the presentation of each language will conclude with
+ an exemple.
+ A C function, which like in the previous section's examples, receives an
+ integer and a string and returns an integer, will be registered.
+ We will present as well, for each language, how to register this function
+ as a global value
 \begin_inset Foot
-collapsed false
+collapsed true
 
 \layout Standard
 
-Ou no caso de Java, método estático.
+Or in the case of Java, a static method.
 \end_inset 
 
  
 \family typewriter 
-teste
+test
 \family default 
- de modo que ela possa ser invocada diretamente a partir da linguagem ou
- através da API.
+ so that it can be directly invoked from the language or through the API.
 \layout Subsection
 
 Python
@@ -9844,58 +9798,54 @@ Parâmetros de entrada
 
 \layout Standard
 
-Python não possui um tipo 
+Python does not have a proper 
 \begin_inset Quotes eld
 \end_inset 
 
-função
+function
 \begin_inset Quotes erd
 \end_inset 
 
- propriamente dito declarável em C.
- Métodos de classes, no entanto, são objetos e possuem um tipo específico,
- que pode ser verificado com a função 
+ type declarable from C.
+ Class methods, however, are objects and have a specific type, which can
+ be verified with the 
 \family typewriter 
 PyMethod_Check
 \family default 
-.
- Tipicamente, métodos são criados passando-se um array de estruturas 
+ function.
+ Typically, methods are created passing an array of 
 \family typewriter 
 PyMethodDef
 \family default 
-.
- Estas estruturas são compostas do nome da função, o ponteiro da função
- C, um vetor de flags e uma string de documentação.
- As flags são usadas para indicar a convenção adotada para os parâmetros
- de entrada na função C.
- As flags mais comuns são: 
+ structures.
+ These structures are composed by the name of the function, the pointer
+ to the C function, a flags vector and a documentation string.
+ These flags are used to indicate the convention adopted for input parameters
+ in the C function.
+ The most common flags are: 
 \family typewriter 
 METH_NOARGS
 \family default 
-, usada para funções Python que não recebem parâmetros, indicando que a
- função C deve receber um único ponteiro para 
+, used for Python functions which receive no arguments, indicating that
+ the C function will receive a sole 
 \family typewriter 
 PyObject
 \family default 
-, que irá conter o 
+ pointer which will contain the method's 
 \family typewriter 
 self
 \family default 
- do método; 
+; 
 \family typewriter 
 METH_VARARGS
 \family default 
-, para funções que recebem como segundo parâmetro uma tupla Python que conterá
- um número variável de parâmetros passados de Python para C; e 
+, for functions that receive as a second parameters a Python tuple containing
+ a variable number of parameters passed from Python to C; and 
 \family typewriter 
 METH_KEYWORDS
 \family default 
-, para indicar que a função C recebe ainda como terceiro parâmetro um dicionário
- contendo os argumentos 
-\emph on 
-keywords
-\emph default 
- passados à função.
+, to indicate that the C function receives as a third parameter a dictionary
+ containing keyword arguments passed to the function.
 \layout Standard
 
 
@@ -9910,30 +9860,26 @@ API para registrar funções
 
 \layout Standard
 
-De posse destas informações, funções da API que operam sobre arrays de 
+With this information in hand, API functions which operate on 
 \family typewriter 
 PyMethodDef
 \family default 
- podem criar e associar objetos do tipo método no espaço de Python.
+ arrays can create and associate method objects to Python's space.
  
 \family typewriter 
 Py_InitModule
 \family default 
-, por exemplo, inicializa um módulo com funções de um array de 
+, for example, initializes a module with functions from a 
 \family typewriter 
 PyMethodDef
 \family default 
-.
- Similarmente, os métodos de uma classe implementada em C podem ser dados
- no campo 
-\family typewriter 
-tp_methods
-\family default 
- da estrutura 
+ array.
+ Likewise, methods of a class implemented in C can be given in the tp_methods
+ field of the 
 \family typewriter 
 PyTypeObject
 \family default 
- relativa à classe.
+ structure relative to the class.
 \layout Standard
 
 
@@ -9948,29 +9894,23 @@ Valores de retorno
 
 \layout Standard
 
-Funções C registradas em Python devem retornar um ponteiro para 
-\family typewriter 
-PyObject
-\family default 
-, ou 
-\family typewriter 
-NULL
-\family default 
- em caso de erro (opcionalmente declarando uma exceção com 
+C functions registered in Python must return a pointer to PyObject, or NULL
+ in case of error (optionally declaring an exception with 
 \family typewriter 
 PyErr_SetString
 \family default 
- ou 
+ or 
 \family typewriter 
 PyErr_SetObject
 \family default 
 ).
- Funções que não retornam valores devem retornar o objeto pré-definido 
+ Functions that do not return values must return the pre-defined object
+ 
 \family typewriter 
 Py_None
 \family default 
-, lembrando das questões de contagem de referência de valores retornados
- discutidas na Seção\SpecialChar ~
+, always keeping in mind reference counting issues for returned values as
+ discussed in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Python-GC}
 
@@ -9991,51 +9931,36 @@ O que são funções na linguagem
 
 \layout Standard
 
-Embora métodos sejam usualmente criados em C usando estruturas 
+Although methods are usually created in C using 
 \family typewriter 
 PyMethodDef
 \family default 
-, é possível ainda criar um objeto do tipo método explicitamente a partir
- de C com a função 
+ structures, it is also possible to create a method object explicitly from
+ C with the 
 \family typewriter 
 PyMethod_New
 \family default 
-, passando como parâmetro um objeto Python 
-\begin_inset Quotes eld
-\end_inset 
-
-chamável
-\begin_inset Quotes erd
-\end_inset 
-
- e o objeto ou classe a que ele deve se referir.
- Como visto na Seção\SpecialChar ~
+ function, passing as a parameter any callable Python object and the object
+ or class is should refer to.
+ As seen in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Python-Chamada}
 
 \end_inset 
 
-, objetos Python podem ser tornados 
-\begin_inset Quotes eld
-\end_inset 
-
-chamáveis
-\begin_inset Quotes erd
-\end_inset 
-
- implementando um método 
+, Python object can be made callable by implementing a 
 \family typewriter 
 __call__
 \family default 
- em Python ou associando uma função C ao campo 
+ method in Python or associating a C function to the 
 \family typewriter 
 tp_call
 \family default 
- do seu 
+ field of their corresponding 
 \family typewriter 
 PyTypeObject
 \family default 
- correspondente.
+.
 \layout Standard
 
 
@@ -10050,39 +9975,39 @@ Exemplo
 
 \layout Standard
 
-Uma implementação simples de uma função C que pode ser registrada em Python
- como a função global 
+A simple implementation of a C function that can be registered in Python
+ as the 
 \family typewriter 
-teste
+test
 \family default 
- é dada a seguir:
+ global function is given below:
 \layout LyX-Code
 
 
 \size footnotesize 
-PyObject* teste_py(PyObject* self, PyObject* args) {
+PyObject* test_py(PyObject* self, PyObject* args) {
 \layout LyX-Code
 
 
 \size footnotesize 
-   char* entrada; long n;
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-   /* Em caso de erro nos argumentos, PyArg_ParseTuple
+   char* foo; long n;
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-      gera uma exceção apropriada automaticamente */
+   /* In case of argument errors, PyArg_ParseTuple
 \layout LyX-Code
 
 
 \size footnotesize 
-   if (!PyArg_ParseTuple(args, "sl", &entrada, &n))
+\emph on 
+      raises the appropriate exception automatically */
+\layout LyX-Code
+
+
+\size footnotesize 
+   if (!PyArg_ParseTuple(args, "sl", &foo, &n))
 \layout LyX-Code
 
 
@@ -10092,9 +10017,9 @@ PyObject* teste_py(PyObject* self, PyObject* args) {
 
 
 \size footnotesize 
-   printf("Recebi: %s e %ld 
+   printf("Received: %s and %ld 
 \backslash 
-n", entrada, n);
+n", foo, n);
 \layout LyX-Code
 
 
@@ -10119,26 +10044,26 @@ Verificar valores de entrada
 
 \layout Standard
 
-Como os argumentos são recebidos em uma tupla no segundo parâmetro, a assinatura
- de função empregada corresponde à flag 
+Since arguments were received as a tuple in the second parameter, the function
+ signature corresponds to the 
 \family typewriter 
 METH_VARARGS
 \family default 
-.
- Os parâmetros de entrada são convertidos para C e verificados com 
+ flag.
+ Input arguments are converted to C and verified with 
 \family typewriter 
 PyArg_ParseTuple
 \family default 
 .
- O valor de retorno é convertido do tipo nativo C para um 
+ The return value is converted from the native C type to a 
 \family typewriter 
 PyObject
 \family default 
- com 
+ with 
 \family typewriter 
 PyInt_FromLong
 \family default 
-, gerando uma nova referência.
+, generating a new reference.
 \layout Standard
 
 
@@ -10153,17 +10078,17 @@ Exemplo de registro de global
 
 \layout Standard
 
-A API de Python é projetada primariamente para o desenvolvimento de módulos
- de extensão para a linguagem.
- Embora existam diversas funções para registrar métodos em classes e inicializar
- módulos com listas de funções, não há uma forma direta para registrar funções
- globais na máquina virtual.
- Uma maneira possível é usando a rotina utilitária para lookup de métodos
- 
+The Python API is designed primarily to the development of extension modules
+ for the language.
+ Though several functions exist for registering methods in classes and initializ
+ing modules with function lists, there is no direct way for registering
+ global functions in the virtual machine.
+ A possible way is using the utility routing for method lookup, 
 \family typewriter 
 Py_FindMethod
 \family default 
- e inserindo o método retornado no dicionário do módulo global 
+, and inserting the returned moethod in the dictionary of the global module
+ 
 \family typewriter 
 __main__
 \family default 
@@ -10177,12 +10102,12 @@ PyObject* globals = PyModule_GetDict(PyImport_AddModule("__main__"));
 
 
 \size footnotesize 
-static PyMethodDef teste_def[] = {
+static PyMethodDef test_def[] = {
 \layout LyX-Code
 
 
 \size footnotesize 
-   { "teste", (PyCFunction) teste_py, METH_VARARGS, "um teste" },
+   { "test", (PyCFunction) test_py, METH_VARARGS, "a test" },
 \layout LyX-Code
 
 
@@ -10197,12 +10122,12 @@ static PyMethodDef teste_def[] = {
 
 
 \size footnotesize 
-PyObject* teste_obj = Py_FindMethod(teste_def, NULL, "teste");
+PyObject* test_obj = Py_FindMethod(test_def, NULL, "test");
 \layout LyX-Code
 
 
 \size footnotesize 
-PyDict_SetItemString(globals, "teste", teste_obj);
+PyDict_SetItemString(globals, "test", test_obj);
 \layout Standard
 
 
@@ -10217,46 +10142,46 @@ collapsed true
 
 \layout Standard
 
-Note que foi passado 
+Notice that 
 \family typewriter 
 NULL
 \family default 
- para 
+ was passed to 
 \family typewriter 
 Py_FindMethod
 \family default 
-, indicando que não há um objeto do qual o método faz parte.
- O argumento 
+, indicating that there is no object the method will be part of.
+ Because of that, the 
 \family typewriter 
 self
 \family default 
- recebido pela função C 
+ argument received by the C function 
 \family typewriter 
-teste_py
+test_py
 \family default 
- será também 
+ will also be 
 \family typewriter 
 NULL
 \family default 
- e pode ser ignorado.
- O array 
+ and can be ignored.
+ The 
 \family typewriter 
-teste_def
+test_def
 \family default 
- foi declarado 
+ array was declared 
 \family typewriter 
 static
 \family default 
- para garantir que o 
+ to ensure that the 
 \family typewriter 
 PyMethodDef
 \family default 
- continuará válido enquanto a função global estiver registrada, pois na
- criação de 
+ will remain valid as long as the global function is registered, as in the
+ creation of 
 \family typewriter 
-teste_obj
+test_obj
 \family default 
- um ponteiro para ele é armazenado internamente no objeto criado.
+ a pointer to it is stored internally in the newly created object.
 \layout Subsection
 
 Ruby
