@@ -642,7 +642,7 @@ O .NET Framework\SpecialChar ~
 
 \end_inset 
 
-; de forma similar, foi desenvolvido um novo dialeto de ML chamado F#, para,
+; de forma análoga, foi desenvolvido um novo dialeto de ML chamado F#, para,
  entre outros motivos, proporcionar melhor integração com componentes .NET
  desenvolvidos em outras linguagens\SpecialChar ~
 
@@ -742,8 +742,9 @@ independente de linguagens
 \begin_inset Quotes erd
 \end_inset 
 
-, entretanto, são similares aos de uma interface entre duas linguagens quaisquer
-, já que esse modelo, por sua vez, descreve também um sistema de tipos.
+, entretanto, são parecidos com os de uma interface entre duas linguagens
+ quaisquer, já que esse modelo, por sua vez, descreve também um sistema
+ de tipos.
  Ao implementar 
 \emph on 
 bindings
@@ -9020,8 +9021,9 @@ Como obter/referenciar uma função
 
 \layout Standard
 
-De forma similar ao acesso a atributos, na chamada de métodos em Java deve-se
- inicialmente obter um identificador para o método, do tipo 
+De forma similar ao acesso a atributos, na chamada de métodos Java a partir
+ de C deve-se inicialmente obter um identificador para o método, do tipo
+ 
 \family typewriter 
 jmethodID
 \family default 
@@ -9381,8 +9383,11 @@ Para realizar o exemplo da função
 \family typewriter 
 teste
 \family default 
-, já que Java não possui funções globais, vamos assumir que teste é um método
- estático de uma classe chamada 
+, já que Java não possui funções globais, vamos assumir que 
+\family typewriter 
+teste
+\family default 
+ é um método estático de uma classe chamada 
 \family typewriter 
 Exemplo
 \family default 
@@ -9426,7 +9431,7 @@ jstring entrada = (*J)->NewStringUTF(J, "entrada");
 
 
 \size footnotesize 
-long result = (*J)->CallStaticIntMethod(J, exemplo, teste, entrada, (jint)2);
+long retorno = (*J)->CallStaticIntMethod(J, exemplo, teste, entrada, (jint)2);
 \layout Standard
 
 
@@ -9445,7 +9450,7 @@ Inicialmente, é obtida uma referência à classe
 \family typewriter 
 Exemplo
 \family default 
-, a partir da qual é obtido o identificador do método desejado, baseado
+, a partir da qual requisitamos o identificador do método desejado, baseado
  no seu nome e assinatura.
  Como em Ruby, a string passada como parâmetro deve ser convertida para
  um tipo da máquina virtual.
@@ -9646,7 +9651,7 @@ t.m(t,x)
 .
  Todavia, não há na API de C uma chamada específica para replicar esta abreviaçã
 o.
- Para funções armazenadas em tabela, a função deve ser obtida com 
+ Para funções armazenadas em tabelas, a função deve ser obtida com 
 \family typewriter 
 lua_gettable
 \family default 
@@ -9671,7 +9676,13 @@ O exemplo da chamada da função
 teste
 \family default 
  demonstra a disciplina de pilha adotada na API de Lua.
- De forma similar a Java, iremos assumir a existência de um ponteiro 
+ De forma similar ao exemplo de Java na Seção\SpecialChar ~
+
+\begin_inset LatexCommand \ref{sub:Java-Chamada}
+
+\end_inset 
+
+, iremos assumir a existência de um ponteiro 
 \family typewriter 
 L
 \family default 
@@ -9725,7 +9736,7 @@ lua_call(L, 2, 1);
 
 
 \size footnotesize 
-long result = lua_tointeger(L, -1);  
+long retorno = lua_tointeger(L, -1); 
 \emph on 
 /* Obtém o resultado no topo da pilha (-1) */
 \layout LyX-Code
@@ -9859,9 +9870,9 @@ As funções
 \family typewriter 
 call_
 \family default 
-* possuem um argumento indicando flags a serem passadas que indicam a forma
- que a função deve ser chamada e como tratar os argumentos e valores de
- retorno.
+* possuem um argumento de flags a serem passadas que indicam a forma que
+ a função deve ser chamada e como tratar os parâmetros de entrada e valores
+ de retorno.
  
 \family typewriter 
 G_VOID
@@ -10199,8 +10210,8 @@ varargs
 \emph on 
 varargs
 \emph default 
- de forma bastante simples, sem precisar especificar a forma como a conversão
- deles deve ser realizada.
+ de forma direta, sem precisar especificar a forma como a conversão deles
+ deve ser realizada.
  Ruby também oferece algumas variantes de funções de chamada.
 \layout Standard
 
@@ -10217,7 +10228,7 @@ Lua, em contraste, separa a rotina da chamada da função da passagem dos
 
 Em Lua e Python, a ocorrência de erros pode ser verificada com o valor de
  retorno da função.
- De forma similar, Perl permite detectar erros na chamada mais recente verifican
+ De modo parecido, Perl permite detectar erros na chamada mais recente verifican
 do uma variável especial; em Java, isto é feito chamando uma função da API.
  Somente o tratamento de erros em Ruby é mais convoluto, pois estranhamente
  a API oferece uma função que permite invocar funções C em modo protegido,
@@ -10255,10 +10266,10 @@ a priori
  de código C usando a API da linguagem de script.
 \layout Standard
 
-Também nesta seção, a apresentação de cada linguagem encerrará com o exemplo
- de função C a ser registrada, que assim como nos exemplos da seção anterior,
- recebe um inteiro e uma string e retorna um inteiro.
- Será apresentada também, para cada linguagem, a forma de registrar a função
+Também nesta seção, a apresentação de cada linguagem encerrará com um exemplo.
+ Uma função C que, assim como nos exemplos da seção anterior, recebe um
+ inteiro e uma string e retorna um inteiro, será registrada.
+ Apresentaremos também, para cada linguagem, a forma de registrar a função
  como a global
 \begin_inset Foot
 collapsed false
