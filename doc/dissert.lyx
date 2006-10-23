@@ -3691,7 +3691,7 @@ Set
 ArrayRegion
 \family default 
 ), funções que retornam ponteiros para o array podendo ou não realizar cópias,
- de forma similar a 
+ de forma análoga a 
 \family typewriter 
 GetStringChars
 \family default 
@@ -9676,7 +9676,7 @@ O exemplo da chamada da função
 teste
 \family default 
  demonstra a disciplina de pilha adotada na API de Lua.
- De forma similar ao exemplo de Java na Seção\SpecialChar ~
+ Similarmente ao exemplo de Java na Seção\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Java-Chamada}
 
@@ -10782,7 +10782,7 @@ VALUE
  correspondente a um array Ruby.
 \layout Standard
 
-De forma similar à função 
+De forma que lembra a função 
 \family typewriter 
 PyArg_ParseTuple
 \family default 
@@ -11130,7 +11130,7 @@ jobject
 \family typewriter 
 jclass
 \family default 
- para métodos estáticos) e os demais parâmetros da função Java em suas represent
+ para métodos estáticos) e os demais parâmetros do método Java em suas represent
 ações C, discutidas na Seção\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Dados-Java}
@@ -11142,7 +11142,7 @@ ações C, discutidas na Seção\SpecialChar ~
  em Java como em C, não é preciso realizar a verificação dos tipos dos dados
  recebidos no código C.
  A assinatura das funções que implementam métodos, especificados nos arquivos
- de cabeçalho gerados pela ferramento 
+ de cabeçalho gerados pela ferramenta 
 \family typewriter 
 javah
 \family default 
@@ -11152,7 +11152,8 @@ javah
 O tipo de retorno corresponde ao tipo\SpecialChar ~
 C equivalente ao tipo de retorno do
  método Java.
- O valor retornado pode ser uma referência local ou global.
+ Valores representados com tipos de referência podem ser retornados tanto
+ com referências locais como globais.
  Além de tratar ou propagar erros como discutido na Seção\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Java-Chamada}
@@ -11188,9 +11189,9 @@ Funções da API para registrar funções (não há)
 \layout Standard
 
 Como o modo de expor à máquina virtual de Java funções implementadas em
- C é diferente do empregado nas linguagens vistas anteriormente, pela forma
- de declarar a função para o espaço de Java, para só então mostrar a implementaç
-ão de 
+ C é diferente do empregado nas linguagens vistas anteriormente, iniciaremos
+ pela forma de declarar a função para o espaço de Java, para só então mostrar
+ a implementação de 
 \family typewriter 
 teste
 \family default 
@@ -11386,7 +11387,7 @@ JNICALL
 \family typewriter 
 jni.h
 \family default 
- para dar maior portabilidade ao código C gerado.
+ para dar maior portabilidade ao código C resultante.
  Como o método foi declarado como 
 \family typewriter 
 static
@@ -11427,23 +11428,6 @@ GetStringUTFChars
 ReleaseStringUTFChars
 \family default 
 .
-\layout Standard
-
-
-\begin_inset Note
-collapsed true
-
-\layout Standard
-
-Valor de retorno
-\end_inset 
-
-
-\layout Standard
-
-Neste exemplo, a função retorna um valor imediato.
- Valores representados com tipos de referência podem ser retornados tanto
- com referências locais como globais.
 \layout Subsection
 
 Lua
@@ -11539,7 +11523,7 @@ luaL_checkint
 luaL_check\SpecialChar \-
 string
 \family default 
-, etc.) verificam o tipo de um elemento da pilha e o retornam, sinalizando
+, etc.) verificam o tipo de elementos da pilha e os retornam, sinalizando
  erro caso o tipo do elemento não seja o requisitado.
  As funções 
 \family typewriter 
@@ -11596,7 +11580,7 @@ lua_pushcfunction
 .
  Lua possui também algumas funções de conveniência para registrar um conjunto
  de funções C de uma só vez.
- De forma similar ao uso de arrays 
+ Do mesmo modo que ocorre no uso de arrays 
 \family typewriter 
 PyMethodDef
 \family default 
@@ -11698,7 +11682,7 @@ longjmp
  como em Ruby.
 \layout Standard
 
-A string retornada o tipo da string obtida é do tipo 
+O tipo da string obtida é 
 \family typewriter 
 const char*
 \family default 
@@ -12156,7 +12140,7 @@ Uma vez compilada a extensão usando os Makefiles gerados por
 \family typewriter 
 h2xs
 \family default 
-, a extensão pode ser carregada e usada a partir de Perl:
+, esta pode ser carregada e usada a partir de Perl:
 \layout LyX-Code
 
 
@@ -12192,12 +12176,12 @@ collapsed true
 Para expor funções de uma aplicação C a um interpretador Perl embutido nela,
  devemos criar uma extensão que encapsula estas funções usando XS, ligar
  a extensão à aplicação e carregá-la.
- A carga é feita passando para o interpretador uma função C contendo chamadas
- 
+ A carga é feita passando para o interpretador durante a sua inicialização
+ uma função C contendo chamadas 
 \family typewriter 
 newXS
 \family default 
- durante a sua inicialização.
+.
  O módulo Perl 
 \family typewriter 
 ExtUtils::Embed
@@ -12224,10 +12208,10 @@ s (o exemplo de função de inicialização incluído na documentação de Perl\Special
 Comparação
 \layout Standard
 
-Python e Ruby oferecem ao programador diferentes opções de assinaturas de
- função\SpecialChar ~
-C reconhecidas pela API, o que é prático, uma vez que pode-se escolher
- assim diferentes representações em C para os parâmetros de entrada (agregados
+Python e Ruby oferecem ao programador várias opções de assinaturas de função\SpecialChar ~
+C
+ reconhecidas pela API, o que é prático, uma vez que pode-se escolher assim
+ diferentes representações em C para os parâmetros de entrada (agregados
  em um array, recebidos um a um, etc.) conforme o seu uso na função.
  Lua oferece apenas uma assinatura de função possível para funções C a serem
  registradas na máquina virtual, mas isto é apropriado para o modelo de
