@@ -13947,7 +13947,7 @@ void script_plugin_done_perl(script_perl_state* state) {
 \size footnotesize 
    
 \emph on 
-/* Algumas operações operam sobre o 
+/* Algumas operações atuam sobre o 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -14225,7 +14225,8 @@ A transferência de dados entre a biblioteca principal e os plugins é concentrada
  a operação inversa.
  A primeira é usada na passagem de parâmetros de entrada quando funções
  da linguagem de script são chamadas por C e para a obtenção dos valores
- de retorno quando a linguagem de script faz chamadas que são tratadas C.
+ de retorno quando a linguagem de script faz chamadas que são tratadas por
+ C.
  A segunda operação, de forma complementar, é usada para os valores de retorno
  quando C chama a linguagem de script e para os parâmetros de entrada quando
  uma chamada feita pela linguagem de script é tratada por código C.
@@ -14405,6 +14406,9 @@ lua_tostring
 lua_tolstring
 \family default 
  (que retorna também o tamanho do buffer).
+ Esta decisão de projeto coincide com o objetivo explicado anteriormente
+ de restringirmos a API da biblioteca principal a recursos disponíveis em
+ todas as linguagens.
 \layout Standard
 
 Os valores de tipos desconhecidos são substituídos pelo valor zero, o que
@@ -14566,7 +14570,7 @@ collapsed true
 Em LibScript-Python, não foi possível concentrar as operações de transferência
  de dados em apenas duas funções.
  Cada operação teve que ser dividida em duas partes.
- A conversão de dados recebidos de Python para o buffer de LibScript foi
+ A conversão de dados enviados de Python para o buffer de LibScript foi
  divida nas funções 
 \family typewriter 
 script_python_put_object
@@ -15859,7 +15863,11 @@ SPAGAIN
 \layout Standard
 
 A conversão de valores do buffer LibScript para a pilha de Perl é dada em
- duas funções, uma que gera um único SV e outra que empilha todos os elementos:
+ duas funções, uma que gera um único 
+\family typewriter 
+SV
+\family default 
+ e outra que empilha todos os elementos:
 \layout LyX-Code
 
 
@@ -16326,12 +16334,11 @@ script_call
 \layout Standard
 
 No plugin Perl, como em Lua e Python, também há uma função C responsável
- por realizar a conversão de parâmetros e valores de retorno a invocação
- de 
+ por realizar a a invocação de 
 \family typewriter 
 script_call
 \family default 
-.
+ e a conversão de parâmetros e valores de retorno.
  Esta função, 
 \family typewriter 
 script_perl_caller
@@ -16344,7 +16351,7 @@ LibScript::caller
 \family default 
 .
  A resolução dinâmica de funções do pacote Perl que representa o ambiente
- virtual é feita usando a função 
+ virtual LibScript é feita usando a função 
 \family typewriter 
 AUTOLOAD
 \family default 
@@ -16827,7 +16834,7 @@ A escolha de uma linguagem de script depende de uma série de fatores, varios
 Este trabalho traçou um panorama dos problemas gerais enfrentados na interação
  entre código C e o ambiente de execução de uma linguagem de script.
  Apresentamos as formas como as APIs de cinco linguagens tratam estes problemas,
- apontando pontos positivos e negativos das diferentes abordagens utilizadas.
+ indicando pontos positivos e negativos das diferentes abordagens utilizadas.
  Realizamos uma comparação prática do uso destas APIs através de um estudo
  de caso onde as linguagens de script foram embutidas em bibliotecas C exportand
 o uma mesma interface.
