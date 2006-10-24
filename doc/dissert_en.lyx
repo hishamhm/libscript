@@ -251,7 +251,7 @@ cy models.
 
 We can observe in the existing implementations of FLIs a number of approaches
  to these problems.
- In fact, FLIs for different languages (or even different revisions of a
+ Indeed, FLIs for different languages (or even different revisions of a
  single language) tend to be very different from each other.
  Still, it is possible to trace parallels among the various techniques employed,
  since the fundamental problems that they address are the same.
@@ -1717,8 +1717,7 @@ obj
 
 \size footnotesize 
 \emph on 
-   given in the first argument.
- */
+   given in the first argument */
 \layout LyX-Code
 
 
@@ -2223,8 +2222,7 @@ a_point->x = 100; a_point->y = 200;
 
 \size footnotesize 
 \emph on 
-   assuming the globals dictionary was stored in 'globals'.
- */
+   assuming the globals dictionary was stored in 'globals' */
 \layout LyX-Code
 
 
@@ -4271,8 +4269,7 @@ point
 \size footnotesize 
 \emph on 
    the pointer to C.
- The memory is allocated by Lua.
- */
+ The memory is allocated by Lua */
 \layout LyX-Code
 
 
@@ -4352,8 +4349,7 @@ n", p->x, p->y);
 
 \size footnotesize 
 \emph on 
-   It won't be collected, as it is tied to the global variable.
- */
+   It won't be collected, as it is tied to the global variable */
 \layout LyX-Code
 
 
@@ -4879,8 +4875,7 @@ point
 
 \size footnotesize 
 \emph on 
-it will be an opaque variable (its contents won't be accessible).
- */
+it will be an opaque variable (its contents won't be accessible) */
 \layout LyX-Code
 
 
@@ -5108,8 +5103,7 @@ element not found
 
 \size footnotesize 
 \emph on 
-/* Create a new array.
- */
+/* Create a new array */
 \layout LyX-Code
 
 
@@ -5120,8 +5114,7 @@ AV* a = newAV();
 
 \size footnotesize 
 \emph on 
-/* Store two values, 0 and 1, at its first positions.
- */
+/* Store two values, 0 and 1, at its first positions */
 \layout LyX-Code
 
 
@@ -7360,8 +7353,8 @@ suggests that the Java Virtual Machine expend effort toward recycling unused
 \end_inset 
 
 .
- In fact, the various implementations of the JVM use different algorithms
- for garbage collection.
+ Indeed, the various available implementations of the JVM use different
+ algorithms for garbage collection.
 \layout Standard
 
 For manipulating data through the API, Lua and Ruby are the languages that
@@ -7607,8 +7600,7 @@ ret = some_string.split(" ")
 
 \size footnotesize 
 \emph on 
-/* "s" indicates that the next parameter is a string.
- */
+/* "s" indicates that the next parameter is a string */
 \layout LyX-Code
 
 
@@ -7742,8 +7734,7 @@ long result = PyInt_AsLong(obj_result);
 
 \size footnotesize 
 \emph on 
-/* Frees the temporary PyObject that was returned.
- */
+/* Frees the temporary PyObject that was returned */
 \layout LyX-Code
 
 
@@ -8042,7 +8033,7 @@ s directly when passing parameters to
 rb_funcall
 \family default 
 .
- In fact, all three lines above could have been condensed, passing 
+ Actually, all three lines above could have been condensed, passing 
 \family typewriter 
 rb_funcall
 \family default 
@@ -8258,8 +8249,7 @@ VALUE a_proc = rb_proc_new(a_C_block, Qnil);
 
 \size footnotesize 
 \emph on 
-/* Doesn't work! A Proc is not a code block.
- */
+/* Doesn't work! A Proc is not a code block */
 \layout LyX-Code
 
 
@@ -8442,8 +8432,7 @@ VALUE call_a_ruby_function() {
 
 \size footnotesize 
 \emph on 
-   to be passed to either function.
- */
+   to be passed to either function */
 \layout LyX-Code
 
 
@@ -12431,8 +12420,7 @@ script_err test_lua(script_env* env) {
 
 \size footnotesize 
 \emph on 
-   /* Escape the function with an error if any script_get* failed.
- */
+   /* Escape the function with an error if any script_get* failed */
 \layout LyX-Code
 
 
@@ -12885,11 +12873,11 @@ s (Section\SpecialChar ~
  environments.
  For example, the modification of the value of a global variable in an environme
 nt does not affect the other ones.
- In fact, the 
+ In fact, 
 \family typewriter 
 script_plugin_state
 \family default 
- returned by the Lua plugin is simply the 
+ as returned by the Lua plugin is simply a 
 \family typewriter 
 lua_State
 \family default 
@@ -13042,8 +13030,7 @@ char* namespace = script_namespace(env);
 
 \size footnotesize 
 \emph on 
-   the second one the module's method list, which will start empty.
- */
+   the second one the module's method list, which will start empty */
 \layout LyX-Code
 
 
@@ -13195,7 +13182,7 @@ rb_const_set(state, rb_intern("@@LibScriptEnv"), INT2NUM((long)env));
 return (script_plugin_state) state;
 \layout Subsection
 
-Encerramento de estados
+Termination of states
 \begin_inset LatexCommand \label{sub:Encerramento-de-estados}
 
 \end_inset 
@@ -13203,10 +13190,11 @@ Encerramento de estados
 
 \layout Standard
 
-Como Lua e Perl representam estados de forma independente, o encerramento
- de um estado nestes plugins é simples: a estrutura da linguagem que encapsula
- o ambiente completo de execução é encerrada.
- A implementação da função de finalização no plugin Lua é a seguinte:
+Because Lua and Perl represent states in an independent way, state termination
+ in these plugins is simple: the language structure which wraps the complete
+ runtime environment is terminated.
+ The implementation of the finalization function in the Lua plugin is the
+ following:
 \layout LyX-Code
 
 
@@ -13218,7 +13206,7 @@ void script_plugin_done_lua(script_plugin_state state) {
 \size footnotesize 
    
 \emph on 
-/* Em Lua, um state é um lua_State */
+/* In Lua, a state is a lua_State */
 \layout LyX-Code
 
 
@@ -13230,9 +13218,8 @@ void script_plugin_done_lua(script_plugin_state state) {
 \size footnotesize 
    
 \emph on 
-/* Encerra o estado.
- Não afeta outros ambientes.
- */
+/* Terminates the state.
+ Does not affect other environments */
 \layout LyX-Code
 
 
@@ -13257,7 +13244,8 @@ collapsed true
 
 \layout Standard
 
-Em Perl, o processo, embora um tanto mais elaborado, é essencialmente similar:
+In Perl, the process, although a tad more elaborate, is essentially the
+ same:
 \layout LyX-Code
 
 
@@ -13269,14 +13257,7 @@ void script_plugin_done_perl(script_perl_state* state) {
 \size footnotesize 
    
 \emph on 
-/* Algumas macros assumem que o ponteiro do interpretador
-\layout LyX-Code
-
-
-\size footnotesize 
-\emph on 
-      se chama my_perl.
- */
+/* Some macros assume the interpreter pointer is called my_perl */
 \layout LyX-Code
 
 
@@ -13288,11 +13269,11 @@ void script_plugin_done_perl(script_perl_state* state) {
 \size footnotesize 
    
 \emph on 
-/* Algumas operações operam sobre o 
+/* Some operations act on the 
 \begin_inset Quotes eld
 \end_inset 
 
-estado atual
+current state
 \begin_inset Quotes erd
 \end_inset 
 
@@ -13302,13 +13283,13 @@ estado atual
 
 \size footnotesize 
 \emph on 
-      então a macro PERL_SET_CONTEXT deve ser usada para
+      so the PERL_SET_CONTEXT macro must be used to 
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-      alternar o interpretador ativo */
+      switch the active interpreter */
 \layout LyX-Code
 
 
@@ -13319,19 +13300,19 @@ estado atual
 
 \size footnotesize 
 \emph on 
-   /* Esta flag deve ser ativada para que a limpeza do
+   /* This flag must be activated so that the cleaning 
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-      ambiente seja completa, o que é necessário quando
+      of an environment is complete, which is needed
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-      pode haver mais de um interpretador ativo */
+      when there may be more than one active interpreter */
 \layout LyX-Code
 
 
@@ -13342,7 +13323,7 @@ estado atual
 
 \size footnotesize 
 \emph on 
-   /* Encerramento do interpretador */
+   /* Terminating the interpreter */
 \layout LyX-Code
 
 
@@ -13371,57 +13352,59 @@ collapsed true
 
 \layout Standard
 
-Em Python e Ruby, o plugin precisa manter o controle do número de estados
- ativos para desalocar a máquina virtual somente quando este chegar a zero.
- Além disso, tanto em Ruby como em Python não há recursos nas APIs (ou nas
- linguagens, de fato) para remover, respectivamente, classes ou módulos.
- Em Ruby, poderíamos atribuir 
+In Python and Ruby, plugins need to keep track of the number of active states
+ to deallocate the virtual machine only when it reaches zero.
+ Besides, both in Ruby and Python there are no features in their APIs (or
+ in the languages, actually) to remove, respectively, classes and modules.
+ In Ruby, we could assign 
 \family typewriter 
 nil
 \family default 
- à constante que representa a classe que descreve o ambiente virtual, mas
- depois disso não é possível definir uma nova classe em seu lugar: tanto
- 
+ to the constant that represents the class which describes the virtual environme
+nt, but after that it is not possible to define a new class in its place:
+ both 
 \family typewriter 
 rb_define_class
 \family default 
- via C como 
+ through C and 
 \family typewriter 
-class 
+class
 \family default 
+ 
 \emph on 
-<Nome>
+<Name>
 \emph default 
- via Ruby geram um erro indicando que o valor já foi definido com outro
- tipo.
- Como Ruby possui classes abertas, uma construção 
+ through Ruby indicating that the value was already defined with another
+ type.
+ Since Ruby features open classes, a 
 \family typewriter 
-class 
+class
 \family default 
+ 
 \emph on 
-<Nome>
+<Name>
 \emph default 
- para um 
+ construct for an already existing 
 \emph on 
-<Nome>
+<Name>
 \emph default 
- já existente é entendida como a continuação da descrição da classe, e não
- como a redefinição de 
+ is understood as a resumption of the class description, and not as the
+ redefinition of 
 \emph on 
-<Nome>
+<Name>
 \emph default 
 .
- Python, por sua vez, não disponibiliza recursos na API para a descarga
- de módulos, mas permite atribuir 
+ Python, on its turn, does not provide API features for unloading modules,
+ but allows assigning 
 \family typewriter 
 None
 \family default 
- à global referente ao módulo.
- O módulo pode ser importado novamente, mas a mesma instância dele, armazenada
- internamente por Python, será retornada.
- A seguinte sessão interativa de linha de comando permite observar este
- comportamento, que ocorre tanto diretamente em Python como via a API de
- C:
+ to the global referring the module.
+ The module can then be imported again, but the same instance, stored internally
+ by Python, will be returned.
+ The following interactive command-line session allows us to observe this
+ behavior, which happens both directly in Python as well as through the
+ C API:
 \layout LyX-Code
 
 
@@ -13476,9 +13459,9 @@ collapsed true
 
 \layout Standard
 
-Assim, as estruturas de dados referentes aos estados LibScript não são encerrado
-s nos plugins Python e Ruby.
- Esta é a implementação da rotina de encerramento no plugin Ruby:
+Thus, data structures referring to LibScript states are not terminated in
+ LibScript-Python and LibScript-Ruby.
+ This is the implementation of the termination routine in the Ruby plugin:
 \layout LyX-Code
 
 
@@ -13489,12 +13472,7 @@ void script_plugin_done_ruby(script_ruby_state state) {
 
 \size footnotesize 
 \emph on 
-   /* Decrementa o contador de estados, uma variável global 
-\emph default 
-static
-\emph on 
- do plugin.
- */
+   /* Decrements the state counter, a static global variable */
 \layout LyX-Code
 
 
@@ -13505,8 +13483,7 @@ static
 
 \size footnotesize 
 \emph on 
-   /* Finaliza o interpretador se este for o último estado.
- */
+   /* Terminates the interpreter if this is the last state */
 \layout LyX-Code
 
 
@@ -13524,7 +13501,7 @@ static
 }
 \layout Standard
 
-A implementação no plugin Python é basicamente igual:
+The Python implementation is basically the same:
 \layout LyX-Code
 
 
@@ -13552,7 +13529,7 @@ void script_plugin_done_python(script_python_state state) {
 }
 \layout Subsection
 
-Passagem de parâmetros
+Passing arguments
 \begin_inset LatexCommand \label{sub:Passagem-de-parâmetros}
 
 \end_inset 
@@ -13560,41 +13537,40 @@ Passagem de parâmetros
 
 \layout Standard
 
-A transferência de dados entre a biblioteca principal e os plugins é concentrada
- em duas operações: uma para passar o conteúdo do buffer de parâmetros de
- LibScript para o espaço de dados da máquina virtual e outra para realizar
- a operação inversa.
- A primeira é usada na passagem de parâmetros de entrada quando funções
- da linguagem de script são chamadas por C e para a obtenção dos valores
- de retorno quando a linguagem de script faz chamadas que são tratadas C.
- A segunda operação, de forma complementar, é usada para os valores de retorno
- quando C chama a linguagem de script e para os parâmetros de entrada quando
- uma chamada feita pela linguagem de script é tratada por código C.
+Data transfer between the main library and plugins is concentrated in two
+ operations: one to pass the contents of the LibScript argument buffer to
+ the virtual machine data space and another to perform the inverse operation.
+ The first one is used for passing input parameters when scripting language
+ functions are called from C and for obtaining return values when the scripting
+ language makes calls that are handled by C.
+ The second operation, complementarily, is used for filling return values
+ when C calls the scripting language and for input parameters when a scripting
+ language call is handled by C code.
 \layout Standard
 
-Na implementação do plugin LibScript-Lua, a função 
+In the implementation of LibScript-Lua, the 
 \family typewriter 
 script_lua_stack_to_buffer
 \family default 
- converte o conteúdo da pilha de Lua para o buffer de parâmetros de LibScript.
- A função do plugin responsável por invocar funções Lua a partir de C, 
+ function converts the contents of the Lua stack to the LibScript argument
+ buffer.
+ The plugin function responsible for invoking Lua functions from C, 
 \family typewriter 
 script_plugin_call_lua
 \family default 
-, usa a função 
+, uses 
 \family typewriter 
 script_lua_stack_to_buffer
 \family default 
- para armazenar no buffer LibScript os valores de retorno da função Lua
- invocada, já que estes são retornados na pilha virtual.
- Quando o código Lua chama funções implementadas em C ou em outro plugin,
- 
+ to store in the LibScript buffer return values of the invoked Lua function,
+ since these are returned in Lua's virtual stack.
+ When Lua code calls functions implemented in C or some other plugin, 
 \family typewriter 
 script_lua_stack_to_buffer
 \family default 
- é usada para converter os parâmetros de entrada da função, também recebidos
- na pilha virtual.
- A seguir, vemos a implementação desta função:
+ is used to convert the function's input parameters, also retreived through
+ the virtual stack.
+ Below, we see the implementation of this function:
 \layout LyX-Code
 
 
@@ -13611,14 +13587,14 @@ static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
 \size footnotesize 
    nargs = lua_gettop(L);    
 \emph on 
-/* Número de elementos na pilha de Lua */
+/* Number of elements in the Lua stack */
 \layout LyX-Code
 
 
 \size footnotesize 
    script_reset_buffer(env); 
 \emph on 
-/* Esvazia o buffer LibScript */
+/* Empties the LibScript buffer */
 \layout LyX-Code
 
 
@@ -13630,13 +13606,14 @@ static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
 \size footnotesize 
       
 \emph on 
-/* Verifica o tipo Lua do elemento na posição i da pilha */
+/* Checks the Lua type of element in stack position i */
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-      /* e para cada tipo, converte o elemento e o armazena no buffer */
+      /* and for each type, convert the element and store in the buffer
+ */
 \layout LyX-Code
 
 
@@ -13682,8 +13659,7 @@ static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
 
 \size footnotesize 
 \emph on 
-         /* Tipos não tratados são substituídos por zero.
- */
+         /* Unhandled types are replaced by zero */
 \layout LyX-Code
 
 
@@ -13718,36 +13694,6 @@ collapsed true
 
 \layout Standard
 
-Assumimos em LibScript strings no formato de C: a função 
-\family typewriter 
-script_put_string
-\family default 
- copia a string passada até o primeiro 
-\family typewriter 
-'
-\backslash 
-0'
-\family default 
-.
- Assim, ao obter strings de linguagens que permitem conteúdo arbitrário,
- estas serão truncadas caso contenham 
-\family typewriter 
-'
-\backslash 
-0'
-\family default 
-.
- Por isso, no plugin Lua usamos diretamente a função 
-\family typewriter 
-lua_tostring
-\family default 
-, e não a função mais geral 
-\family typewriter 
-lua_tolstring
-\family default 
- (que retorna também o tamanho do buffer).
-\layout Standard
-
 Os valores de tipos desconhecidos são substituídos pelo valor zero, o que
  mantém a posição dos demais valores na lista de argumentos.
  Optamos por não sinalizar erro nesta situação para evitar aqui a geração
@@ -13759,22 +13705,26 @@ Os valores de tipos desconhecidos são substituídos pelo valor zero, o que
 \end_inset 
 
 .
+ This design decision coincides with the goal explained earlier of restricting
+ the main library API to features available in all languages.
 \layout Standard
 
-A segunda função de transferência de dados de LibScript-Lua, 
+The second data transfer function from LibScript-Lua, 
 \family typewriter 
 script_lua_buffer_to_stack
 \family default 
-, obtém os valores do buffer LibScript e os insere na pilha virtual de Lua.
- Esta função é usada para passar os parâmetros de entrada para Lua em 
+, obtains values from the LibScript buffer and inserts them into Lua's virtual
+ stack.
+ This function is used to pass input arguments to Lua in 
 \family typewriter 
 script_plugin_call_lua
 \family default 
- e para passar para Lua os valores obtidos pelo retorno da função 
+ and to pass to Lua return values from the 
 \family typewriter 
 script_call
 \family default 
-, que é invocada internamente pelo plugin quando Lua invoca uma função C.
+ function, which is internally invoked by the plugin when Lua invokes a
+ C function.
 \layout LyX-Code
 
 
@@ -13791,7 +13741,7 @@ static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
 \size footnotesize 
    int len = script_buffer_len(env); 
 \emph on 
-/* Número de elementos no buffer */
+/* Number of elements in the buffer */
 \layout LyX-Code
 
 
@@ -13802,13 +13752,13 @@ static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
 
 \size footnotesize 
 \emph on 
-      /* Verifica o tipo do elemento na posição i do buffer */
+      /* Checks the type of element in buffer position i */
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-      /* e para cada tipo, o obtém e o insere na pilha de Lua */
+      /* and for each type, obtains it and inserts in in Lua's stack */
 \layout LyX-Code
 
 
@@ -13840,8 +13790,7 @@ static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
 \size footnotesize 
          s = script_get_string(env, i); 
 \emph on 
-/* A string pertence ao chamador.
- */
+/* The string belongs to the caller */
 \layout LyX-Code
 
 
@@ -13853,8 +13802,7 @@ static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
 \size footnotesize 
          free(s); 
 \emph on 
-/* Libera a string, já que Lua armazena sua própria cópia.
- */
+/* Frees the string, since Lua stores its own copy */
 \layout LyX-Code
 
 
@@ -13904,21 +13852,21 @@ collapsed true
 
 \layout Standard
 
-Em LibScript-Python, não foi possível concentrar as operações de transferência
- de dados em apenas duas funções.
- Cada operação teve que ser dividida em duas partes.
- A conversão de dados recebidos de Python para o buffer de LibScript foi
- divida nas funções 
+In LibScript-Python, it was not possible to concentrate data transfer operations
+ in two functions only.
+ Each operation had to be split in two parts.
+ The conversion of data sent from Python to the LibScript buffer was split
+ into 
 \family typewriter 
 script_python_put_object
 \family default 
- e 
+ and 
 \family typewriter 
 script_python_tuple_to_buffer
 \family default 
 .
- A primeira função converte um único valor Python e o insere na posição
- solicitada no buffer:
+ The first function converts a single value Python and inserts it in the
+ requested buffer position:
 \layout LyX-Code
 
 
@@ -14004,19 +13952,19 @@ collapsed true
 
 \layout Standard
 
-É importante notar que os tipos Python 
+It is important to note that Python types 
 \family typewriter 
 PyInt
 \family default 
- e 
+ and 
 \family typewriter 
 PyLong
 \family default 
- não correspondem aos tipos C 
+ do not correspond to C types 
 \family typewriter 
 int
 \family default 
- e 
+ and 
 \family typewriter 
 long
 \family default 
@@ -14024,42 +13972,42 @@ long
 \family typewriter 
 PyInt
 \family default 
- é o tipo inteiro correspondente ao tamanho da palavra da máquina (análogo
- a 
+ is the integer type corresponding to the machine word size (analogous to
+ 
 \family typewriter 
 int
 \family default 
-), mas 
+), but a 
 \family typewriter 
 PyLong
 \family default 
- é um inteiro de precisão arbitrária.
- Em LibScript, representamos 
+ is an arbitrary-precision integer.
+ In LibScript, we represent 
 \family typewriter 
 PyLong
 \family default 
-s como 
+s as 
 \family typewriter 
 double
 \family default 
 s.
- A API de LibScript oferece a função 
+ The LibScript API offers the 
 \family typewriter 
 script_put_int
 \family default 
- como conveniência, mas internamente, como ocorre por exemplo em Lua, todos
- os números são armazenados como 
+ function as a convenience, but internally, as it happens for example in
+ Lua, all numbers are stored as 
 \family typewriter 
 double
 \family default 
 s.
 \layout Standard
 
-A segunda função, 
+The second function, 
 \family typewriter 
 script_python_tuple_to_buffer
 \family default 
-, insere os elementos de uma tupla no buffer:
+, inserts elements of a tuple in the buffer:
 \layout LyX-Code
 
 
@@ -14077,14 +14025,14 @@ static void script_python_tuple_to_buffer(script_env* env, PyObject* tuple)
 \size footnotesize 
    int len = PyTuple_GET_SIZE(tuple); 
 \emph on 
-/* Número de elementos da tupla */
+/* Number of elements in the tuple */
 \layout LyX-Code
 
 
 \size footnotesize 
    script_reset_buffer(env);          
 \emph on 
-/* Esvazia o buffer LibScript */
+/* Empties the LibScript buffer */
 \layout LyX-Code
 
 
@@ -14096,15 +14044,14 @@ static void script_python_tuple_to_buffer(script_env* env, PyObject* tuple)
 \size footnotesize 
       PyObject* o = PyTuple_GET_ITEM(tuple, i); 
 \emph on 
-/* Obtém elemento da tupla */
+/* Get a tuple element */
 \layout LyX-Code
 
 
 \size footnotesize 
       script_python_put_object(env, i, o);      
 \emph on 
-/* Insere-o no buffer.
- */
+/* Insert it in the buffer */
 \layout LyX-Code
 
 
@@ -14129,18 +14076,18 @@ collapsed true
 
 \layout Standard
 
-A operação inversa, de transferência de dados do buffer LibScript para Python,
- também é implementada em duas funções, uma tratando objetos individualmente
- e outra tratando tuplas.
- A função 
+The inverse operation, for transferring data from the LibScript buffer to
+ Python, is also implemented in two functions, one handling objects individually
+ and another handling tuples.
+ The 
 \family typewriter 
 script_get_object
 \family default 
- converte um elemento do buffer para um 
+ function converts a buffer element to an equivalent 
 \family typewriter 
 PyObject
 \family default 
- equivalente:
+:
 \layout LyX-Code
 
 
@@ -14225,11 +14172,11 @@ collapsed true
 
 \layout Standard
 
-A função 
+The 
 \family typewriter 
 script_python_buffer_to_tuple
 \family default 
- gera uma tupla contendo todos os elementos do buffer LibScript:
+ function generates a tuple containing every element of the LibScript buffer:
 \layout LyX-Code
 
 
@@ -14294,25 +14241,24 @@ collapsed true
 
 \layout Standard
 
-Assim, estes dois pares de funções realizam funções equivalentes às que
- 
+This way, these two pairs of functions perform functions equivalent to 
 \family typewriter 
 script_lua_\SpecialChar \-
 stack_to_buffer
 \family default 
- e 
+ and 
 \family typewriter 
 script_lua_buffer_to_stack
 \family default 
- exercem no plugin Lua.
- Elas foram separadas em duas partes em função do modelo de retorno de valores
- em funções Python: no caso de múltiplos valores de retorno, eles são retornados
- como uma tupla; para valores simples, eles são passados diretamente.
- Isto é evidenciado no seguinte trecho da função 
+ do in the Lua script.
+ They were separated in two parts because of the model for return values
+ in Python functions: for the case of multiple return values, they are returned
+ as a tuple; for single values, they are passed directly.
+ This is made evident in the following excerpt of the 
 \family typewriter 
 script_plugin_call_python
 \family default 
-:
+ function:
 \layout LyX-Code
 
 
@@ -14331,14 +14277,14 @@ PyObject *ret, *args;
 \size footnotesize 
 args = script_python_buffer_to_tuple(env);  
 \emph on 
-/* Obtém o parâmetros de entrada */
+/* Get input parameters */
 \layout LyX-Code
 
 
 \size footnotesize 
 ret = PyEval_CallObject(func, args); 
 \emph on 
-       /* Chama uma função Python */
+       /* Call a Python function */
 \layout LyX-Code
 
 
@@ -14352,42 +14298,42 @@ ret = PyEval_CallObject(func, args);
 \size footnotesize 
 if (ret == Py_None)                         
 \emph on 
-/* Se a função não retornou valor */
+/* If the function returned no values */
 \layout LyX-Code
 
 
 \size footnotesize 
    script_reset_buffer(env);                
 \emph on 
-/* Apenas zere o buffer LibScript */
+/* Just empty the LibScript buffer */
 \layout LyX-Code
 
 
 \size footnotesize 
 else if (PyTuple_Check(ret))                
 \emph on 
-/* Se retornou uma tupla */
+/* If a tuple was returned */
 \layout LyX-Code
 
 
 \size footnotesize 
    script_python_tuple_to_buffer(env, ret); 
 \emph on 
-/* Insira seus elementos no buffer */
+/* Insert its elements in the buffer */
 \layout LyX-Code
 
 
 \size footnotesize 
 else                                        
 \emph on 
-/* Se retornou outro tipo de objeto */
+/* If another type was returned */
 \layout LyX-Code
 
 
 \size footnotesize 
    script_python_put_object(env, 0, ret);   
 \emph on 
-/* Insira-o como único elemento */
+/* Insert it as the only element */
 \layout Standard
 
 
@@ -14402,22 +14348,22 @@ collapsed true
 
 \layout Standard
 
-No tratador de chamadas a funções externas do plugin, a comunicação no sentido
- inverso emprega uma lógica similar:
+In the plugin handler for calls to external functions, communication in
+ the opposite direction follows a similar logic:
 \layout LyX-Code
 
 
 \size footnotesize 
 script_python_tuple_to_buffer(env, args);    
 \emph on 
-/* Obtém o parâmetros de entrada */
+/* Get input parameters */
 \layout LyX-Code
 
 
 \size footnotesize 
 err = script_call(env, fn_name);             
 \emph on 
-/* Chama um função via LibScript */
+/* Call a function through LibScript */
 \layout LyX-Code
 
 
@@ -14435,42 +14381,42 @@ switch(script_buffer_len(env)) {
 \size footnotesize 
 case 0:                                      
 \emph on 
- /* Se a função não retornou valor */
+ /* If the function returned no values */
 \layout LyX-Code
 
 
 \size footnotesize 
    Py_RETURN_NONE;                           
 \emph on 
- /* Retorne o valor Python 'None' */
+ /* Return the Python value 'None' */
 \layout LyX-Code
 
 
 \size footnotesize 
 case 1:                                      
 \emph on 
- /* Se retornou um único valor */
+ /* If a single value was returned */
 \layout LyX-Code
 
 
 \size footnotesize 
    return script_python_get_object(env, 0);  
 \emph on 
- /* Converta e retorne-o */
+ /* Convert it and return it */
 \layout LyX-Code
 
 
 \size footnotesize 
 default:                                      
 \emph on 
-/* Se retornou mais de um valor */
+/* If more than one value was returned */
 \layout LyX-Code
 
 
 \size footnotesize 
    return script_python_buffer_to_tuple(env); 
 \emph on 
-/* Retorne-os em uma tupla */
+/* Return them in a tuple */
 \layout LyX-Code
 
 
@@ -14490,16 +14436,16 @@ collapsed true
 
 \layout Standard
 
-Assim como em Python, funções em Ruby retornam múltiplos valores encapsulando-os
- em um tipo agregado.
- Desta forma, as operações de transferências de dados de LibScript-Ruby
- também são divididas em pares de funções, uma convertendo um valor do buffer,
- e outra operando sobre um array Ruby.
- A função análoga a 
+Like in Python, Ruby functions return multiple values by wrapping them in
+ an aggregate type.
+ This way, data transfer operations in LibScript-Ruby are also split into
+ pairs of functions, one converting a buffer value and another operating
+ on a Ruby array.
+ The analogous function to 
 \family typewriter 
 script_python_put_object
 \family default 
- é 
+ is 
 \family typewriter 
 script_ruby_put_value
 \family default 
@@ -14598,109 +14544,86 @@ collapsed true
 
 \layout Standard
 
-Aqui, alguns problemas da API de Ruby são aparentes.
- Além da inconsistência na nomenclatura das funções de conversão de objetos,
- o significado do valor retornado pela macro 
+Here, some problems of the Ruby API become apparent.
+ Besides the inconsistency in the naming of object conversion function names,
+ the meaning of the value returned by the 
 \family typewriter 
 TYPE
 \family default 
- só pode ser compreendido através da representação interna de 
+ macro can only be understood through the internal representation of 
 \family typewriter 
 VALUE
 \family default 
-s na implementação de Ruby, e não através da hierarquia de tipos dos objetos
- da linguagem.
- As classes que têm tratamento especial na estrutura interna de 
+s in Ruby's implementation, and not through the type hierarchy of language
+ objects.
+ Classes that has special handling in the internal structure of 
 \family typewriter 
 VALUE
 \family default 
-s possuem constantes associadas a si, como 
+s have constants associated to them, such as 
 \family typewriter 
 T_FLOAT
 \family default 
- e 
+ and 
 \family typewriter 
 T_STRING
 \family default 
-; as demais são identificados apenas como 
+; the rest are identified only as 
 \family typewriter 
 T_OBJECT
 \family default 
 s.
- O uso de 
+ The use of 
 \family typewriter 
 T_TRUE
 \family default 
- e 
+ and 
 \family typewriter 
 T_FALSE
 \family default 
- pode dar a entender que alguns valores específicos também retornam resultados
- especiais para 
+ may lead to think that some specific values also return special results
+ for 
 \family typewriter 
 TYPE
 \family default 
 .
- De fato, estes valores são definidos como 
+ Indeed, these values are defined as 
 \family typewriter 
 VALUE
 \family default 
-s que não correspondem a índices da heap de objetos de Ruby e são tratados
- de forma especial na implementação.
- Do ponto de vista de código Ruby, entretanto, esta classificação dos valores
- 
-\family typewriter 
-true
-\family default 
- e 
-\family typewriter 
-false
-\family default 
- em tipos separados na API C é justificada definindo-os como 
-\emph on 
-singletons
-\emph default 
- das classes 
+s that do not correspond to Ruby heap indices and are handled especially
+ by the implementation.
+ From the point of view of Ruby code, however, this classification of values
+ true and false as separate types in the C API is justified by defining
+ them as singletons of classes 
 \family typewriter 
 TrueClass
 \family default 
- e 
+ and 
 \family typewriter 
 FalseClass
 \family default 
-, abordagem provavelmente influenciada por Smalltalk.
- Porém, diferentemente de Smalltalk, onde 
-\family typewriter 
-True
-\family default 
- e 
-\family typewriter 
-False
-\family default 
- são subclasses de 
-\family typewriter 
-Boolean
-\family default 
-, em Ruby 
+, an approach probably influenced by Smalltalk.
+ Unlike Smalltalk, though, where True and False are subclasses of Boolean,
+ in Ruby 
 \family typewriter 
 TrueClass
 \family default 
- e 
+ and 
 \family typewriter 
 FalseClass
 \family default 
- são subclasses diretas de 
+ are direct subclasses of 
 \family typewriter 
 Object
 \family default 
 .
- Isto traz a inconveniência de que verificar se um tipo é um valor booleano
- incorre sempre em dois testes.
+ This brings the inconvenience that checking if a type matches a boolean
+ value two tests are needed.
 \layout Standard
 
-Assim como LibScript-Python tem uma função para armazenar no buffer os elementos
- de uma tupla, LibScript-Ruby possui uma função para armazenar os elementos
- de um array:
+Like LibScript-Python has a function to store in the buffer elements from
+ a tuple, LibScript-Ruby has a function to store elements of an array:
 \layout LyX-Code
 
 
@@ -14748,23 +14671,22 @@ static void script_ruby_array_to_buffer(script_env* env, VALUE array) {
 }
 \layout Standard
 
-Ruby não possui uma função na API C para retornar o tamanho de um array;
- ao invés disso, a estrutura interna do 
+Ruby does not have a function in its C API to return the size of an array;
+ instead, the internal structure of 
 \family typewriter 
 VALUE
 \family default 
- é exposta através da macro 
+ is exposed through the 
 \family typewriter 
 RARRAY
 \family default 
- (que apenas encapsula um cast).
- 
+ macro (which just wraps a cast).
 \layout Standard
 
-As operações para conversão de valores do buffer LibScript para Ruby também
- são similares às implementadas no plugin Python.
- Novamente, onde em Python há uma função para manipulação de tuplas, temos
- em Ruby uma função que opera sobre arrays:
+Operations for converting values from the LibScript buffer to Ruby are also
+ similar to those implemented in the Python plugin.
+ Again, where in Python there is a function for manipulating tuples, we
+ have in Ruby a function that operates on arrays:
 \layout LyX-Code
 
 
@@ -14901,57 +14823,56 @@ collapsed true
 
 \layout Standard
 
-De forma similar ao plugin Python, a implementação da chamada de funções
- Ruby a partir de LibScript usa a função 
+In a similar way to the Python plugin, the implementation of Ruby function
+ calls from LibScript uses the 
 \family typewriter 
 script_ruby_buffer_to_array
 \family default 
- para converter os parâmetros de entrada e as funções 
+ to convert input parameters and functions 
 \family typewriter 
 script_ruby_put_value
 \family default 
- ou 
+ or 
 \family typewriter 
 script_ruby_array_to_buffer
 \family default 
- para converter o valor de retorno, dependendo se a função retornou um ou
- mais valores (ou mais precisamente, se a função retornou ou não um array).
- Em chamadas de funções LibScript a partir de Ruby, os parâmetros de entrada
- são convertidos com 
+ to convert the return value, depending on the number of values returned
+ (or, more precisely, if the function has returned an array or not).
+ In calls to LibScript functions from Ruby, input parameters are converted
+ with 
 \family typewriter 
 script_ruby_array_to_buffer
 \family default 
- e os valores de retorno com 
+ and return values are converted with 
 \family typewriter 
 script_ruby_get_value
 \family default 
- ou 
+ or 
 \family typewriter 
 script_ruby_buffer_to_array
 \family default 
 .
 \layout Standard
 
-No plugin Perl, temos três funções: a transferência de dados da pilha para
- o buffer LibScript pôde ser implementada em uma única função como em Lua,
- mas a transferência no sentido oposto teve que ser dividida em duas funções,
- como em Python e Ruby.
- Esta assimetria vem do fato de que o tratamento de valores de retorno é
- encapsulado pelo pré-processador XS através da variável especial 
+In the Perl plugin, we have three functions: data transfer from the stack
+ to the LibScript buffer was implemented in a single function like in Lua,
+ but transfer in the opposite direction had to be split in two functions,
+ like in Python and Ruby.
+ This asymmetry comes from the fact that handling of return values is wrapped
+ by the XS pre-processor through the 
 \family typewriter 
 RETVAL
 \family default 
-; assim, nesta situação não podemos manipular a pilha diretamente, mas apenas
- passar 
+ variable; so, in this situation we cannot manipulate the stack directly,
+ but only pass 
 \family typewriter 
 SV
 \family default 
-s como valores de saída.
- 
+s as output values.
 \layout Standard
 
-A transferência de dados da pilha de Perl para o buffer LibScript é razoavelment
-e simples:
+Transferring data from the Perl stack to the LibScript buffer is reasonably
+ simple: 
 \layout LyX-Code
 
 
@@ -14982,7 +14903,7 @@ void script_perl_stack_to_buffer(pTHX_ int ax, script_env* env,
 
 \size footnotesize 
 \emph on 
-      /* Obtém um ponteiro para o SV */
+      /* Obtain a pointer to a SV from Perl's stack */
 \layout LyX-Code
 
 
@@ -15052,78 +14973,83 @@ collapsed true
 
 \layout Standard
 
-Os parâmetros de entrada desta função merecem comentário.
- Inicialmente, temos a macro 
+This functions' input parameters deserve mention.
+ Initially, we have the 
 \family typewriter 
 pTHX_
 \family default 
-.
- Esta macro foi adicionada à API quando Perl passou a permitir múltiplos
- interpretadores simultâneos por processo: as funções da API foram transformadas
- em macros que encapsulam a passagem deste primeiro parâmetro.
- Por exemplo, a função 
+ macro.
+ This macro was added to the API when Perl started allowing multiple simultaneou
+s interpreters per process: API functions were transformed into macros that
+ wrap this first argument.
+ For example, 
 \family typewriter 
 eval_sv
 \family default 
- pode ser chamada como 
+ can be called as 
 \family typewriter 
 Perl_eval_sv
 \family default 
-, passando a macro 
+, passing the 
 \family typewriter 
 aTHX_
 \family default 
- como parâmetro inicial.
- De maneira geral o uso destas macros fica implícito, mas ao escrever funções
- que usam a API de Perl torna-se necessário usar a macro 
-\family typewriter 
-pTHX_
-\family default 
- na declaração
+ macro as an initial parameter.
+ In general the use of these macros remains implicit, but when writing functions
+ that use the Perl API it becomes necessary to use the pTHX_ macro in declaratio
+ns
 \begin_inset Foot
 collapsed true
 
 \layout Standard
 
-A macro 
+The 
 \family typewriter 
 pTHX_
 \family default 
- é usada sem a vírgula separando-a do argumento seguinte.
- Quando ela é o único argumento, deve-se usar 
+ is used without a comma separating it from the following argument.
+ When it is the only argument, one should use 
 \family typewriter 
 pTHX
 \family default 
 .
 \end_inset 
 
-, para propagar a informação de estado do interpretador através de chamadas
- de função, e 
+, to propagate interpreter state information through function calls, and
+ 
 \family typewriter 
 aTHX_
 \family default 
- nas chamadas.
+ in calls.
 \layout Standard
 
-Outro sintoma de que a API de Perl foi projetada mais para uso interno do
- pré-processador XS do que para manipulação direta transparece no segundo
- argumento, 
+Another symptom that the Perl API was designed more for internal use of
+ the XS pre-processor than for direct manipulation shows in the second argument,
+ 
 \family typewriter 
 ax
 \family default 
 .
- Algumas macros assumem a existência deste valor, que não é propagado via
- 
+ Some macros assume the existence of this value, which is not propagated
+ by 
 \family typewriter 
 pTHX_
 \family default 
-, mas é declarado implicitamente quando funções são encapsuladas via XS.
- A API parece assumir que uma função XS não irá invocar outra função C que
- também use a API.
- Tivemos então que propagar esta variável (que é citada na documentação,
- mas apenas como 
+, but is implictly declared when functions are wrapped with XS.
+ The API seems to assume that an XS function will not invoke another C function
+ which also uses the API.
+ We had to propagate the variable ourselves (which is mentioned in the documenta
+tion, but only as 
+\begin_inset Quotes eld
+\end_inset 
+
+the 'ax' variable
+\begin_inset Quotes erd
+\end_inset 
+
+
 \emph on 
-"the 'ax' variable"\SpecialChar ~
+\SpecialChar ~
 
 \emph default 
 
@@ -15131,76 +15057,66 @@ pTHX_
 
 \end_inset 
 
-, sem explicações do seu propósito).
+, with no explanations of its purpose).
 \layout Standard
 
-Os outros dois parâmetros, 
+The other two parameters, count and offset, are needed due to the different
+ ways that the information they represent are obtained in the two contexts
+ where this function is used.
+ In other plugins, we can obtain the number of input elements in a uniform
+ way (checking the number of elements in a Python tuple, for example).
+ In Perl, in the two situations where the function is called, the number
+ of elements to be read from the stack should be obtained in different ways,
+ and because of that we pass it as the 
 \family typewriter 
 count
 \family default 
- e 
-\family typewriter 
-offset
-\family default 
-, são necessários devido às diferentes formas que as informações que eles
- representam são obtidas nos dois contextos onde esta função é usada.
- Nos outros plugins, podemos obter a quantidade de elementos de entrada
- de forma uniforme (consultando o número de elementos da tupla em Python,
- por exemplo).
- Em Perl, nas duas situações onde a função é chamada, o número de elementos
- a serem lidos da pilha deve ser obtido de formas diferentes, e por isso
- o passamos como parâmetro 
-\family typewriter 
-count
-\family default 
-.
- Na rotina chamadora de funções LibScript, implementada no arquivo XS, o
- tamanho da pilha é obtido através de uma variável especial, 
+ parameter.
+ In the routine that calls LibScript functions, implemented in the XS file,
+ the size of the stack is obtained through a special variable, 
 \family typewriter 
 items
 \family default 
 .
- Já na chamada de funções Perl, o valor de 
+ When calling Perl functions, the value of 
 \family typewriter 
 count
 \family default 
- é obtido como retorno da função que realiza a invocação, 
+ is obtained as the result of the invocation function, 
 \family typewriter 
 Perl_call_pv
 \family default 
 .
- 
 \layout Standard
 
-A posição inicial da pilha a partir da qual devemos obter os elementos (
+The start position from where to obtain elements (
 \family typewriter 
 offset
 \family default 
-) também varia.
- Dentro da função XS, os parâmetros de entrada começam a partir da posição
- 2, pois LibScript passa o ponteiro do ambiente e o nome da função nos dois
- primeiros argumentos.
- Na chamada de funções Perl, o valor de 
-\family typewriter 
-offset
-\family default 
- é zero pois, como visto no protocolo de chamada de funções Perl discutido
- na Seção\SpecialChar ~
+) also varies.
+ Inside the XS function, input parameters start from position 2, because
+ LibScript passes the environment pointer and function name in the first
+ two arguments.
+ In calls to Perl functions, the value of offset is zero because, as seen
+ in the protocol for invocation of Perl functions discussed in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Perl-call}
 
 \end_inset 
 
-, a base da pilha é ajustada após a chamada da função pela macro 
+, the stack bottom is adjusted after the function call by the 
 \family typewriter 
 SPAGAIN
 \family default 
-.
- 
+ macro.
 \layout Standard
 
-A conversão de valores do buffer LibScript para a pilha de Perl é dada em
- duas funções, uma que gera um único SV e outra que empilha todos os elementos:
+Conversion of values from the LibScript buffer to the Perl stack is implemented
+ in two functions, one that generates a single 
+\family typewriter 
+SV
+\family default 
+ and another that pushes all elements:
 \layout LyX-Code
 
 
@@ -15221,7 +15137,7 @@ SV* script_perl_get_sv(pTHX_ script_env* env, int i) {
 
 \size footnotesize 
 \emph on 
-   /* 0 indica que o tamanho da string deve ser calculado por Perl.
+   /* 0 indicates that the size of the string should be computed by Perl
  */
 \layout LyX-Code
 
@@ -15299,36 +15215,25 @@ collapsed true
 
 \layout Standard
 
-Novamente, uma variável criada internamente por Perl teve que ser propagada
- explicitamente: 
+Again, a variable created internally by Perl had to be propagated explicitly:
+ 
 \family typewriter 
 sp
 \family default 
-, o 
-\emph on 
-stack pointer
-\emph default 
-.
- Esta variável é referenciada internamente pela macro 
+, the stack pointer.
+ This variable is referenced internally by the 
 \family typewriter 
 xPUSHs
 \family default 
-.
- Além disso, como 
-\family typewriter 
-XPUSHs
-\family default 
- pode redimensionar a pilha, precisamos retornar o valor atualizado de 
+ macro.
+ Besides, as XPUSHs can resize the stack, we need to return the updated
+ value of 
 \family typewriter 
 sp
 \family default 
- de volta para o chamador.
- No mais, a geração de 
-\family typewriter 
-SV
-\family default 
-s, o registro destes como variáveis mortais e o seu empilhamento ocorre
- da forma usual, já apresentada na Seção\SpecialChar ~
+ back to the caller.
+ Apart from that, generation of SVs, their registration as mortal variables
+ and their insertion in the stack happens as usual, as presented in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Perl-call}
 
@@ -15337,31 +15242,31 @@ s, o registro destes como variáveis mortais e o seu empilhamento ocorre
 .
 \layout Standard
 
-Assim como nos demais plugins, a passagem de parâmetros de entrada em LibScript-
-Perl, tanto para a chamada de funções Perl como de funções via LibScript,
- é feita chamando a função de conversão que opera sobre o buffer como um
- todo: na chamada de funções Perl usamos 
+Like in the other plugins, the transfer of input parameters in LibScript-Perl,
+ both for Perl functions and for functions called through LibScript, is
+ made calling the conversion function that acts on the buffer as a whole:
+ when calling Perl functions we use 
 \family typewriter 
 script_perl_buffer_to_stack
 \family default 
- e na de funções via LibScript, 
+ and for functions called using LibScript, 
 \family typewriter 
 script_perl_stack_to_buffer
 \family default 
 .
- Para tratar os valores de retorno de funções Perl, pudemos utilizar diretamente
- a função 
+ For handling return values for Perl functions, we were able to use directly
+ the 
 \family typewriter 
 script_perl_stack_to_buffer
 \family default 
-, de forma similar à realizada em LibScript-Lua.
- Para o retorno de funções chamadas via LibScript, porém, precisamos lidar
- com a variável especial 
+ function, not unlike it was done in LibScript-Lua.
+ For the return value of functions called using LibScript, however, we need
+ to deal with the special XS variable 
 \family typewriter 
 RETVAL
 \family default 
- de XS e com os diferentes contextos de chamada de Perl.
- O trecho abaixo ilustra o tratamento de valores de retorno neste caso:
+ and with the different call contexts of Perl.
+ The excerpt below illustrates the handling of return values in this case:
 \layout LyX-Code
 
 
@@ -15373,7 +15278,7 @@ err = script_call(env, function_name);
 \size footnotesize 
 \emph on 
 /* ...
- (tratamento de erro omitido) ...
+ (error handling omitted) ...
  */
 \layout LyX-Code
 
@@ -15390,7 +15295,7 @@ case G_SCALAR:
 
 \size footnotesize 
 \emph on 
-   /* Retorna o primeiro item do buffer */
+   /* Return the first item of the buffer */
 \layout LyX-Code
 
 
@@ -15416,7 +15321,7 @@ case G_ARRAY:
 
 \size footnotesize 
 \emph on 
-   /* Cria um array */
+   /* Create an array */
 \layout LyX-Code
 
 
@@ -15427,7 +15332,7 @@ case G_ARRAY:
 
 \size footnotesize 
 \emph on 
-   /* Arrays retornados devem ser marcados como mortais */
+   /* Returned arrays have to be marked as mortal */
 \layout LyX-Code
 
 
@@ -15438,7 +15343,7 @@ case G_ARRAY:
 
 \size footnotesize 
 \emph on 
-   /* Insere o conteúdo do buffer no array */
+   /* Insert the contents of the buffer in the array */
 \layout LyX-Code
 
 
@@ -15464,15 +15369,13 @@ case G_VOID:
 
 \size footnotesize 
 \emph on 
-   /* O valor de retorno é descartado em contextos void.
- */
+   /* As the return value is discarded in void contexts, */
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-   /* Retornamos então a constante Perl undef.
- */
+   /* we return the Perl constant undef */
 \layout LyX-Code
 
 
@@ -15495,47 +15398,48 @@ case G_VOID:
 
 \end_inset 
 
-Chamada de funções
+Function calls
 \layout Standard
 
-Nos plugins de LibScript, funções implementadas externamente (em C ou outros
- plugins) são localizadas somente no momento em que elas são chamadas.
- O objetivo aqui, além de otimizar o tempo de inicialização e consumo de
- memória no ambiente de execução da linguagem de script (ao evitar a declaração
- de funções que não serão utilizadas), é permitir a localização de funções
- declaradas após a inicialização do ambiente.
- Para permitir esta resolução de funções de forma dinâmica, é preciso capturar
- o acesso a elementos inexistentes na estrutura que descreve o ambiente
- virtual no plugin e encaminhar a chamada à biblioteca principal via 
+In LibScript plugins, functions implemented externally (in C or other plugins)
+ are located only in the moment when they are called.
+ The goal here, besides optimizing initialization time and memory consumption
+ in the scripting language runtime environment (avoiding the declaration
+ of functions that will not be used), is to allow the location of functions
+ declared after the environment's initialization.
+ To allow function resolution in a dynamic way, it is necessary to capture
+ the access to missing elements in the structure which describes the virtual
+ environment to the plugin and forward the call to the main library using
+ 
 \family typewriter 
 script_call
 \family default 
 .
- Ao comparar as abordagens empregadas em cada plugin para obter tal comportament
-o, podemos avaliar alguns recursos de meta-programação oferecidos por cada
- linguagem e a sua disponibilidade através das suas APIs.
+ When comparing approaches employed in each plugin to get this behavior,
+ we can evaluate some meta-programming features provided by each language
+ and their availability through their APIs.
 \layout Standard
 
-Como vimos na Seção\SpecialChar ~
+As seen in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Representação-de-estados}
 
 \end_inset 
 
-, em Lua, durante a inicialização do plugin, é criada uma tabela armazenada
- em uma variável global com o nome do ambiente.
- Funções são inseridas dinamicamente nesta tabela através da metatabela
- associada a ela logo após a sua criação em 
+, in Lua, during plugin initialization, a table is created and stored in
+ a global variable with the same name as the environment.
+ Functions are inserted dynamically in this table through a metatable associated
+ to it right after its creation in 
 \family typewriter 
 script_plugin_init_lua
 \family default 
 .
- O campo 
+ The 
 \family typewriter 
 __index
 \family default 
- da metatabela aponta para uma função\SpecialChar ~
-C interna ao plugin, 
+ field of this metatable points to a C function internal to the plugin,
+ 
 \family typewriter 
 script_lua_
 \family default 
@@ -15544,163 +15448,142 @@ script_lua_
 \family typewriter 
 make_caller
 \family default 
-, que é então invocada sempre que um elemento inexistente for solicitado
- na tabela.
- A função 
+, which is then invoked always that a nonexistent element is requested in
+ the table.
+ The 
 \family typewriter 
 script_lua_make_caller
 \family default 
- cria uma 
-\emph on 
-closure
-\emph default 
-\SpecialChar ~
-C, que consiste de outra função\SpecialChar ~
-C interna ao plugin (
+ function creates a C closure, which consists of another C function internal
+ to the plugin (
 \family typewriter 
 script_lua_caller
 \family default 
-) e o nome da função solicitada.
- Esta closure é associada à entrada da tabela do ambiente.
- Assim, chamadas a funções implementadas externamente serão resolvidas por
- 
+) and the name of the requested function.
+ This closure is associated to the proper entry in the environment table.
+ This way, calls to functions implemented externally are resolved by 
 \family typewriter 
 script_lua_caller
 \family default 
-, que as passará adiante para 
+, which will pass them on to 
 \family typewriter 
 script_call
 \family default 
 .
 \layout Standard
 
-No plugin Python, ao chamar uma função no módulo do ambiente virtual, o
- 
-\emph on 
-callback
-\emph default 
- 
+In the Python plugin, when calling a function in the virtual environment
+ module, the module's 
 \family typewriter 
 __getattro
 \family default 
- do módulo, definido como a função interna 
+ callback, defined as the internal function 
 \family typewriter 
 script_python_get
 \family default 
-, é chamado.
- Esta função procura uma entrada no dicionário do módulo e, caso não a encontre,
- cria um objeto do tipo 
+, is called.
+ This function searches for an entry in the module's dictionary and, if
+ it is not found, creates an object of the 
 \family typewriter 
 script_python_object
 \family default 
-, e o retorna como resultado de 
+ type, and returns it as the result of 
 \family typewriter 
 __getattro
 \family default 
 .
- Este tipo de dado é declarado no plugin como uma classe Python, cujas instância
-s contêm um ponteiro para o ambiente virtual e uma string C com o nome da
- função que eles representam.
- Estes objetos possuem o seu 
-\emph on 
-callback
-\emph default 
- 
+ This data type is declared in the plugin as a Python class, whose instances
+ contain a pointer to the virtual environment and a C string with the name
+ of the function they represent.
+ These objects have their 
 \family typewriter 
 __call
 \family default 
- definido como 
+ callback defined as 
 \family typewriter 
 script_python_caller
 \family default 
-, uma função que, assim como 
+, a function that, like 
 \family typewriter 
 script_lua_caller
 \family default 
-, converte os parâmetros recebidos para o buffer de LibScript, invoca 
+, converts its received parameters to the LibScript buffer, invokes 
 \family typewriter 
 script_call
 \family default 
- e converte os valores de retorno de volta a Python.
- Assim, objetos deste tipo são 
+ and converts the return values back to Python.
+ Therefore, objects of this type are 
 \emph on 
 functors
 \emph default 
-, e se comportam de forma similar à 
-\emph on 
-closure
-\emph default 
- definida no plugin Lua.
+, and behave similarly to the closure defined in the Lua plugin.
 \layout Standard
 
-A resolução de funções sob demanda em Ruby é implementada utilizando o método
- 
+Function resolution is implemented in Ruby using the 
 \family typewriter 
 method_missing
 \family default 
-, que é um fallback definido pela linguagem, chamado sempre que um método
- inexistente é invocado em uma classe.
- Diferentemente de 
+ method, which is a language-defined fallback, always called when a nonexistent
+ method is invoked in a class.
+ Unlike 
 \family typewriter 
 __getattro
 \family default 
- em Python e 
+ in Python and 
 \family typewriter 
 __index
 \family default 
- em Lua, que são tratadores de acesso a atributos e portanto precisam retornar
- um objeto que é chamado em um passo seguinte, o método 
+ in Lua, which are attribute access handlers and therefore need to return
+ an object which is called in a later step, 
 \family typewriter 
 method_missing
 \family default 
- trata chamadas diretamente.
- Assim, ao ser invocado, 
+ handles calls directly.
+ Hence, when invoked, 
 \family typewriter 
 method_missing
 \family default 
- recebe o nome do método solicitado e os parâmetros passados e os encaminha
- para a função 
+ receives the name of the requested method and the given parameters and
+ forwards them to 
 \family typewriter 
 script_call
 \family default 
 .
 \layout Standard
 
-No plugin Perl, como em Lua e Python, também há uma função C responsável
- por realizar a conversão de parâmetros e valores de retorno a invocação
- de 
+In the Perl plugin, like in Lua and Python, there is also a C function responsib
+le for invoking 
 \family typewriter 
 script_call
 \family default 
-.
- Esta função, 
+ and converting input parameters and return values.
+ So that this function, 
 \family typewriter 
 script_perl_caller
 \family default 
-, para que possa ser exposta ao interpretador Perl, é implementada em um
- módulo XS.
- Uma vez carregado o módulo, a função é visível em Perl como a função 
+, can be exposed to the Perl interpreter, it is implemented in an XS module.
+ Once the module is loaded the function is visible in Perl as 
 \family typewriter 
 LibScript::caller
 \family default 
 .
- A resolução dinâmica de funções do pacote Perl que representa o ambiente
- virtual é feita usando a função 
+ Dynamic resolution of functions from the Perl package representing the
+ LibScript virtual environment is done using the 
 \family typewriter 
 AUTOLOAD
 \family default 
- de Perl, que se comporta como 
+ Perl function, which behaves like 
 \family typewriter 
 method_missing
 \family default 
- em Ruby, capturando chamadas a funções inexistentes.
- Na função de inicialização do plugin, código Perl é executado para carregar
- o módulo de extensão, inicializar o pacote do ambiente e inserir nele uma
- função 
+ in Ruby, capturing calls to missing functions.
+ In the plugin's initialization function, Perl code is executed to load
+ the extension module, initialize the environment package and insert in
+ it an 
 \family typewriter 
 AUTOLOAD
 \family default 
- que chamará 
+ function which will call 
 \family typewriter 
 LibScript::caller
 \family default 
@@ -15716,21 +15599,21 @@ snprintf(code, LEN_CODE,
 \size footnotesize 
    "bootstrap LibScript;"   
 \emph on 
-/* Inicializa o módulo de extensão */
+/* Initializes the extension module */
 \layout LyX-Code
 
 
 \size footnotesize 
    "package %s;" 
 \emph on 
-           /* Declara o pacote do ambiente */
+           /* Declare the environment package */
 \layout LyX-Code
 
 
 \size footnotesize 
    "$LibScript::env = %p;"  
 \emph on 
-/* Armazena o ponteiro do ambiente em Perl */
+/* Store the enviroment pointer in Perl */
 \layout LyX-Code
 
 
@@ -15746,15 +15629,15 @@ snprintf(code, LEN_CODE,
 
 \size footnotesize 
 \emph on 
-      /* Extrai o nome do método do nome qualificado 
+      /* Extract the method name from the qualified 
 \begin_inset Quotes eld
 \end_inset 
 
-pacote::método
+package::method
 \begin_inset Quotes erd
 \end_inset 
 
- */
+ name */
 \layout LyX-Code
 
 
@@ -15765,13 +15648,13 @@ pacote::método
 
 \size footnotesize 
 \emph on 
-      /* Invoca caller passando o endereço do ambiente, */
+      /* Invokes caller passing the environment pointer, */
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-      /* o nome do método, e o array de argumentos */
+      /* the method name, and the argument array */
 \layout LyX-Code
 
 
@@ -15795,13 +15678,13 @@ pacote::método
 
 \size footnotesize 
 \emph on 
-/* Avalia a string de código;
+/* Evaluate the code string:
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-   TRUE indica que erros devem ser sinalizados.
+   TRUE indicates that any errors should be reported.
  */
 \layout LyX-Code
 
@@ -15810,7 +15693,7 @@ pacote::método
 Perl_eval_pv(my_perl, code, TRUE);
 \layout Subsection
 
-Captura de erros
+Capturing errors
 \begin_inset LatexCommand \label{sub:Captura-de-erros}
 
 \end_inset 
@@ -15818,25 +15701,25 @@ Captura de erros
 
 \layout Standard
 
-Os plugins devem capturar a ocorrência de erros na execução de strings de
- código e em chamadas de função.
- Em Lua, ambas as operações são realizadas usando a função 
+Plugins should capture the occurrence of runtime errors when executing strings
+ of code and function calls.
+ In Lua, both operations are performed using the 
 \family typewriter 
 lua_pcall
 \family default 
-, cujo valor de retorno indica a ocorrência de erros.
- No caso de erros, a mensagem de erro é obtida no topo da pilha virtual
- de Lua e propagada para a biblioteca principal usando 
+ function, which indicates errors in its return value.
+ In case of errors, the error message is obtained from the top of Lua's
+ virtual stack and propagated to the main library using 
 \family typewriter 
 script_set_error_message
 \family default 
 .
- No caso da execução de strings de código, erros de compilação são detectados
- através do valor de retorno da função 
+ In case of execution of strings of code, compilation errors are detected
+ through the return value of 
 \family typewriter 
 luaL_loadstring
 \family default 
-, que carrega o código a ser executado por 
+, which loads code to be executed by 
 \family typewriter 
 lua_pcall
 \family default 
@@ -15870,51 +15753,76 @@ PyString_AS_STRING
 .
 \layout Standard
 
-Em Perl, erros são sinalizados na variável especial 
+In Python, the occurrence of errors is signalled by the return value of
+ functions for executing strings, 
 \family typewriter 
-$@
+PyRun_SimpleString
 \family default 
-, cujo conteúdo pode ser verificado através da API de C com a macro 
+, and for calling functions, 
 \family typewriter 
-ERRSV
+PyEval_CallObject
 \family default 
 .
- O teste para ocorrência de erros é 
+ In case of errors, we call the 
 \family typewriter 
-SvTRUE(ERRSV)
+PyErr_Occurred
 \family default 
-, e a mensagem de erro pode ser obtida convertendo esta variável para uma
- string C com a macro 
+ function which returns a Python object representing the exception.
+ The error message is obtained converting this object to a Python string
+ using 
 \family typewriter 
-SvPV
+PyObject_Str
+\family default 
+, and finally to a C string with 
+\family typewriter 
+PyString_AS_STRING
 \family default 
 .
 \layout Standard
 
-Ruby disponibiliza uma função para execução de strings de código, 
+In Perl, errors are signalled in the special variable 
+\family typewriter 
+$@
+\family default 
+; its contents can be checked from the C API with the 
+\family typewriter 
+ERRSV
+\family default 
+ macro.
+ The presence of errors is tested with 
+\family typewriter 
+SvTRUE(ERRSV)
+\family default 
+, and the error message can be obtained converting this variable to a C
+ string with the 
+\family typewriter 
+SvPV
+\family default 
+ macro.
+\layout Standard
+
+Ruby provides a function for executing strings of code, 
 \family typewriter 
 rb_eval_string
 \family default 
-, e uma versão desta que captura erros e sinaliza a sua ocorrência através
- do valor de retorno, 
+, and a variant that captures errors and signals them through its return
+ value, 
 \family typewriter 
 rb_eval_string_protect
 \family default 
 .
- Entretanto, para chamadas de método, não há uma versão protegida da função
- 
+ However, for method calls, there is no protected version of 
 \family typewriter 
 rb_funcall
 \family default 
 .
- A função disponibilizada pela API para proteger chamadas, 
+ The only function provided by the API to protect calls, 
 \family typewriter 
 rb_protect
 \family default 
-, não recebe como parâmetro um método Ruby, mas sim uma função\SpecialChar ~
-C.
- Para chamar métodos Ruby de forma protegida, precisamos escrever uma função
- C que encapsula a chamada:
+, does not get as a parameter a Ruby method, but a C function instead.
+ To call Ruby methods in a protected way, we had to write a C function that
+ wraps the call:
 \layout LyX-Code
 
 
@@ -15925,7 +15833,7 @@ static VALUE script_ruby_pcall(VALUE args) {
 
 \size footnotesize 
 \emph on 
-   /* Extrai nome do método do array de argumentos */
+   /* Extract the method name from the arguments array */
 \layout LyX-Code
 
 
@@ -15936,7 +15844,7 @@ static VALUE script_ruby_pcall(VALUE args) {
 
 \size footnotesize 
 \emph on 
-   /* Extrai a classe do array de argumentos */
+   /* Extract the class from the arguments array */
 \layout LyX-Code
 
 
@@ -15954,7 +15862,7 @@ static VALUE script_ruby_pcall(VALUE args) {
 }
 \layout Standard
 
-e então invocá-la usando 
+and then invoke it using 
 \family typewriter 
 rb_protect
 \family default 
@@ -15964,7 +15872,7 @@ rb_protect
 
 \size footnotesize 
 \emph on 
-/* Insere a classe no array de argumentos */
+/* Insert the class in the arguments array */
 \layout LyX-Code
 
 
@@ -15975,7 +15883,7 @@ rb_ary_push(args, klass);
 
 \size footnotesize 
 \emph on 
-/* Insere o nome do método no array de argumentos */
+/* Insert the method name in the arguments array */
 \layout LyX-Code
 
 
@@ -15986,7 +15894,7 @@ rb_ary_push(args, ID2SYM(rb_intern(fn)));
 
 \size footnotesize 
 \emph on 
-/* Chama a função wrapper */
+/* Call the wrapper function */
 \layout LyX-Code
 
 
@@ -16036,88 +15944,83 @@ collapsed true
 
 \layout Standard
 
-Como a função 
+As 
 \family typewriter 
 rb_protect
 \family default 
- passa apenas um 
+ passes a single 
 \family typewriter 
 VALUE
 \family default 
- para a função C, precisamos armazenar a classe, o identificador do método
- e os parâmetros de entrada do método Ruby a ser invocado em um array Ruby.
- A ocorrência de erros é sinalizada em uma variável passada no terceiro
- parâmetro de 
-\family typewriter 
-rb_protect
-\family default 
-, e a mensagem de erro é obtida no 
+ to the C function, we had to store the class, method identifier and all
+ input parameters of the Ruby method to be invoked in a Ruby array.
+ The occurrence of errors is signalled in a variable passed as the third
+ parameter of rb_protect, and the error message is obtained in the global
+ 
 \family typewriter 
 VALUE
 \family default 
- global 
+ 
 \family typewriter 
 ruby_errinfo
 \family default 
 .
 \layout Section
 
-Conclusões
+Conclusions
 \layout Standard
 
-O estudo de caso apresentado aqui ilustrou, através da implementação dos
- plugins, o processo de embutir quatro linguagens de script realizando interface
- com uma mesma API C.
- Diversos aspectos da interação entre C e as linguagens de script foram
- abordados, contemplando inicialização e encerramento do ambiente de execução,
- passagem de dados e chamadas de função nos dois sentidos e a sinalização
- de erros.
- A partir disto, podemos fazer algumas observações sobre a adequabilidade
- destas linguagens como ambientes embutidos em aplicações.
+The case study presented here illustrated, through the implementation of
+ plugins, the process of embedding four scripting languages interfacing
+ a given C API.
+ Several aspects of the interaction between C and scripting languages were
+ covered, contemplating initialization and termination of their runtime
+ environments, passing data and calling functions in both directions and
+ signalling errors.
+ From that, we can make some observations on the adequacy of those languages
+ as embedded environments in applications.
 \layout Standard
 
-Em muitas aplicações é importante que haja isolamento entre os scripts executado
-s, como por exemplo, em scripts de diferentes clientes rodando em um servidor
- web.
- Como vimos, Lua e Perl permitem disparar múltiplos ambientes de execução,
- o que garante isolamento.
- Já Python e Ruby permitem apenas um estado, reduzindo sua aplicabilidade
- para cenários onde os scripts devem executar isolados uns dos outros
+In many applications it is important to have isolation between each script
+ executed, such as for example, when one scripts from different customers
+ running in a web server.
+ As we have seen, Lua and Perl allow launching multiple runtime environments,
+ which gives isolation guarantees.
+ Python and Ruby, on the other hand, allow only a single state, reducing
+ their applicability for scenarios where scripts need to run isolated from
+ each other
 \begin_inset Foot
 collapsed true
 
 \layout Standard
 
-Em Python é possível alternar a tabela de globais durante a execução de
- diferentes threads, o que oferece uma alternativa, um tanto mais trabalhosa,
- para obter isolamento.
- Ainda assim, o estado global compartilhado por módulos de extensão é o
- mesmo.
- 
+In Python it is possible to alternate the globals table during the execution
+ of different threads, which offers an alternative, even if less than straightfo
+rward, to obtain isolation.
+ Even then, the global state shared by extension modules in the same.
 \end_inset 
 
 .
- Estas duas linguagens trazem ainda outro problema: em alguns casos não
- é possível trazer o seu espaço de dados de volta ao estado original durante
- a execução de uma aplicação.
- Em Python, módulos importados não podem ser descarregados.
- Em Ruby, uma classe não pode ser redefinida (somente estendida) e 
+ These two languages have yet another problem: in some cases it is not possible
+ to bring its data space back to the original state during the execution
+ of an application.
+ In Python, imported modules cannot be unloaded.
+ In Ruby, a class cannot be redefined (only extended) and 
 \family typewriter 
 ID
 \family default 
-s não são coletados.
+s are not collected.
 \layout Standard
 
-Na implementação do plugin de Perl fica evidente que a sua API não foi projetada
- visando embutir o interpretador em aplicações.
- Além de exigir o desenvolvimento de um módulo de extensão para que o código
- Perl possa ter acesso a funções C, observamos aqui que a sua API é incompleta
- no que diz respeito ao seu uso como linguagem embutida.
- Muitas macros foram desenvolvidas assumindo que seriam sempre invocadas
- a partir de código escrito em arquivos XS, ou mesmo por código gerado pelo
- pré-processador XS.
- Isto é confirmado pela necessidade de passar parâmetros adicionais não-document
-ados para que as macros funcionem, como pôde ser observado na Seção\SpecialChar ~
+In the implementation of the Perl plugin it became evident that its API
+ was not designed for embedding the interpreter in applications.
+ Besides demanding the development of an extension module so that Perl code
+ can access C functions, we observed here that its API is incomplete with
+ regard to its use as an embedded language.
+ Many macros were developed assuming they would always be invoked from code
+ written in XS files, or even by code generated by the XS pre-processor.
+ This is confirmed by the need to pass additional undocumented parameters
+ so that macros work, as presented in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Passagem-de-parâmetros}
 
@@ -16126,25 +16029,22 @@ ados para que as macros funcionem, como pôde ser observado na Seção\SpecialChar 
 .
 \layout Standard
 
-Lua, por sua vez, mostrou-se apropriada como linguagem embutida, não compartilha
-ndo das limitações aqui descritas sobre as outras linguagens.
- Além disso, ela possui uma API simples, que trata as construções da linguagem
- de forma completa e ortogonal, o que se deve tanto ao foco da implementação
- de Lua como linguagem embutida, quanto ao projeto minimalista da linguagem
- em si.
- Mesmo em exemplos pequenos como os apresentados aqui, que exercitam apenas
- uma parte pequena das APIs, podemos observar que aspectos onde as linguagens
- definem tratamentos especiais ou possuem menor uniformidade transparecem
- nas APIs para C.
- Tanto em Python como em Ruby, funções que retornam múltiplos valores geram
- conversões implícitas para tipos agregados (listas e arrays).
- De forma similar, múltiplos retornos são representados em Perl através
- de contextos do tipo array.
- Nos seus respectivos plugins LibScript, estas características tiveram que
- ser tratadas de forma especial.
- No plugin Lua, em contraste, o tratamento para um valor único de retorno
- é igual ao de valores múltiplos, assim como ocorre na linguagem.
- 
+Lua, on its turn, has shown to be appropriate as an embedded language, not
+ sharing the limitations described here about other languages.
+ Besides, it features a simple API, which handles language constructs in
+ a complete and orthogonal way, which is due both to the focus of its implementa
+tion as an embedded language, and to the minimalist design of the language
+ itself.
+ Even in small projects like the one presented here, which exercises only
+ a small fraction of the APIs, we could observe that aspects where languages
+ define special cases or have less uniformity leak through their C APIs.
+ Both in Python and Ruby, functions returning multiple values cause implicit
+ conversions to aggregate types (lists and arrays).
+ In a similar way, multiple results are represented in Perl as array contexts.
+ In their respective LibScript plugins, these features had to be handled
+ especially.
+ In the Lua plugin, in contrast, handling a single return value is no different
+ from handling multiple values, like it happens in native language code.
 \layout Chapter
 
 
@@ -16152,222 +16052,206 @@ ndo das limitações aqui descritas sobre as outras linguagens.
 
 \end_inset 
 
-Conclusões
+Conclusions
 \layout Standard
 
-A escolha de uma linguagem de script depende de uma série de fatores, varios
- deles relativos à linguagem em si, outros relativos à sua implementação.
- Quando lidamos com cenários de desenvolvimento multi-linguagem, um aspecto
- que não deve ser negligenciado é o projeto das interfaces entre as linguagens.
- Seja estendendo a linguagem de script através de código C, ou tornando
- uma aplicação C extensível através de uma linguagem de script, a API oferecida
- pela linguagem tem um papel fundamental, muitas vezes influenciando o projeto
- da aplicação.
+Choosing a scripting language depends on a series of factors, many of them
+ relative to the language itself, others relative to its implementation.
+ When we deal with multi-language development scenarios, an aspect that
+ should not be neglected is the design of interfaces between languages.
+ Be it extending the scripting language through C code, or making a C applicatio
+n extensible through a scripting language, the API offered by the language
+ has a fundamental role, often influencing the design of the application.
 \layout Standard
 
-Este trabalho traçou um panorama dos problemas gerais enfrentados na interação
- entre código C e o ambiente de execução de uma linguagem de script.
- Apresentamos as formas como as APIs de cinco linguagens tratam estes problemas,
- apontando pontos positivos e negativos das diferentes abordagens utilizadas.
- Realizamos uma comparação prática do uso destas APIs através de um estudo
- de caso onde as linguagens de script foram embutidas em bibliotecas C exportand
-o uma mesma interface.
- A implementação consiste de uma biblioteca genérica para scripting, chamada
- LibScript, e uma série de plugins que realizam a interface com as diferentes
- linguagens.
- Pudemos assim observar como elas tratam aspectos importantes relativos
- a linguagens embutidas, como a passagem de dados, chamadas de funções entre
- as duas linguagens, tratamento de erros e o isolamento dos ambientes de
- execução em aplicações.
+This work discussed the main issues faced in the integration between C code
+ and the runtime environment of a scripting language.
+ We presented how the APIs of five languages handle these issues, indicating
+ positive and negative points of the various approaches used.
+ We performed a practical comparison of the use of these APIs through a
+ case study where scripting languages were embedded to C libraries exporting
+ one single interface.
+ The implementation consists of a generic scripting library, called LibScript,
+ and a series of plugins which interface different languages.
+ We were able, this way, to observe how they handle important aspects related
+ to embedded languages, such as passing data, function calls between two
+ languages, error handling and isolation of runtime environments within
+ applications.
 \layout Standard
 
-Embora os mesmos problemas gerais, como transferência de dados, registro
- e chamada de funções, sejam comuns aos diferentes cenários de uso de uma
- API de linguagem de script, aplicações embutindo uma máquina virtual tendem
- a demandar mais da API do que bibliotecas implementando módulos de extensão.
- Este ponto é ilustrado pelas dificuldades impostas pela API de Python tanto
- no acesso a variáveis como no registro de funções globais; e principalmente
- pela complexidade da API de chamada de funções de Perl.
+Although the same general problems, such as data transfer, function registration
+ and calling, are common to different usage scenarios of a scripting language
+ API, applications embedding a virtual machine tend to demand more from
+ the API than libraries implementing extension modules.
+ This point is illustrated by the difficulties imposed by the Python API
+ both in the access to global variables and registration of global functions;
+ and, more evidently, by the complexity of Perl's API for function calls.
 \layout Standard
 
-O fato de que a API de Python dificulta o uso de variáveis e funções globais,
- favorecendo o uso de módulos, pode ser justificado como uma forma de promover
- um modelo de programação mais estruturada.
- Isto é interessante para o uso da API no desenvolvimento de módulos de
- extensão, uma vez que o uso de variáveis e funções globais é extremamente
- prejudicial nestes casos, já que poluiria o espaço de nomes das aplicações
- Python.
- Já para o caso onde a linguagem é embutida para prover suporte à execução
- de scripts em uma aplicação C, a ausência de uma forma conveniente para
- definir funções globais no espaço de nomes dos scripts é questionável.
+The fact that the Python API makes the use of global variables and functions
+ difficult, favoring the use of modules, can be justified as a way to promote
+ a more structured programming discipline.
+ This is interesting when using the API for developing extension modules,
+ given that using global variables and functions is extremely harmful in
+ those cases, as it would pollute the namespace of Python applications.
+ For the case where the language is embedded to provide scripting support
+ for a C application, the absence of a convenient way to define global functions
+ in the scripts' namespace is questionable.
 \layout Standard
 
-A abordagem empregada por Perl, usando um pré-processador com o objetivo
- de gerar automaticamente o código para a conversão de dados na passagem
- de parâmetros e valores de retorno, se mostrou inadequada para o cenário
- envolvendo interpretadores embutidos.
- Embora o uso do pré-processador simplifique os casos simples de declaração
- de funções C, a falta de uma API bem definida para tratar a transferência
- de dados entre o interpretador Perl e o código C se faz perceber nos casos
- mais elaborados.
- Duas destas situações se fizeram presentes no estudo de caso: o recebimento
- de parâmetros 
-\emph on 
-varargs
-\emph default 
- e a passagem de valores de retorno tratando múltiplos contextos de execução.
- Ambas exigiram manipulações de estruturas e construções de mais baixo nível,
- que o pré-processador tem por objetivo ocultar.
+The approach adopted by Perl, using a pre-processor which generates automaticall
+y code for converting data when passing parameters and return values, has
+ shown to be inadequate for scenarios involving embedded interpreters.
+ Although the use of a pre-processor simplifies the simpler cases of declaration
+ of C functions, the lack of a well-defined API for handling data transfer
+ between the Perl interpreter and C code becomes apparent in more elaborate
+ cases.
+ Two of these situations happened in our case study: when receiving vararg
+ parameters and when handling return values supporting multiple call contexts.
+ Both demanded manipulation of low-level structures and constructs which
+ the pre-processor aims to hide.
 \layout Standard
 
-Observações interessantes resultaram da comparação da API de Java com a
- das demais quatro linguagens de script, uma vez que, embora possua diversas
- características em comum com estas linguagens, Java não seja considerada
- uma linguagem de script.
- Enquanto a tipagem estática reduz bastante a necessidade de conversões
- de dados explícitas no código C para tipos primitivos da linguagem, na
- prática a verificação de tipos para objetos e a ligação de campos e métodos
- acontece de forma dinâmica, já que estes têm que ser realizados em tempo
- de execução pela JNI.
- Assim, no contexto da interação de uma máquina virtual com código C, as
- vantagens trazidas pela tipagem estática são reduzidas.
- Além disso, a resolução dinâmica de campos e métodos faz com que a manipulação
- de objetos via C tenha diferenças sutis de comportamento em relação ao
- que ocorre em código Java, o que pode ser uma fonte de erros do programador.
+Interesting observations resulted from the comparison of the Java API with
+ that from the other four scripting languages, given than, although it shares
+ several traits with those languages, Java is not considered a scripting
+ language.
+ While static typing does reduce considerably the need for explicit data
+ conversion in C code for primitive types of the language, in practice type
+ checking for objects and the linking of fields and methods happens in a
+ dynamic way, as these have to be performed at runtime by the JNI.
+ Thus, regarding interaction of the virtual machine with C, advantages brought
+ by static typing are reduced.
+ Besides, dynamic resolution of fields and methods through C has subtle
+ differences in behavior when compared to what occurs in native Java code,
+ which can be a source of programmer errors.
 \layout Standard
 
-Ao comparar as APIs, consideramos apenas as suas interfaces, fazendo uma
- análise qualitativa da usabilidade de cada uma da perspectiva do programador
- C, e não uma análise quantitativa das suas implementações.
- O custo de desempenho adicionado pelo código que realiza a ligação entre
- duas linguagens, por exemplo, não pode ser desprezado.
- Muitas decisões de projeto de uma API são influenciadas por requisitos
- da implementação como restrições de portabilidade ou desempenho.
- Por exemplo, o tratamento automático de controle de escopo de 
+When comparing APIs, we considered only their interfaces, making a qualitative
+ usability analysis of each of them from the perspective of a C programmer,
+ and not a quantitative analysis of their implementations.
+ The performance cost added by code which performs bridging between two
+ languages, for example, cannot be disconsidered.
+ Many design decisions from an API are influenced by implementation requirements
+ such as portability or performance restrictions.
+ For example, automatic handling of scope of 
 \family typewriter 
 VALUE
 \family default 
-s em Ruby, varrendo a pilha de C, traz grande conveniência para o programador,
- mas reduz a portabilidade da implementação.
+s in Ruby, scanning the C stack, brings great convenience to the programmer,
+ but reduces the portability of its implementation.
 \layout Standard
 
-Merece comentário também a disparidade entre as linguagens no que concerne
- à disponibilidade de documentação.
- Java, Python e Lua possuem extensa documentação, tanto para a linguagem
- como para as suas APIs para C.
- Para estas linguagens, pudemos basear largamente nosso estudo e a implementação
- dos exemplos para o estudo de caso na documentação fornecida.
- A documentação de Ruby relativa à sua API de C é mais escassa; em\SpecialChar ~
+The disparity between languages with regard to the availability of documentation
+ also deserves mention.
+ Java, Python and Lua feature extensive documentation, both for the languages
+ themselves and to their C APIs.
+ For those languages, we were able to largely base our study and the implementat
+ion of examples for the case study in the provided documentation.
+ The documentation of Ruby relative to its C API is sparser; in\SpecialChar ~
 
 \begin_inset LatexCommand \cite{thomas04ruby}
 
 \end_inset 
 
- é coberta apenas parte da API pública.
- Precisamos fazer uso de funções não documentadas para tarefas fundamentais
- como liberar referências globais registradas via C.
- Durante o desenvolvimento do plugin Ruby no estudo de caso, consultamos
- freqüentemente o código-fonte de Ruby para compreender os aspectos que
- não são cobertos pela documentação do comportamento das suas funções públicas.
- A documentação da API de C de Perl também é incompleta, espalhada através
- de diversas 
-\emph on 
-man pages
-\emph default 
- incluídas na sua distribuição e em certos casos desatualizada.
- Para compreender os diversos protocolos envolvidos no uso prático da API
- de Perl, precisamos recorrer ao código-fonte de aplicações que fazem uso
- dela.
+ only part of its public API is covered.
+ We had to make use of undocumented functions for tasks as fundamental as
+ freeing global references registered through C.
+ During the development of the Ruby plugin for the case study, we referred
+ frequently to its source code to understand aspects which are not covered
+ by the documentation about the behavior of its public functions.
+ The documentation for Perl's C API is also incomplete, spread over several
+ Unix manual pages included in its distribution, and in certain cases, out-of-da
+te.
+ To understand the various protocols involved in the practical use of the
+ Perl API, we had to resort to the source code of applications using it.
 \layout Standard
 
-O equilíbrio entre simplicidade e conveniência é outro tema recorrente ao
- compararmos as APIs.
- A extensa API de Python, contendo 656 funções públicas, contrasta com as
- 113 funções expostas pela API de Lua (79 na API 
-\emph on 
-core
-\emph default 
-, 34 na API auxiliar).
- Em diversas situações, funções na API de Python abreviam duas, três ou
- até mais chamadas, como no caso de funções poderosas como 
+The balance between simplicity and convenience is another recurring theme
+ when comparing APIs.
+ Python's extensive API, containing 656 public functions, contrasts with
+ the 113 functions exposed by the Lua API (79 from the core API, 34 in its
+ auxiliary API).
+ In many situations, Python API functions abbreviate two, three ore even
+ more calls, as in the case of powerful functions such as 
 \family typewriter 
 Py_BuildValue
 \family default 
- e 
+ and 
 \family typewriter 
 PyObject_CallFunction
 \family default 
-, tornando o código C sucinto e legível.
- A abordagem defendida por Lua é a de uma API minimalista, oferecendo mecanismos
- sobre os quais funcionalidades mais elaboradas possam ser construídas.
- De fato, em\SpecialChar ~
+, resulting in short and readable C code.
+ The approach defended by Lua is that of a minimalistic API, offering mechanisms
+ with which more elaborate functionality can be built.
+ In fact, in \SpecialChar ~
 
 \begin_inset LatexCommand \cite{ierusalimschy06pil2}
 
 \end_inset 
 
- é apresentada uma função C equivalente a 
+ a C function equivalent to 
 \family typewriter 
 PyObject_CallFunction
 \family default 
- usando a API de Lua.
+ is presented, using the Lua API.
+ 
 \layout Standard
 
-Ruby exporta 530 funções em seu cabeçalho e Perl 1209, mas como apenas uma
- pequena fração destas é documentada, torna-se difícil avaliar o tamanho
- da 
+Ruby exports 530 functions in its header and Perl 1209, but as only a small
+ fraction of those is documented, it is hard to evaluate the size of their
+ 
 \begin_inset Quotes eld
 \end_inset 
 
-API pública
+public API
 \begin_inset Quotes erd
 \end_inset 
 
- destas linguagens e quantas destas são apenas funções para uso interno
- expostas nos seus cabeçalhos
+ and how many of these are just function for internal use exposed in their
+ headers
 \begin_inset Foot
 collapsed true
 
 \layout Standard
 
-Algumas funções são marcadas como sendo de uso interno, mas a maioria não
- possui qualquer indicação.
+Some functions are marked as being for internal use only, but most of them
+ have no indication whatsoever.
 \end_inset 
 
 .
- Isto mostra também que a documentação não é relevante apenas enquanto material
- de apoio para o desenvolvimento, mas também indica o quão bem definida
- é uma API.
+ This also shows that the documentation is not relevant as support material
+ for development, but it also indicates how well-defined an API is.
 \layout Standard
 
-A API de Java é bem documentada como a de Python e Lua, mas o número de
- funções exportadas não é um bom parâmetro para comparações com as demais
- APIs porque, em função dos tipos estaticamente definidos, muitas funções
- possuem uma variante para cada tipo primitivo.
- Java exporta sua API como uma estrutura contendo ponteiros para função;
- 228 funções ao todo são exportadas nesta estrutura.
+The Java API is well-documented, like that from Python and Lua, but the
+ number of exported function is not a good parameter for comparison with
+ the other APIs as, because of statically defined types, many functions
+ have a variant for each primitive type.
+ Java exports its API as a structure containing function pointers; 228 functions
+ in total are exported in this structure.
 \layout Standard
 
-Outro aspecto que pôde ser observado neste trabalho é que a consistência
- da API depende largamente da consistência da linguagem que ela expõe.
- Construções onde a linguagem tem pouca ortogonalidade, como o tratamento
- de blocos em Ruby ou as diferenças nos tratamentos de valores escalares
- e arrays em Perl, acabam por aumentar a complexidade da API da linguagem
- e demandam tratamento específico por parte do programador no código C.
+Another aspect that could be observed in this work is that the consistency
+ of an API depends greatly on the consistency of the language it exposes.
+ Constructions where a language lacks orthogonality, such as code blocks
+ in Ruby or the differences when manipulating scalar and array values in
+ Perl, end up increasing the complexity of the API and demand from the programme
+r specific handling in C code.
 \layout Standard
 
-Como possibilidades de trabalhos futuros, este trabalho pode ser estendido
- através do estudo de outros aspectos de APIs de linguagens de script.
- Um foco possível é o impacto de desempenho de diferentes projetos de API
- em aplicações multi-linguagem.
- Outro é a relação entre o projeto de uma máquina virtual e o de sua respectiva
- API.
- Além disso, outra perspectiva de trabalho é a continuação do desenvolvimento
- da biblioteca LibScript.
- Possibilidades incluem adicionar novos plugins, revisar a sua API e exercitá-la
- embutindo a biblioteca em aplicações reais.
- LibScript e os quatro plugins implementados são software livre e estão
- disponíveis para download em\SpecialChar ~
+As possibilities for future work, this work can be extended through the
+ study of other aspects of scripting language.
+ A possible focus is the performance impact of different API designs in
+ multi-language applications.
+ Another is the relation between the design of a virtual machine and its
+ respective API.
+ Additionally, another perspective for future work lies in the continued
+ development of the LibScript library.
+ Possibilities include adding new plugins, review its API and exercise it
+ by embedding the library in actual applications.
+ LibScript and the four plugins implemented in this work are free software
+ and are available for download at\SpecialChar ~
 
 \begin_inset LatexCommand \url{http://libscript.sourceforge.net}
 
@@ -16389,10 +16273,10 @@ Como possibilidades de trabalhos futuros, este trabalho pode ser estendido
 
 \end_inset 
 
-API de LibScript
+The LibScript API
 \layout Section
 
-Inicialização e Término
+Startup and termination
 \layout Itemize
 
 
@@ -16401,13 +16285,13 @@ script_env* script_init(const char* namespace)
 \family default 
 
 \newline 
-Inicializa LibScript e retorna um ponteiro para o ambiente virtual.
- O parâmetro 
+Initializes LibScript and returns a pointer to a virtual enviroment.
+ The 
 \family typewriter 
 namespace
 \family default 
- indica o nome a ser usado nas estruturas a serem criadas no espaço de nomes
- das máquinas virtuais para representar o ambiente virtual.
+ argument indicates the name to be used in structures to be created in the
+ namespace of virtual machines to represent the virtual environment.
 \layout Itemize
 
 
@@ -16416,10 +16300,10 @@ void script_done(script_env* env)
 \family default 
 
 \newline 
-Encerra o ambiente virtual.
+Terminates the virtual environment.
 \layout Section
 
-Registro de Funções
+Function registration
 \layout Itemize
 
 
@@ -16428,14 +16312,10 @@ typedef script_err (*script_fn)(script_env*)
 \family default 
 
 \newline 
-Tipo das funções C a serem registradas no ambiente virtual.
- Ao expor uma API existente para LibScript, a função tipicamente será uma
- função 
-\emph on 
-wrapper
-\emph default 
- que carrega os parâmetros de entrada do ambiente, chama uma função do programa
- e envia os parâmetros de saída de volta ao ambiente.
+Type of C functions to be registered in the virtual environment.
+ When exposing an existing API to LibScript, the function will typically
+ be a wrapper that loads input parameters from the environment, calls a
+ program function and sends output parameters back to the environment.
 \layout Itemize
 
 
@@ -16445,10 +16325,10 @@ script_err script_new_function(script_env* env, script_fn fn, const char*
 \family default 
 
 \newline 
-Registra uma função no ambiente virtual.
+Registers a new C function in the virtual environment.
 \layout Section
 
-Buffer de parâmetros
+Arguments buffer
 \layout Itemize
 
 
@@ -16463,26 +16343,22 @@ const char* script_get_string(script_env* env, int index)
 \family default 
 
 \newline 
-Obtêm dados do buffer.
- Estas funções devem ser chamadas ao início das funções 
-\emph on 
-wrapper
-\emph default 
-.
- Para cada parâmetro de entrada, uma chamada deve ser realizada.
- Ao fim, pode-se invocar a macro 
+Obtain data from the buffer.
+ These functions should be called by the beginning of wrapper functions.
+ For each input parameter a call should be performed.
+ Once done, one can invoke the 
 \family typewriter 
 SCRIPT_CHECK_INPUTS(env)
 \family default 
-, que encerra a função retornando um código de erro caso alguma leitura
- com alguma destas funções não tenha encontrado um dado do tipo esperado
- (A API não realiza conversões automáticas entre strings e números).
- Em 
+ macro, which terminates the function with an error code in case any of
+ these function have not found data of the expected type (the API does not
+ perform automatic conversion between strings and numbers).
+ In 
 \family typewriter 
 script_get_string
 \family default 
-, a string retornada pertence ao chamador, que passa a ser responsável por
- desalocá-la.
+, the returned string belongs to the caller, which becomes responsible for
+ deallocating it.
 \layout Itemize
 
 
@@ -16493,17 +16369,17 @@ int script_buffer_len(script_env* env)
 \newline 
 
 \family default 
-Estas funções permitem escrever funções em C que realizam verificação de
- tipo e número de parâmetros em tempo de execução.
- A função 
+These functions allow writing C functions that perform type checking and
+ verify the number of arguments at runtime.
+ The 
 \family typewriter 
 script_get_type
 \family default 
- obtém o tipo do elemento do buffer solicitado e 
+ function obtains the type of the requested buffer element and 
 \family typewriter 
 script_buffer_len
 \family default 
- retorna o número de parâmetros no buffer.
+ returns the number of arguments in the buffer.
 \layout Itemize
 
 
@@ -16518,13 +16394,13 @@ void script_put_string(script_env* env, int index, const char* value)
 \newline 
 
 \family default 
-Inserem dados no buffer.
- Ao final de uma função, os valores de retorno devem ser passados com chamadas
- a estas funções e um código de erro 
+Insert data in the buffer.
+ By the end of a function, return values should be passed with calls to
+ these functions and a 
 \family typewriter 
 SCRIPT_OK
 \family default 
- como retorno da função C.
+ error code as the return value of the C function.
 \layout Itemize
 
 
@@ -16533,10 +16409,10 @@ void script_reset_buffer(script_env* env)
 \family default 
 
 \newline 
-Esvazia o buffer.
+Empties the buffer.
 \layout Section
 
-Executando Código
+Running code
 \layout Itemize
 
 
@@ -16546,8 +16422,8 @@ script_err script_run(script_env* env, const char* language, const char*
 \family default 
 
 \newline 
-Executa uma string de código em uma dada linguagem.
- Se necessário, o plugin apropriado é carregado e inicializado.
+Runs a string of code in a given language.
+ If necessary, the appropriate plugin is loaded and initialized.
 \layout Itemize
 
 
@@ -16556,12 +16432,12 @@ script_err script_run_file(script_env* env, const char* filename)
 \family default 
 
 \newline 
-Função de conveniência; carrega o texto de um arquivo e o executa com 
+Convenience function; loads the contents of a file and runs it with 
 \family typewriter 
 script_run
 \family default 
 .
- A linguagem é detectada a partir da extensão do arquivo.
+ 
 \layout Itemize
 
 
