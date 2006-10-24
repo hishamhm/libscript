@@ -12260,7 +12260,7 @@ luaL_register
 Estudo de caso: LibScript
 \layout Standard
 
-No capítulo anterior, foram discutidas as principais questões envolvendo
+Nos capítulos anteriores, foram discutidas as principais questões envolvendo
  interfaces de linguagens para C e a forma como estas questões são tratadas
  pelas linguagens abordadas neste estudo.
  Neste capítulo, realizaremos uma comparação entre as APIs através de um
@@ -12284,7 +12284,7 @@ plugins
  diversas linguagens.
  A biblioteca principal provê uma API para scripting independente de linguagem,
  permitindo a uma aplicação registrar as suas funções e disparar scripts
- que as utilizem.
+ que utilizem estas funções.
  Esta biblioteca então invoca o plugin da linguagem apropriada para rodar
  o script (por exemplo, LibScript-Python para código Python).
  Desta forma, o desenvolvedor da aplicação permite ao seu usuário utilizar
@@ -12850,7 +12850,7 @@ function
 \family typewriter 
 hello
 \family default 
- (nome registrado da função) da tabela 
+ (nome registrado da função) da tabela global 
 \family typewriter 
 exemplo
 \family default 
@@ -12929,18 +12929,26 @@ script_put_
 script_get_
 \family default 
 * os removem.
- Uma chamada a uma função teste passando uma string e um inteiro como parâmetros
- e obtendo um inteiro como resultado é realizada da seguinte forma:
+ Uma chamada a uma função 
+\family typewriter 
+teste
+\family default 
+ passando uma string e um inteiro como parâmetros e obtendo um inteiro como
+ resultado é realizada da seguinte forma:
 \layout LyX-Code
 
 
 \size footnotesize 
-script_put_string(env, 0, "entrada"); /* índice 0: "entrada" */
+script_put_string(env, 0, "entrada"); 
+\emph on 
+/* índice 0: "entrada" */
 \layout LyX-Code
 
 
 \size footnotesize 
-script_put_int(env, 1, 2);            /* índice 1: 2 */
+script_put_int(env, 1, 2);            
+\emph on 
+/* índice 1: 2 */
 \layout LyX-Code
 
 
@@ -12950,7 +12958,9 @@ script_call(env, "teste");
 
 
 \size footnotesize 
-resultado = script_get_int(env, 0);   /* retorna índice 0 */
+resultado = script_get_int(env, 0);   
+\emph on 
+/* retorna índice 0 */
 \layout Standard
 
 
@@ -13607,7 +13617,7 @@ PerlInterpreter
 *.
 \layout Standard
 
-Como discutido na seção\SpecialChar ~
+Como discutido na Seção\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Perl-registro}
 
@@ -13822,6 +13832,7 @@ state = rb_define_class(class_name, rb_cObject);
 
 
 \size footnotesize 
+\emph on 
 /* Isto assume que void* cabe em um long */
 \layout LyX-Code
 
@@ -13833,6 +13844,7 @@ rb_const_set(state, rb_intern("@@LibScriptEnv"), INT2NUM((long)env));
 
 
 \size footnotesize 
+\emph on 
 /* ...
  */
 \layout LyX-Code
