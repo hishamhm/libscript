@@ -114,6 +114,8 @@ Advisor: Roberto Ierusalimschy
 \newline 
 
 \newline 
+
+\lang portuges
 Pontifícia Universidade Católica do Rio de Janeiro
 \newline 
 Centro Técnico Científico
@@ -292,13 +294,13 @@ applications.
  in an environment with inherently dynamic characteristics such as that
  from a scripting language with C\SpecialChar ~
 code.
- Besides being currently the most popular class of languges for multi-language
+ Besides being currently the most popular class of languages for multi-language
  development, typical features of scripting languages such as garbage collection
  and dynamic typing illustrate well the problems that arise in the communication
  between different programming environment, since these features are absent
  in\SpecialChar ~
 C.
- Languages with static typic may present similar needs for type conversion,
+ Languages with static typing may present similar needs for type conversion,
  but the problem tends to be simplified by the definition of equivalent
  types in the API and compile-time inference (as can be observed in the
  C APIs for Ada and Fortran).
@@ -347,7 +349,7 @@ APIs
  This allows us to observe how typing affects the design of the API.
 \layout Standard
 
-In the second part, we illustrate the differences of the APIs of those langages
+In the second part, we illustrate the differences of the APIs of those languages
  and the impact of those in the resulting code of a C application through
  a case study.
  We performed a comparison between the scripting language APIs through a
@@ -562,7 +564,7 @@ language
  has been introduced specifically for it, this environment has as one of
  its goals multi-language support -- evidenced by the very name of its Common
  Language Runtime (CLR) -- contrasting with the limitations imposed by the
- Java enviroment to those who try to use it with other languages.
+ Java environment to those who try to use it with other languages.
  However, adaptations to languages remain necessary in the .NET environment:
  the .NET version of Visual Basic includes changes to the language to make
  its semantics match those from C#; a new dialect of C++, C++/CLI, was introduce
@@ -583,7 +585,7 @@ d adapting its memory management model to that of the CLR\SpecialChar ~
 .
 \layout Standard
 
-Another implementation of a virtual machine for multiple languagens is being
+Another implementation of a virtual machine for multiple languages is being
  pursued by the Parrot project\SpecialChar ~
 
 \begin_inset LatexCommand \cite{randal04perl6}
@@ -649,7 +651,7 @@ t of distributed applications in heterogeneous environments; language heterogene
 ity was one of the aspects taken into consideration.
 \layout Standard
 
-The challanges existing when designing a 
+The challenges existing when designing a 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -672,7 +674,7 @@ If on one hand the task may be easier since the model has been designed
 type system),
  on the other one would usually expect a higher level of transparency in
  the representation of data.
- For example, while in an application intergrating\SpecialChar ~
+ For example, while in an application integrating\SpecialChar ~
 C++ and Python the distinction
  between C++\SpecialChar ~
 objects and Python objects is clear and the Python API defines
@@ -686,7 +688,7 @@ stubs
 , objects that give a uniform native appearance to data, regardless of the
  language in which they were implemented, and in the case of distributed
  models such as CORBA, of the location of the objects in the network.
- The correspondence between the lifecycles of the stubs and that of the
+ The correspondence between the life cycles of the stubs and that of the
  objects they represent is another factor that should be taken into account.
  In the Java bindings, for instance, this is done with the help of the language'
 s own garbage collector.
@@ -844,7 +846,7 @@ The C language has, nowadays, a special role in the world of programming
 \end_inset 
 
  compilers, which generate C from Haskell and Eiffel, respectively).
- This pravelence of C makes the C API a convenient format for a foreign
+ This prevalence of C makes the C API a convenient format for a foreign
  language interface.
 \layout Standard
 
@@ -884,7 +886,7 @@ ccall
  directive was integrated, but the use of the monad is optional, requiring
  the programmer to ensure that the functions that use it are not pure
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -925,7 +927,7 @@ Another possible source of incompatibility between languages that has to
 \layout Standard
 
 For example, APIs between C and Java must take into account the preemptive
- multithreading model adopted by Java.
+ multi-threading model adopted by Java.
  The JNI (Java Native Interface)\SpecialChar ~
 
 \begin_inset LatexCommand \cite{liang99jni}
@@ -1040,7 +1042,7 @@ These two categories of languages have fundamentally different goals.
  Systems programming languages emerged as an alternative to assembly in
  the development of applications, having as main features static typing,
  which eases the understanding of data structures in large systems, and
- the implemantation as compilers, due to concerns with performance.
+ the implementation as compilers, due to concerns with performance.
  In contrast, scripting languages are dynamically typed and are implemented
  as interpreters or virtual machines.
  Dynamic typing and the extensive use of higher-level constructs as basic
@@ -1255,7 +1257,7 @@ The alternative to allowing C code to operate over structured data, thus,
  Consistency problems, however, may occur if the API allows the C code to
  store pointers to objects from the language -- this makes it necessary
  for the programmer to manage explicitly the synchronicity between pointers
- and the lifecycles of objects that may be subject to garbage collection.
+ and the life cycles of objects that may be subject to garbage collection.
  Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sec:Coleta-de-lixo}
@@ -2123,8 +2125,8 @@ point_getattr
 Py_TPFLAGS_DEFAULT
 \family default 
  in the flags field to indicate that this is a class with a default behavior,
- without the need for special treatements such as cycle checking during
- garbage collection.
+ without the need for special treatment such as cycle checking during garbage
+ collection.
 \layout Standard
 
 While the in-memory representation of 
@@ -3152,7 +3154,7 @@ _set
 \family default 
  function
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -3448,7 +3450,7 @@ GetStringCritical
 Arrays of primitive elements are handled in a similar way to strings, differentl
 y from object arrays
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -3597,7 +3599,7 @@ java.lang.String
 \family default 
 
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -3812,7 +3814,7 @@ Java_ExampleJNI_secondElement(JNIEnv* J, jobject this) {
 
 \size footnotesize 
 \emph on 
-   /* Get ExemploJNI.elements, a String[] */
+   /* Get ExampleJNI.elements, a String[] */
 \layout LyX-Code
 
 
@@ -3828,7 +3830,7 @@ Java_ExampleJNI_secondElement(JNIEnv* J, jobject this) {
 
 \size footnotesize 
 \emph on 
-   /* Get the contents of ExemploJNI.elements */
+   /* Get the contents of ExampleJNI.elements */
 \layout LyX-Code
 
 
@@ -3916,7 +3918,7 @@ secondElement
 \family default 
 , to be implemented in C
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -4018,7 +4020,7 @@ GetFieldID
 \family default 
 
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -4103,7 +4105,7 @@ lua_setglobal
 \family default 
 
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -4702,7 +4704,7 @@ get_hv
 "package::variable"
 \family default 
  syntax).
- The content of scalar values are converted back to C ytpes with the 
+ The content of scalar values are converted back to C types with the 
 \family typewriter 
 Sv
 \family default 
@@ -4758,7 +4760,7 @@ av
 hv
 \family default 
  indicates whether the variable should be created if the given name does
- not correspond to an existing varible.
+ not correspond to an existing variable.
  Passing an unexisting name and using 
 \family typewriter 
 TRUE
@@ -4838,7 +4840,7 @@ point
 
 \size footnotesize 
 \emph on 
-/* Allocates an unitialized SV, the size of a 
+/* Allocates an uninitialized SV, the size of a 
 \emph default 
 point
 \emph on 
@@ -5594,10 +5596,10 @@ Finally, an aspect that deserves being mentioned is the concern on not polluting
  the C namespace.
  Python, Java and Lua define all its functions and C types with prefixes
  that aim to avoid conflicts with names defined by the application.
- Perl and Ruby define names in a disorganized fashin, which occasionally
+ Perl and Ruby define names in a disorganized fashion, which occasionally
  causes problems
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -5615,7 +5617,7 @@ For example, conflicts of this kind happened in the Ruby bindings of the
  in its functions, but this feature is incomplete and using it hampers the
  functionality of its headers
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -5657,7 +5659,7 @@ ts is no different from manual memory management normally taken care by
  C programmers.
  However, the interaction with some languages adds an important factor of
  complexity: the garbage collection mechanisms perform deallocation of data
- from memory in an implicity manner.
+ from memory in an implicit manner.
  The fundamental principle of garbage collection dictates that an object
  is not collected in case there is some element (variable, data structure)
  pointing to it.
@@ -5673,8 +5675,8 @@ It is necessary, then, to indicate from C code that the data remain accessible
  structure of the other language -- it is necessary to indicate to the language
  how to deallocate the memory of the structure when the garbage collector
  detects that it is no longer in use.
- The way how the API will provide these functionalities depends not only
- of the design of the C API, but also of the garbage collection mode employed
+ The way how the API will provide this functionality depends not only of
+ the design of the C API, but also of the garbage collection mode employed
  by the implementation of the language.
 \layout Subsection
 
@@ -5938,7 +5940,7 @@ The interaction with the reference counter can be very subtle.
 , extracted from the Python documentation, demonstrates that a reference
  can be invalidated by apparently unrelated code
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -6002,7 +6004,7 @@ Py_INCREF(Py_none)
 \family default 
 
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -6033,7 +6035,7 @@ PyTypeObject
  structure so that C code can perform finalization operations over data
  stored in a Python type defined in C.
  This function is normally responsible for freeing resources allocated through
- C code (open files, pointers to memory areas unaccessible from Python,
+ C code (open files, pointers to memory areas inaccessible from Python,
  etc.) and decrementing references to other Python objects maintained by
  the object.
 \layout Standard
@@ -6151,7 +6153,7 @@ tp_traverse
 \family typewriter 
 Py_TPFLAGS_HAVE_GC
 \family default 
- flage in the 
+ flag in the 
 \family typewriter 
 tp_flags
 \family default 
@@ -7108,7 +7110,7 @@ __metatable
  making the metatable itself unaccessible.
 \layout Standard
 
-Another resource related to memory management provided by Lua is the possiblity
+Another resource related to memory management provided by Lua is the possibility
  of configuring, at runtime, the allocation function to be used by the virtual
  machine.
  In the creation of a new Lua state, an allocation function is passed as
@@ -7274,7 +7276,7 @@ SV
 .
 \layout Standard
 
-The Perl API does not provide facilites for interfacing with the garbage
+The Perl API does not provide facilities for interfacing with the garbage
  collector, but features some debugging support functions that report informatio
 n about the state of garbage collection.
  The 
@@ -7291,8 +7293,8 @@ SV
 Devel::Peek
 \family default 
  module allows examining from Perl the content of values (reference counts,
- flags, etc.) -- from C, these informations are directly available, since
- their structures are not opaque.
+ flags, etc.) -- from C, this information is directly available, since their
+ structures are not opaque.
 \layout Subsection
 
 Comparison
@@ -7325,14 +7327,14 @@ lua_gc
 
 Of the five languages studied, the only whose API abstracts entirely the
  implementation of the garbage collector is Java.
- The only intarfacing operation provided by the language, 
+ The only interfacing operation provided by the language, 
 \family typewriter 
 System.gc()
 \family default 
 , does not receive any arguments and does not specify how or when the collection
  should be done
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -7540,7 +7542,7 @@ PyObject_Call
 \family typewriter 
 PyObject_CallFunction
 \family default 
- ncapsulates the call to 
+ encapsulates the call to 
 \family typewriter 
 Py_BuildValue
 \family default 
@@ -8868,7 +8870,7 @@ Verificação da ocorrência de erros
 
 \layout Standard
 
-C code may verify the ocurrence of exceptions through 
+C code may verify the occurrence of exceptions through 
 \family typewriter 
 ExceptionCheck
 \family default 
@@ -9405,7 +9407,7 @@ G_NOARGS
 \family default 
 , should not be constructed
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -9464,7 +9466,7 @@ G_KEEPERR
 \family typewriter 
 $@
 \family default 
-, but concatenate to it, accumulating sequences of errors in diferent call
+, but concatenate to it, accumulating sequences of errors in different call
  levels.
 \layout Standard
 
@@ -9760,7 +9762,7 @@ Again in this section, the presentation of each language will conclude with
  We will present as well, for each language, how to register this function
  as a global value
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -10083,7 +10085,7 @@ ing modules with function lists, there is no direct way for registering
 \family typewriter 
 Py_FindMethod
 \family default 
-, and inserting the returned moethod in the dictionary of the global module
+, and inserting the returned method in the dictionary of the global module
  
 \family typewriter 
 __main__
@@ -10886,7 +10888,7 @@ int
 lua_State
 \family default 
  encapsulates the entire state of a Lua virtual machine; multiple Lua states
- can be mantained in parallel.
+ can be maintained in parallel.
  Every function of the core API receives a 
 \family typewriter 
 lua_State
@@ -11571,7 +11573,7 @@ collapsed true
 To expose functions from a C application to an embedded Perl interpreter,
  we have to create an extension that wraps these functions using XS, link
  the extension to the application and load it.
- The loading is performed passing to the interpeter during its initialization
+ The loading is performed passing to the interpreter during its initialization
  a C function containing 
 \family typewriter 
 newXS
@@ -11809,8 +11811,11 @@ The
 \family typewriter 
 #!/usr/bin/perl -w
 \family default 
- will indicate that libscript-perl should be loaded, but the Perl interpreter
- in 
+ will indicate that 
+\family typewriter 
+libscript-perl
+\family default 
+ should be loaded, but the Perl interpreter in 
 \family typewriter 
 /usr/bin
 \family default 
@@ -11847,7 +11852,7 @@ collapsed false
 
 \end_inset 
 
-Ambientes virtuais em LibScript
+Virtual environments in LibScript
 \end_inset 
 
 
@@ -12078,7 +12083,7 @@ collapsed false
 
 \end_inset 
 
-API para execução de código em LibScript
+API for running code in LibScript
 \end_inset 
 
 
@@ -12695,7 +12700,7 @@ script_done
  when a virtual environment is terminated.
  Depending on the internal representation used in the plugin, the termination
  of a state may or may not imply in the termination of the virtual machine.
- Preferrably, this function should remove the data structure that describe
+ Preferably, this function should remove the data structure that describe
  the virtual environment, but as we will see in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Encerramento-de-estados}
@@ -12767,7 +12772,7 @@ The design of LibScript allows plugins to have multiple independent states
  Lua and Perl allow multiple isolated instances of their runtime environments
  in a simple way, since their API calls include a state identifier
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -12779,7 +12784,7 @@ The feature of multiple independent states is optional in Perl, and can
  Language that keep state in a static manner, like Python and Ruby, don't
  allow working with multiple isolated states easily
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -12968,7 +12973,7 @@ As discussed in Section\SpecialChar ~
 
 C direction in an embedded virtual machine is linking an extension module
  to the virtual machine.
- Thus, part of LibScript-Perl is implemente as an XS module, exposed to
+ Thus, part of LibScript-Perl is implemented as an XS module, exposed to
  the embedded virtual machine as the 
 \family typewriter 
 LibScript
@@ -12989,7 +12994,7 @@ script_plugin_init_perl
 "package 
 \family default 
 \emph on 
-<ambiente>
+<environment>
 \family typewriter 
 \emph default 
 ;"
@@ -13572,7 +13577,7 @@ script_lua_stack_to_buffer
 \family typewriter 
 script_lua_stack_to_buffer
 \family default 
- is used to convert the function's input parameters, also retreived through
+ is used to convert the function's input parameters, also retrieved through
  the virtual stack.
  Below, we see the implementation of this function:
 \layout LyX-Code
@@ -13698,19 +13703,37 @@ collapsed true
 
 \layout Standard
 
-Os valores de tipos desconhecidos são substituídos pelo valor zero, o que
- mantém a posição dos demais valores na lista de argumentos.
- Optamos por não sinalizar erro nesta situação para evitar aqui a geração
- de exceções, o que complicaria a exposição.
- A captura e propagação de erros serão vistas na Seção\SpecialChar ~
+We assume in LibScript C-format strings: the 
+\family typewriter 
+script_put_string
+\family default 
+ function copies the given string up to the first null character.
+ Thus, when obtaining strings from languages that allow arbitrary contents,
+ these will be truncated in case they contain nulls.
+ Because of that, in the Lua plugin we use directly the 
+\family typewriter 
+lua_tostring
+\family default 
+ function, and not the more general 
+\family typewriter 
+lua_tolstring
+\family default 
+ (which also returns the buffer size).
+ This design decision coincides with the goal explained earlier of restricting
+ the main library API to features available in all languages.
+\layout Standard
+
+Values of unknown types are replaced by zero, which keeps the position of
+ the other elements in the arguments list unaltered.
+ We chose not to signal error is this situation to avoid raising exceptions
+ here, which would complicate our presentation.
+ Capture and propagation of errors will be seen in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Captura-de-erros}
 
 \end_inset 
 
 .
- This design decision coincides with the goal explained earlier of restricting
- the main library API to features available in all languages.
 \layout Standard
 
 The second data transfer function from LibScript-Lua, 
@@ -15003,7 +15026,7 @@ aTHX_
  that use the Perl API it becomes necessary to use the pTHX_ macro in declaratio
 ns
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -15039,7 +15062,7 @@ ax
 \family typewriter 
 pTHX_
 \family default 
-, but is implictly declared when functions are wrapped with XS.
+, but is implicitly declared when functions are wrapped with XS.
  The API seems to assume that an XS function will not invoke another C function
  which also uses the API.
  We had to propagate the variable ourselves (which is mentioned in the documenta
@@ -15227,17 +15250,24 @@ sp
 , the stack pointer.
  This variable is referenced within the 
 \family typewriter 
-xPUSHs
+XPUSHs
 \family default 
  macro.
- Besides, as XPUSHs can resize the stack, we need to return the updated
- value of 
+ Besides, as 
+\family typewriter 
+XPUSHs
+\family default 
+ can resize the stack, we need to return the updated value of 
 \family typewriter 
 sp
 \family default 
  back to the caller.
- Apart from that, generation of SVs, their registration as mortal variables
- and their insertion in the stack happens as usual, as presented in Section\SpecialChar ~
+ Apart from that, generation of 
+\family typewriter 
+SV
+\family default 
+s, their registration as mortal variables and their insertion in the stack
+ happens as usual, as presented in Section\SpecialChar ~
 
 \begin_inset LatexCommand \ref{sub:Perl-call}
 
@@ -15617,7 +15647,7 @@ snprintf(code, LEN_CODE,
 \size footnotesize 
    "$LibScript::env = %p;"  
 \emph on 
-/* Store the enviroment pointer in Perl */
+/* Store the environment pointer in Perl */
 \layout LyX-Code
 
 
@@ -15726,33 +15756,6 @@ luaL_loadstring
 , which loads code to be executed by 
 \family typewriter 
 lua_pcall
-\family default 
-.
-\layout Standard
-
-Em Python, a ocorrência de erros é sinalizada pelo valor de retorno das
- funções de execução de strings, 
-\family typewriter 
-PyRun_SimpleString
-\family default 
-, e de chamada de funções, 
-\family typewriter 
-PyEval_CallObject
-\family default 
-.
- No caso de erros, chamamos a função 
-\family typewriter 
-PyErr_Occurred
-\family default 
-, que retorna um objeto Python representando a exceção.
- A mensagem de erro é obtida convertendo este objeto para uma string Python
- usando 
-\family typewriter 
-PyObject_Str
-\family default 
-, e finalmente para uma string C com 
-\family typewriter 
-PyString_AS_STRING
 \family default 
 .
 \layout Standard
@@ -15994,7 +15997,7 @@ In many applications it is important to have isolation between each script
  their applicability for scenarios where scripts need to run isolated from
  each other
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -16215,7 +16218,7 @@ public API
  and how many of these are just function for internal use exposed in their
  headers
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -16289,7 +16292,7 @@ script_env* script_init(const char* namespace)
 \family default 
 
 \newline 
-Initializes LibScript and returns a pointer to a virtual enviroment.
+Initializes LibScript and returns a pointer to a virtual environment.
  The 
 \family typewriter 
 namespace
@@ -16538,7 +16541,7 @@ language
 
 \newline 
 Responsible for initializing a plugin.
- During initalization, the virtual environment returns a 
+ During initialization, the virtual environment returns a 
 \family typewriter 
 script_plugin_state
 \family default 
@@ -16586,7 +16589,7 @@ SCRIPT_ERRLANGCOMP
 \family typewriter 
 SCRIPT_ERRLANGRUN
 \family default 
- for runtime errors, preferrably defining an error message with 
+ for runtime errors, preferably defining an error message with 
 \family typewriter 
 script_set_error_message
 \family default 
