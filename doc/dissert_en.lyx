@@ -155,21 +155,21 @@ Applications written in two programming languages, in order to optimize
  user-written scripts, are commonplace nowadays.
  There are several ways to obtain this kind of interoperability; ideally,
  however, a language should provide a foreign language interface (FLI),
- allowing the programmer to send and receive both data and function calls
- to the external language.
+ allowing programmers to send and receive both data and function calls to
+ code written in another language.
  
 \layout Standard
 
-This work discusses the main issues involving the design of APIs for the
- integration of language environments within C\SpecialChar ~
+This work discusses the main issues involving the design of APIs for integration
+ of language environments within C\SpecialChar ~
 applications.
  We present the main problems faced in the interaction between code executed
  in an environment with inherently dynamic characteristics such as a scripting
  language and C\SpecialChar ~
 code.
- We compare the approaches employed by five languages when handling communicatio
-n between the data spaces of C and the embedded runtime environment and
- the consequences of these approaches in memory management, as well as sharing
+ We compare approaches employed by five languages when handling communication
+ between the data spaces of C and embedded runtime environments and the
+ consequences of these approaches in memory management, as well as sharing
  of code between the C\SpecialChar ~
 application and that from the scripting language.
 \layout Standard
@@ -224,17 +224,17 @@ There are many situations in which it is necessary or interesting to have
  APIs for database access, or even operating system calls.
  Another scenario involves applications developed using more than one programmin
 g language, in order to optimize parts where performance is critical or
- to allow extensibility through scripts written by the end-user.
+ to allow extensibility through scripts written by end-users.
 \layout Standard
 
 Regardless of purpose, communication between programs written in different
  languages brings up a number of design issues, not only in the development
- of the applications, but in the languages themselves.
+ of the applications, but of the languages themselves.
  There are many ways to obtain this kind of interoperability, from translation
  of code of a language to another to the use of a common virtual machine.
  Ideally, however, a language should provide a foreign language interface
- (FLI) that allows the programmer to send and receive both calls and data
- to the other language\SpecialChar ~
+ (FLI) that allows programmers to send and receive both calls and data to
+ another language\SpecialChar ~
 
 \begin_inset LatexCommand \cite{finne98haskellfli}
 
@@ -246,12 +246,12 @@ Regardless of purpose, communication between programs written in different
  issues (such as garbage collection and direct access to pointers) and concurren
 cy models.
  Beyond dealing with semantic differences, the design of an interface between
- languages involves pragmatic issues such as the balance between the safe
- isolation of the runtime environments, performance and the simplicity of
- the resulting API.
+ languages involves pragmatic issues such as the balance between safe isolation
+ of the runtime environments, performance and simplicity of the resulting
+ API.
 \layout Standard
 
-We can observe in the existing implementations of FLIs a number of approaches
+We can observe in existing implementations of FLIs a number of approaches
  to these problems.
  Indeed, FLIs for different languages (or even different revisions of a
  single language) tend to be very different from each other.
@@ -261,7 +261,7 @@ We can observe in the existing implementations of FLIs a number of approaches
 
 Because of the popularity of the C\SpecialChar ~
 language and the support it enjoys in
- the most popular operating systems, a considerable part of the implementations
+ most popular operating systems, a considerable number of implementations
  of foreign language interfaces are, in practice, C APIs.
  Besides, an interaction model for programming languages that has become
  especially relevant nowadays is that between statically typed compiled
@@ -280,8 +280,8 @@ language and the support it enjoys in
  or virtual machines, and make extensive use of high-level constructs, such
  as lists and hashes, as basic types.
  These complementary features have made the two-language programming model
- popular, in which a lower-level language is used for the development of
- components, which are then connected through a higher-level language.
+ popular, in which a lower-level language is used for development of components,
+ which are then connected through a higher-level language.
 \layout Section
 
 Objectives
@@ -301,12 +301,12 @@ code.
  in\SpecialChar ~
 C.
  Languages with static typing may present similar needs for type conversion,
- but the problem tends to be simplified by the definition of equivalent
- types in the API and compile-time inference (as can be observed in the
- C APIs for Ada and Fortran).
+ but this problem tends to be simplified by the definition of equivalent
+ types in the API and compile-time inference (as can be observed in C APIs
+ for Ada and Fortran).
  Functional languages have additional concerns related to side effects in
  C code, but this is equivalent to the paradigm break problem caused by
- the handling of I/O commonly faced by those languages.
+ handling of I/O commonly faced by those languages.
 \layout Standard
 
 This study consists of two parts.
@@ -349,12 +349,12 @@ APIs
  This allows us to observe how typing affects the design of the API.
 \layout Standard
 
-In the second part, we illustrate the differences of the APIs of those languages
- and the impact of those in the resulting code of a C application through
- a case study.
- We performed a comparison between the scripting language APIs through a
- concrete example, in order to present implementations in each of the studied
- languages side by side.
+In the second part, we illustrate the differences between the APIs of those
+ languages and the impact of those in the resulting code of a C application
+ through a case study.
+ We performed a comparison between scripting language APIs through a concrete
+ example, in order to present implementations in each of the studied languages
+ side by side.
  The example consists of a generic scripting library, called LibScript,
  and a series of plugins that interface to the different languages.
  This way, the code of each plugin allows us to observe in a clear and isolated
@@ -7555,7 +7555,9 @@ Py_BuildValue
 ), accepting directly the format string and the value to be converted.
  
 \family typewriter 
-PyObject_CallFunctionObjArgs
+PyObject_Call\SpecialChar \-
+Function\SpecialChar \-
+ObjArgs
 \family default 
  is a vararg function that accepts a sequence of pointers to 
 \family typewriter 
@@ -7580,7 +7582,8 @@ Função vs.
 There are also many convenience functions for method invocation.
  The 
 \family typewriter 
-PyObject_CallMethod
+PyObject_Call\SpecialChar \-
+Method
 \family default 
  is a variant of 
 \family typewriter 
@@ -8274,7 +8277,8 @@ collapsed true
 The only ways for invoking a Ruby method passing a code block are through
  
 \family typewriter 
-rb_eval_string
+rb_eval_\SpecialChar \-
+string
 \family default 
  and 
 \family typewriter 
@@ -11002,7 +11006,8 @@ lua_CFunction
 \family default 
  type can be passed to Lua through the 
 \family typewriter 
-lua_pushcfunction
+lua_pushc\SpecialChar \-
+function
 \family default 
  call.
  Lua has also some convenience functions for registering a set of C functions
@@ -11702,7 +11707,7 @@ collapsed false
 \align center 
 
 \begin_inset Graphics
-	filename figura1.eps
+	filename figura1_en.eps
 	width 100col%
 	keepAspectRatio
 
@@ -11838,7 +11843,7 @@ collapsed false
 \align center 
 
 \begin_inset Graphics
-	filename figura2.eps
+	filename figura2_en.eps
 	width 100col%
 	keepAspectRatio
 
@@ -11982,7 +11987,7 @@ When implementing plugins, we used features offered by these languages to
 
 \end_inset 
 
-The main library API
+Main library API
 \layout Standard
 
 The API provided by LibScript isolates the application from the different
@@ -12069,7 +12074,7 @@ collapsed false
 
 
 \begin_inset Graphics
-	filename figura3.eps
+	filename figura3_en.eps
 	width 100col%
 	keepAspectRatio
 
@@ -12483,7 +12488,7 @@ In LibScript, strings returned by script_get_string belong to the caller,
  would force the programmer to copy strings frequently.
 \layout Subsection
 
-The plugins API
+Plugins API
 \begin_inset LatexCommand \label{sub:A-API-de-plugins}
 
 \end_inset 
@@ -12515,13 +12520,13 @@ done
 script_plugin_
 \family default 
 \emph on 
-<operation>
+operation
 \family typewriter 
 \emph default 
 _
 \family default 
 \emph on 
-<language>
+language
 \emph default 
 .
 \layout Standard
@@ -12531,7 +12536,7 @@ The
 script_plugin_init_
 \family default 
 \emph on 
-<language>
+language
 \emph default 
  function is responsible for initializing a plugin, and is called by the
  
@@ -12544,7 +12549,7 @@ script_init
 script_plugin_init_
 \family default 
 \emph on 
-<language>
+language
 \emph default 
  a 
 \family typewriter 
@@ -12582,7 +12587,7 @@ The
 script_plugin_run_
 \family default 
 \emph on 
-<language>
+language
 \emph default 
  function is invoked by 
 \family typewriter 
@@ -12616,7 +12621,7 @@ The function
 script_plugin_call_
 \family default 
 \emph on 
-<language>
+language
 \emph default 
  is used by 
 \family typewriter 
@@ -12632,7 +12637,7 @@ script_call
 script_plugin_run_
 \family default 
 \emph on 
-<language>
+language
 \emph default 
 .
  If the requested function was not defined in this virtual machine, 
@@ -12640,7 +12645,7 @@ script_plugin_run_
 script_plugin_call_
 \family default 
 \emph on 
-<language>
+language
 \emph default 
  must return the constant 
 \family typewriter 
@@ -12677,7 +12682,7 @@ script_call
 script_plugin_call_
 \family default 
 \emph on 
-<language>
+language
 \emph default 
  on each plugin and trying the next one each time it receives 
 \family typewriter 
@@ -12691,7 +12696,7 @@ Finally, the
 script_plugin_done_
 \family default 
 \emph on 
-<language>
+language
 \emph default 
  function is called by 
 \family typewriter 
@@ -12842,7 +12847,7 @@ As discussed in the previous section, the
 script_plugin_init_
 \family default 
 \emph on 
-<language>
+language
 \emph default 
  function returns a 
 \family typewriter 
@@ -12858,7 +12863,7 @@ script_plugin_state
 script_plugin_init_
 \family default 
 \emph on 
-<language>
+language
 \emph default 
 , so that the plugin can make calls to the main library, and an identifier
  that allows the plugin to access the data structure that represents for
@@ -15281,17 +15286,29 @@ Like in the other plugins, the transfer of input parameters in LibScript-Perl,
  made calling the conversion function that acts on the buffer as a whole:
  when calling Perl functions we use 
 \family typewriter 
-script_perl_buffer_to_stack
+script_\SpecialChar \-
+perl_\SpecialChar \-
+buffer_\SpecialChar \-
+to_\SpecialChar \-
+stack
 \family default 
  and for functions called using LibScript, 
 \family typewriter 
-script_perl_stack_to_buffer
+script_\SpecialChar \-
+perl_\SpecialChar \-
+stack_\SpecialChar \-
+to_\SpecialChar \-
+buffer
 \family default 
 .
  For handling return values for Perl functions, we were able to use directly
  the 
 \family typewriter 
-script_perl_stack_to_buffer
+script_\SpecialChar \-
+perl_\SpecialChar \-
+stack_\SpecialChar \-
+to_\SpecialChar \-
+buffer
 \family default 
  function, not unlike it was done in LibScript-Lua.
  For the return value of functions called using LibScript, however, we need
