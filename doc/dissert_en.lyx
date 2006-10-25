@@ -12541,7 +12541,11 @@ script_plugin_init_
 \emph on 
 <language>
 \emph default 
- a script_env pointer and receives a 
+ a 
+\family typewriter 
+script_env
+\family default 
+ pointer and receives a 
 \family typewriter 
 script_plugin_state
 \family default 
@@ -12841,7 +12845,7 @@ script_plugin_state
 \family default 
  to the main library, which is the opaque representation of its virtual
  state.
- The contents if this representation vary from language to language, but
+ The contents of this representation vary from language to language, but
  the basic principle is that two data should be available from this value:
  a reference to the LibScript virtual environment, received as an argument
  by 
@@ -15221,7 +15225,7 @@ Again, a variable created internally by Perl had to be propagated explicitly:
 sp
 \family default 
 , the stack pointer.
- This variable is referenced internally by the 
+ This variable is referenced within the 
 \family typewriter 
 xPUSHs
 \family default 
@@ -16446,34 +16450,24 @@ script_err script_call(script_env* env, const char* fn)
 \family default 
 
 \newline 
-Requisita a execução de uma função em algum dos plugins cadastrados.
- Os parâmetros de entrada devem ser passados anteriormente com chamadas
- às funções 
+Requests the execution of a function in some of the registered plugins.
+ Input parameters should be passed previously with calls to the 
 \family typewriter 
 script_put_*
 \family default 
-; valores de retorno podem ser obtidos com 
+ functions; return values can be obtained with 
 \family typewriter 
 script_get_*
 \family default 
 .
- Inicialmente, a tabela de funções C do ambiente virtual é consultada.
- Não havendo uma função definida em C, os plugins são consultados na seqüência
- em que foram inicializados implicitamente via 
-\family typewriter 
-script_run
-\family default 
- ou 
+ Initially, the environment's table of C functions is consulted.
+ If there is no function defined in C, plugins are consulted in the same
+ order as they were implicitly initialized through script_run or 
 \family typewriter 
 script_run_file
 \family default 
-: funções registradas na representação do ambiente virtual definido para
- a LibScript na máquina virtual da linguagem (isto é, no nome criado com
- 
-\family typewriter 
-script_init
-\family default 
-) são acessíveis via 
+: functions registered in each plugin's representation of the virtual environmen
+t are available through 
 \family typewriter 
 script_call
 \family default 
@@ -16490,21 +16484,24 @@ void script_set_error_message(script_env* env, const char* message)
 \newline 
 
 \family default 
-Obtém o código e a mensagem de erro mais recentes do ambiente.
- Após uma chamada a script_error, o código de erro é zerado de volta para
- 
+Obtain the most recent error code and message from an environment.
+ After calling 
+\family typewriter 
+script_error
+\family default 
+, the error code is reset back to 
 \family typewriter 
 SCRIPT_OK
 \family default 
 .
- A mensagem de erro, por sua vez, não é zerada.
- A função 
+ The error message is not reset after being checked.
+ The 
 \family typewriter 
 script_set_error_message
 \family default 
- define um novo valor para a mensagem de erro do ambiente.
- Permite ao plugin propagar à aplicação as mensagens de erro da máquina
- virtual.
+ function defines a new value for the environment's error message.
+ This allows the plugin propagating to the application error messages from
+ the virtual machine.
 \layout Itemize
 
 
@@ -16513,19 +16510,19 @@ const char* script_get_namespace(script_env* env)
 \family default 
 
 \newline 
-Retorna o nome do namespace registrado com 
+Returns the name of the namespace registered with 
 \family typewriter 
 script_init
 \family default 
 .
 \layout Section
 
-API Exportada por Plugins
+API exported by plugins
 \layout Standard
 
-As chamadas aos plugins que implementam interfaces com as várias máquinas
- virtuais são realizadas internamente pela biblioteca principal, que espera
- encontrar as seguintes funções:
+Calls to plugins that implement interfaces to different virtual machines
+ are performed internally by the main library, which expects to find in
+ plugins the following functions:
 \layout Itemize
 
 
@@ -16533,22 +16530,26 @@ As chamadas aos plugins que implementam interfaces com as várias máquinas
 script_plugin_state script_plugin_init_
 \family default 
 \emph on 
-linguagem
+language
 \family typewriter 
 \emph default 
 (script_env* env)
 \family default 
 
 \newline 
-Responsável por inicializar o plugin.
- Durante a inicialização, o espaço de nomes do ambiente virtual deve ser
- exposto à máquina virtual de alguma forma apropriada para a linguagem (como
- uma tabela em Lua, ou um módulo em Python, ou ainda uma classe em Ruby).
- A rotina de inicialização pode retornar um handle que será passado de volta
- a ele nas chamadas subseqüentes.
- O estado da máquina virtual e o ponteiro para o ambiente LibScript devem
- ser armazenados de modo a ser posteriormente acessíveis a partir deste
- handle.
+Responsible for initializing a plugin.
+ During initalization, the virtual environment returns a 
+\family typewriter 
+script_plugin_state
+\family default 
+ to the main library, which is the opaque representation of its virtual
+ state.
+ The contents of this representation vary from language to language, but
+ the basic principle is that two data should be available from this value:
+ a reference to the LibScript virtual environment, so that the plugin can
+ make calls to the main library, and an identifier that allows the plugin
+ to access the language-specific data structure that represents the namespace
+ of LibScript-accessible functions.
 \layout Itemize
 
 
@@ -16556,37 +16557,36 @@ Responsável por inicializar o plugin.
 script_err script_plugin_run_
 \family default 
 \emph on 
-linguagem
+language
 \family typewriter 
 \emph default 
 (script_plugin_state st, char* text)
 \family default 
 
 \newline 
-Envia código para execução na máquina virtual.
- Esta função é utilizada internamente por 
+Sends code for execution in the virtual machine.
+ This function is used internally by 
 \family typewriter 
 script_run
 \family default 
- e 
+ and 
 \family typewriter 
 script_run_file
 \family default 
 .
- Deve retornar 
+ It should return 
 \family typewriter 
 SCRIPT_OK
 \family default 
- em caso de sucesso, 
+ in case of success, 
 \family typewriter 
 SCRIPT_ERRLANGCOMP
 \family default 
- para erros de compilação ou 
+ for compile errors or 
 \family typewriter 
 SCRIPT_ERRLANGRUN
 \family default 
- para erros de execução, preferencialmente definindo uma mensagem de erro
- com 
+ for runtime errors, preferrably defining an error message with 
 \family typewriter 
 script_set_error_message
 \family default 
@@ -16598,45 +16598,48 @@ script_set_error_message
 script_err script_plugin_call_
 \family default 
 \emph on 
-linguagem
+language
 \family typewriter 
 \emph default 
 (script_plugin_state st, char* fn)
 \family default 
 
 \newline 
-Realiza a chamada de uma função que tenha sido definida nativamente no espaço
- de nomes do ambiente na máquina virtual do plugin.
- Ao chamar uma função no espaço de nomes, seja em C através de 
+Calls a function which has been defined natively in the environment namespace
+ of the plugin's virtual machine.
+ When calling a function from this language's copy of virtual environment,
+ either in C through 
 \family typewriter 
 script_call
 \family default 
- ou executando código em algum dos plugins, LibScript irá utilizar esta
- função para tentar executar a função no contexto do plugin.
- Se a função não foi definida no plugin, o valor 
+ or from code from other plugins (which would also route through 
+\family typewriter 
+script_call
+\family default 
+), LibScript will use this function to try to run it.
+ If the function was not defined in the plugin, the 
 \family typewriter 
 SCRIPT_ERRFNUNDEF
 \family default 
- deve ser retornado.
- Caso contrário, ela deve ser executada, com parâmetros de entrada obtidos
- através de 
+ value must be returned.
+ Otherwise, it should be executed, with input parameters obtained through
+ 
 \family typewriter 
 script_get_*
 \family default 
- e valores de retorno enviados com 
+ and return values sent with 
 \family typewriter 
 script_put_*
 \family default 
-, e os valores 
+, and values 
 \family typewriter 
 SCRIPT_OK
 \family default 
- ou 
+ or 
 \family typewriter 
 SCRIPT_ERRLANGRUN
 \family default 
- devem ser retornados, conforme apropriado.
- 
+ should be returned as appropriate.
 \layout Itemize
 
 
@@ -16644,12 +16647,12 @@ SCRIPT_ERRLANGRUN
 void script_plugin_done_
 \family default 
 \emph on 
-linguagem
+language
 \family typewriter 
 \emph default 
 (script_plugin_state st)
 \family default 
 
 \newline 
-Responsável pelo encerramento do ambiente.
+Responsible for terminating an environment.
 \the_end
