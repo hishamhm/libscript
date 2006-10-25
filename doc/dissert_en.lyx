@@ -11,7 +11,7 @@
 \graphics default
 \paperfontsize 12
 \spacing single 
-\papersize Default
+\papersize a4paper
 \paperpackage a4
 \use_geometry 0
 \use_amsmath 0
