@@ -1181,6 +1181,41 @@ Ousterhout aponta que, num modelo integrando estes dois tipos de linguagens,
  de código escrito com linguagens de script.
  A conveniência oferecida por linguagens interpretadas de alto nível permite
  prototipagem rápida e encoraja o reuso de componentes.
+\layout Subsection
+
+Linguagens extensíveis e de extensão
+\layout Standard
+
+
+\color red
+Discutir embedding vs.
+ extending
+\layout Standard
+
+O modelo de desenvolvimento baseado em duas linguagens não se limita a aplicaçõe
+s que permitem customizações através de scripts escritos pelo usuário.
+ Em muitos cenários, existe claramente uma distinção entre uma camada de
+ mais baixo nível onde desempenho é um fator crítico e outra de alto nível
+ que se caracteriza por operações de coordenação de elementos da camada
+ inferior.
+ Exemplos típicos são aplicações gráficas onde a interface é descrita por
+ linguagens de script controlando componentes implementados em C e jogos
+ onde a lógica é descrita em scripts e a 
+\emph on 
+engine
+\emph default 
+ de execução é implementada em linguagens de mais baixo nível.
+\layout Standard
+
+Este aumento da importância das linguagens de script, onde elas deixam de
+ ser apenas um mecanismo de extensão de aplicações e passam a ter um papel
+ mais central na coordenação da execução do programa, promoveu também um
+ modelo inverso de interação entre linguagens, no qual a aplicação em si
+ é escrita usando linguagem de script e bibliotecas escritas em linguagens
+ de mais baixo nível são carregadas por este como módulos de extensão.
+\layout Subsection
+
+Tcl
 \layout Standard
 
 A integração de programas desenvolvidos em linguagens de programação de
@@ -1190,7 +1225,11 @@ A integração de programas desenvolvidos em linguagens de programação de
  onde construções como pipes (que conectam a saída de um processo à entrada
  de outro) permitem realizar tarefas combinando uma série de programas implement
 ados em outras linguagens, ou mesmo outros scripts.
- Com o surgimento de Tcl\SpecialChar ~
+\layout Standard
+
+
+\color red
+Com o surgimento de Tcl\SpecialChar ~
 
 \begin_inset LatexCommand \cite{ousterhout94tcl}
 
@@ -1208,31 +1247,61 @@ dentro
  Estruturas de dados da aplicação são expostas ao ambiente de script como
  objetos manipuláveis; em contrapartida, a aplicação pode disparar funções
  na linguagem de script e acessar os seus dados.
- Aplicações programáveis já existiam bem antes disso, tipicamente usando
+ 
+\layout Itemize
+
+Tcl adaptou o modelo de interação promovido por linguagens de shell para
+ a manipulação de funções de uma aplicação 
+\begin_inset LatexCommand \cite{ousterhout90tcl}
+
+\end_inset 
+
+.
+\layout Itemize
+
+Um único tipo de dados: string
+\layout Itemize
+
+argc e argv
+\layout Itemize
+
+Limitações desta abordagem: desempenho, conversão de dados no código C
+\layout Itemize
+
+Tcl perdeu espaço como linguagem de script
+\layout Itemize
+
+Versões mais recentes de Tcl adotam um modelo de dados semelhante ao de
+ linguagens de script mais modernas 
+\begin_inset LatexCommand \cite{welch95tcl}
+
+\end_inset 
+
+
+\layout Itemize
+
+objc e objv -- preocupações com contagem de referências
+\layout Itemize
+
+questões de compatibilidade: objetos 
+\emph on 
+
+\begin_inset Quotes eld
+\end_inset 
+
+dual-ported
+\begin_inset Quotes erd
+\end_inset 
+
+
+\emph default 
+, carregam a representação do dado como string
+\layout Standard
+
+Aplicações programáveis já existiam bem antes disso, tipicamente usando
  pequenas linguagens criadas especificamente para a aplicação, mas o conceito
  introduzido por Tcl de implementar linguagens de script como bibliotecas
  para C impulsionou fortemente o desenvolvimento de aplicações extensíveis.
-\layout Standard
-
-O modelo de desenvolvimento baseado em duas linguagens não se limita a aplicaçõe
-s que permitem customizações através de scripts escritos pelo usuário.
- Em muitos cenários, existe claramente uma distinção entre uma camada de
- mais baixo nível onde desempenho é um fator crítico e outra de alto nível
- que se caracteriza por operações de coordenação de elementos da camada
- inferior.
- Exemplos típicos são aplicações gráficas onde a interface é descrita por
- linguagens de script controlando componentes implementados em C e jogos
- onde a lógica é descrita em scripts e a 
-\emph on 
-engine
-\emph default 
- de execução é implementada em linguagens de mais baixo nível.
- Este aumento da importância das linguagens de script, onde elas deixam
- de ser apenas um mecanismo de extensão de aplicações e passam a ter um
- papel mais central na coordenação da execução do programa, promoveu também
- um modelo inverso de interação entre linguagens, no qual a aplicação em
- si é escrita usando linguagem de script e bibliotecas escritas em linguagens
- de mais baixo nível são carregadas por este como módulos de extensão.
 \layout Chapter
 
 
