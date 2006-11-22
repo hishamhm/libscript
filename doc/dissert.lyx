@@ -1186,12 +1186,6 @@ Ousterhout aponta que, num modelo integrando estes dois tipos de linguagens,
 Linguagens extensíveis e de extensão
 \layout Standard
 
-
-\color red
-Discutir embedding vs.
- extending
-\layout Standard
-
 O modelo de desenvolvimento baseado em duas linguagens não se limita a aplicaçõe
 s que permitem customizações através de scripts escritos pelo usuário.
  Em muitos cenários, existe claramente uma distinção entre uma camada de
@@ -1212,7 +1206,27 @@ Este aumento da importância das linguagens de script, onde elas deixam de
  mais central na coordenação da execução do programa, promoveu também um
  modelo inverso de interação entre linguagens, no qual a aplicação em si
  é escrita usando linguagem de script e bibliotecas escritas em linguagens
- de mais baixo nível são carregadas por este como módulos de extensão.
+ de mais baixo nível são carregadas por esta como módulos de extensão.
+\layout Standard
+
+Faz sentido então, ao discutirmos interação entre linguagens, fazermos a
+ distinção entre 
+\emph on 
+linguagens extensíveis
+\emph default 
+ e 
+\emph on 
+linguagens de extensão
+\emph default 
+.
+ Linguagens extensíveis são aquelas que podem ser estendidas através de
+ módulos externos implementados em outras linguagens.
+ Linguagens de extensão são aquelas cujo ambiente de execução pode ser embutido
+ em uma aplicação, permitindo assim usá-las para estender a aplicação.
+ Tipicamente, linguagens de script podem ser usadas, com maior ou menor
+ grau de conveniência, como linguagens extensíveis e linguagens de extensão.
+ O foco da linguagem em um ou outro cenário tende a se refletir no projeto
+ de sua FLI.
 \layout Subsection
 
 Tcl
@@ -1227,81 +1241,169 @@ A integração de programas desenvolvidos em linguagens de programação de
 ados em outras linguagens, ou mesmo outros scripts.
 \layout Standard
 
-
-\color red
-Com o surgimento de Tcl\SpecialChar ~
-
+Aplicações gráficas interativas não se encaixam bem a este modelo de programabil
+idade.
+ A partir desta observação, Ousterhout identificou a necessidade de mover
+ a linguagem de coordenação para 
+\emph on 
+dentro
+\emph default 
+ das aplicações, criando a linguagem Tcl 
 \begin_inset LatexCommand \cite{ousterhout94tcl}
 
 \end_inset 
 
-, este tipo de coordenação de componentes através de linguagens de script
- passou a ocorrer com maior freqüência 
-\emph on 
-dentro
-\emph default 
- de aplicações.
- Neste modelo, a linguagem de script é implementada como uma biblioteca
+, que adaptou o modelo de interação promovido por linguagens de shell para
+ a manipulação de funções de uma aplicação.
+\layout Standard
+
+No modelo de Tcl, a linguagem de script é implementada como uma biblioteca
  e é embutida em uma aplicação escrita em uma linguagem de mais baixo nível,
  como C.
  Estruturas de dados da aplicação são expostas ao ambiente de script como
  objetos manipuláveis; em contrapartida, a aplicação pode disparar funções
  na linguagem de script e acessar os seus dados.
- 
-\layout Itemize
+\layout Standard
 
-Tcl adaptou o modelo de interação promovido por linguagens de shell para
- a manipulação de funções de uma aplicação 
+Quatro objetivos principais foram destacados no projeto original de Tcl
+ 
 \begin_inset LatexCommand \cite{ousterhout90tcl}
 
 \end_inset 
 
+: foco como linguagem para comandos (voltada para escrever programas curtos);
+ extensibilidade; simplicidade na implementação; e interface simples com
+ aplicações C.
+ Desde já observamos os princípios que hoje são entendidos como os fundamentos
+ de linguagens extensíveis e de extensão: extensibilidade foi listada como
+ objetivo explicitamente; os dois últimos objetivos (e o último em particular)
+ demonstram o foco de Tcl como linguagem de extensão.
+\layout Standard
+
+Tendo em vista simplificar a interação com código C, Tcl utiliza strings
+ como o tipo único de dados (conforme o contexto, strings podem ser interpretada
+s como por exemplo listas, números ou blocos de código Tcl).
+ A API da linguagem, então, realiza a comunicação entre código C e o interpretad
+or Tcl através de strings C.
+ A influência do modelo de interação entre programas em shell scripting
+ transparece na forma como código C se comunica com funções Tcl: parâmetros
+ são recebidos em C a partir de Tcl usando um inteiro e um array C de strings,
+ como nos parâmetros da função 
+\family typewriter 
+main
+\family default 
+ de C.
+ Uma função C a ser exposta para o interpretador Tcl deve seguir a seguinte
+ assinatura:
+\layout LyX-Code
+
+
+\size small 
+typedef int (*Tcl_CmdProc) (ClientData c, Tcl_Interp *i,
+\newline 
+                            int argc, char* argv[]);
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(paragrafo)
+\end_inset 
+
+
+\layout Standard
+
+Chamadas a Tcl a partir de C são feitas enviando uma string de código Tcl
+ para execução:
+\layout LyX-Code
+
+
+\size small 
+int Tcl_Eval(Tcl_Interp *i, char* cmd);
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(paragrafo)
+\end_inset 
+
+
+\layout Standard
+
+O valor de retorno indica o sucesso ou erro da função, e a string de retorno
+ do código Tcl pode ser obtida em 
+\family typewriter 
+i->result
+\family default 
 .
-\layout Itemize
+ Embora simples, esta abordagem possui algumas limitações significativas:
+ a conversão constante de strings afeta o desempenho negativamente; além
+ disso, a API limitada a strings faz com que código C tenha que realizar
+ uma série de conversões explicitamente, mesmo em operações tão básicas
+ quanto passar um inteiro como parâmetro.
+\layout Standard
 
-Um único tipo de dados: string
-\layout Itemize
+Com o passar dos anos, outras linguagens de script apresentaram propostas
+ diferentes para interação com código C.
+ Além disso, o minimalismo de Tcl, que se mostrou uma vantagem da linguagem
+ enquanto linguagem de extensão, faz com que ela pareça limitada frente
+ a linguagens como Python, que provêem uma base mais completa enquanto linguagem
+ extensível.
+ As linguagens de script foram além do primeiro objetivo de Tcl (foco como
+ linguagem de comandos, para programas curtos).
+ Assim, Tcl gradualmente perdeu espaço como linguagem de script.
+ Neste trabalho, nosso foco irá se concentrar em APIs modernas de linguagens
+ de script populares na atualidade.
+\layout Standard
 
-argc e argv
-\layout Itemize
-
-Limitações desta abordagem: desempenho, conversão de dados no código C
-\layout Itemize
-
-Tcl perdeu espaço como linguagem de script
-\layout Itemize
-
-Versões mais recentes de Tcl adotam um modelo de dados semelhante ao de
- linguagens de script mais modernas 
+De fato, versões mais recentes de Tcl adotam um modelo de dados similar
+ ao de linguagens de script mais modernas 
 \begin_inset LatexCommand \cite{welch95tcl}
 
 \end_inset 
 
+, abandonando a manipulação puramente por strings ao definir um tipo C 
+\family typewriter 
+Tcl_Obj
+\family default 
+ que corresponde a um valor Tcl.
+ Esta nova API, assim, não é muito diferente da API de Python, que também
+ possui um tipo C 
+\family typewriter 
+PyObject
+\family default 
+, que será discutido na Seção 
+\begin_inset LatexCommand \ref{sub:Dados-Python}
 
-\layout Itemize
-
-objc e objv -- preocupações com contagem de referências
-\layout Itemize
-
-questões de compatibilidade: objetos 
-\emph on 
-
-\begin_inset Quotes eld
 \end_inset 
 
-dual-ported
-\begin_inset Quotes erd
+.
+ Embora estas mudanças resolvam alguns dos problemas de desempenho da versão
+ original de Tcl, elas trazem também outros problemas: por questões de compatibi
+lidade, objetos carregam ainda a representação do dado como string; além
+ disso, contagem de referências passa a ser uma preocupação (também compartilhad
+a pela API de Python -- o problema é discutido na Seção 
+\begin_inset LatexCommand \ref{sub:Python-GC}
+
 \end_inset 
 
-
-\emph default 
-, carregam a representação do dado como string
+).
+ 
 \layout Standard
 
-Aplicações programáveis já existiam bem antes disso, tipicamente usando
- pequenas linguagens criadas especificamente para a aplicação, mas o conceito
- introduzido por Tcl de implementar linguagens de script como bibliotecas
- para C impulsionou fortemente o desenvolvimento de aplicações extensíveis.
+A importância histórica de Tcl, entretanto, é inegável.
+ Embora aplicações programáveis já existissem bem antes do seu surgimento,
+ tipicamente usando pequenas linguagens criadas especificamente para a aplicação
+, foi o conceito introduzido por Tcl de implementar linguagens de script
+ como bibliotecas para C que impulsionou fortemente o desenvolvimento de
+ aplicações extensíveis.
 \layout Chapter
 
 
