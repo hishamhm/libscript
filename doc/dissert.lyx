@@ -411,8 +411,22 @@ Na segunda parte, ilustramos as diferenças das APIs destas linguagens e
  Realizamos uma comparação entre as APIs das linguagens de script através
  de um exemplo concreto, de modo a colocar implementações em cada uma das
  linguagens lado a lado.
- O exemplo consiste de uma biblioteca genérica para scripting, chamada LibScript
-, e uma série de plugins que realizam a interface com as diferentes linguagens.
+\layout Standard
+
+O exemplo consiste de uma biblioteca genérica para scripting, chamada LibScript.
+ Esta biblioteca foi projetada para tornar aplicações extensíveis através
+ de scripting de uma forma independente de linguagem.
+ Ela é baseada em uma arquitetura de 
+\emph on 
+plugins
+\emph default 
+: bibliotecas dinâmicas carregadas sob demanda por LibScript que encapsulam
+ a interface com as máquinas virtuais.
+ A biblioteca principal provê uma API para scripting independente de linguagem,
+ permitindo a uma aplicação registrar as suas funções e disparar scripts
+ que utilizem estas funções.
+ Esta biblioteca então invoca o plugin da linguagem apropriada para rodar
+ o script (por exemplo, LibScript-Lua para código Lua).
  Assim, o código de cada plugin permite observar de forma clara e isolada
  os procedimentos adotados em cada linguagem para chamada de funções, registro
  de funções C e conversão de dados entre os ambientes.
