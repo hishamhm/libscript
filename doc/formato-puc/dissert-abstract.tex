@@ -1,0 +1,26 @@
+Applications written in two programming languages, in order to optimize
+parts where performance is critical or to obtain extensibility through
+user-written scripts, are commonplace nowadays. There are several
+ways to obtain this kind of interoperability; ideally, however, a
+language should provide a foreign language interface (FLI), allowing
+the programmer to send and receive both data and function calls to
+the external language. 
+
+This work discusses the main issues involving the design of APIs for
+the integration of language environments within C~applications. We
+present the main problems faced in the interaction between code executed
+in an environment with inherently dynamic characteristics such as
+a scripting language and C~code. We compare the approaches employed
+by five languages when handling communication between the data spaces
+of C and the embedded runtime environment and the consequences of
+these approaches in memory management, as well as sharing of code
+between the C~application and that from the scripting language.
+
+We illustrate the differences of the APIs of those languages and their
+impact in the resulting code of a C~application through a case study.
+Different scripting languages were embedded as plugins for a library,
+which on its turn exposes to client applications a generic scripting
+API. This way, the code of each plugin allows us to observe in a clear
+and isolated way the procedures adopted by each language for function
+calls, registration of C~functions and conversion of data between
+the environments.

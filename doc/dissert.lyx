@@ -1200,12 +1200,11 @@ Ousterhout aponta que, num modelo integrando estes dois tipos de linguagens,
 Linguagens extensíveis e de extensão
 \layout Standard
 
-O modelo de desenvolvimento baseado em duas linguagens não se limita a aplicaçõe
-s que permitem customizações através de scripts escritos pelo usuário.
- Em muitos cenários, existe claramente uma distinção entre uma camada de
- mais baixo nível onde desempenho é um fator crítico e outra de alto nível
- que se caracteriza por operações de coordenação de elementos da camada
- inferior.
+Com a popularização de linguagens de script, o modelo de desenvolvimento
+ baseado em duas linguagens, passou a ser encarado de duas formas: além
+ do modelo onde a linguagem de script tem função acessória, onde scripts
+ escritos pelo usuário permitem customizações de aplicações, há também um
+ modelo onde a linguagem de script desempenha um papel mais central na execução.
  Exemplos típicos são aplicações gráficas onde a interface é descrita por
  linguagens de script controlando componentes implementados em C e jogos
  onde a lógica é descrita em scripts e a 
@@ -1215,12 +1214,13 @@ engine
  de execução é implementada em linguagens de mais baixo nível.
 \layout Standard
 
-Este aumento da importância das linguagens de script, onde elas deixam de
- ser apenas um mecanismo de extensão de aplicações e passam a ter um papel
- mais central na coordenação da execução do programa, promoveu também um
- modelo inverso de interação entre linguagens, no qual a aplicação em si
- é escrita usando linguagem de script e bibliotecas escritas em linguagens
- de mais baixo nível são carregadas por esta como módulos de extensão.
+Nestes cenários, existe claramente uma distinção entre uma camada de mais
+ baixo nível onde desempenho é um fator crítico e outra de alto nível que
+ se caracteriza por operações de coordenação de elementos da camada inferior.
+ Linguagens de script deixam de ser apenas um mecanismo de extensão: a aplicação
+ em si é escrita usando a linguagem de script e bibliotecas escritas em
+ linguagens de mais baixo nível são carregadas por esta como módulos de
+ extensão.
 \layout Standard
 
 Faz sentido então, ao discutirmos interação entre linguagens, fazermos a
@@ -1240,7 +1240,24 @@ linguagens de extensão
  Tipicamente, linguagens de script podem ser usadas, com maior ou menor
  grau de conveniência, como linguagens extensíveis e linguagens de extensão.
  O foco da linguagem em um ou outro cenário tende a se refletir no projeto
- de sua FLI.
+ de sua FLI, como veremos na comparação entre as APIs de diferentes linguagens
+ ao longo do Capítulo 
+\begin_inset LatexCommand \ref{cha:APIs-de-Máquinas}
+
+\end_inset 
+
+.
+\layout Standard
+
+Outra observação interessante é que, enquanto em um modelo a linguagem de
+ script serve como linguagem de extensão para a linguagem de baixo nível
+ em que a aplicação é escrita, no outro modelo ocorre o contrário: podemos
+ encarar módulos de extensão escritos utilizando a FLI como uma forma de
+ estender a linguagem de script usando C como linguagem de extensão.
+ Desta forma, o conjunto de funcionalidades providas por uma API entre C
+ e uma linguagem de script tende a ser simétrico nos dois sentidos caso
+ se queira permitir tanto extensibilidade da linguagem como o seu uso como
+ linguagem de extensão.
 \layout Subsection
 
 Tcl

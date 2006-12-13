@@ -1,0 +1,28 @@
+Um cenário comum atualmente é o de aplicações desenvolvidas usando
+duas linguagens de programação a fim de otimizar partes onde o desempenho
+é crítico e permitir extensibilidade através de \emph{scripts} escritos
+pelo usuário. Há várias formas de se obter esse tipo de interoperabilidade;
+idealmente, entretanto, uma linguagem deve prover uma interface de
+acesso externo (\emph{foreign language interface}, FLI) que permita
+ao programador receber e enviar tanto chamadas como dados para outra
+linguagem. 
+
+Este trabalho discute as principais questões envolvendo o projeto
+de APIs para integração de ambientes de execução de linguagens em
+aplicações~C. Apresentamos os principais problemas enfrentados na
+interação entre código executando em um ambiente com características
+inerentemente dinâmicas como o de uma linguagem de script com código~C.
+Comparamos aqui as abordagens empregadas por cinco linguagens no tratamento
+da comunicação entre os espaços de dados de~C e do ambiente de execução
+embutido e as conseqüências destas abordagens no gerenciamento de
+memória, bem como no compartilhamento de código entre a aplicação~C
+e o da linguagem de script. 
+
+Ilustramos as diferenças das APIs destas linguagens e o impacto destas
+no código resultante de uma aplicação~C através de um estudo de caso.
+Diferentes linguagens de script são embutidas como plugins de uma
+mesma biblioteca, que por sua vez expõe a aplicações clientes uma
+API genérica de scripting. Assim, o código de cada plugin permite
+observar de forma clara e isolada os procedimentos adotados em cada
+linguagem para chamada de funções, registro de funções~C e conversão
+de dados entre os ambientes.
