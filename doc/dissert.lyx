@@ -2076,19 +2076,19 @@ obj
 
 \size footnotesize 
 \emph on 
-/* Esta é uma função vararg que recebe como argumentos adicionais uma lista
+/* Esta é uma função vararg que recebe como argumentos adicionais
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-   terminada em NULL de PyObjects a serem passados à função Python indicada
+   uma lista terminada em NULL de PyObjects a serem passados à
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-   no primeiro argumento.
+   função Python indicada no primeiro argumento.
  */
 \layout LyX-Code
 
@@ -2418,30 +2418,47 @@ static PyTypeObject point_type = {
 
 
 \size footnotesize 
-   .tp_name = "point",             
 \emph on 
-/* O nome da classe */
+   /* O nome da classe */
 \layout LyX-Code
 
 
 \size footnotesize 
-   .tp_basicsize = sizeof(point),  
-\emph on 
-/* O tamanho da área de memória a ser alocada */
+   .tp_name = "point",
 \layout LyX-Code
 
 
 \size footnotesize 
-   .tp_getattr = point_getattr,    
+\emph on 
+   /* O tamanho da área de memória a ser alocada */
+\layout LyX-Code
+
+
+\size footnotesize 
+   .tp_basicsize = sizeof(point),
+\layout LyX-Code
+
+
+\size footnotesize 
+   
 \emph on 
 /* A função de acesso a atributos */
 \layout LyX-Code
 
 
 \size footnotesize 
-   .tp_flags = Py_TPFLAGS_DEFAULT  
+   .tp_getattr = point_getattr,
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
-/* Classe não requer tratamentos especiais */
+   /* Classe não requer tratamentos especiais */
+\layout LyX-Code
+
+
+\size footnotesize 
+   .tp_flags = Py_TPFLAGS_DEFAULT
 \layout LyX-Code
 
 
@@ -3372,13 +3389,13 @@ VALUE point_initialize_copy(VALUE copy, VALUE orig) {
 
 \size footnotesize 
 \emph on 
-   /* Ruby pode chamar esta função com o mesmo objeto nos dois parâmetros;
+   /* Ruby pode chamar esta função com o mesmo objeto nos dois
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-      nesse caso, ignore a chamada e retorne o objeto */
+      parâmetros; nesse caso, ignore a chamada e retorne o objeto */
 \layout LyX-Code
 
 
@@ -3495,8 +3512,12 @@ Point
 
 
 \size footnotesize 
-rb_define_method(point_class, "initialize_copy", point_initialize_copy,
- 1);
+rb_define_method(point_class, "initialize_copy",
+\layout LyX-Code
+
+
+\size footnotesize 
+                 point_initialize_copy, 1);
 \layout LyX-Code
 
 
@@ -3639,9 +3660,13 @@ VALUE obj = rb_gv_get("obj");
 
 
 \size footnotesize 
-rb_iv_set(obj, "c", g);
 \emph on 
- /* Equivale a: rb_ivar_set(obj, rb_intern("c"), g); */
+/* Equivale a: rb_ivar_set(obj, rb_intern("c"), g); */
+\layout LyX-Code
+
+
+\size footnotesize 
+rb_iv_set(obj, "c", g);
 \layout LyX-Code
 
 
@@ -3885,10 +3910,10 @@ Get
 Set
 \family default 
 \emph on 
-<tipo
-\emph default 
->
+[tip
 \family typewriter 
+o]
+\emph default 
 \SpecialChar \-
 ArrayRegion
 \family default 
@@ -3906,10 +3931,9 @@ Get
 Release
 \family default 
 \emph on 
-<tipo
-\emph default 
->
+[tipo]
 \family typewriter 
+\emph default 
 ArrayElements
 \family default 
 ) e que podem acessar o buffer interno da JVM diretamente, como em 
@@ -4548,14 +4572,14 @@ L
 
 
 \size footnotesize 
-lua_pushinteger(L, 123);       
+lua_pushinteger(L, 123);   
 \emph on 
 /* Insere o número 123 na pilha */
 \layout LyX-Code
 
 
 \size footnotesize 
-lua_setglobal(L, "foo");       
+lua_setglobal(L, "foo");   
 \emph on 
 /* Atribui o número 123 na global 
 \emph default 
@@ -5329,7 +5353,13 @@ point
 
 \size footnotesize 
 \emph on 
-ele será uma variável opaca (seu conteúdo não será acessível via Perl).
+ele será uma variável opaca (seu conteúdo não será acessível
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+via Perl).
  */
 \layout LyX-Code
 
@@ -5576,19 +5606,25 @@ for (int i = 2; i < 10; i++) {
 
 \size footnotesize 
 \emph on 
-   /* Obviamente seria mais eficiente armazenar os valores em variáveis
+   /* Obviamente seria mais eficiente armazenar os valores em
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-      temporárias em C, mas obtenhamos os dois últimos valores da
+      variáveis temporárias em C, mas obtenhamos os dois últimos
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-      seqüência de volta do array Perl para fins de ilustração: */
+      valores da seqüência de volta do array Perl para fins de
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      ilustração: */
 \layout LyX-Code
 
 
@@ -7313,16 +7349,24 @@ Java_Exemplo_concatArray(JNIEnv* J, jobject this, jobjectArray a) {
 
 
 \size footnotesize 
-   jstring s = (*J)->NewString(J, NULL, 0);     
 \emph on 
-/* s = "" */
+   /* s = "" */
 \layout LyX-Code
 
 
 \size footnotesize 
-   int len = (*J)->GetArrayLength(J, a);     
+   jstring s = (*J)->NewString(J, NULL, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
    /* len = a.length */
+\layout LyX-Code
+
+
+\size footnotesize 
+   int len = (*J)->GetArrayLength(J, a);
 \layout LyX-Code
 
 
@@ -7330,25 +7374,37 @@ Java_Exemplo_concatArray(JNIEnv* J, jobject this, jobjectArray a) {
    for (int i = 0; i < len; i++) {
 \layout LyX-Code
 
+     
+\size footnotesize 
+\emph on 
+/* o = a[i] */
+\layout LyX-Code
+
 
 \size footnotesize 
       jobject o = (*J)->GetObjectArrayElement(J, a, i);
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
-      /* o = a[i] */
+      /* os = o.toString() */
 \layout LyX-Code
 
 
 \size footnotesize 
       jstring os = (*J)->CallObjectMethod(J, o, toString);
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
-   /* os = o.toString() */
+      /* s2 = s.concat(os) */
 \layout LyX-Code
 
 
 \size footnotesize 
       jstring s2 = (*J)->CallObjectMethod(J, s, concat, os);
-\emph on 
- /* s2 = s.concat(os) */
 \layout LyX-Code
 
 
@@ -8577,8 +8633,12 @@ ID teste = rb_intern("teste");
 
 
 \size footnotesize 
-VALUE val_result = rb_funcall(Qnil, teste, 2, rb_str_new2("entrada"), INT2NUM(2)
-);
+VALUE val_result = rb_funcall(Qnil, teste, 2,
+\layout LyX-Code
+
+
+\size footnotesize 
+                              rb_str_new2("entrada"), INT2NUM(2));
 \layout LyX-Code
 
 
@@ -9082,7 +9142,12 @@ VALUE chama_uma_funcao_ruby() {
 
 
 \size footnotesize 
-VALUE resultado = rb_iterate(chama_uma_funcao_ruby, Qnil, um_bloco_C, Qnil);
+VALUE resultado = rb_iterate(chama_uma_funcao_ruby, Qnil,
+\layout LyX-Code
+
+
+\size footnotesize 
+                             um_bloco_C, Qnil);
 \layout Standard
 
 
@@ -9314,13 +9379,14 @@ Method
 Call
 \family roman 
 \emph on 
-<tipo><retorno>
+[tipo][retorno
 \family default 
+]
 \emph default 
 Method
 \family roman 
 \emph on 
-<argumentos>
+[argumentos]
 \layout Standard
 
 
@@ -9337,7 +9403,7 @@ Valor de retorno
 
 O 
 \emph on 
-<tipo>
+[tipo]
 \emph default 
  pode ser 
 \family typewriter 
@@ -9367,7 +9433,7 @@ jobject
  sobre o qual o método será aplicado.
  O tipo de retorno é indicado em 
 \emph on 
-<retorno>
+[retorno]
 \emph default 
 : 
 \family typewriter 
@@ -9633,7 +9699,12 @@ jstring entrada = (*J)->NewStringUTF(J, "entrada");
 
 
 \size footnotesize 
-long retorno = (*J)->CallStaticIntMethod(J, exemplo, teste, entrada, (jint)2);
+long retorno = (*J)->CallStaticIntMethod(J, exemplo, teste,
+\layout LyX-Code
+
+
+\size footnotesize 
+                                         entrada, (jint)2);
 \layout Standard
 
 
@@ -9925,7 +9996,7 @@ lua_pushinteger(L, 2);
 
 
 \size footnotesize 
-lua_call(L, 2, 1);                   
+lua_call(L, 2, 1);               
 \emph on 
 /* Chama a função com 2 parâmetros,
 \layout LyX-Code
@@ -9940,7 +10011,13 @@ lua_call(L, 2, 1);
 \size footnotesize 
 long retorno = lua_tointeger(L, -1); 
 \emph on 
-/* Obtém o resultado no topo da pilha (-1) */
+/* Obtém o resultado no
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+                                        topo da pilha (-1) */
 \layout LyX-Code
 
 
@@ -11291,13 +11368,14 @@ loader
 Java_
 \family default 
 \emph on 
-<nome da classe>
+[nome da classe
 \family typewriter 
+]
 \emph default 
 _
 \family default 
 \emph on 
-<nome do método>
+[nome do método]
 \emph default 
 .
  No caso de sobrecarga de funções, um sufixo é adicionado indicando o tipo
@@ -11823,16 +11901,24 @@ int teste_lua(lua_State* L) {
 
 
 \size footnotesize 
-   const char* entrada = luaL_checkstring(L, 1); 
 \emph on 
-/* Obtém o primeiro parâmetro */
+   /* Obtém o primeiro parâmetro */
 \layout LyX-Code
 
 
 \size footnotesize 
-   long n = luaL_checkinteger(L, 2);             
+   const char* entrada = luaL_checkstring(L, 1);
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
-/* Obtém o segundo parâmetro */
+   /* Obtém o segundo parâmetro */
+\layout LyX-Code
+
+
+\size footnotesize 
+   long n = luaL_checkinteger(L, 2);
 \layout LyX-Code
 
 
@@ -11844,16 +11930,24 @@ n", entrada, n);
 
 
 \size footnotesize 
-   lua_pushinteger(L, 42);                       
 \emph on 
-/* Empilha o valor de retorno */
+   /* Empilha o valor de retorno */
 \layout LyX-Code
 
 
 \size footnotesize 
-   return 1;                             
+   lua_pushinteger(L, 42);
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
-/* Retorna um valor, do topo da pilha */
+   /* Retorna um valor, do topo da pilha */
+\layout LyX-Code
+
+
+\size footnotesize 
+   return 1;
 \layout LyX-Code
 
 
@@ -13259,16 +13353,24 @@ script_err teste_lua(script_env* env) {
 
 
 \size footnotesize 
-   char* entrada = script_get_string(env, 0);  
 \emph on 
-/* Entrada, índice 0: string */
+   /* Entrada, índice 0: string */
 \layout LyX-Code
 
 
 \size footnotesize 
-   int n = script_get_int(env, 1);             
+   char* entrada = script_get_string(env, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
-/* Entrada, índice 1: inteiro */
+   /* Entrada, índice 1: inteiro */
+\layout LyX-Code
+
+
+\size footnotesize 
+   int n = script_get_int(env, 1);
 \layout LyX-Code
 
 
@@ -13296,9 +13398,13 @@ n", entrada, n);
 
 
 \size footnotesize 
-   script_put_int(env, 0, 42);                 
 \emph on 
-/* Retorno, índice 0: inteiro */
+   /* Retorno, índice 0: inteiro */
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_put_int(env, 0, 42);
 \layout LyX-Code
 
 
@@ -13368,13 +13474,13 @@ done
  script_plugin_
 \family default 
 \emph on 
-<operação>
+[operação]
 \family typewriter 
 \emph default 
 _
 \family default 
 \emph on 
-<linguagem>
+[linguagem]
 \emph default 
 .
 \layout Standard
@@ -13384,7 +13490,7 @@ A função
 script_plugin_init_
 \family default 
 \emph on 
-<linguagem>
+[linguagem]
 \emph default 
  é responsável pela inicialização de um plugin, e é chamada pela função
  
@@ -13397,7 +13503,7 @@ script_init
 script_plugin_init_
 \family default 
 \emph on 
-<linguagem>
+[linguagem]
 \emph default 
  um ponteiro 
 \family typewriter 
@@ -13436,7 +13542,7 @@ A função
 script_plugin_run_
 \family default 
 \emph on 
-<linguagem>
+[linguagem]
 \emph default 
  é invocada por 
 \family typewriter 
@@ -13471,7 +13577,7 @@ A função
 script_plugin_call_
 \family default 
 \emph on 
-<linguagem>
+[linguagem]
 \emph default 
  é usada por 
 \family typewriter 
@@ -13487,7 +13593,7 @@ script_call
 script_plugin_run_
 \family default 
 \emph on 
-<linguagem>
+[linguagem]
 \emph default 
 .
  Caso a função solicitada não tenha sido definida na máquina virtual, 
@@ -13496,7 +13602,7 @@ script_plugin_call_
 \family default 
 \emph on 
 \SpecialChar \-
-<linguagem>
+[linguagem]
 \emph default 
  deve retornar a constante 
 \family typewriter 
@@ -13534,7 +13640,7 @@ script_call
 script_plugin_call_
 \family default 
 \emph on 
-<linguagem>
+[linguagem]
 \emph default 
  em cada plugin, e tentando o próximo a cada vez que recebe 
 \family typewriter 
@@ -13548,7 +13654,7 @@ Finalmente, a função
 script_plugin_done_
 \family default 
 \emph on 
-<linguagem>
+[linguagem]
 \emph default 
  é chamada por 
 \family typewriter 
@@ -13699,7 +13805,9 @@ Como comentado na seção anterior, a função
 script_plugin_init_
 \family default 
 \emph on 
-<linguagem>
+lin\SpecialChar \-
+gua\SpecialChar \-
+gem
 \emph default 
  retorna à biblioteca principal um 
 \family typewriter 
@@ -13714,7 +13822,9 @@ script_plugin_state
 script_plugin_init_
 \family default 
 \emph on 
-<linguagem>
+lin\SpecialChar \-
+gua\SpecialChar \-
+gem
 \emph default 
 , para que o plugin possa fazer chamadas à biblioteca principal, e um identifica
 dor que permita ao plugin acessar a estrutura de dados que representa na
@@ -13753,23 +13863,35 @@ lua_State
 
 
 \size footnotesize 
-lua_pushstring(L, "LibScript.env"); 
 \emph on 
-  /* Empilha o índice */
+/* Empilha o índice */
 \layout LyX-Code
 
 
 \size footnotesize 
-lua_pushlightuserdata(L, env);        
+lua_pushstring(L, "LibScript.env");
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
 /* Empilha o ambiente LibScript */
 \layout LyX-Code
 
 
 \size footnotesize 
-lua_settable(L, LUA_REGISTRYINDEX);   
+lua_pushlightuserdata(L, env);
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
 /* registro["LibScript.env"] = env */
+\layout LyX-Code
+
+
+\size footnotesize 
+lua_settable(L, LUA_REGISTRYINDEX);
 \layout Standard
 
 
@@ -13854,7 +13976,7 @@ script_plugin_init_perl
 "package 
 \family default 
 \emph on 
-<ambiente>
+[ambiente]
 \family typewriter 
 \emph default 
 ;"
@@ -13893,13 +14015,13 @@ char* namespace = script_namespace(env);
 \size footnotesize 
 \emph on 
 /* Cria o módulo.
- O primeiro parâmetro é o nome do módulo,
+ O primeiro parâmetro é o nome do módulo, o segundo
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-   o segundo a lista de métodos do módulo, que será inicialmente vazio.
+   a lista de métodos do módulo, que será inicialmente vazio.
  */
 \layout LyX-Code
 
@@ -14251,7 +14373,7 @@ rb_define_class
 class 
 \family default 
 \emph on 
-<Nome>
+[Nome]
 \emph default 
  via Ruby geram um erro indicando que o valor já foi definido com outro
  tipo.
@@ -14260,16 +14382,16 @@ class
 class 
 \family default 
 \emph on 
-<Nome>
+[Nome]
 \emph default 
  para um 
 \emph on 
-<Nome>
+[Nome]
 \emph default 
  já existente é entendida como a continuação da descrição da classe, e não
  como a redefinição de 
 \emph on 
-<Nome>
+[Nome]
 \emph default 
 .
  Python, por sua vez, não disponibiliza recursos na API para a descarga
@@ -14350,7 +14472,13 @@ void script_plugin_done_ruby(script_ruby_state state) {
 
 \size footnotesize 
 \emph on 
-   /* Decrementa o contador de estados, uma variável global 
+   /* Decrementa o contador de estados,
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+      uma variável global 
 \emph default 
 static
 \emph on 
@@ -14436,23 +14564,38 @@ A transferência de dados entre a biblioteca principal e os plugins é concentrada
 
 Na implementação do plugin LibScript-Lua, a função 
 \family typewriter 
-script_lua_stack_to_buffer
+script_\SpecialChar \-
+lua_\SpecialChar \-
+stack_\SpecialChar \-
+to_\SpecialChar \-
+buffer
 \family default 
  converte o conteúdo da pilha de Lua para o buffer de parâmetros de LibScript.
  A função do plugin responsável por invocar funções Lua a partir de C, 
 \family typewriter 
-script_plugin_call_lua
+script_\SpecialChar \-
+plugin_\SpecialChar \-
+call_\SpecialChar \-
+lua
 \family default 
 , usa a função 
 \family typewriter 
-script_lua_stack_to_buffer
+script_\SpecialChar \-
+lua_\SpecialChar \-
+stack_\SpecialChar \-
+to_\SpecialChar \-
+buffer
 \family default 
  para armazenar no buffer LibScript os valores de retorno da função Lua
  invocada, já que estes são retornados na pilha virtual.
  Quando o código Lua chama funções implementadas em C ou em outro plugin,
  
 \family typewriter 
-script_lua_stack_to_buffer
+script_\SpecialChar \-
+lua_\SpecialChar \-
+stack_\SpecialChar \-
+to_\SpecialChar \-
+buffer
 \family default 
  é usada para converter os parâmetros de entrada da função, também recebidos
  na pilha virtual.
@@ -14471,9 +14614,14 @@ static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
 
 
 \size footnotesize 
-   nargs = lua_gettop(L);    
+   
 \emph on 
 /* Número de elementos na pilha de Lua */
+\layout LyX-Code
+
+
+\size footnotesize 
+   nargs = lua_gettop(L);
 \layout LyX-Code
 
 
@@ -14492,13 +14640,13 @@ static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
 \size footnotesize 
       
 \emph on 
-/* Verifica o tipo Lua do elemento na posição i da pilha */
+/* Verifica o tipo Lua do elemento na posição i da pilha
 \layout LyX-Code
 
 
 \size footnotesize 
 \emph on 
-      /* e para cada tipo, converte o elemento e o armazena no buffer */
+      e para cada tipo, converte o elemento e o armazena no buffer */
 \layout LyX-Code
 
 
@@ -14654,9 +14802,13 @@ static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
 
 
 \size footnotesize 
-   int len = script_buffer_len(env); 
 \emph on 
-/* Número de elementos no buffer */
+   /* Número de elementos no buffer */
+\layout LyX-Code
+
+
+\size footnotesize 
+   int len = script_buffer_len(env);
 \layout LyX-Code
 
 
@@ -14703,10 +14855,18 @@ static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
 
 
 \size footnotesize 
-         s = script_get_string(env, i); 
+         
 \emph on 
 /* A string pertence ao chamador.
  */
+\size default 
+\emph default 
+ 
+\layout LyX-Code
+
+
+\size footnotesize 
+         s = script_get_string(env, i);
 \layout LyX-Code
 
 
@@ -14716,10 +14876,20 @@ static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
 
 
 \size footnotesize 
-         free(s); 
 \emph on 
-/* Libera a string, já que Lua armazena sua própria cópia.
+         /* Libera a string,
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+            já que Lua armazena sua própria cópia.
  */
+\layout LyX-Code
+
+
+\size footnotesize 
+         free(s);
 \layout LyX-Code
 
 
@@ -14940,16 +15110,24 @@ static void script_python_tuple_to_buffer(script_env* env, PyObject* tuple)
 
 
 \size footnotesize 
-   int len = PyTuple_GET_SIZE(tuple); 
 \emph on 
-/* Número de elementos da tupla */
+   /* Número de elementos da tupla */
 \layout LyX-Code
 
 
 \size footnotesize 
-   script_reset_buffer(env);          
+   int len = PyTuple_GET_SIZE(tuple);
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
-/* Esvazia o buffer LibScript */
+   /* Esvazia o buffer LibScript */
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_reset_buffer(env);
 \layout LyX-Code
 
 
@@ -14959,17 +15137,25 @@ static void script_python_tuple_to_buffer(script_env* env, PyObject* tuple)
 
 
 \size footnotesize 
-      PyObject* o = PyTuple_GET_ITEM(tuple, i); 
 \emph on 
-/* Obtém elemento da tupla */
+      /* Obtém elemento da tupla */
 \layout LyX-Code
 
 
 \size footnotesize 
-      script_python_put_object(env, i, o);      
+      PyObject* o = PyTuple_GET_ITEM(tuple, i);
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
-/* Insere-o no buffer.
+      /* Insere-o no buffer.
  */
+\layout LyX-Code
+
+
+\size footnotesize 
+      script_python_put_object(env, i, o);
 \layout LyX-Code
 
 
@@ -15194,16 +15380,24 @@ PyObject *ret, *args;
 
 
 \size footnotesize 
-args = script_python_buffer_to_tuple(env);  
 \emph on 
 /* Obtém o parâmetros de entrada */
 \layout LyX-Code
 
 
 \size footnotesize 
-ret = PyEval_CallObject(func, args); 
+args = script_python_buffer_to_tuple(env);
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
-       /* Chama uma função Python */
+/* Chama uma função Python */
+\layout LyX-Code
+
+
+\size footnotesize 
+ret = PyEval_CallObject(func, args);
 \layout LyX-Code
 
 
@@ -15215,44 +15409,68 @@ ret = PyEval_CallObject(func, args);
 
 
 \size footnotesize 
-if (ret == Py_None)                         
 \emph on 
 /* Se a função não retornou valor */
 \layout LyX-Code
 
 
 \size footnotesize 
-   script_reset_buffer(env);                
-\emph on 
-/* Apenas zere o buffer LibScript */
+if (ret == Py_None)
 \layout LyX-Code
 
 
 \size footnotesize 
-else if (PyTuple_Check(ret))                
+\emph on 
+   /* Apenas zere o buffer LibScript */
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_reset_buffer(env);
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
 /* Se retornou uma tupla */
 \layout LyX-Code
 
 
 \size footnotesize 
-   script_python_tuple_to_buffer(env, ret); 
-\emph on 
-/* Insira seus elementos no buffer */
+else if (PyTuple_Check(ret))
 \layout LyX-Code
 
 
 \size footnotesize 
-else                                        
+\emph on 
+   /* Insira seus elementos no buffer */
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_python_tuple_to_buffer(env, ret);
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
 /* Se retornou outro tipo de objeto */
 \layout LyX-Code
 
 
 \size footnotesize 
-   script_python_put_object(env, 0, ret);   
+else
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
-/* Insira-o como único elemento */
+   /* Insira-o como único elemento */
+\layout LyX-Code
+
+
+\size footnotesize 
+   script_python_put_object(env, 0, ret);
 \layout Standard
 
 
@@ -15273,16 +15491,24 @@ No tratador de chamadas a funções externas do plugin, a comunicação no sentido
 
 
 \size footnotesize 
-script_python_tuple_to_buffer(env, args);    
 \emph on 
 /* Obtém o parâmetros de entrada */
 \layout LyX-Code
 
 
 \size footnotesize 
-err = script_call(env, fn_name);             
+script_python_tuple_to_buffer(env, args);
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
 /* Chama um função via LibScript */
+\layout LyX-Code
+
+
+\size footnotesize 
+err = script_call(env, fn_name);
 \layout LyX-Code
 
 
@@ -15298,44 +15524,68 @@ switch(script_buffer_len(env)) {
 
 
 \size footnotesize 
-case 0:                                      
 \emph on 
- /* Se a função não retornou valor */
+/* Se a função não retornou valor */
 \layout LyX-Code
 
 
 \size footnotesize 
-   Py_RETURN_NONE;                           
-\emph on 
- /* Retorne o valor Python 'None' */
+case 0:
 \layout LyX-Code
 
 
 \size footnotesize 
-case 1:                                      
 \emph on 
- /* Se retornou um único valor */
+   /* Retorne o valor Python 'None' */
 \layout LyX-Code
 
 
 \size footnotesize 
-   return script_python_get_object(env, 0);  
-\emph on 
- /* Converta e retorne-o */
+   Py_RETURN_NONE;
 \layout LyX-Code
 
 
 \size footnotesize 
-default:                                      
+\emph on 
+/* Se retornou um único valor */
+\layout LyX-Code
+
+
+\size footnotesize 
+case 1:
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Converta e retorne-o */
+\layout LyX-Code
+
+
+\size footnotesize 
+   return script_python_get_object(env, 0);
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
 /* Se retornou mais de um valor */
 \layout LyX-Code
 
 
 \size footnotesize 
-   return script_python_buffer_to_tuple(env); 
+default:
+\layout LyX-Code
+
+
+\size footnotesize 
 \emph on 
-/* Retorne-os em uma tupla */
+   /* Retorne-os em uma tupla */
+\layout LyX-Code
+
+
+\size footnotesize 
+   return script_python_buffer_to_tuple(env);
 \layout LyX-Code
 
 
@@ -16582,23 +16832,35 @@ snprintf(code, LEN_CODE,
 
 
 \size footnotesize 
-   "bootstrap LibScript;"   
 \emph on 
-/* Inicializa o módulo de extensão */
+   /* Inicializa o módulo de extensão */
 \layout LyX-Code
 
 
 \size footnotesize 
-   "package %s;" 
-\emph on 
-           /* Declara o pacote do ambiente */
+   "bootstrap LibScript;"
 \layout LyX-Code
 
 
 \size footnotesize 
-   "$LibScript::env = %p;"  
 \emph on 
-/* Armazena o ponteiro do ambiente em Perl */
+   /* Declara o pacote do ambiente */
+\layout LyX-Code
+
+
+\size footnotesize 
+   "package %s;"
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+   /* Armazena o ponteiro do ambiente em Perl */
+\layout LyX-Code
+
+
+\size footnotesize 
+   "$LibScript::env = %p;"
 \layout LyX-Code
 
 
@@ -16614,7 +16876,13 @@ snprintf(code, LEN_CODE,
 
 \size footnotesize 
 \emph on 
-      /* Extrai o nome do método do nome qualificado 
+      /* Extrai o nome do método
+\layout LyX-Code
+
+
+\size footnotesize 
+\emph on 
+         do nome qualificado 
 \begin_inset Quotes eld
 \end_inset 
 

@@ -836,11 +836,11 @@ seguinte equivale a chamar \texttt{PyObject\_Str} sobre um objeto
 Python qualquer \texttt{obj}:
 
 \begin{lyxcode}
-\emph{\footnotesize /{*}~Esta~é~uma~função~vararg~que~recebe~como~argumentos~adicionais~uma~lista}{\footnotesize \par}
+\emph{\footnotesize /{*}~Esta~é~uma~função~vararg~que~recebe~como~argumentos~adicionais}{\footnotesize \par}
 
-~\emph{\footnotesize ~~terminada~em~NULL~de~PyObjects~a~serem~passados~à~função~Python~indicada}{\footnotesize \par}
+~\emph{\footnotesize ~~uma~lista~terminada~em~NULL~de~PyObjects~a~serem~passados~à}{\footnotesize \par}
 
-~\emph{\footnotesize ~~no~primeiro~argumento.~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~função~Python~indicada~no~primeiro~argumento.~{*}/}{\footnotesize \par}
 
 {\footnotesize PyObject{*}~result~=~PyObject\_CallFunctionObjArgs(str,~obj,~NULL);}{\footnotesize \par}
 \end{lyxcode}
@@ -950,13 +950,21 @@ possui 54 campos ao todo.%
 
 ~{\footnotesize ~~PyObject\_HEAD\_INIT(NULL)}{\footnotesize \par}
 
-~{\footnotesize ~~.tp\_name~=~\char`\"{}point\char`\"{},~~~~~~~~~~~~}~\emph{\footnotesize /{*}~O~nome~da~classe~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~O~nome~da~classe~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~.tp\_basicsize~=~sizeof(point),~}~\emph{\footnotesize /{*}~O~tamanho~da~área~de~memória~a~ser~alocada~{*}/}{\footnotesize \par}
+~{\footnotesize ~~.tp\_name~=~\char`\"{}point\char`\"{},}{\footnotesize \par}
 
-~{\footnotesize ~~.tp\_getattr~=~point\_getattr,~~~}~\emph{\footnotesize /{*}~A~função~de~acesso~a~atributos~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~O~tamanho~da~área~de~memória~a~ser~alocada~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~.tp\_flags~=~Py\_TPFLAGS\_DEFAULT~}~\emph{\footnotesize /{*}~Classe~não~requer~tratamentos~especiais~{*}/}{\footnotesize \par}
+~{\footnotesize ~~.tp\_basicsize~=~sizeof(point),}{\footnotesize \par}
+
+~{\footnotesize ~}~\emph{\footnotesize /{*}~A~função~de~acesso~a~atributos~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~.tp\_getattr~=~point\_getattr,}{\footnotesize \par}
+
+~\emph{\footnotesize ~~/{*}~Classe~não~requer~tratamentos~especiais~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~.tp\_flags~=~Py\_TPFLAGS\_DEFAULT}{\footnotesize \par}
 
 {\footnotesize \};}{\footnotesize \par}
 \end{lyxcode}
@@ -1246,9 +1254,9 @@ implementação em C é dada abaixo:
 
 ~{\footnotesize ~~point{*}~p\_orig;}{\footnotesize \par}
 
-~\emph{\footnotesize ~~/{*}~Ruby~pode~chamar~esta~função~com~o~mesmo~objeto~nos~dois~parâmetros;}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~Ruby~pode~chamar~esta~função~com~o~mesmo~objeto~nos~dois}{\footnotesize \par}
 
-~\emph{\footnotesize ~~~~~nesse~caso,~ignore~a~chamada~e~retorne~o~objeto~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~~~~parâmetros;~nesse~caso,~ignore~a~chamada~e~retorne~o~objeto~{*}/}{\footnotesize \par}
 
 ~{\footnotesize ~~if~(copy~==~orig)~return~copy;}{\footnotesize \par}
 
@@ -1289,7 +1297,9 @@ como feito na seção anterior para Python:
 Estas funções também são registradas como métodos de \texttt{Point}:
 
 \begin{lyxcode}
-{\footnotesize rb\_define\_method(point\_class,~\char`\"{}initialize\_copy\char`\"{},~point\_initialize\_copy,~1);}{\footnotesize \par}
+{\footnotesize rb\_define\_method(point\_class,~\char`\"{}initialize\_copy\char`\"{},}{\footnotesize \par}
+
+~{\footnotesize ~~~~~~~~~~~~~~~~point\_initialize\_copy,~1);}{\footnotesize \par}
 
 {\footnotesize rb\_define\_method(point\_class,~\char`\"{}distance\char`\"{},~point\_distance,~0);}{\footnotesize \par}
 \end{lyxcode}
@@ -1325,7 +1335,9 @@ depois altera o valor da variável global para zero:
 
 {\footnotesize VALUE~obj~=~rb\_gv\_get(\char`\"{}obj\char`\"{});}{\footnotesize \par}
 
-{\footnotesize rb\_iv\_set(obj,~\char`\"{}c\char`\"{},~g);}~\emph{\footnotesize /{*}~Equivale~a:~rb\_ivar\_set(obj,~rb\_intern(\char`\"{}c\char`\"{}),~g);~{*}/}{\footnotesize \par}
+\emph{\footnotesize /{*}~Equivale~a:~rb\_ivar\_set(obj,~rb\_intern(\char`\"{}c\char`\"{}),~g);~{*}/}{\footnotesize \par}
+
+{\footnotesize rb\_iv\_set(obj,~\char`\"{}c\char`\"{},~g);}{\footnotesize \par}
 
 \emph{\footnotesize /{*}~Zera~a~variável~global~{*}/}{\footnotesize \par}
 
@@ -1379,9 +1391,9 @@ Arrays de elementos primitivos são tratados de forma similar a strings,
 diferentemente de arrays de objetos%
 \footnote{Arrays multi-dimensionais são considerados {}``arrays de arrays''
 e, portanto, são também arrays de objetos.%
-}. Há funções para realizar a cópia de arrays (\texttt{Get}/\texttt{Set}\emph{<tipo}>\texttt{\-ArrayRegion}),
+}. Há funções para realizar a cópia de arrays (\texttt{Get}/\texttt{Set}\emph{{[}tip}\texttt{\emph{o{]}}}\texttt{\-ArrayRegion}),
 funções que retornam ponteiros para o array podendo ou não realizar
-cópias, de forma análoga a \texttt{GetStringChars} (\texttt{Get}/\texttt{Release}\emph{<tipo}>\texttt{ArrayElements})
+cópias, de forma análoga a \texttt{GetStringChars} (\texttt{Get}/\texttt{Release}\emph{{[}tipo{]}}\texttt{ArrayElements})
 e que podem acessar o buffer interno da JVM diretamente, como em \texttt{GetStringCritical}
 (\texttt{Get}/\texttt{Release\-PrimitiveArrayCritical}). Para arrays
 de objetos, não é possível obter um ponteiro para o buffer interno
@@ -1574,9 +1586,9 @@ o estado a que se referem. Isto será discutido mais adiante, na Seção
 }:
 
 \begin{lyxcode}
-{\footnotesize lua\_pushinteger(L,~123);~~~~~~}~\emph{\footnotesize /{*}~Insere~o~número~123~na~pilha~{*}/}{\footnotesize \par}
+{\footnotesize lua\_pushinteger(L,~123);~~}~\emph{\footnotesize /{*}~Insere~o~número~123~na~pilha~{*}/}{\footnotesize \par}
 
-{\footnotesize lua\_setglobal(L,~\char`\"{}foo\char`\"{});~~~~~~}~\emph{\footnotesize /{*}~Atribui~o~número~123~na~global}~{\footnotesize foo}~\emph{\footnotesize {*}/}{\footnotesize \par}
+{\footnotesize lua\_setglobal(L,~\char`\"{}foo\char`\"{});~~}~\emph{\footnotesize /{*}~Atribui~o~número~123~na~global}~{\footnotesize foo}~\emph{\footnotesize {*}/}{\footnotesize \par}
 \end{lyxcode}
 
 
@@ -1815,7 +1827,9 @@ podemos armazenar um objeto C em um valor Perl da seguinte forma:
 
 \emph{\footnotesize /{*}~Manipula~o}~{\footnotesize point}~\emph{\footnotesize em~C.~Quando~v~for~retornado~para~Perl,}{\footnotesize \par}
 
-\emph{\footnotesize ele~será~uma~variável~opaca~(seu~conteúdo~não~será~acessível~via~Perl).~{*}/}{\footnotesize \par}
+\emph{\footnotesize ele~será~uma~variável~opaca~(seu~conteúdo~não~será~acessível}{\footnotesize \par}
+
+\emph{\footnotesize via~Perl).~{*}/}{\footnotesize \par}
 
 {\footnotesize p->x~=~100;~p->y~=~200;}{\footnotesize \par}
 \end{lyxcode}
@@ -1873,11 +1887,13 @@ elementos da série de Fibonacci:
 
 {\footnotesize for~(int~i~=~2;~i~<~10;~i++)~\{}{\footnotesize \par}
 
-~\emph{\footnotesize ~~/{*}~Obviamente~seria~mais~eficiente~armazenar~os~valores~em~variáveis}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~Obviamente~seria~mais~eficiente~armazenar~os~valores~em}{\footnotesize \par}
 
-~\emph{\footnotesize ~~~~~temporárias~em~C,~mas~obtenhamos~os~dois~últimos~valores~da}{\footnotesize \par}
+~\emph{\footnotesize ~~~~~variáveis~temporárias~em~C,~mas~obtenhamos~os~dois~últimos}{\footnotesize \par}
 
-~\emph{\footnotesize ~~~~~seqüência~de~volta~do~array~Perl~para~fins~de~ilustração:~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~~~~valores~da~seqüência~de~volta~do~array~Perl~para~fins~de}{\footnotesize \par}
+
+~\emph{\footnotesize ~~~~~ilustração:~{*}/}{\footnotesize \par}
 
 ~{\footnotesize ~~SV{*}{*}~penultimo\_sv~=~av\_fetch(a,~i-2,~FALSE);}{\footnotesize \par}
 
@@ -2447,17 +2463,27 @@ uma referência local nova.
 
 ~{\footnotesize ~~if~(!concat)~cache\_ids(J);}{\footnotesize \par}
 
-~{\footnotesize ~~jstring~s~=~({*}J)->NewString(J,~NULL,~0);~~~~}~\emph{\footnotesize /{*}~s~=~\char`\"{}\char`\"{}~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~s~=~\char`\"{}\char`\"{}~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~int~len~=~({*}J)->GetArrayLength(J,~a);~~~~}~\emph{\footnotesize ~~~/{*}~len~=~a.length~{*}/}{\footnotesize \par}
+~{\footnotesize ~~jstring~s~=~({*}J)->NewString(J,~NULL,~0);}{\footnotesize \par}
+
+~\emph{\footnotesize ~~/{*}~len~=~a.length~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~int~len~=~({*}J)->GetArrayLength(J,~a);}{\footnotesize \par}
 
 ~{\footnotesize ~~for~(int~i~=~0;~i~<~len;~i++)~\{}{\footnotesize \par}
 
-~{\footnotesize ~~~~~jobject~o~=~({*}J)->GetObjectArrayElement(J,~a,~i);}~\emph{\footnotesize ~~~~~/{*}~o~=~a{[}i{]}~{*}/}{\footnotesize \par}
+~~~~~\emph{\footnotesize /{*}~o~=~a{[}i{]}~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~~~~jstring~os~=~({*}J)->CallObjectMethod(J,~o,~toString);}~\emph{\footnotesize ~~/{*}~os~=~o.toString()~{*}/}{\footnotesize \par}
+~{\footnotesize ~~~~~jobject~o~=~({*}J)->GetObjectArrayElement(J,~a,~i);}{\footnotesize \par}
 
-~{\footnotesize ~~~~~jstring~s2~=~({*}J)->CallObjectMethod(J,~s,~concat,~os);}~\emph{\footnotesize /{*}~s2~=~s.concat(os)~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~~~~/{*}~os~=~o.toString()~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~~~~jstring~os~=~({*}J)->CallObjectMethod(J,~o,~toString);}{\footnotesize \par}
+
+~\emph{\footnotesize ~~~~~/{*}~s2~=~s.concat(os)~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~~~~jstring~s2~=~({*}J)->CallObjectMethod(J,~s,~concat,~os);}{\footnotesize \par}
 
 ~{\footnotesize ~~~~~({*}J)->DeleteLocalRef(J,~s);}{\footnotesize \par}
 
@@ -2868,7 +2894,9 @@ de entrada e saída entre C e o interpretador.
 \begin{lyxcode}
 {\footnotesize ID~teste~=~rb\_intern(\char`\"{}teste\char`\"{});}{\footnotesize \par}
 
-{\footnotesize VALUE~val\_result~=~rb\_funcall(Qnil,~teste,~2,~rb\_str\_new2(\char`\"{}entrada\char`\"{}),~INT2NUM(2));}{\footnotesize \par}
+{\footnotesize VALUE~val\_result~=~rb\_funcall(Qnil,~teste,~2,}{\footnotesize \par}
+
+~{\footnotesize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~rb\_str\_new2(\char`\"{}entrada\char`\"{}),~INT2NUM(2));}{\footnotesize \par}
 
 {\footnotesize long~result~=~NUM2LONG(val\_result);}{\footnotesize \par}
 \end{lyxcode}
@@ -3026,7 +3054,9 @@ que recebe uma função~C como bloco de código.
 
 ~\emph{\footnotesize ~~nem~para~a~função~nem~para~o~bloco~{*}/}{\footnotesize \par}
 
-{\footnotesize VALUE~resultado~=~rb\_iterate(chama\_uma\_funcao\_ruby,~Qnil,~um\_bloco\_C,~Qnil);}{\footnotesize \par}
+{\footnotesize VALUE~resultado~=~rb\_iterate(chama\_uma\_funcao\_ruby,~Qnil,}{\footnotesize \par}
+
+~{\footnotesize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~um\_bloco\_C,~Qnil);}{\footnotesize \par}
 \end{lyxcode}
 
 
@@ -3080,18 +3110,18 @@ de alguma das 90 funções da família \texttt{Call}{*}\texttt{Method}{*}.
 Os nomes das funções seguem a forma
 
 \begin{lyxcode}
-{\footnotesize Call}\textrm{\emph{\footnotesize <tipo><retorno>}}{\footnotesize Method}\textrm{\emph{\footnotesize <argumentos>}}{\footnotesize \par}
+{\footnotesize Call}\textrm{\emph{\footnotesize {[}tipo{]}{[}retorno}}\emph{\footnotesize {]}}{\footnotesize Method}\textrm{\emph{\footnotesize {[}argumentos{]}}}{\footnotesize \par}
 \end{lyxcode}
 
 
-O \emph{<tipo>} pode ser \texttt{Static} para funções estáticas, passando
-na chamada uma \texttt{jclass} como parâmetro; \texttt{Nonvirtual}
+O \emph{{[}tipo{]}} pode ser \texttt{Static} para funções estáticas,
+passando na chamada uma \texttt{jclass} como parâmetro; \texttt{Nonvirtual}
 para invocar implementações de um método em uma classe específica
 sobre um determinado objeto, passando uma \texttt{jclass} e um \texttt{jobject}
 como parâmetros; ou omitido para métodos de instância, passando o
 \texttt{jobject} sobre o qual o método será aplicado. O tipo de retorno
-é indicado em \emph{<retorno>}: \texttt{Void}, \texttt{Object}, \texttt{Int},
-etc.
+é indicado em \emph{{[}retorno{]}}: \texttt{Void}, \texttt{Object},
+\texttt{Int}, etc.
 
 
 
@@ -3150,7 +3180,9 @@ tipo \texttt{JNIEnv}, será discutido na Seção~\ref{sub:Java-Registro}).
 
 {\footnotesize jstring~entrada~=~({*}J)->NewStringUTF(J,~\char`\"{}entrada\char`\"{});}{\footnotesize \par}
 
-{\footnotesize long~retorno~=~({*}J)->CallStaticIntMethod(J,~exemplo,~teste,~entrada,~(jint)2);}{\footnotesize \par}
+{\footnotesize long~retorno~=~({*}J)->CallStaticIntMethod(J,~exemplo,~teste,}{\footnotesize \par}
+
+~{\footnotesize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~entrada,~(jint)2);}{\footnotesize \par}
 \end{lyxcode}
 
 
@@ -3233,11 +3265,13 @@ mais adiante na Seção~\ref{sub:Lua-Registro}.
 
 {\footnotesize lua\_pushinteger(L,~2);~~~~~~~~~~~~~~}~\emph{\footnotesize /{*}~Empilha~o~número~2~{*}/}{\footnotesize \par}
 
-{\footnotesize lua\_call(L,~2,~1);~~~~~~~~~~~~~~~~~~}~\emph{\footnotesize /{*}~Chama~a~função~com~2~parâmetros,}{\footnotesize \par}
+{\footnotesize lua\_call(L,~2,~1);~~~~~~~~~~~~~~}~\emph{\footnotesize /{*}~Chama~a~função~com~2~parâmetros,}{\footnotesize \par}
 
 ~\emph{\footnotesize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~e~espera~1~como~retorno~{*}/}{\footnotesize \par}
 
-{\footnotesize long~retorno~=~lua\_tointeger(L,~-1);}~\emph{\footnotesize /{*}~Obtém~o~resultado~no~topo~da~pilha~(-1)~{*}/}{\footnotesize \par}
+{\footnotesize long~retorno~=~lua\_tointeger(L,~-1);}~\emph{\footnotesize /{*}~Obtém~o~resultado~no}{\footnotesize \par}
+
+~\emph{\footnotesize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~topo~da~pilha~(-1)~{*}/}{\footnotesize \par}
 
 {\footnotesize lua\_pop(L,~1);~~~~~~~~~~~~~~~~~~~~~~}~\emph{\footnotesize /{*}~Remove-o~da~pilha~{*}/}{\footnotesize \par}
 \end{lyxcode}
@@ -3649,12 +3683,12 @@ de classes Java, com os protótipos de funções C no formato especificado
 pela JNI. Este formato especifica não apenas a assinatura dos parâmetros
 de entrada e tipo de retorno, mas também o nome da função, para que
 o \emph{loader} realize a ligação entre a função C e o método Java
-na máquina virtual. As funções devem se chamar \texttt{Java\_}\emph{<nome
-da classe>}\texttt{\_}\emph{<nome do método>}. No caso de sobrecarga
-de funções, um sufixo é adicionado indicando o tipo dos parâmetros
-de entrada (por exemplo, \texttt{Java\_Classe\_metodo\_\_DI} para
-a versão de \texttt{Classe.metodo} que aceita um \texttt{double} e
-um \texttt{int} como parâmetros).
+na máquina virtual. As funções devem se chamar \texttt{Java\_}\emph{{[}nome
+da classe}\texttt{\emph{{]}}}\texttt{\_}\emph{{[}nome do método{]}}.
+No caso de sobrecarga de funções, um sufixo é adicionado indicando
+o tipo dos parâmetros de entrada (por exemplo, \texttt{Java\_Classe\_metodo\_\_DI}
+para a versão de \texttt{Classe.metodo} que aceita um \texttt{double}
+e um \texttt{int} como parâmetros).
 
 Os parâmetros de entrada da função são um ponteiro para \texttt{JNIEnv},
 que representa uma thread da JVM, um \texttt{jobject} representando
@@ -3811,15 +3845,23 @@ a seguir:
 \begin{lyxcode}
 {\footnotesize int~teste\_lua(lua\_State{*}~L)~\{}{\footnotesize \par}
 
-~{\footnotesize ~~const~char{*}~entrada~=~luaL\_checkstring(L,~1);}~\emph{\footnotesize /{*}~Obtém~o~primeiro~parâmetro~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~Obtém~o~primeiro~parâmetro~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~long~n~=~luaL\_checkinteger(L,~2);~~~~~~~~~~~~}~\emph{\footnotesize /{*}~Obtém~o~segundo~parâmetro~{*}/}{\footnotesize \par}
+~{\footnotesize ~~const~char{*}~entrada~=~luaL\_checkstring(L,~1);}{\footnotesize \par}
+
+~\emph{\footnotesize ~~/{*}~Obtém~o~segundo~parâmetro~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~long~n~=~luaL\_checkinteger(L,~2);}{\footnotesize \par}
 
 ~{\footnotesize ~~printf(\char`\"{}Recebi~\%s~e~\%ld~\textbackslash{}n\char`\"{},~entrada,~n);}{\footnotesize \par}
 
-~{\footnotesize ~~lua\_pushinteger(L,~42);~~~~~~~~~~~~~~~~~~~~~~}~\emph{\footnotesize /{*}~Empilha~o~valor~de~retorno~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~Empilha~o~valor~de~retorno~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~return~1;~~~~~~~~~~~~~~~~~~~~~~~~~~~~}~\emph{\footnotesize /{*}~Retorna~um~valor,~do~topo~da~pilha~{*}/}{\footnotesize \par}
+~{\footnotesize ~~lua\_pushinteger(L,~42);}{\footnotesize \par}
+
+~\emph{\footnotesize ~~/{*}~Retorna~um~valor,~do~topo~da~pilha~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~return~1;}{\footnotesize \par}
 
 {\footnotesize \}}{\footnotesize \par}
 \end{lyxcode}
@@ -4320,9 +4362,13 @@ com \texttt{script\_call}.
 \begin{lyxcode}
 {\footnotesize script\_err~teste\_lua(script\_env{*}~env)~\{}{\footnotesize \par}
 
-~{\footnotesize ~~char{*}~entrada~=~script\_get\_string(env,~0);~}~\emph{\footnotesize /{*}~Entrada,~índice~0:~string~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~Entrada,~índice~0:~string~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~int~n~=~script\_get\_int(env,~1);~~~~~~~~~~~~}~\emph{\footnotesize /{*}~Entrada,~índice~1:~inteiro~{*}/}{\footnotesize \par}
+~{\footnotesize ~~char{*}~entrada~=~script\_get\_string(env,~0);}{\footnotesize \par}
+
+~\emph{\footnotesize ~~/{*}~Entrada,~índice~1:~inteiro~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~int~n~=~script\_get\_int(env,~1);}{\footnotesize \par}
 
 ~\emph{\footnotesize ~~/{*}~Sai~da~função~com~erro~se~algum~script\_get\_{*}~falhou~{*}/}{\footnotesize \par}
 
@@ -4332,7 +4378,9 @@ com \texttt{script\_call}.
 
 ~{\footnotesize ~~free(entrada);}{\footnotesize \par}
 
-~{\footnotesize ~~script\_put\_int(env,~0,~42);~~~~~~~~~~~~~~~~}~\emph{\footnotesize /{*}~Retorno,~índice~0:~inteiro~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~Retorno,~índice~0:~inteiro~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~script\_put\_int(env,~0,~42);}{\footnotesize \par}
 
 ~{\footnotesize ~~return~SCRIPT\_OK;}{\footnotesize \par}
 
@@ -4356,12 +4404,12 @@ Um plugin que embute uma linguagem de script deve implementar quatro
 operações: \texttt{init}, \texttt{run}, \texttt{call} e \texttt{done}.
 A biblioteca principal espera que a biblioteca dinâmica que implementa
 o plugin de uma linguagem exporte quatro funções, com nomes do tipo
-\texttt{script\_plugin\_}\emph{<operação>}\texttt{\_}\emph{<linguagem>}.
+\texttt{script\_plugin\_}\emph{{[}operação{]}}\texttt{\_}\emph{{[}linguagem{]}}.
 
-A função \texttt{script\_plugin\_init\_}\emph{<linguagem>} é responsável
+A função \texttt{script\_plugin\_init\_}\emph{{[}linguagem{]}} é responsável
 pela inicialização de um plugin, e é chamada pela função \texttt{script\_init}
 da biblioteca principal. Na inicialização de um plugin, a biblioteca
-principal passa à função \texttt{script\_plugin\_init\_}\emph{<linguagem>}
+principal passa à função \texttt{script\_plugin\_init\_}\emph{{[}linguagem{]}}
 um ponteiro \texttt{script\_env} e recebe um \texttt{script\_plugin\_state},
 que é um tipo opaco que é sempre passado de volta ao plugin nas demais
 chamadas. Cada plugin define a sua representação interna para \texttt{script\_plugin\_state}.
@@ -4371,7 +4419,7 @@ a partir deste handle. Na Seção~\ref{sub:Representa=E7=E3o-de-estados}
 discutiremos como cada plugin representa o ambiente e o seu estado
 interno em \texttt{script\_plugin\_state}.
 
-A função \texttt{script\_plugin\_run\_}\emph{<linguagem>} é invocada
+A função \texttt{script\_plugin\_run\_}\emph{{[}linguagem{]}} é invocada
 por \texttt{script\_run}. Ela recebe uma string contendo código da
 linguagem de script, executa este código na máquina virtual e retorna
 um valor de status indicando sucesso ou a ocorrência de erros de compilação
@@ -4382,15 +4430,15 @@ ser propagada usando a função \texttt{script\_set\_error\_message}
 da biblioteca principal. A mensagem armazenada por ela poderá ser
 posteriormente consultada pela aplicação com a função \texttt{script\_error\_message}.
 
-A função \texttt{script\_plugin\_call\_}\emph{<linguagem>} é usada
+A função \texttt{script\_plugin\_call\_}\emph{{[}linguagem{]}} é usada
 por \texttt{script\_call}, e é responsável por realizar chamadas a
 funções implementadas na linguagem embutida pelo plugin. Se a função
 foi definida no plugin, isto é, se uma função com o nome solicitado
 foi registrada na estrutura de dados que descreve o ambiente na máquina
 virtual, ela será executada, e o sucesso ou falha da execução será
-reportado de forma igual a \texttt{script\_plugin\_run\_}\emph{<linguagem>}.
+reportado de forma igual a \texttt{script\_plugin\_run\_}\emph{{[}linguagem{]}}.
 Caso a função solicitada não tenha sido definida na máquina virtual,
-\texttt{script\_plugin\_call\_}\emph{\-<linguagem>} deve retornar
+\texttt{script\_plugin\_call\_}\emph{\-{[}linguagem{]}} deve retornar
 a constante \texttt{SCRIPT\_ERRFNUNDEF}. Parâmetros de entrada e valores
 de retorno são passados através do buffer de parâmetros, usando as
 mesmas funções \texttt{script\_get\_{*}} e \texttt{script\_put\_{*}}
@@ -4402,10 +4450,10 @@ faz uso deste comportamento dos plugins para invocar funções de modo
 independente de linguagem. Inicialmente, ela tenta encontrar uma função
 solicitada na lista de funções C registradas. Caso não haja uma função
 C no ambiente virtual com este nome, \texttt{script\_call} tenta localizar
-a função nos plugins carregados, chamando a função com \texttt{script\_plugin\_call\_}\emph{<linguagem>}
+a função nos plugins carregados, chamando a função com \texttt{script\_plugin\_call\_}\emph{{[}linguagem{]}}
 em cada plugin, e tentando o próximo a cada vez que recebe \texttt{SCRIPT\_ERRFNUNDEF}.
 
-Finalmente, a função \texttt{script\_plugin\_done\_}\emph{<linguagem>}
+Finalmente, a função \texttt{script\_plugin\_done\_}\emph{{[}linguagem{]}}
 é chamada por \texttt{script\_done} quando um ambiente virtual é encerrado.
 Dependendo da representação interna usada no plugin, a finalização
 de um estado pode ou não implicar na finalização da máquina virtual.
@@ -4457,14 +4505,14 @@ relativo a um ambiente virtual LibScript dentro de um plugin damos
 o nome de \emph{estado virtual}, que pode ou não corresponder a um
 estado de execução isolado.
 
-Como comentado na seção anterior, a função \texttt{script\_plugin\_init\_}\emph{<linguagem>}
+Como comentado na seção anterior, a função \texttt{script\_plugin\_init\_}\emph{lin\-gua\-gem}
 retorna à biblioteca principal um \texttt{script\_plugin\_state},
 que é a representação opaca do seu estado virtual. O conteúdo desta
 representação varia de linguagem para linguagem, mas o princípio básico
 é que dois dados devem estar disponíveis a partir deste valor: uma
 referência para o ambiente virtual LibScript, recebido como parâmetro
-para \texttt{script\_plugin\_init\_}\emph{<linguagem>}, para que o
-plugin possa fazer chamadas à biblioteca principal, e um identificador
+para \texttt{script\_plugin\_init\_}\emph{lin\-gua\-gem}, para que
+o plugin possa fazer chamadas à biblioteca principal, e um identificador
 que permita ao plugin acessar a estrutura de dados que representa
 na linguagem o espaço de nome de funções acessíveis via LibScript.
 No plugin Lua, esta estrutura é uma tabela; em Python, um módulo;
@@ -4480,11 +4528,17 @@ O ponteiro para o ambiente LibScript é armazenado em Lua no registro,
 da seguinte forma:
 
 \begin{lyxcode}
-{\footnotesize lua\_pushstring(L,~\char`\"{}LibScript.env\char`\"{});}~\emph{\footnotesize ~~/{*}~Empilha~o~índice~{*}/}{\footnotesize \par}
+\emph{\footnotesize /{*}~Empilha~o~índice~{*}/}{\footnotesize \par}
 
-{\footnotesize lua\_pushlightuserdata(L,~env);~~~~~~~}~\emph{\footnotesize /{*}~Empilha~o~ambiente~LibScript~{*}/}{\footnotesize \par}
+{\footnotesize lua\_pushstring(L,~\char`\"{}LibScript.env\char`\"{});}{\footnotesize \par}
 
-{\footnotesize lua\_settable(L,~LUA\_REGISTRYINDEX);~~}~\emph{\footnotesize /{*}~registro{[}\char`\"{}LibScript.env\char`\"{}{]}~=~env~{*}/}{\footnotesize \par}
+\emph{\footnotesize /{*}~Empilha~o~ambiente~LibScript~{*}/}{\footnotesize \par}
+
+{\footnotesize lua\_pushlightuserdata(L,~env);}{\footnotesize \par}
+
+\emph{\footnotesize /{*}~registro{[}\char`\"{}LibScript.env\char`\"{}{]}~=~env~{*}/}{\footnotesize \par}
+
+{\footnotesize lua\_settable(L,~LUA\_REGISTRYINDEX);}{\footnotesize \par}
 \end{lyxcode}
 
 
@@ -4509,7 +4563,7 @@ um módulo XS, exposto na máquina virtual embutida como o pacote Perl
 o ponteiro para o ambiente virtual LibScript é armazenado neste pacote,
 na variável \texttt{\$LibScript::env}. O pacote que representa o ambiente
 virtual é criado pela função \texttt{script\_plugin\_init\_perl},
-executando a string de código \texttt{\char`\"{}package} \emph{<ambiente>}\texttt{;\char`\"{}}
+executando a string de código \texttt{\char`\"{}package} \emph{{[}ambiente{]}}\texttt{;\char`\"{}}
 com a função \texttt{Perl\_eval\_pv}.
 
 Como Python não dispõe de facilidades para disparar múltiplas máquinas
@@ -4524,9 +4578,9 @@ exibe a seqüência onde o módulo é criado e importado:
 
 {\footnotesize char{*}~namespace~=~script\_namespace(env);}{\footnotesize \par}
 
-\emph{\footnotesize /{*}~Cria~o~módulo.~O~primeiro~parâmetro~é~o~nome~do~módulo,}{\footnotesize \par}
+\emph{\footnotesize /{*}~Cria~o~módulo.~O~primeiro~parâmetro~é~o~nome~do~módulo,~o~segundo}{\footnotesize \par}
 
-~\emph{\footnotesize ~~o~segundo~a~lista~de~métodos~do~módulo,~que~será~inicialmente~vazio.~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~a~lista~de~métodos~do~módulo,~que~será~inicialmente~vazio.~{*}/}{\footnotesize \par}
 
 {\footnotesize PyObject{*}~module~=~Py\_InitModule3(namespace,~NULL);}{\footnotesize \par}
 
@@ -4644,17 +4698,17 @@ nas APIs (ou nas linguagens, de fato) para remover, respectivamente,
 classes ou módulos. Em Ruby, poderíamos atribuir \texttt{nil} à constante
 que representa a classe que descreve o ambiente virtual, mas depois
 disso não é possível definir uma nova classe em seu lugar: tanto \texttt{rb\_define\_class}
-via C como \texttt{class} \emph{<Nome>} via Ruby geram um erro indicando
-que o valor já foi definido com outro tipo. Como Ruby possui classes
-abertas, uma construção \texttt{class} \emph{<Nome>} para um \emph{<Nome>}
-já existente é entendida como a continuação da descrição da classe,
-e não como a redefinição de \emph{<Nome>}. Python, por sua vez, não
-disponibiliza recursos na API para a descarga de módulos, mas permite
-atribuir \texttt{None} à global referente ao módulo. O módulo pode
-ser importado novamente, mas a mesma instância dele, armazenada internamente
-por Python, será retornada. A seguinte sessão interativa de linha
-de comando permite observar este comportamento, que ocorre tanto diretamente
-em Python como via a API de C:
+via C como \texttt{class} \emph{{[}Nome{]}} via Ruby geram um erro
+indicando que o valor já foi definido com outro tipo. Como Ruby possui
+classes abertas, uma construção \texttt{class} \emph{{[}Nome{]}} para
+um \emph{{[}Nome{]}} já existente é entendida como a continuação da
+descrição da classe, e não como a redefinição de \emph{{[}Nome{]}}.
+Python, por sua vez, não disponibiliza recursos na API para a descarga
+de módulos, mas permite atribuir \texttt{None} à global referente
+ao módulo. O módulo pode ser importado novamente, mas a mesma instância
+dele, armazenada internamente por Python, será retornada. A seguinte
+sessão interativa de linha de comando permite observar este comportamento,
+que ocorre tanto diretamente em Python como via a API de C:
 
 \begin{lyxcode}
 {\footnotesize >\,{}>\,{}>~import~sys}{\footnotesize \par}
@@ -4682,7 +4736,9 @@ rotina de encerramento no plugin Ruby:
 \begin{lyxcode}
 {\footnotesize void~script\_plugin\_done\_ruby(script\_ruby\_state~state)~\{}{\footnotesize \par}
 
-~\emph{\footnotesize ~~/{*}~Decrementa~o~contador~de~estados,~uma~variável~global}~{\footnotesize static}~\emph{\footnotesize do~plugin.~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~Decrementa~o~contador~de~estados,}{\footnotesize \par}
+
+~\emph{\footnotesize ~~~~~uma~variável~global}~{\footnotesize static}~\emph{\footnotesize do~plugin.~{*}/}{\footnotesize \par}
 
 ~{\footnotesize ~~script\_ruby\_state\_count-{}-;}{\footnotesize \par}
 
@@ -4721,31 +4777,34 @@ de forma complementar, é usada para os valores de retorno quando C
 chama a linguagem de script e para os parâmetros de entrada quando
 uma chamada feita pela linguagem de script é tratada por código C.
 
-Na implementação do plugin LibScript-Lua, a função \texttt{script\_lua\_stack\_to\_buffer}
+Na implementação do plugin LibScript-Lua, a função \texttt{script\_\-lua\_\-stack\_\-to\_\-buffer}
 converte o conteúdo da pilha de Lua para o buffer de parâmetros de
 LibScript. A função do plugin responsável por invocar funções Lua
-a partir de C, \texttt{script\_plugin\_call\_lua}, usa a função \texttt{script\_lua\_stack\_to\_buffer}
-para armazenar no buffer LibScript os valores de retorno da função
-Lua invocada, já que estes são retornados na pilha virtual. Quando
-o código Lua chama funções implementadas em C ou em outro plugin,
-\texttt{script\_lua\_stack\_to\_buffer} é usada para converter os
-parâmetros de entrada da função, também recebidos na pilha virtual.
-A seguir, vemos a implementação desta função:
+a partir de C, \texttt{script\_\-plugin\_\-call\_\-lua}, usa a
+função \texttt{script\_\-lua\_\-stack\_\-to\_\-buffer} para armazenar
+no buffer LibScript os valores de retorno da função Lua invocada,
+já que estes são retornados na pilha virtual. Quando o código Lua
+chama funções implementadas em C ou em outro plugin, \texttt{script\_\-lua\_\-stack\_\-to\_\-buffer}
+é usada para converter os parâmetros de entrada da função, também
+recebidos na pilha virtual. A seguir, vemos a implementação desta
+função:
 
 \begin{lyxcode}
 {\footnotesize static~void~script\_lua\_stack\_to\_buffer(script\_env{*}~env,~lua\_State~{*}L)~\{}{\footnotesize \par}
 
 ~{\footnotesize ~~int~nargs;~int~i;~}{\footnotesize \par}
 
-~{\footnotesize ~~nargs~=~lua\_gettop(L);~~~}~\emph{\footnotesize /{*}~Número~de~elementos~na~pilha~de~Lua~{*}/}{\footnotesize \par}
+~{\footnotesize ~}~\emph{\footnotesize /{*}~Número~de~elementos~na~pilha~de~Lua~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~nargs~=~lua\_gettop(L);}{\footnotesize \par}
 
 ~{\footnotesize ~~script\_reset\_buffer(env);}~\emph{\footnotesize /{*}~Esvazia~o~buffer~LibScript~{*}/}{\footnotesize \par}
 
 ~{\footnotesize ~~for~(i~=~1;~i~<=~nargs;~i++)~\{}{\footnotesize \par}
 
-~{\footnotesize ~~~~}~\emph{\footnotesize /{*}~Verifica~o~tipo~Lua~do~elemento~na~posição~i~da~pilha~{*}/}{\footnotesize \par}
+~{\footnotesize ~~~~}~\emph{\footnotesize /{*}~Verifica~o~tipo~Lua~do~elemento~na~posição~i~da~pilha}{\footnotesize \par}
 
-~\emph{\footnotesize ~~~~~/{*}~e~para~cada~tipo,~converte~o~elemento~e~o~armazena~no~buffer~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~~~~e~para~cada~tipo,~converte~o~elemento~e~o~armazena~no~buffer~{*}/}{\footnotesize \par}
 
 ~{\footnotesize ~~~~~switch(lua\_type(L,~i))~\{~}{\footnotesize \par}
 
@@ -4803,7 +4862,9 @@ valores obtidos pelo retorno da função \texttt{script\_call}, que
 
 ~{\footnotesize ~~int~i;~char{*}~s;}{\footnotesize \par}
 
-~{\footnotesize ~~int~len~=~script\_buffer\_len(env);}~\emph{\footnotesize /{*}~Número~de~elementos~no~buffer~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~Número~de~elementos~no~buffer~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~int~len~=~script\_buffer\_len(env);}{\footnotesize \par}
 
 ~{\footnotesize ~~for~(i~=~0;~i~<~len;~i++)~\{}{\footnotesize \par}
 
@@ -4821,11 +4882,17 @@ valores obtidos pelo retorno da função \texttt{script\_call}, que
 
 ~{\footnotesize ~~~~~case~SCRIPT\_STRING:}{\footnotesize \par}
 
-~{\footnotesize ~~~~~~~~s~=~script\_get\_string(env,~i);}~\emph{\footnotesize /{*}~A~string~pertence~ao~chamador.~{*}/}{\footnotesize \par}
+~{\footnotesize ~~~~~~~}~\emph{\footnotesize /{*}~A~string~pertence~ao~chamador.~{*}/}~
+
+~{\footnotesize ~~~~~~~~s~=~script\_get\_string(env,~i);}{\footnotesize \par}
 
 ~{\footnotesize ~~~~~~~~lua\_pushstring(L,~s);}{\footnotesize \par}
 
-~{\footnotesize ~~~~~~~~free(s);}~\emph{\footnotesize /{*}~Libera~a~string,~já~que~Lua~armazena~sua~própria~cópia.~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~~~~~~~/{*}~Libera~a~string,}{\footnotesize \par}
+
+~\emph{\footnotesize ~~~~~~~~~~~já~que~Lua~armazena~sua~própria~cópia.~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~~~~~~~free(s);}{\footnotesize \par}
 
 ~{\footnotesize ~~~~~~~~break;}{\footnotesize \par}
 
@@ -4898,15 +4965,23 @@ os elementos de uma tupla no buffer:
 
 ~{\footnotesize ~~int~i;}{\footnotesize \par}
 
-~{\footnotesize ~~int~len~=~PyTuple\_GET\_SIZE(tuple);}~\emph{\footnotesize /{*}~Número~de~elementos~da~tupla~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~Número~de~elementos~da~tupla~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~script\_reset\_buffer(env);~~~~~~~~~}~\emph{\footnotesize /{*}~Esvazia~o~buffer~LibScript~{*}/}{\footnotesize \par}
+~{\footnotesize ~~int~len~=~PyTuple\_GET\_SIZE(tuple);}{\footnotesize \par}
+
+~\emph{\footnotesize ~~/{*}~Esvazia~o~buffer~LibScript~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~script\_reset\_buffer(env);}{\footnotesize \par}
 
 ~{\footnotesize ~~for~(i~=~0;~i~<~len;~i++)~\{}{\footnotesize \par}
 
-~{\footnotesize ~~~~~PyObject{*}~o~=~PyTuple\_GET\_ITEM(tuple,~i);}~\emph{\footnotesize /{*}~Obtém~elemento~da~tupla~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~~~~/{*}~Obtém~elemento~da~tupla~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~~~~script\_python\_put\_object(env,~i,~o);~~~~~}~\emph{\footnotesize /{*}~Insere-o~no~buffer.~{*}/}{\footnotesize \par}
+~{\footnotesize ~~~~~PyObject{*}~o~=~PyTuple\_GET\_ITEM(tuple,~i);}{\footnotesize \par}
+
+~\emph{\footnotesize ~~~~~/{*}~Insere-o~no~buffer.~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~~~~script\_python\_put\_object(env,~i,~o);}{\footnotesize \par}
 
 ~{\footnotesize ~~\}}{\footnotesize \par}
 
@@ -4989,23 +5064,39 @@ trecho da função \texttt{script\_plugin\_call\_python}:
 
 \emph{\footnotesize /{*}~...~{*}/}{\footnotesize \par}
 
-{\footnotesize args~=~script\_python\_buffer\_to\_tuple(env);~}~\emph{\footnotesize /{*}~Obtém~o~parâmetros~de~entrada~{*}/}{\footnotesize \par}
+\emph{\footnotesize /{*}~Obtém~o~parâmetros~de~entrada~{*}/}{\footnotesize \par}
 
-{\footnotesize ret~=~PyEval\_CallObject(func,~args);}~\emph{\footnotesize ~~~~~~~/{*}~Chama~uma~função~Python~{*}/}{\footnotesize \par}
+{\footnotesize args~=~script\_python\_buffer\_to\_tuple(env);}{\footnotesize \par}
+
+\emph{\footnotesize /{*}~Chama~uma~função~Python~{*}/}{\footnotesize \par}
+
+{\footnotesize ret~=~PyEval\_CallObject(func,~args);}{\footnotesize \par}
 
 \emph{\footnotesize /{*}~...~{*}/}{\footnotesize \par}
 
-{\footnotesize if~(ret~==~Py\_None)~~~~~~~~~~~~~~~~~~~~~~~~}~\emph{\footnotesize /{*}~Se~a~função~não~retornou~valor~{*}/}{\footnotesize \par}
+\emph{\footnotesize /{*}~Se~a~função~não~retornou~valor~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~script\_reset\_buffer(env);~~~~~~~~~~~~~~~}~\emph{\footnotesize /{*}~Apenas~zere~o~buffer~LibScript~{*}/}{\footnotesize \par}
+{\footnotesize if~(ret~==~Py\_None)}{\footnotesize \par}
 
-{\footnotesize else~if~(PyTuple\_Check(ret))~~~~~~~~~~~~~~~}~\emph{\footnotesize /{*}~Se~retornou~uma~tupla~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~Apenas~zere~o~buffer~LibScript~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~script\_python\_tuple\_to\_buffer(env,~ret);}~\emph{\footnotesize /{*}~Insira~seus~elementos~no~buffer~{*}/}{\footnotesize \par}
+~{\footnotesize ~~script\_reset\_buffer(env);}{\footnotesize \par}
 
-{\footnotesize else~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}~\emph{\footnotesize /{*}~Se~retornou~outro~tipo~de~objeto~{*}/}{\footnotesize \par}
+\emph{\footnotesize /{*}~Se~retornou~uma~tupla~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~script\_python\_put\_object(env,~0,~ret);~~}~\emph{\footnotesize /{*}~Insira-o~como~único~elemento~{*}/}{\footnotesize \par}
+{\footnotesize else~if~(PyTuple\_Check(ret))}{\footnotesize \par}
+
+~\emph{\footnotesize ~~/{*}~Insira~seus~elementos~no~buffer~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~script\_python\_tuple\_to\_buffer(env,~ret);}{\footnotesize \par}
+
+\emph{\footnotesize /{*}~Se~retornou~outro~tipo~de~objeto~{*}/}{\footnotesize \par}
+
+{\footnotesize else}{\footnotesize \par}
+
+~\emph{\footnotesize ~~/{*}~Insira-o~como~único~elemento~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~script\_python\_put\_object(env,~0,~ret);}{\footnotesize \par}
 \end{lyxcode}
 
 
@@ -5013,25 +5104,41 @@ No tratador de chamadas a funções externas do plugin, a comunicação
 no sentido inverso emprega uma lógica similar:
 
 \begin{lyxcode}
-{\footnotesize script\_python\_tuple\_to\_buffer(env,~args);~~~}~\emph{\footnotesize /{*}~Obtém~o~parâmetros~de~entrada~{*}/}{\footnotesize \par}
+\emph{\footnotesize /{*}~Obtém~o~parâmetros~de~entrada~{*}/}{\footnotesize \par}
 
-{\footnotesize err~=~script\_call(env,~fn\_name);~~~~~~~~~~~~}~\emph{\footnotesize /{*}~Chama~um~função~via~LibScript~{*}/}{\footnotesize \par}
+{\footnotesize script\_python\_tuple\_to\_buffer(env,~args);}{\footnotesize \par}
+
+\emph{\footnotesize /{*}~Chama~um~função~via~LibScript~{*}/}{\footnotesize \par}
+
+{\footnotesize err~=~script\_call(env,~fn\_name);}{\footnotesize \par}
 
 {\footnotesize /{*}~...~{*}/}{\footnotesize \par}
 
 {\footnotesize switch(script\_buffer\_len(env))~\{}{\footnotesize \par}
 
-{\footnotesize case~0:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}~\emph{\footnotesize ~/{*}~Se~a~função~não~retornou~valor~{*}/}{\footnotesize \par}
+\emph{\footnotesize /{*}~Se~a~função~não~retornou~valor~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~Py\_RETURN\_NONE;~~~~~~~~~~~~~~~~~~~~~~~~~~}~\emph{\footnotesize ~/{*}~Retorne~o~valor~Python~'None'~{*}/}{\footnotesize \par}
+{\footnotesize case~0:}{\footnotesize \par}
 
-{\footnotesize case~1:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}~\emph{\footnotesize ~/{*}~Se~retornou~um~único~valor~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~Retorne~o~valor~Python~'None'~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~return~script\_python\_get\_object(env,~0);~}~\emph{\footnotesize ~/{*}~Converta~e~retorne-o~{*}/}{\footnotesize \par}
+~{\footnotesize ~~Py\_RETURN\_NONE;}{\footnotesize \par}
 
-{\footnotesize default:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}~\emph{\footnotesize /{*}~Se~retornou~mais~de~um~valor~{*}/}{\footnotesize \par}
+\emph{\footnotesize /{*}~Se~retornou~um~único~valor~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~return~script\_python\_buffer\_to\_tuple(env);}~\emph{\footnotesize /{*}~Retorne-os~em~uma~tupla~{*}/}{\footnotesize \par}
+{\footnotesize case~1:}{\footnotesize \par}
+
+~\emph{\footnotesize ~~/{*}~Converta~e~retorne-o~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~return~script\_python\_get\_object(env,~0);}{\footnotesize \par}
+
+\emph{\footnotesize /{*}~Se~retornou~mais~de~um~valor~{*}/}{\footnotesize \par}
+
+{\footnotesize default:}{\footnotesize \par}
+
+~\emph{\footnotesize ~~/{*}~Retorne-os~em~uma~tupla~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~return~script\_python\_buffer\_to\_tuple(env);}{\footnotesize \par}
 
 {\footnotesize \}}{\footnotesize \par}
 \end{lyxcode}
@@ -5472,17 +5579,25 @@ do ambiente e inserir nele uma função \texttt{AUTOLOAD} que chamará
 \begin{lyxcode}
 {\footnotesize snprintf(code,~LEN\_CODE,}{\footnotesize \par}
 
-~{\footnotesize ~~\char`\"{}bootstrap~LibScript;\char`\"{}~~}~\emph{\footnotesize /{*}~Inicializa~o~módulo~de~extensão~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~Inicializa~o~módulo~de~extensão~{*}/}{\footnotesize \par}
 
-~{\footnotesize ~~\char`\"{}package~\%s;\char`\"{}}~\emph{\footnotesize ~~~~~~~~~~~/{*}~Declara~o~pacote~do~ambiente~{*}/}{\footnotesize \par}
+~{\footnotesize ~~\char`\"{}bootstrap~LibScript;\char`\"{}}{\footnotesize \par}
 
-~{\footnotesize ~~\char`\"{}\$LibScript::env~=~\%p;\char`\"{}~}~\emph{\footnotesize /{*}~Armazena~o~ponteiro~do~ambiente~em~Perl~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~/{*}~Declara~o~pacote~do~ambiente~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~\char`\"{}package~\%s;\char`\"{}}{\footnotesize \par}
+
+~\emph{\footnotesize ~~/{*}~Armazena~o~ponteiro~do~ambiente~em~Perl~{*}/}{\footnotesize \par}
+
+~{\footnotesize ~~\char`\"{}\$LibScript::env~=~\%p;\char`\"{}}{\footnotesize \par}
 
 ~{\footnotesize ~~\char`\"{}sub~AUTOLOAD~\{\char`\"{}}{\footnotesize \par}
 
 ~{\footnotesize ~~~~~\char`\"{}our~\$AUTOLOAD;\char`\"{}}{\footnotesize \par}
 
-~\emph{\footnotesize ~~~~~/{*}~Extrai~o~nome~do~método~do~nome~qualificado~{}``pacote::método''~{*}/}{\footnotesize \par}
+~\emph{\footnotesize ~~~~~/{*}~Extrai~o~nome~do~método}{\footnotesize \par}
+
+~\emph{\footnotesize ~~~~~~~~do~nome~qualificado~{}``pacote::método''~{*}/}{\footnotesize \par}
 
 ~{\footnotesize ~~~~~\char`\"{}\$AUTOLOAD~=\textasciitilde{}~s/{[}\textasciicircum{}:{]}{*}:://;\char`\"{}}{\footnotesize \par}
 
@@ -5797,6 +5912,7 @@ a sua API e exercitá-la embutindo a biblioteca em aplicações reais.
 LibScript e os quatro plugins implementados são software livre e estão
 disponíveis para download em~\url{http://libscript.sourceforge.net}.
 
+\bibliographystyle{plain}
 \bibliography{dissert}
 
 

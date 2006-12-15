@@ -1110,7 +1110,7 @@
   \puc@showcopyrights%
 %
   \ifthenelse{\boolean{hasdedication}}{\puc@showdedication}{}%
-  \puc@showacknowledgment%
+%  \puc@showacknowledgment%
   \puc@showabstract%
   \puc@showabstractuk%
   \puc@showtables%
