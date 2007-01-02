@@ -698,7 +698,7 @@
 \newcommand{\universidade}[1]{\university{#1}}
 %\newcommand{\uni}[1]{\uni{#1}}
 %\newcommand{\CDD}[1]{\CDD{#1}}
-\newcommand{\membrodabanca}[2]{}
+\newcommand{\membrodabanca}[2]{\jurymember{#1}{#2}}
 \newcommand{\coordenador}[1]{\schoolhead{#1}}
 \newcommand{\banca}[1]{\jury{#1}}
 \newcommand{\curriculo}[1]{\resume{#1}}
