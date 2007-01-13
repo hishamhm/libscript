@@ -355,8 +355,18 @@ In the second part, we illustrate the differences between the APIs of those
  We performed a comparison between scripting language APIs through a concrete
  example, in order to present implementations in each of the studied languages
  side by side.
- The example consists of a generic scripting library, called LibScript,
- and a series of plugins that interface to the different languages.
+\layout Standard
+
+The example consists of a generic scripting library, called LibScript.
+ This library was designed to make applications extensible in a language-indepen
+dent way.
+ It is based on a plugin architecture: dynamic libraries loaded on demand
+ by LibScript which encapsulate the interface which different virtual machines.
+ The main library provides a language-independent scripting API, allowing
+ an application to register its functions and launch scripts that use these
+ functions.
+ This library then invokes the plugin for the appropriate language to run
+ the script (for example, LibScript-Lua for Lua code).
  This way, the code of each plugin allows us to observe in a clear and isolated
  way the procedures used in each language for function calls, registration
  of C\SpecialChar ~
@@ -1059,53 +1069,233 @@ Ousterhout points out that, in a model integrating these two kinds of languages,
  languages.
  The convenience offered by high-level interpreted languages allows rapid
  prototyping and encourages the reuse of components.
+\layout Subsection
+
+Extensible and extension languages
 \layout Standard
 
-The integration of programs developed in systems programming languages coordinat
-ed through scripting languages has been common practice for a long time
- now.
- Shell scripting in Unix systems is probably the most notable example, where
- constructs such as pipes (which connect the output of a process to the
- input of another one) allow one to perform tasks combining a series of
- programs implemented in different languages, or even other scripts.
- With the introduction of Tcl\SpecialChar ~
+With the increased popularity of scripting languages, two models for development
+ based in two languages have risen to prominence: besides the traditional
+ model where the scripting language has an auxiliary role, in which user
+ scripts allow for customization of applications, there is also a model
+ where the scripting language performs a more central role.
+ Typical examples are graphical applications where the interface is described
+ by scripts controlling components implemented in C and games where the
+ logic is described in scripts and the runtime engine is implemented in
+ lower-level languages.
+\layout Standard
 
+In these scenarios, there is a clear distinction between a lower-level layer
+ where performance is a critical factor and another, higher-level layer
+ that coordinates operations on elements of the lower layer.
+ Scripting languages cease to be just an extension mechanism: the application
+ itself is written using the scripting language and libraries written in
+ lower-level languages are loaded as extension modules.
+\layout Standard
+
+It makes sense, then, when discussing language interaction, to make a distinctio
+n between 
+\emph on 
+extensible languages
+\emph default 
+ and 
+\emph on 
+extension languages
+\emph default 
+.
+ Extensible languages are those that can be extended through external modules
+ implemented in other languages.
+ Extension languages are those which runtime environment can be embedded
+ in an application, allowing to use them to extend the application.
+ Typically, scripting languages can be used, with variable degrees of convenienc
+e, as either extensible or extension languages.
+ The focus of the language in one or other scenario tends to show through
+ the design of its FLI, as we will see in the comparison between APIs of
+ different languages throughout Chapter 
+\begin_inset LatexCommand \ref{cha:APIs-de-Máquinas}
+
+\end_inset 
+
+.
+\layout Standard
+
+Another interesting observation is that, while in one model the scripting
+ language serves as an extension language for the lower-level language in
+ which the application is written, in the other model the opposite happens:
+ we can look at extension modules written using the FLI as a way to extend
+ the scripting language using C as an extension language.
+ This way, the set of features provided by an API between C and a scripting
+ language tends to be symmetric (that is, providing code and data manipulation
+ features in both directions) in case its is desired to provide language
+ extensibility as well as promote its use as an extension language.
+\layout Subsection
+
+Tcl
+\layout Standard
+
+The integration of programs developed in systems programming languages through
+ scripting languages has been common practice for a long time.
+ Shell scripting in Unix system is probably the best-known example, where
+ constructs such as pipes (which connect the output of a process to the
+ input of another) allow to perform tasks combining a series of programs
+ implemented in different languages, or even other scripts.
+\layout Standard
+
+Interactive graphical applications do not fit well this model of programmability.
+ From this observation, Ousterhout identified the need of moving the coordinatio
+n language 
+\emph on 
+inside
+\emph default 
+ applications, creating the Tcl language 
 \begin_inset LatexCommand \cite{ousterhout94tcl}
 
 \end_inset 
 
-, this kind of coordination of components through scripting languages started
- to take place 
-\emph on 
-within
-\emph default 
- applications.
- In this model, the scripting language is implemented as a library and is
- embedded in an application written in a lower-level language, such as C.
- Data structures of the application are exposed to the scripting environment
- as objects; conversely, the application can launch functions in the scripting
- language and access its data.
- Programmable applications have existed long before that, typically using
- little languages created specifically for each application, but the concept
- introduced by Tcl of implementing scripting languages as C libraries has
- propelled strongly the development of extensible applications.
+, which adapted the interaction model promoted by shell languages to the
+ manipulation of functions of an application.
 \layout Standard
 
-The development model based in two languages does not limit itself to applicatio
-ns that provide customization through scripts written by the end-user.
- In many scenarios, there is a clear distinction between a lower-level layer
- where performance is a critical factor and a higher-level layer comprised
- by coordination operations between elements of the lower layer.
- Typical examples are graphic applications where the interface is described
- by scripting languages controlling components implemented in C and games
- where the logic is described in scripts and the rendering engine is implemented
- in lower-level languages.
- This greater prominence of scripting languages, where they stop being just
- an application extension mechanism and start having a more central role
- in the coordination of the execution of the program, has also promoted
- an inverted model of interaction between languages, where the application
- itself is written using the scripting language and libraries written in
- lower-level languages are loaded as extension modules.
+In the Tcl model, the scripting language is implemented as a library and
+ is embedded in an application written in a lower-level language, such as
+ C.
+ Data structures of the application are exposed to the scripting environment
+ as objects that can be manipulated; conversely, the application can invoke
+ functions from the scripting language and access its data.
+\layout Standard
+
+Four main goals were set in the original design of Tcl 
+\begin_inset LatexCommand \cite{ousterhout90tcl}
+
+\end_inset 
+
+: focus as a command language (designed to write short programs); extensibility;
+ simplicity in its implementation; simple interface with C applications.
+ We can observe in those goals principles that are now understood as fundamental
+ features of extensible and extension languages: extensibility was listed
+ as a goal explicitly; the last two goals (and especially the last one)
+ demonstrate the focus of Tcl as an extension language.
+\layout Standard
+
+Aiming to simplify the interaction with C code, Tcl uses strings as its
+ single data type (according to their context, strings can be interpreted
+ as lists, numbers, Tcl code blocks, etc.).
+ The language API, then, performs the communication between C code and the
+ Tcl interpreter through C strings.
+ The influence of the program interaction model used in shell scripting
+ shows in the way how C code interacts with Tcl functions: arguments are
+ received in C from Tcl using an integer and a C array of strings, like
+ in the arguments of a 
+\family typewriter 
+main
+\family default 
+ function in C.
+ A C function exposed to the Tcl interpreter needs to have the following
+ signature:
+\layout LyX-Code
+
+
+\size small 
+typedef int (*Tcl_CmdProc) (ClientData c, Tcl_Interp *i,
+\newline 
+                            int argc, char* argv[]);
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(paragrafo)
+\end_inset 
+
+
+\layout Standard
+
+Tcl calls from C are made sending a string of Tcl code:
+\layout LyX-Code
+
+
+\size small 
+int Tcl_Eval(Tcl_Interp *i, char* cmd);
+\layout Standard
+
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+(paragrafo)
+\end_inset 
+
+
+\layout Standard
+
+The return value indicates success or failure of the function, and the return
+ string sent from Tcl can be obtained in 
+\family typewriter 
+i->result
+\family default 
+.
+ While simple, this approach has some significant limitations: the frequent
+ conversion of strings affects performance negatively; besides, the strings-only
+ API forces C code to perform a series of conversions explicitly, even in
+ operations as basic as passing an integer as an argument.
+\layout Standard
+
+Through the years, other scripting languages presented different proposals
+ for interaction with C code.
+ Also, the minimalism of Tcl, which has shown to be an advantage as an extension
+ language, makes it seem limited compared to languages like Python, which
+ provide a more complete feature set as an extensible language.
+ Scripting languages have grown beyond Tcl's first goal (focus as a command
+ language, for short programs).
+ Thus, Tcl gradually lost space as a scripting language.
+ In this work, our focus will concentrate on modern APIs from currently
+ popular scripting languages.
+\layout Standard
+
+Indeed, more recent versions of Tcl adopt a data model akin to that of more
+ modern scripting languages 
+\begin_inset LatexCommand \cite{welch95tcl}
+
+\end_inset 
+
+, abandoning purely string-based manipulation by defining a C type 
+\family typewriter 
+Tcl_Obj
+\family default 
+ which corresponds to a Tcl value.
+ So, this new API is not too different from the Python API, which also features
+ a 
+\family typewriter 
+PyObject
+\family default 
+ C type, which will be presented in Section 
+\begin_inset LatexCommand \ref{sub:Dados-Python}
+
+\end_inset 
+
+.
+ Although these changes solve some of the performance issues of the original
+ version of Tcl, they bring other problems: for compatibility reasons, objects
+ still carry their representation as a string; in addition, reference counting
+ becomes a concern (which is also shared by the Python API -- this issue
+ is discussed in Section 
+\begin_inset LatexCommand \ref{sub:Python-GC}
+
+\end_inset 
+
+).
+\layout Standard
+
+The historical importance of Tcl, however, is undeniable.
+ While programmable applications have existed long before its appearance,
+ typically using little languages created especially for each application,
+ it was the concept introduced by Tcl of implementing scripting languages
+ as C libraries that pushed strongly the development of extensible applications.
 \layout Chapter
 
 
