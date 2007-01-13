@@ -1,12 +1,22 @@
 #LyX 1.3 created this file. For more info see http://www.lyx.org/
 \lyxformat 221
 \textclass article
+\begin_preamble
+\usepackage{sbc-template, url}
+\sloppy
+
+\address{Departamento de Informática \\
+Pontifícia Universidade Católica do Rio de Janeiro (PUC-RIO)\\
+Rio de Janeiro, RJ -- Brazil
+}
+\end_preamble
 \language english
 \inputencoding auto
 \fontscheme default
 \graphics default
-\paperfontsize default
-\papersize Default
+\paperfontsize 12
+\spacing single 
+\papersize a4paper
 \paperpackage a4
 \use_geometry 0
 \use_amsmath 0
@@ -70,12 +80,7 @@ Regardless of purpose, communication between programs written in different
 
 \end_inset 
 
- 
-\color red
-[Quote citation here]
-\color default
 .
- 
 \layout Standard
 
 A model for interaction between languages that has shown to be especially
@@ -260,20 +265,77 @@ Both scenarios involve the same general problems: data transfer between
  C; calling functions declared by the scripting language from C; and the
  registration of C functions so that they can be invoked by scripts.
  
+\layout Subsection
+
+Data transfer
 \layout Standard
 
 The main complexity in the interaction between programming languages is
  not the differences in syntax or semantics from their control flow structures,
  but in their data representations.
- Since the format how these data are represented differ, the alternatives
+ In the communication between code written in two different languages, data
+ flow in various forms: as parameters, object attributes, elements in data
+ structures, etc.
+\layout Standard
+
+Since the format how these data are represented often differ, the alternatives
  to perform data transfer between the languages involve either converting
  the data or manipulating it opaquely through some kind of handle.
- The duplication that takes place in when converting data limits the applicabili
-ty of this method, restricting its use typically to numeric types and, in
+ The duplication that takes place when converting data limits the applicability
+ of this method, restricting its use typically to numeric types and, in
  minor scale, strings.
  When exposing handles, the source language may explicitly offer facilities
  in the target language to manipulate these data, that is, the data remains
  opaque, but the language can access its contents through an API.
+\layout Standard
+
+Because of its focus on the manipulation of pointers and structures, C provides
+ a small set of basic types.
+ Besides, C is very liberal with regard to the internal representation of
+ its structured types, with each different platform having to define its
+ own application binary interface (ABI).
+ There may also be the need to handle conversion of endianness and format
+ of floating point numbers.
+ So, even in cases where it is possible to link C code directly, bindings
+ libraries are still usually needed to make the manipulation of complex
+ types more convenient.
+\layout Standard
+
+For types such as strings, the size of values brings also concerns with
+ performance.
+ In many cases the internal representation used for strings is the same
+ as used in C, so an option is to simply pass to the C code a pointer to
+ the address where the string is stored, which avoids copying of data, under
+ risk of allowing the C code to modify the contents of the string.
+ Exposing to C code pointers to memory areas within the runtime environment
+ of the other language may also bring concurrency problems, in case the
+ environment uses multiple threads.
+\layout Standard
+
+When exposing data of structured types to C, the conversion to a native
+ C type, in many cases, is not an option.
+ Besides the issue of quantity of data to be converted, structured types
+ in C are defined statically, therefore not serving to represent conveniently
+ data of dynamic structures, such as objects that may gain or lose attributes
+ or even change class during runtime.
+ Even in languages with static types, like Java, copying objects is not
+ usually an interesting option due to the volume of data.
+ Copying of structured objects tends to be restricted to specific operations
+ such as manipulation of arrays of primitive types.
+\layout Standard
+
+The alternative to allowing C code to operate over structured data, thus,
+ is to provide an API that exposes as functions the operations defined over
+ those types.
+ This also avoids the need to control the consistency between two copies
+ of a given structure.
+ Consistency problems, however, may occur if the API allows the C code to
+ store pointers to objects from the language -- this makes it necessary
+ for the programmer to manage explicitly the synchronicity between pointers
+ and the life cycles of objects that may be subject to garbage collection.
+\layout Subsection
+
+Garbage collection
 \layout Standard
 
 From the moment when C code gains access to handles to data stored in the
@@ -282,13 +344,21 @@ From the moment when C code gains access to handles to data stored in the
  For example, the C program may deallocate an object referenced by data
  in the scripting language, or the scripting language may remove an element
  from a structure causing it to be collected.
- It is necessary, then, to indicate from C code that the data remain accessible
+\layout Standard
+
+It is necessary, then, to indicate from C code that the data remain accessible
  from it and must not be collected.
  In a complementary way, when transferring the control of C objects to the
  domain of the other language -- for example, when storing them in a data
  structure of the other language -- it is necessary to indicate to the language
  how to deallocate the memory of the structure when the garbage collector
  detects that it is no longer in use.
+ The way how the API will provide this functionality depends not only of
+ the design of the C API, but also of the garbage collection mode employed
+ by the implementation of the language.
+\layout Subsection
+
+Function calls and registration
 \layout Standard
 
 When bridging C and a scripting language, it is necessary to provide a form
@@ -312,6 +382,27 @@ spaces
  In the next section we will discuss how some APIs implement these tasks
  and the impact of their design on their usability as extension and extensible
  languages.
+\layout Standard
+
+Because of the static typing of C, it is not possible to use a transparent
+ syntax for calling functions registered at runtime.
+ It is therefore necessary to define an API of functions for performing
+ calls to the scripting language.
+ Conversely, to allow the invocation of C functions from code written in
+ a scripting language, its API must provide a way to register these functions
+ in the execution environment.
+ In statically typed languages, such as Java, to make it possible to call
+ external functions using the same syntax as native calls, the set of external
+ functions must be declared 
+\emph on 
+a priori
+\emph default 
+ in some way.
+ On the other hand, in dynamically typed languages, functions can be used
+ directly; defining them at some point in time before their call is sufficient.
+ This way, one can declare external functions at runtime through C code
+ using the scripting language API.
+ 
 \layout Section
 
 
@@ -353,19 +444,480 @@ d by Tcl of implementing scripting languages as C libraries that pushed
  strongly the development of extensible applications.
 \layout Standard
 
+In this section, we discuss the design of the C APIs of four popular scripting
+ languages, Python, Perl, Ruby and Lua, in terms of the interaction issues
+ outlined in the previous section, while also contrasting them with the
+ C API of Java.
+ Unlike the others, Java uses static typing, but like them it is based on
+ a virtual machine model, features automatic memory management and allows
+ dynamic loading of code.
+ This allows us to observe how typing affects the design of an API.
+\layout Subsection
 
-\color red
-[...write section...]
+Data transfer
+\layout Standard
+
+The basic set of functions for manipulating data in scripting language APIs
+ is usually the same: they provide functions for converting values from
+ the language to basic C types and vice versa.
+ A central design issue lies in how to represent a value between languages.
+\layout Standard
+
+All values in the Python virtual machine are represented as objects, mapped
+ to the C API as the 
+\family typewriter 
+PyObject
+\family default 
+\SpecialChar ~
+structure 
+\begin_inset LatexCommand \cite{vanrossum06extpy}
+
+\end_inset 
+
+.
+ More specific types such as 
+\family typewriter 
+PyStringObject
+\family default 
+, 
+\family typewriter 
+PyBooleanObject
+\family default 
+ and 
+\family typewriter 
+PyListObject
+\family default 
+ are 
+\family typewriter 
+PyObject
+\family default 
+s by structural equivalence, that is, they can be converted through a C
+ cast.
+ 
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+Reflecting the dynamic typing model of Python, the API functions use 
+\family typewriter 
+PyObject*
+\family default 
+ as a type every time they refer to Python objects, even when they are designed
+ to act on Python values of more specific types, such as for example the
+ 
+\family typewriter 
+PyString_Size
+\family default 
+, which returns the length of a string.
+\end_inset 
+
+ Similarly, in Ruby, the API defines a C data type called 
+\family typewriter 
+VALUE
+\family default 
+, which represents a Ruby object.
+ 
+\family typewriter 
+VALUE
+\family default 
+ may represent both a reference to an object (that is, a pointer to the
+ Ruby heap) as well as an immediate value.
+ In particular, the constants 
+\family typewriter 
+Qtrue
+\family default 
+, 
+\family typewriter 
+Qfalse
+\family default 
+ and 
+\family typewriter 
+Qnil
+\family default 
+ are defined as immediate values, allowing them to be compared in C using
+ the 
+\family typewriter 
+==
+\family default 
+ operator.
+ Perl also provides handles to its data in C, but hese C values are better
+ understood as 
+\emph on 
+containers
+\emph default 
+ to Perl values: types of Perl variables are mapped to C structs -- 
+\family typewriter 
+SV
+\family default 
+ for scalars, 
+\family typewriter 
+AV
+\family default 
+ for arrays, 
+\family typewriter 
+HV
+\family default 
+ for hashes -- and a scalar variable in Perl has an 
+\family typewriter 
+SV
+\family default 
+ associated to itself; however, one can create in C an 
+\family typewriter 
+SV
+\family default 
+ that is not associated to any Perl variable name.
+\layout Standard
+
+Lua, in contrast, defines a different approach for manipulating data in
+ C: no pointers or handles to Lua objects are ever exposed to C code.
+ Operations are defined in terms of indices of a virtual stack.
+ So, data transfer from C to Lua takes place through functions that receive
+ C types, convert them to Lua values and stack them.
+ While this results in the simplest and most orthogonal data manipulation
+ API among the ones mentioned, code in which values are associated to variables
+ (as opposed to stack indices) tends to be more natural-looking: the manipulatio
+n of, say, a Ruby 
+\family typewriter 
+VALUE
+\family default 
+ is syntactically similar to that of any other C type.
+\layout Standard
+
+All of these languages also offer functions for manipulating their fundamental
+ structured types (tables in Lua, arrays and hashes in Ruby and Perl, lists
+ and dictionaries in Python).
+ Python, in particular, defines an extensive function API for operations
+ on its built-in classes; most of these functions could be performed using
+ the generic API for method invocation, but they are offered directly in
+ C as a convenience.
+\layout Standard
+
+In Java, static typing reduces greatly the need for explicit data conversion
+ in C code.
+ The Java Native Interface (JNI) defines C types equivalent to each of Java's
+ primitive types (
+\family typewriter 
+jint
+\family default 
+ for 
+\family typewriter 
+int
+\family default 
+, 
+\family typewriter 
+jfloat
+\family default 
+ for 
+\family typewriter 
+float
+\family default 
+, and so on).
+ While to return an integer to Python from C one would have to use a command
+ such as 
+\family typewriter 
+return PyInteger_New(42)
+\family default 
+, when interfacing Java they could simply write 
+\family typewriter 
+return 42
+\family default 
+.
+ 
+\begin_inset Quotes eld
+\end_inset 
+
+Reference types
+\begin_inset Quotes erd
+\end_inset 
+
+, such as classes and objects, are exposed to C as opaque references, instances
+ of 
+\family typewriter 
+jobject
+\family default 
+.
+ On the other hand, treatment of multi-threading complicates the access
+ of types such as strings and arrays.
 \layout Standard
 
 
-\color red
-[When introducing function calls:]
-\color default
- Because of the static typing of C, it is not possible to use a transparent
- syntax for calling functions registered at runtime.
- It is therefore necessary to define an API of functions for performing
- calls to the scripting language.
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+A negative point in the Ruby API is the exposure of implementation details
+ of the struct fields that describe its fundamental 
+\family typewriter 
+VALUE
+\family default 
+ type.
+ This restricts the flexibility of the language implementation and fosters
+ unsafe programming practices.
+ Perl also exposes a good deal of its internal structures; not as directly
+ as Ruby, but through macros.
+ These macros, however, assume the adherence to usage protocols so strict
+ that in practice they also largely limit the possibilities of changes in
+ the implementation.
+\end_inset 
+
+
+\layout Standard
+
+The creation of data containing C structures stored by the scripting language
+ is an easy task in Perl, Ruby and Lua: Perl allows one to create 
+\family typewriter 
+SV
+\family default 
+s containing arbitrary memory blocks for use in C; Ruby offers the 
+\family typewriter 
+Data_Wrap_Struct
+\family default 
+ macro which generates a Ruby object which encapsulates a C structure; Lua
+ defines a basic type in the language especially for this end, called 
+\emph on 
+userdata
+\emph default 
+.
+ In Python, on its turn, the process is not as straightforward.
+ Creating a Python class from C involves declaring parts of it statically
+ and other parts dynamically, being usually necessary to define three different
+ C structures.
+ In Java, it is not possible to create new types from C, one can only load
+ classes.
+\layout Standard
+
+Another common task when interacting with C is the need to store pointers
+ in the data space of the scripting language.
+ Python, Lua and Perl offer features to do this directly: creating a 
+\family typewriter 
+PyCObject
+\family default 
+ in Python; a 
+\emph on 
+light userdata
+\emph default 
+ in Lua; or storing a pointer in the data area of an 
+\family typewriter 
+SV
+\family default 
+ in Perl.
+ In Java and Ruby, the alternative is to convert pointers and store them
+ as numbers.
+ In fact, this happens internally in the implementation of Ruby, and the
+ portability limitations of this approach are made evident by the fact that
+ the compilation of Ruby fails if 
+\family typewriter 
+sizeof(void*) != sizeof(long)
+\family default 
+.
+\layout Standard
+
+Finally, an aspect that deserves being mentioned is the concern on not polluting
+ the C namespace.
+ Python, Java and Lua define all its functions and C types with prefixes
+ that aim to avoid conflicts with names defined by the application.
+ Perl and Ruby define names in a disorganized fashion, which occasionally
+ causes problems.
+ Perl has options to disable a series of macros and force a common prefix
+ in its functions, but this feature is incomplete and using it hampers the
+ functionality of its headers.
+\layout Subsection
+
+Garbage collection NEEDS REWRITE
+\layout Standard
+
+Garbage collection aims to isolate, as much as possible, the programmer
+ from memory management.
+ This way, ideally an API should also be as independent as possible from
+ the garbage collection algorithm used in the implementation of the virtual
+ machine.
+ Perl and Python perform garbage collection based on reference counting,
+ and this shows through in the reference increment and decrement operations
+ frequently needed during the use of their APIs.
+\layout Standard
+
+Ruby uses a mark-and-sweep garbage collector.
+ Its API manages to abstract this fact well for manipulation of native Ruby
+ objects, but the implementation of the collector is evident in the creation
+ of Ruby types in C, where we need to declare a mark function when there
+ are C structures that store reference to Ruby objects.
+ The Lua API goes further when isolating itself from the implementation
+ of the garbage collector: the only point of the API where the use of an
+ incremental garbage collection is apparent is in the routine for direct
+ interaction with the collector, 
+\family typewriter 
+lua_gc
+\family default 
+, where its parameters can be configured.
+\layout Standard
+
+Of the five languages studied, the only whose API abstracts entirely the
+ implementation of the garbage collector is Java.
+ The only interfacing operation provided by the language, 
+\family typewriter 
+System.gc()
+\family default 
+, does not receive any arguments and does not specify how or when the collection
+ should be done
+\begin_inset Foot
+collapsed false
+
+\layout Standard
+
+The documentation is purposely vague, stating only that this method 
+\begin_inset Quotes eld
+\end_inset 
+
+suggests that the Java Virtual Machine expend effort toward recycling unused
+ objects
+\begin_inset Quotes erd
+\end_inset 
+
+
+\emph on 
+ 
+\emph default 
+.
+\end_inset 
+
+.
+ Indeed, the various available implementations of the JVM use different
+ algorithms for garbage collection.
+\layout Standard
+
+For manipulating data through the API, Lua and Ruby are the languages that
+ demand the least concerns from the programmer about managing references.
+ Ruby keeps control of references returned to C functions scanning the C
+ stack during garbage collection, detecting the presence of references stored
+ in local variables.
+ Lua avoids the problem altogether, by keeping its objects in the virtual
+ stack and not returning references to C code.
+\layout Standard
+
+The issue of references stored in local variables is handled by Perl and
+ Java in a similar way, by defining two types of references, global and
+ local (local references are called 
+\begin_inset Quotes eld
+\end_inset 
+
+mortal variables
+\begin_inset Quotes erd
+\end_inset 
+
+ in Perl).
+ Local references allow for mostly implicit management.
+ API functions in Java return local references by default, which can be
+ converted to global ones with 
+\family typewriter 
+NewGlobalRef
+\family default 
+.
+ In Perl, the opposite happens, and global references can be converted to
+ local ones with 
+\family typewriter 
+sv_2mortal
+\family default 
+.
+ Java's approach is more interesting, as normally more locally-scoped than
+ globally-scoped variables are used.
+ Values stored globally always need to have some form of explicit management
+ to them, even in Ruby and Lua, through 
+\family typewriter 
+rb_global_variable
+\family default 
+ and 
+\family typewriter 
+luaL_ref
+\family default 
+/
+\family typewriter 
+luaL_unref
+\family default 
+.
+\layout Subsection
+
+Function calls NEEDS REWRITE
+\layout Standard
+
+In Python, Lua and Perl, functions can be accessed as language objects and
+ invoked.
+ In Ruby and Java, the API defines special types used to reference methods.
+ Like in data manipulation, Python offers an extensive API, with several
+ convenience functions allowing parameters to be passed as Python tuples,
+ Python objects given as varargs, C values to be converted by the invocation
+ function, etc.
+ Java also offers a large number of method invocation functions and, due
+ to static typing, input parameters can be passed as varargs in a direct
+ way, without having to specify how their conversion should be made.
+ Ruby also offers some variants for call functions.
+\layout Standard
+
+Lua, in contrast, separates the function call routine from argument passing,
+ which is done previously through the stack.
+ This is a very simple solution, but the resulting code is less clear than
+ the equivalent calls in languages such as Ruby and Python.
+ Perl also features function calls using a stack model, but unlike Lua its
+ use is exceedingly complex, demanding a macro protocol to be followed which
+ exposes the internal workings of the interpreter.
+ Another complicating factor is the handling of return values, for these
+ vary according to the Perl context in which the function is called.
+\layout Standard
+
+In Lua and Python, the occurrence of errors can be checked through the function'
+s return value.
+ In a similar way, Perl allows detecting errors in the most recent call
+ checking a special variable; in Java, this is done calling an API function.
+ In Ruby, error handling is more convoluted: strangely, the API offers a
+ function for invoking C functions in protected mode, but lacks an equivalent
+ for calling Ruby functions.
+ It is necessary to write a wrapper function in those cases.
+\layout Subsection
+
+Registration of C functions NEEDS REWRITE
+\layout Standard
+
+Python and Ruby offer to the programmer various options for C function signature
+s that are recognized by the API, which is practical, given that this way
+ one can choose different C representations for the input parameters (collected
+ in an array, obtained one by one, etc.) according to their use in the function.
+ Lua offers only one possible signature for C functions to be registered
+ in its virtual machine, but this is appropriate for the stack model adopted
+ by its API.
+\layout Standard
+
+In Java, function signatures are created through the 
+\family typewriter 
+javah
+\family default 
+ tool -- due to its static type system, types of input parameters passed
+ by Java are converted automatically by the JNI, which is very convenient
+ as it avoids explicit operations for conversion and type checking in the
+ function.
+ Because of their dynamic type systems, the other languages offer specific
+ API functions for performing these checks.
+ Perl function signatures are created only through the XS tool, but differently
+ from Java they are not exposed to the programmer.
+ This brings the inconvenience that the programmer needs to pre-process
+ C code as an XS extension even when they are embedding Perl in an application.
+\layout Standard
+
+Registration of functions in Ruby and Lua is simple.
+ In Lua, in particular, it is an assignment, not different from any other
+ object.
+ In Python, there are features for batch registering, using 
+\family typewriter 
+PyMethodDef
+\family default 
+ arrays (Lua offers a similar feature with 
+\family typewriter 
+luaL_register
+\family default 
+), but there is no simple way to register a single function.
+ Both in Java and Perl, function registration is done implicitly, and there
+ are no API functions for registering new C functions at runtime in either
+ of them.
 \layout Section
 
 
@@ -385,6 +937,149 @@ n extensible through a scripting language, the API offered by the language
  has a fundamental role, often influencing the design of the application.
 \layout Standard
 
+Although the same general problems, such as data transfer, function registration
+ and calling, are common to different usage scenarios of a scripting language
+ API, applications embedding a virtual machine tend to demand more from
+ the API than libraries implementing extension modules.
+ This point is illustrated by the difficulties imposed by the Python API
+ both in the access to global variables and registration of global functions;
+ and, more evidently, by the complexity of Perl's API for function calls.
+\layout Standard
+
+The fact that the Python API makes the use of global variables and functions
+ difficult, favoring the use of modules, can be justified as a way to promote
+ a more structured programming discipline.
+ This is interesting when using the API for developing extension modules,
+ given that using global variables and functions is extremely harmful in
+ those cases, as it would pollute the namespace of Python applications.
+ For the case where the language is embedded to provide scripting support
+ for a C application, the absence of a convenient way to define global functions
+ in the scripts' namespace is questionable.
+\layout Standard
+
+The approach adopted by Perl, using a pre-processor which generates automaticall
+y code for converting data when passing parameters and return values, has
+ shown to be inadequate for scenarios involving embedded interpreters.
+ Although the use of a pre-processor simplifies the simpler cases of declaration
+ of C functions, the lack of a well-defined API for handling data transfer
+ between the Perl interpreter and C code becomes apparent in more elaborate
+ cases.
+\layout Standard
+
+Interesting observations resulted from the comparison of the Java API with
+ that from the other four scripting languages, given than, although it shares
+ several traits with those languages, Java is not considered a scripting
+ language.
+ While static typing does reduce considerably the need for explicit data
+ conversion in C code for primitive types of the language, in practice type
+ checking for objects and the linking of fields and methods happens in a
+ dynamic way, as these have to be performed at runtime by the JNI
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+define JNI earlier
+\end_inset 
+
+.
+ Thus, regarding interaction of the virtual machine with C, advantages brought
+ by static typing are reduced.
+ Besides, dynamic resolution of fields and methods through C has subtle
+ differences in behavior when compared to what occurs in native Java code,
+ which can be a source of programmer errors.
+\layout Standard
+
+The disparity between languages with regard to the availability of documentation
+ also deserves mention.
+ Java, Python and Lua feature extensive documentation, both for the languages
+ themselves and to their C APIs.
+ For those languages, we were able to largely base our study and the implementat
+ion of examples for the case study in the provided documentation.
+ The documentation of Ruby relative to its C API is sparser; in\SpecialChar ~
+
+\begin_inset LatexCommand \cite{thomas04ruby}
+
+\end_inset 
+
+ only part of its public API is covered.
+ One has to make use of undocumented functions for tasks as fundamental
+ as freeing global references registered through C.
+\layout Standard
+
+The balance between simplicity and convenience is another recurring theme
+ when comparing APIs.
+ Python's extensive API, containing 656 public functions, contrasts with
+ the 113 functions exposed by the Lua API (79 from the core API, 34 in its
+ auxiliary API).
+ In many situations, Python API functions abbreviate two, three ore even
+ more calls, as in the case of powerful functions such as 
+\family typewriter 
+Py_BuildValue
+\family default 
+ and 
+\family typewriter 
+PyObject_CallFunction
+\family default 
+, resulting in short and readable C code.
+ The approach defended by Lua is that of a minimalistic API, offering mechanisms
+ with which more elaborate functionality can be built.
+ In fact, in \SpecialChar ~
+
+\begin_inset LatexCommand \cite{ierusalimschy06pil2}
+
+\end_inset 
+
+ a C function equivalent to 
+\family typewriter 
+PyObject_CallFunction
+\family default 
+ is presented, using the Lua API.
+ 
+\layout Standard
+
+Ruby exports 530 functions in its header and Perl 1209, but as only a small
+ fraction of those is documented, it is hard to evaluate the size of their
+ 
+\begin_inset Quotes eld
+\end_inset 
+
+public API
+\begin_inset Quotes erd
+\end_inset 
+
+ and how many of these are just function for internal use exposed in their
+ headers
+\begin_inset Foot
+collapsed false
+
+\layout Standard
+
+Some functions are marked as being for internal use only, but most of them
+ have no indication whatsoever.
+\end_inset 
+
+.
+ This also shows that the documentation is not relevant as support material
+ for development, but it also indicates how well-defined an API is.
+\layout Standard
+
+The Java API is well-documented, like that from Python and Lua, but the
+ number of exported function is not a good parameter for comparison with
+ the other APIs as, because of statically defined types, many functions
+ have a variant for each primitive type.
+ Java exports its API as a structure containing function pointers; 228 functions
+ in total are exported in this structure.
+\layout Standard
+
+Another aspect that could be observed in this work is that the consistency
+ of an API depends greatly on the consistency of the language it exposes.
+ Constructions where a language lacks orthogonality, such as code blocks
+ in Ruby or the differences when manipulating scalar and array values in
+ Perl, end up increasing the complexity of the API and demand from the programme
+r specific handling in C code.
+\layout Standard
+
 
 \color red
 [Write the rest of the conclusion, but the bottom line is:] 
@@ -395,7 +1090,7 @@ The focus in extending or embedding adopted by a language's C API has as
 \layout Standard
 
 
-\begin_inset LatexCommand \BibTeX[plain]{dissert}
+\begin_inset LatexCommand \BibTeX[sbc]{dissert}
 
 \end_inset 
 
