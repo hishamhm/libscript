@@ -1,0 +1,403 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\language english
+\inputencoding auto
+\fontscheme default
+\graphics default
+\paperfontsize default
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Title
+
+C APIs in extension and extensible languages
+\layout Author
+
+Hisham Muhammad
+\newline 
+Roberto Ierusalimschy
+\layout Abstract
+
+Scripting languages are used in conjuction with C code in two ways: as extension
+ languages, where the interpreter is embedded into an application as a library;
+ or as extensible languages, where the interpreter loads C code as add-on
+ modules.
+ These two scenarios share many similarities, as in both of them two-way
+ communication of code and data needs to take place.
+ However, the differences between them impose design tradeoffs that affect
+ the C API that bridges the two languages, often making a scripting language
+ more suitable for extending than embedding, or vice-versa.
+ This paper discusses how these tradeoffs are handled in the APIs of popular
+ scripting languages, and the impact on their use as embedded or extensible
+ languages.
+\layout Section
+
+Introduction
+\layout Standard
+
+There are many situations in which it is necessary or interesting to have
+ interaction between programs written in different languages.
+ A typical case is the use of external libraries, such as graphic toolkits,
+ APIs for database access, or even operating system calls.
+ Another scenario involves applications developed using more than one programmin
+g language, in order to optimize parts where performance is critical or
+ to allow extensibility through scripts written by end-users.
+\layout Standard
+
+Regardless of purpose, communication between programs written in different
+ languages brings up a number of design issues, not only in the development
+ of the applications, but of the languages themselves.
+ There are many ways to obtain this kind of interoperability, but ideally,
+ a language should provide a foreign language interface that allows programmers
+ to send and receive both calls and data to another language\SpecialChar ~
+
+\begin_inset LatexCommand \cite{finne98haskellfli}
+
+\end_inset 
+
+ 
+\color red
+[Quote citation here]
+\color default
+.
+ 
+\layout Standard
+
+A model for interaction between languages that has shown to be especially
+ relevant nowadays is that between statically typed compiled languages,
+ such as C and C++, and dynamically typed interpreted languages, such as
+ Perl and Python.
+ In\SpecialChar ~
+
+\begin_inset LatexCommand \cite{ousterhout98scripting}
+
+\end_inset 
+
+, Ousterhout categorizes these two groups as 
+\emph on 
+systems programming languages
+\emph default 
+ and 
+\emph on 
+scripting languages
+\emph default 
+.
+\layout Standard
+
+These two categories of languages have fundamentally different goals.
+ Systems programming languages emerged as an alternative to assembly in
+ the development of applications, having as main features static typing,
+ which eases the understanding of data structures in large systems, and
+ the implementation as compilers, due to concerns with performance.
+ In contrast, scripting languages are dynamically typed and are implemented
+ as interpreters or virtual machines.
+ Dynamic typing and the extensive use of higher-level constructs as basic
+ types, such as lists and hashes, brings greater flexibility in the interaction
+ between components; in static languages, the type system imposes restrictions
+ to those interactions, often requiring the programmer to write adaptation
+ interfaces, which makes the reuse of components harder.
+\layout Standard
+
+Scripting languages have the distinction that, by design, they are developed
+ having interaction with code written in other languages in mind.
+ Because of the popularity of the C\SpecialChar ~
+language and the support it enjoys in
+ most popular operating systems, a considerable number of implementations
+ of foreign language interfaces are, in practice, C APIs.
+\layout Standard
+
+Scripting languages can be understood in are used in conjuction with C code
+ in two ways: extending a C application, where the interpreter is embedded
+ as a library; or by having C code extend the language, through add-on modules
+ written as C libraries.
+ These two scenarios share many similarities, as in both of them two-way
+ communication of code and data needs to take place.
+ However, the differences between them impose tradeoffs that affect the
+ design of the resulting C API.
+\layout Standard
+
+This paper discusses how the design of a language's C API affects its suitabilit
+y for different application scenarios.
+ In Section 
+\begin_inset LatexCommand \ref{sec:Extension-and-extensible}
+
+\end_inset 
+
+, we discuss the different roles of scripting languages.
+ In Section 
+\begin_inset LatexCommand \ref{sec:Interaction-between-C}
+
+\end_inset 
+
+, the main issues involving interaction of C code with scripting language
+ runtime environments are presented, followed by a discussion in Section
+ 
+\begin_inset LatexCommand \ref{sec:Scripting-language-API}
+
+\end_inset 
+
+ on how popular scripting languages address those issues and the effect
+ of their designs in their applicability as extension and extensible languages.
+ Finally, Section 
+\begin_inset LatexCommand \ref{sec:Conclusion}
+
+\end_inset 
+
+ concludes the paper.
+\layout Section
+
+
+\begin_inset LatexCommand \label{sec:Extension-and-extensible}
+
+\end_inset 
+
+Extension and extensible languages
+\layout Standard
+
+With the increased popularity of scripting languages, two models for development
+ based in two languages have risen to prominence: besides the traditional
+ model where the scripting language has an auxiliary role, in which user
+ scripts allow for customization of applications, there is also a model
+ where the scripting language performs a more central role.
+ Typical examples are graphical applications where the interface is described
+ by scripts controlling components implemented in C and games where the
+ logic is described in scripts and the runtime engine is implemented in
+ lower-level languages.
+\layout Standard
+
+In these scenarios, there is a clear distinction between a lower-level layer
+ where performance is a critical factor and another, higher-level layer
+ that coordinates operations on elements of the lower layer.
+ Scripting languages cease to be just an extension mechanism: the application
+ itself is written using the scripting language and libraries written in
+ lower-level languages are loaded as extension modules.
+\layout Standard
+
+It makes sense, then, when discussing language interaction, to make a distinctio
+n between 
+\emph on 
+extensible languages
+\emph default 
+ and 
+\emph on 
+extension languages
+\emph default 
+.
+ Extensible languages are those that can be extended through external modules
+ implemented in other languages.
+ Extension languages are those which runtime environment can be embedded
+ in an application, allowing to use them to extend the application.
+ Typically, scripting languages can be used, with variable degrees of convenienc
+e, as either extensible or extension languages.
+\layout Standard
+
+Another interesting observation is that, while in one model the scripting
+ language serves as an extension language for the lower-level language in
+ which the application is written, in the other model the opposite happens:
+ we can look at add-on modules written using the language's C API as a way
+ to extend the scripting language using C; in this perspective, C becomes
+ the extension language.
+\layout Standard
+
+This way, the set of features provided by an API between C and a scripting
+ language tends to be symmetric in case it is desired to provide language
+ extensibility as well as promote its use as an extension language.
+ In both situations, code and data manipulation features need to be provided
+ in both directions.
+ A few common issues arise when implementing interaction between C and scripting
+ languages; they are discussed in the following section.
+\layout Section
+
+
+\begin_inset LatexCommand \label{sec:Interaction-between-C}
+
+\end_inset 
+
+Interaction between C and scripting languages
+\layout Standard
+
+Interfaces provided by scripting languages are usually understood as 
+\begin_inset Quotes eld
+\end_inset 
+
+extension APIs
+\begin_inset Quotes erd
+\end_inset 
+
+: they extend the virtual machine with features not originally offered by
+ it, or alternatively, they extend an external application with the features
+ offered by the runtime environment of the language, embedding it to the
+ application.
+ The first scenario is the one used in the programming model where the high-leve
+l coordination is made by an interpreted language and modules written in
+ languages such as C and C++ are used to access external libraries or to
+ implement performance-critical parts.
+ The second scenario, in general, will also encompass the first one, when
+ exposing to the embedded virtual machine extensions that will allow it
+ to talk to the host application.
+\layout Standard
+
+Both scenarios involve the same general problems: data transfer between
+ the two languages, including how to allow the scripting language to manipulate
+ structures declared in C and vice versa; handling the difference between
+ the memory management models, more specifically the interaction between
+ garbage collection in the virtual machine and explicit deallocation in
+ C; calling functions declared by the scripting language from C; and the
+ registration of C functions so that they can be invoked by scripts.
+ 
+\layout Standard
+
+The main complexity in the interaction between programming languages is
+ not the differences in syntax or semantics from their control flow structures,
+ but in their data representations.
+ Since the format how these data are represented differ, the alternatives
+ to perform data transfer between the languages involve either converting
+ the data or manipulating it opaquely through some kind of handle.
+ The duplication that takes place in when converting data limits the applicabili
+ty of this method, restricting its use typically to numeric types and, in
+ minor scale, strings.
+ When exposing handles, the source language may explicitly offer facilities
+ in the target language to manipulate these data, that is, the data remains
+ opaque, but the language can access its contents through an API.
+\layout Standard
+
+From the moment when C code gains access to handles to data stored in the
+ storage space of another language, the programmer must take into consideration
+ the differences between the memory management models involved.
+ For example, the C program may deallocate an object referenced by data
+ in the scripting language, or the scripting language may remove an element
+ from a structure causing it to be collected.
+ It is necessary, then, to indicate from C code that the data remain accessible
+ from it and must not be collected.
+ In a complementary way, when transferring the control of C objects to the
+ domain of the other language -- for example, when storing them in a data
+ structure of the other language -- it is necessary to indicate to the language
+ how to deallocate the memory of the structure when the garbage collector
+ detects that it is no longer in use.
+\layout Standard
+
+When bridging C and a scripting language, it is necessary to provide a form
+ of invoking, from C, functions to be executed by the scripting language,
+ and vice-versa.
+ This combines the issues of data transfer, for passing arguments and receiving
+ results between these two 
+\begin_inset Quotes eld
+\end_inset 
+
+spaces
+\begin_inset Quotes erd
+\end_inset 
+
+, and the implications that this brings about the objects' lifetime, affecting
+ garbage collection.
+ The tasks involved are always the same -- perform conversion of input data,
+ pass parameters to the other language, specify which function to call,
+ obtain return values, convert them back to the other language -- but approaches
+ employed in scripting language APIs vary widely.
+ In the next section we will discuss how some APIs implement these tasks
+ and the impact of their design on their usability as extension and extensible
+ languages.
+\layout Section
+
+
+\begin_inset LatexCommand \label{sec:Scripting-language-API}
+
+\end_inset 
+
+Scripting language API designs
+\layout Standard
+
+A pioneering example of an embedded, extension language is Tcl 
+\begin_inset LatexCommand \cite{ousterhout94tcl}
+
+\end_inset 
+
+.
+ Four main goals were set in its original design 
+\begin_inset LatexCommand \cite{ousterhout90tcl}
+
+\end_inset 
+
+: focus as a command language (designed to write short programs); extensibility;
+ simplicity in its implementation; simple interface with C applications.
+ We observe in those goals principles that are now understood as fundamental
+ features of extensible and extension languages: extensibility was listed
+ as a goal explicitly; the last two goals point out its focus as an extension
+ language.
+\layout Standard
+
+Aiming to simplify the interaction with C code, Tcl uses strings as its
+ single data type.
+ This minimalism, which has shown to be an advantage for Tcl as an extension
+ language, makes it seem limited compared to languages like Python, which
+ provide a more complete feature set as an extensible language.
+ Scripting languages have grown beyond Tcl's focus as a command language,
+ and thus, Tcl gradually lost space in the scripting world.
+ Its historical importance, however, is undeniable: it was the concept introduce
+d by Tcl of implementing scripting languages as C libraries that pushed
+ strongly the development of extensible applications.
+\layout Standard
+
+
+\color red
+[...write section...]
+\layout Standard
+
+
+\color red
+[When introducing function calls:]
+\color default
+ Because of the static typing of C, it is not possible to use a transparent
+ syntax for calling functions registered at runtime.
+ It is therefore necessary to define an API of functions for performing
+ calls to the scripting language.
+\layout Section
+
+
+\begin_inset LatexCommand \label{sec:Conclusion}
+
+\end_inset 
+
+Conclusion
+\layout Standard
+
+Choosing a scripting language depends on a series of factors, many of them
+ relative to the language itself, others relative to its implementation.
+ When we deal with multi-language development scenarios, an aspect that
+ should not be neglected is the design of interfaces between languages.
+ Be it extending the scripting language through C code, or making a C applicatio
+n extensible through a scripting language, the API offered by the language
+ has a fundamental role, often influencing the design of the application.
+\layout Standard
+
+
+\color red
+[Write the rest of the conclusion, but the bottom line is:] 
+\color default
+The focus in extending or embedding adopted by a language's C API has as
+ mucch impact in its suitability for one or other scenario as the design
+ of the language itself.
+\layout Standard
+
+
+\begin_inset LatexCommand \BibTeX[plain]{dissert}
+
+\end_inset 
+
+
+\the_end
