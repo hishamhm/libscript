@@ -1427,7 +1427,7 @@ For types such as strings, the size of values brings also concerns with
  environment uses multiple threads.
 \layout Standard
 
-When exposing to C data of structured types, the conversion to a native
+When exposing data of structured types to C, the conversion to a native
  C type, in many cases, is not an option.
  Besides the issue of quantity of data to be converted, structured types
  in C are defined statically, therefore not serving to represent conveniently
@@ -3748,7 +3748,7 @@ GetStaticIntField
 .
  Like in Ruby, the Java API defines a specific C type to avoid the frequent
  use of C strings in the description of fields.
- However, while ruby uses 
+ However, while Ruby uses 
 \family typewriter 
 ID
 \family default 
@@ -5712,7 +5712,7 @@ l data manipulation API among the ones studied.
  while reading the program.
 \layout Standard
 
-In Java, static typing reduces greatly the need of explicit data conversion
+In Java, static typing reduces greatly the need for explicit data conversion
  in C code.
  On the other hand, treatment of multi-threading complicates the access
  of types such as strings and arrays.
@@ -5789,7 +5789,7 @@ Finally, an aspect that deserves being mentioned is the concern on not polluting
  Perl and Ruby define names in a disorganized fashion, which occasionally
  causes problems
 \begin_inset Foot
-collapsed false
+collapsed true
 
 \layout Standard
 
@@ -5807,7 +5807,7 @@ For example, conflicts of this kind happened in the Ruby bindings of the
  in its functions, but this feature is incomplete and using it hampers the
  functionality of its headers
 \begin_inset Foot
-collapsed false
+collapsed true
 
 \layout Standard
 
@@ -7591,7 +7591,7 @@ sv_2mortal
 .
  Java's approach is more interesting, as normally more locally-scoped than
  globally-scoped variables are used.
- Values stored globally always need to have some for of explicit management
+ Values stored globally always need to have some form of explicit management
  to them, even in Ruby and Lua, through 
 \family typewriter 
 rb_global_variable
