@@ -12,7 +12,7 @@ AC_PROG_CC
 
 # Checks for libraries.
 
-AC_RUBY_DEVEL
+AC_RUBY_DEVEL(1.9)
 
 #AC_CHECK_LIB([script], [script_init], , AC_MSG_ERROR([Could not find suitable LibScript library.]))
 

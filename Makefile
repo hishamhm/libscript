@@ -1,5 +1,5 @@
 
-export CFLAGS = -g -DDEBUG -ansi -Wall
+#export CFLAGS = -g -DDEBUG -ansi -Wall
 
 root = $(PWD)
 BUILD_LIBDIR=$(root)/build/lib

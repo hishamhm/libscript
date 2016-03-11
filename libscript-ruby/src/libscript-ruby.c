@@ -10,13 +10,15 @@
 #define inline
 #endif
 
+#include <ruby.h>
+
 /* Since we're not ANSI C anyway, use snprintf */
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
 #include <stdio.h>
 #include <ctype.h>
 #include <assert.h>
-
-#include <ruby.h>
 
 #include "libscript-ruby.h"
 
@@ -44,7 +46,7 @@ INLINE static void script_ruby_put_value(script_env* env, int i, VALUE arg) {
 
 INLINE static void script_ruby_array_to_buffer(script_env* env, VALUE array) {
    int i;
-   int len = RARRAY(array)->len;
+   int len = RARRAY_LEN(array);
    script_reset_buffer(env);
    for (i = 0; i < len; i++) {
       VALUE o = rb_ary_entry(array, i);
@@ -89,7 +91,7 @@ INLINE static script_env* script_ruby_get_env(VALUE state) {
 
 static VALUE script_ruby_method_missing(VALUE self, VALUE args) {
    script_env* env = script_ruby_get_env(self);
-   char *method_name = rb_id2name(SYM2ID(rb_ary_shift(args)));
+   const char *method_name = rb_id2name(SYM2ID(rb_ary_shift(args)));
    script_err err;
    script_ruby_array_to_buffer(env, args);
    err = script_call(env, method_name);
@@ -136,8 +138,9 @@ script_plugin_state script_plugin_init_ruby(script_env* env) {
 
 INLINE int script_ruby_error(script_env* env) {
    script_reset_buffer(env);
-   script_set_error_message(env, StringValuePtr(ruby_errinfo));
-   ruby_errinfo = Qnil;
+   VALUE errinfo = rb_errinfo();
+   script_set_error_message(env, StringValuePtr(errinfo));
+   rb_set_errinfo(Qnil);
    return SCRIPT_ERRLANGRUN;
 }
 

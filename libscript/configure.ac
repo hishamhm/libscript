@@ -25,7 +25,9 @@ AC_C_CONST
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([memset strchr])
 
-AC_DEFINE_UNQUOTED(DATADIR, "`eval echo $datadir`", [Path of datafiles directory (plugin ids)])
+expanded_datadir=$(eval echo $(eval echo $datadir))
+
+AC_DEFINE_UNQUOTED(DATADIR, "$expanded_datadir", [Path of datafiles directory (plugin ids)])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

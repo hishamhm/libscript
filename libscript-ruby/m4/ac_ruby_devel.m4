@@ -23,12 +23,13 @@ AC_DEFUN([AC_RUBY_DEVEL],
   AC_PATH_PROG([cv_path_ruby], [ruby])
   if test "x$cv_path_ruby" != x; then
     AC_MSG_CHECKING([for ruby version >= $1])
-    if $cv_path_ruby -e 'VERSION >= "$1" or exit 1' >/dev/null 2>/dev/null;then
-      cv_ruby_version=`$cv_path_ruby -e 'print VERSION'`
+    if $cv_path_ruby -e 'RUBY_VERSION >= "$1" or exit 1' >/dev/null 2>/dev/null;then
+      cv_ruby_version=`$cv_path_ruby -e 'print RUBY_VERSION'`
       AC_MSG_RESULT([$cv_ruby_version])
-      rubyhdrdir=`$cv_path_ruby -r mkmf -e 'print Config::CONFIG[["archdir"]]'\
+      rubyarch=`$cv_path_ruby -r mkmf -e 'print Config::CONFIG[["arch"]]'`
+      rubyhdrdir=`$cv_path_ruby -r mkmf -e 'print Config::CONFIG[["rubyhdrdir"]]'\
                           || echo $hdrdir`
-      RUBY_CFLAGS="-I$rubyhdrdir"
+      RUBY_CFLAGS="-I$rubyhdrdir -I$rubyhdrdir/$rubyarch"
 
       rubylibs=`$cv_path_ruby -r rbconfig -e 'print Config::CONFIG[["LIBS"]]'`
       if test "x$rubylibs" != x; then

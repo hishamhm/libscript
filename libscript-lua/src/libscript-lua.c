@@ -132,7 +132,7 @@ script_err script_plugin_call_lua(script_plugin_state state, char* fn) {
    env = script_lua_get_env(L);
    namespace = script_namespace(env);
 
-   lua_getfield(L, LUA_GLOBALSINDEX, namespace);
+   lua_getglobal(L, namespace);
    lua_pushstring(L, fn);
    lua_gettable(L, -2);
    if (!lua_isfunction(L, -1) || lua_iscfunction(L, -1))

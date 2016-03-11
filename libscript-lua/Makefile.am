@@ -3,7 +3,7 @@ lib_LTLIBRARIES = libscript-lua.la
 
 libscript_lua_la_SOURCES = src/libscript-lua.c src/libscript-lua.h
 
-AM_CFLAGS = -ansi -Wall
+AM_CFLAGS = -Wall
 
 idsdir = $(datadir)/libscript/ids
 ids_DATA = ids/lua.id

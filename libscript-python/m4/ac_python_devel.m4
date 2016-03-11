@@ -88,7 +88,7 @@ to something else than an empty string.
 If you have it installed, but it isn't the default Python
 interpreter in your system path, please pass the PYTHON_VERSION 
 variable to configure. See ``configure --help'' for reference.
-])dnl
+])
 		fi
 	fi
 
