@@ -1,0 +1,77 @@
+.doc {
+   margin: 0px;
+   font-family: "bitstream vera serif", "paladino", "georgia", "luxi serif", "serif";
+}
+pre {
+   font-family: "bitstream vera sans mono", "andale mono", "luxi mono", "monospace";
+}
+.topbar {
+   background-color: #588a4b;
+   text-align: left;
+   margin: 0px;
+}
+.toplogo {
+   padding: 10px;
+}
+.name {
+   color: #386a2b;
+}
+.lib {
+   // font-family: "luxi mono", "bitstream vera mono", "andale mono", "courier new", "monospace";
+   font-style: italic;
+}
+.content {
+   padding-top: 5px;
+   margin-left: 20px;
+   margin-right: 20px;
+}
+.menu {
+   background-color: #fbf4cf;
+   width: 236px;
+   position: relative;
+   float: right;
+   margin-left: 10px;
+   margin-bottom: 10px;
+   font-size: larger;
+}
+h1 {
+   color: #588a4b;
+   font-weight: normal;
+}
+tt {
+   color: #588a4b;
+}
+.function {
+   font-weight: bold;
+}
+h2 {
+   color: #aba47f;
+   font-weight: normal;
+}
+a {
+   color: #588a4b;
+   text-decoration: none;
+   font-weight: bold;
+}
+a:hover {
+   text-decoration: underline;
+}
+ul {
+   list-style-type: square;
+}
+li.api {
+   margin-bottom: 10px;
+}
+.menulist {
+   list-style-type: none;
+}
+hr {
+   height: 1px;
+   background-color: #588a4b;
+   margin: 40px;
+   border: 0px;
+}
+.footer {
+   text-size: smaller;
+   text-align: right;
+}

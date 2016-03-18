@@ -1,0 +1,215 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="libscript.css"/>
+</head>
+<body class="doc">
+
+<p class="topbar">
+<a href="http://hishamhm.github.io/libscript"><img border="0px" class="toplogo" src="libscript.gif" alt="libscript" title="libscript"/></a>
+</p>
+
+<div class="menu">
+<ul class="menulist">
+<li><a href="index.html">About</a></li>
+<li><a href="languages.html">Languages</a></li>
+<li><a href="downloads.html">Downloads</a></li>
+<li><a href="https://github.com/hishamhm/libscript" target="_blank">Browse Git</a></li>
+<li><a href="api.html">API reference</a></li>
+</ul>
+</div>
+
+<div class="content">
+
+
+<h1>
+API Reference
+</h1>
+
+<h2> Initialization and termination </h2>
+
+<ul>
+<li class="api">
+<tt>script_env* <span class="function">script_init</span>(const char* namespace)</tt><br/>
+Initializes LibScript and returns a pointer to
+the virtual environment. The <tt>namespace</tt> parameter
+indicates the name to be used in structures that will be
+created in the namespaces of the various virtual machines
+used to represent the virtual environment.
+</li>
+<li class="api">
+<tt>void <span class="function">script_done</span>(script_env* env)</tt><br/>
+Terminates the virtual environment.
+</li>
+</ul>
+
+<h2>Registration of functions</h2>
+
+<ul>
+<li class="api">
+<tt>typedef script_err (*<span class="function">script_fn</span>)(script_env*)</tt><br/>
+Type of C functions to be registered in the virtual
+environment. When exposing an existing API to LibScript,
+the function will typically be a wrapper that loads
+the input parameters from the environment, calls the
+function and then sends the output parameters back
+to the environment.
+</li>
+<li class="api">
+<tt>script_err <span class="function">script_new_function</span>(script_env* env, script_fn fn, const char* name)</tt><br/>
+Registers a function in the virtual environment.
+</li>
+</ul>
+
+<h2>Parameters buffer</h2>
+
+<ul>
+
+<li class="api">
+<tt>double <span class="function">script_get_double</span>(script_env* env, int index)<br/>
+  int <span class="function">script_get_int</span>(script_env* env, int index)<br/>
+  int <span class="function">script_get_bool</span>(script_env* env, int index)<br/>
+  const char* <span class="function">script_get_string</span>(script_env* env, int index)<br/>
+</tt>
+Obtains data from the buffer. These functions must be called
+in the beginning of wrapper functions. For each input parameter,
+a call to one of these functions should be made. After all
+parameters are collected, one can invoke the 
+<tt>SCRIPT_CHECK_INPUTS(env)</tt> macro, which terminates the
+function returning an error code if any of the preceding calls
+could not find a value of the expected type. (The API does not
+perform automatic conversions between strings and numbers.)
+In <tt>script_get_string</tt>, the string to be returned belongs
+to the caller, who becomes responsible for deallocating it.
+</li>
+
+<li class="api">
+<tt>
+script_type <span class="function">script_get_type</span>(script_env* env, int index)<br/>
+int <span class="function">script_buffer_len</span>(script_env* env)<br/>
+</tt>
+These functions allow one to write C functions that perform
+verification on the type and number of parameters in runtime.
+The <tt>script_get_type</tt> function obtains the type of 
+the item at the requested buffer index and <tt>script_buffer_len</tt>
+returns the number of items in the buffer.
+</li>
+
+<li class="api">
+<tt>
+void <span class="function">script_put_double</span>(script_env* env, int index, double value)<br/>
+void <span class="function">script_put_int</span>(script_env* env, int index, int value)<br/>
+void <span class="function">script_put_bool</span>(script_env* env, int index, int value)<br/>
+void <span class="function">script_put_string</span>(script_env* env, int index, const char* value)<br/>
+</tt>
+Inserts data in the buffer. At the end of a registered C function,
+the return values should be passed as calls to these functions and
+a <tt>SCRIPT_OK</tt> error code should be passed as the function result.
+</li>
+
+<li class="api">
+<tt>void <span class="function">script_reset_buffer</span>(script_env* env)</tt><br/>
+Empties the buffer.
+</li>
+
+</ul>
+
+<h2>Executing code</h2>
+
+<ul>
+
+<li class="api">
+<tt>script_err <span class="function">script_run</span>(script_env* env, const char* language, const char* code)</tt><br/>
+Executes a string of code in a given langugage.
+If necessary, the appropriate plugin is loaded and initialized.
+</li>
+<li class="api">
+<tt>script_err <span class="function">script_run_file</span>(script_env* env, const char* filename)</tt><br/>
+Convenience function; loads the text of a file and
+executes it with <tt>script_run</tt>. The language is detected
+based on the filename extension or the #! identifier in the first line.
+</li>
+<li class="api">
+<tt>script_err <span class="function">script_call</span>(script_env* env, const char* fn)</tt><br/>
+Calls a function. The input parameters should be given
+beforehand with <tt>script_put_*</tt> calls; return values can be
+obtained with <tt>script_get_*</tt>. Initially, the table of registered
+C functions from the virtual environment in consulted. If there is no
+function registered there with the given name, the plugins are queried
+for the availability of the function. Functions registered in the 
+languages' data structures that represent the virtual environment
+become accessible through <tt>script_call</tt>.
+</li>
+<li class="api">
+<tt>script_err <span class="function">script_error</span>(script_env* env)<br/>
+  const char* <span class="function">script_error_message</span>(script_env* env)<br/>
+  void <span class="function">script_set_error_message</span>(script_env* env, const char* message)</tt><br/>
+Obtains the error message and code from the most recent error of
+an environment. After a <tt>script_error</tt> call, the error code
+is cleared back to <tt>SCRIPT_OK</tt>. The error message is not
+cleared. The <tt>script_set_error_message</tt> function defines a 
+new value for the environment's error message. This allows a plugin
+to propagate to the application the virtual machine error messages.
+</li>
+<li class="api">
+<tt>const char* <span class="function">script_get_namespace</span>(script_env* env)</tt><br/>
+Returns the name of the namespace registered with script_init for the given virtual environment.
+</li>
+</ul>
+
+<h2>
+   API to be exported by plugins
+</h2>
+
+<p>
+Calls to plugins (libraries that implement interfaces with the various virtual
+machines) are performed internally by the main LibScript library. The main
+library expects to find the following symbols declared in a plugin:
+</p>
+
+<ul>
+<li class="api">
+<tt>script_plugin_state <span class="function">script_plugin_init_<i>language</i></span>(script_env* env)</tt><br/>
+Responsible for initializing the plugin. During its initialization,
+the namespace of the virtual environment should be exposed to the virtual
+machine in some appropriate way (as a table in Lua, as a module in
+Python, as a class in Ruby, etc.). The initialization routine can return
+a handle that will be passed back to it in subsequent calls. The
+virtual machine state and the pointer to the LibScript environment should
+be stored in a way so they can be accessible from this handle.
+</li>
+<li class="api">
+<tt>script_err <span class="function">script_plugin_run_<i>language</i></span>(script_plugin_state st, char* text)</tt><br/>
+Sends code to be executed by the virtual machine. This function is
+used internally by <tt>script_run</tt> and <tt>script_run_file</tt>.
+It should return <tt>SCRIPT_OK</tt> in case of succes, 
+<tt>SCRIPT_ERRLANGCOMP</tt> for compilation errors or
+<tt>SCRIPT ERRLANGRUN</tt> for runtime errors, preferrably
+setting an error message with <tt>script_set_error_message</tt>.
+</li>
+<li class="api">
+<tt> script_err <span class="function">script_plugin_call_<i>language</i></span>(script_plugin_state st, char* fn)</tt><br/>
+Calls a function defined natively in the namespace of the
+virtual machine in the plugin. When calling a function in
+the namespace, through <tt>script_call</tt> or running code
+in another plugin, LibScript will use this function to try
+to the requested function <tt>fn</tt> in this plugin. If 
+the function was not defined in this plugin, the value
+<tt>SCRIPT_ERRFNUNDEF</tt> must be returned. Otherwise, the
+function should be executed, obtaining input parameters with
+<tt>script_get_*</tt> and returning output values with
+<tt>script_put_*</tt>, and the error codes <tt>SCRIPT_OK</tt>
+or <tt>SCRIPT_ERRLANGRUN</tt> should be returned, as appropriate.
+</li>
+<li class="api">
+<tt>void <span class="function">script_plugin_done_<i>language</i></span>(script_plugin_state st)</tt><br/>
+  Responsible for terminating an environment.
+</li>
+</ul>
+
+<hr/>
+
+
+</div>
+
+</body>
+</html>
