@@ -26,31 +26,31 @@ AC_DEFUN([AC_RUBY_DEVEL],
     if $cv_path_ruby -e 'RUBY_VERSION >= "$1" or exit 1' >/dev/null 2>/dev/null;then
       cv_ruby_version=`$cv_path_ruby -e 'print RUBY_VERSION'`
       AC_MSG_RESULT([$cv_ruby_version])
-      rubyarch=`$cv_path_ruby -r mkmf -e 'print Config::CONFIG[["arch"]]'`
-      rubyhdrdir=`$cv_path_ruby -r mkmf -e 'print Config::CONFIG[["rubyhdrdir"]]'\
+      rubyarch=`$cv_path_ruby -r mkmf -e 'print RbConfig::CONFIG[["arch"]]'`
+      rubyhdrdir=`$cv_path_ruby -r mkmf -e 'print RbConfig::CONFIG[["rubyhdrdir"]]'\
                           || echo $hdrdir`
       RUBY_CFLAGS="-I$rubyhdrdir -I$rubyhdrdir/$rubyarch"
 
-      rubylibs=`$cv_path_ruby -r rbconfig -e 'print Config::CONFIG[["LIBS"]]'`
+      rubylibs=`$cv_path_ruby -r rbconfig -e 'print RbConfig::CONFIG[["LIBS"]]'`
       if test "x$rubylibs" != x; then
         RUBY_LIBS="$rubylibs"
               fi
 
       librubyarg=`$cv_path_ruby -r rbconfig -e 'print \
-                    Config.expand(Config::CONFIG[["LIBRUBYARG"]])'`
+                    RbConfig.expand(RbConfig::CONFIG[["LIBRUBYARG"]])'`
       if test -f "$rubyhdrdir/$librubyarg"; then
         librubyarg="$rubyhdrdir/$librubyarg"
       else
         librubyarg=`$cv_path_ruby -r rbconfig -e "print \
                     '$librubyarg'.gsub(/-L\./, %'-L#{ \
-                      Config.expand(Config::CONFIG[[\"libdir\"]])}')"`
+                      RbConfig.expand(RbConfig::CONFIG[[\"libdir\"]])}')"`
       fi
       if test "x$librubyarg" != x; then
         RUBY_LIBS="$librubyarg $RUBY_LIBS"
       fi
 
       RUBY_LDFLAGS=`$cv_path_ruby -r rbconfig -e 'print \
-                    Config::CONFIG[["LDFLAGS"]]'`
+                    RbConfig::CONFIG[["LDFLAGS"]]'`
     else
       AC_MSG_RESULT([too old; need Ruby version $1 or newer])
           fi
