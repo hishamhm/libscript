@@ -84,6 +84,15 @@ INLINE static VALUE script_ruby_buffer_to_array(script_env* env) {
    return ret;
 }
 
+INLINE static VALUE script_ruby_create_array(VALUE* values, int len) {
+   int i;
+   VALUE ret = rb_ary_new2(len);
+   for (i = 0; i < len; i++) {
+      rb_ary_store(ret, i, values[i]);
+   }
+   return ret;
+}
+
 INLINE static script_env* script_ruby_get_env(VALUE state) {
    /* assumes a void* fits in long */
    return (script_env*) NUM2LONG(rb_const_get(state, env_id));
@@ -160,14 +169,21 @@ INLINE static VALUE script_ruby_pcall(VALUE args) {
    return rb_apply(klass, fn_id, args);
 }
 
+INLINE static VALUE script_ruby_get_method(VALUE arr) {
+   VALUE state = rb_ary_pop(arr);
+   VALUE fn_name = rb_ary_pop(arr);
+   return rb_funcall(state, method_id, 1, fn_name);
+}
+
 int script_plugin_call_ruby(script_ruby_state state, char* fn) {
    script_env* env = script_ruby_get_env(state);
    int error;
    VALUE ret;
    VALUE args;
    VALUE fn_value = rb_str_new2(fn);
-   VALUE method = rb_funcall(state, method_id, 1, fn_value);
-   if (method == Qnil)
+   VALUE values[2] = {fn_value, state};
+   VALUE method = rb_protect(script_ruby_get_method,script_ruby_create_array(values,2),&error);
+   if (method == Qnil || error)
       return SCRIPT_ERRFNUNDEF;
    args = script_ruby_buffer_to_array(env);
    rb_ary_push(args, state);
