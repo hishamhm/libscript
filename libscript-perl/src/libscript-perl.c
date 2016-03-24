@@ -5,10 +5,13 @@
 #include <perl.h>
 
 #include "libscript-perl.h"
+#include "config.h"
 
 EXTERN_C void xs_init(pTHX);
    
 #define LEN_CODE 1024
+
+static int script_perl_state_count = 0;
 
 char* script_perl_make_package_name(const char* name) {
    int name_size = strlen(name) + 1;
@@ -19,6 +22,13 @@ char* script_perl_make_package_name(const char* name) {
 }
    
 script_plugin_state script_plugin_init_perl(script_env* env) {
+
+   if (script_perl_state_count > 0 && !USE_MUL) {
+      script_set_error_message(env, "Cant create multiple perl interpreters: "\
+         "Perl was not build with -Dusemultiplicity.");
+      return NULL;
+   }
+
    /* Has to be called "my_perl" because the
       PL_perl_destruct_level macro expects it... */
    char* package_name;
@@ -33,6 +43,9 @@ script_plugin_state script_plugin_init_perl(script_env* env) {
    perl_construct(my_perl);
    perl_parse(my_perl, xs_init, 3, embedding, NULL);
    perl_run(my_perl);
+
+   script_perl_state_count++;
+
 
    package_name = script_perl_make_package_name(script_namespace(env));
    snprintf(code, LEN_CODE,
@@ -53,12 +66,19 @@ script_plugin_state script_plugin_init_perl(script_env* env) {
 }
 
 void script_plugin_done_perl(script_perl_state state) {
+   /* Closed before it was created */
+   if(!state)
+   {
+      return;
+   }
+
    PerlInterpreter* my_perl = (PerlInterpreter*) state;
    PERL_SET_CONTEXT(my_perl);
 
    PL_perl_destruct_level = 1;
    perl_destruct(my_perl);
    perl_free(my_perl);
+   script_perl_state_count--;
 }
 
 script_err script_plugin_run_perl(script_perl_state state, char* programtext) {

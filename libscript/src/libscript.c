@@ -198,7 +198,7 @@ const char* script_error_message(script_env* env) {
    case SCRIPT_ERRDLOPEN: return "Could not open plugin"; 
    case SCRIPT_ERRDLINVALID: return "Invalid plugin";
    case SCRIPT_ERRDLCLOSE: return "Could not close plugin";
-   case SCRIPT_ERRLANG: return "Language error";
+   case SCRIPT_ERRLANG: return (env->error_message[0] ? env->error_message : "Language error");
    case SCRIPT_ERRLANGCOMP: return (env->error_message[0] ? env->error_message : "Compile error");
    case SCRIPT_ERRLANGRUN: return (env->error_message[0] ? env->error_message : "Runtime error");
    case SCRIPT_ERRFN: return "Function error";
