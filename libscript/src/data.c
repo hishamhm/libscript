@@ -88,6 +88,14 @@ int script_get_int(script_env* env, int i) {
    return (int) data->u.double_value;
 }
 
+long long script_get_llint(script_env* env, int i) {
+	script_data* data = script_get_data(env,i,SCRIPT_LLINT);
+	if(!data) return 0;
+	long long ret;
+	memcpy(&ret, &(data->u.llint_value),sizeof(long long));
+	return ret;
+}
+
 int script_get_bool(script_env* env, int i) {
    script_data* data = script_get_data(env, i, SCRIPT_BOOL);
    if (!data) return 0;
@@ -113,6 +121,12 @@ void script_put_int(script_env* env, int i, int value) {
    script_data* data = script_put_data(env, i, SCRIPT_DOUBLE);
    if (!data) return;
    data->u.double_value = value;
+}
+
+void script_put_llint(script_env* env, int i, long long value) {
+   script_data* data = script_put_data(env, i, SCRIPT_LLINT);
+   if (!data) return;
+   memcpy(&(data->u.llint_value),&value,sizeof(long long));
 }
 
 void script_put_bool(script_env* env, int i, int value) {

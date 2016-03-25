@@ -10,6 +10,7 @@ struct script_data_ {
       char* string_value;
       double double_value;
       int bool_value;
+      long long llint_value;
    } u;
 };
 

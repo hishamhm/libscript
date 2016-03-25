@@ -18,6 +18,54 @@ INLINE static script_env* script_lua_get_env(lua_State *L) {
    return env;
 }
 
+#if LUA_VERSION_NUM >= 503
+INLINE static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
+   int nargs;
+   int i;
+   nargs = lua_gettop(L);
+   script_reset_buffer(env);
+   for (i = 1; i <= nargs; i++) {
+      switch(lua_type(L, i)) {
+      case LUA_TNUMBER: 
+	      if(lua_isinteger(L,i)){
+	      		script_put_llint(env, i-1, lua_tointeger(L, i)); break;
+	      }else{
+			script_put_double(env, i-1, lua_tonumber(L, i)); break;
+	      }
+      case LUA_TSTRING: script_put_string(env, i-1, lua_tostring(L, i)); break; /* TODO: zero-term */
+      case LUA_TBOOLEAN: script_put_bool(env, i-1, lua_toboolean(L, i)); break;
+      /* TODO: other types */
+      }
+   }
+}
+
+INLINE static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
+   int i; char* s;
+   int len = script_buffer_len(env);
+   for (i = 0; i < len; i++) {
+      script_type type = script_get_type(env, i);
+      switch (type) {
+	case SCRIPT_LLINT:;
+		long long tmp = script_get_llint(env,i);
+         	lua_pushinteger(L, tmp);
+         break;
+	case SCRIPT_DOUBLE:
+         lua_pushnumber(L, script_get_double(env, i));
+	 break;
+      case SCRIPT_STRING:
+         s = script_get_string(env, i);
+         lua_pushstring(L, s);
+         free(s);
+         break;
+      case SCRIPT_BOOL:
+         lua_pushboolean(L, script_get_bool(env, i)); break;
+      case SCRIPT_NONE: /* pacify gcc warning */ break;
+      /* TODO: other types */
+      }
+   }
+   return len;
+}
+#else
 INLINE static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
    int nargs;
    int i;
@@ -39,7 +87,7 @@ INLINE static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
    for (i = 0; i < len; i++) {
       script_type type = script_get_type(env, i);
       switch (type) {
-      case SCRIPT_DOUBLE:
+	      case SCRIPT_DOUBLE:
          lua_pushnumber(L, script_get_double(env, i));
          break;
       case SCRIPT_STRING:
@@ -55,6 +103,7 @@ INLINE static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
    }
    return len;
 }
+#endif
 
 static int script_lua_caller(lua_State *L) {
    script_env* env = script_lua_get_env(L);
