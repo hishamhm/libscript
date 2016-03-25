@@ -14,9 +14,9 @@ AC_DEFUN(AC_PERL_DEFINE_CHECK,
 	[
 		if $PERL -V | grep config_args | tr ' ' '\n' | grep -q "^-D$1"
 		then
-			ifelse($2,,:,[$2])
-		else
 			ifelse($3,,:,[$3])
+		else
+			ifelse($4,,:,[$4])
 		fi
 	]
 )
