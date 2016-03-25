@@ -3,12 +3,19 @@
 
 #include <EXTERN.h>
 #include <perl.h>
+      
 
 #include "libscript-perl.h"
+#include "config.h"
+
 
 EXTERN_C void xs_init(pTHX);
    
 #define LEN_CODE 1024
+
+#if P_DONT_USE_MULTIPLICITY
+static char script_perl_state_exists = 0;
+#endif
 
 char* script_perl_make_package_name(const char* name) {
    int name_size = strlen(name) + 1;
@@ -19,6 +26,17 @@ char* script_perl_make_package_name(const char* name) {
 }
    
 script_plugin_state script_plugin_init_perl(script_env* env) {
+
+   #if P_DONT_USE_MULTIPLICITY
+   if(script_perl_state_exists) {
+      script_set_error_message(env, "Cannot create multiple instances of Perl. Rebuild with -Dusemultiplicity.");
+      return NULL;
+      /*TODO: A NULL return seems to trigger language error in main libscript.
+      We can hack it to check the error's message, but the error code would still be that of a language error.
+      Define the new kind of error SCRIPT_ERRMUL, and get get script_plugin_load to throw that instead.*/
+   }
+   #endif
+
    /* Has to be called "my_perl" because the
       PL_perl_destruct_level macro expects it... */
    char* package_name;
@@ -49,16 +67,30 @@ script_plugin_state script_plugin_init_perl(script_env* env) {
    free(package_name);
    Perl_eval_pv(my_perl, code, TRUE);
 
+   #if P_DONT_USE_MULTIPLICITY
+   script_perl_state_exists = 1;
+   #endif
    return (script_plugin_state) my_perl;
 }
 
 void script_plugin_done_perl(script_perl_state state) {
+   
+   if(!state)
+      return;
+
+   /*TODO: If possible, delegate checking of state (before every plugin call) to libscript main.
+   Reduce work for the plugins, and give meaningful errors. Then maybe remove the check above.
+   */
+
    PerlInterpreter* my_perl = (PerlInterpreter*) state;
    PERL_SET_CONTEXT(my_perl);
 
    PL_perl_destruct_level = 1;
    perl_destruct(my_perl);
    perl_free(my_perl);
+   #if P_DONT_USE_MULTIPLICITY
+   script_perl_state_exists = 0;
+   #endif
 }
 
 script_err script_plugin_run_perl(script_perl_state state, char* programtext) {
