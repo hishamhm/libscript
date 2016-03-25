@@ -3,12 +3,13 @@
 
 #include <EXTERN.h>
 #include <perl.h>
-
+#include "../config.h"
 #include "libscript-perl.h"
 
 EXTERN_C void xs_init(pTHX);
    
 #define LEN_CODE 1024
+int check_init_times = 0;
 
 char* script_perl_make_package_name(const char* name) {
    int name_size = strlen(name) + 1;
@@ -21,6 +22,14 @@ char* script_perl_make_package_name(const char* name) {
 script_plugin_state script_plugin_init_perl(script_env* env) {
    /* Has to be called "my_perl" because the
       PL_perl_destruct_level macro expects it... */
+
+   check_init_times++;
+
+   if (HAVE_MULTIPLICITY == 0 && check_init_times != 1)
+   {
+      printf("ERROR : Perl was compiled without the -Dusemultiplicity flag and plug-in was initiated more than once\n");
+      exit(1);
+   }
    char* package_name;
    PerlInterpreter *my_perl;
    char *embedding[] = { "", "-e", "0" };
@@ -55,7 +64,7 @@ script_plugin_state script_plugin_init_perl(script_env* env) {
 void script_plugin_done_perl(script_perl_state state) {
    PerlInterpreter* my_perl = (PerlInterpreter*) state;
    PERL_SET_CONTEXT(my_perl);
-
+   check_init_times--;
    PL_perl_destruct_level = 1;
    perl_destruct(my_perl);
    perl_free(my_perl);

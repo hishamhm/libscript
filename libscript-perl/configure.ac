@@ -14,7 +14,7 @@ AC_PROG_CC
 
 AC_PERL_DEVEL
 
-AC_PERL_DEFINE_CHECK([usemultiplicity], , AC_MSG_ERROR([Perl was compiled without the -Dusemultiplicity flag.]))
+AC_PERL_DEFINE_CHECK([usemultiplicity], , AC_DEFINE([HAVE_MULTIPLICITY],1,[Checking if usemultiplicity is available]), AC_DEFINE([HAVE_MULTIPLICITY],0,[Checking if usemultiplicity is available]))
 
 #AC_CHECK_LIB([script], [script_init], , AC_MSG_ERROR([Could not find suitable LibScript library.]))
 
