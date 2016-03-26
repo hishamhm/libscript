@@ -31,7 +31,7 @@ static script_err free_plugin(script_env* env, script_plugin* plugin) {
    /* FIXME: decouple finalization of states and unloading of plugins */
    if (plugin->dlhandle) {
       done_fn = (script_plugin_done_fn) get_symbol(plugin, "done");
-      if (done_fn)
+      if (done_fn && plugin->state)
          done_fn(plugin->state);
       
       err = lt_dlclose(plugin->dlhandle);
@@ -96,7 +96,7 @@ script_plugin* script_plugin_load(script_env* env, const char* id) {
    init_fn = (script_plugin_init_fn) get_symbol(plugin, "init");
    if (!init_fn) return fail_plugin(env, plugin, SCRIPT_ERRDLINVALID);
    plugin->state = init_fn(env, env->namespace);
-   if (!plugin->state) return fail_plugin(env, plugin, SCRIPT_ERRLANG);
+   if (!plugin->state) return fail_plugin(env, plugin, SCRIPT_ERRDL);
    plugin->run = (script_plugin_run_fn) get_symbol(plugin, "run");
    if (!plugin->run) return fail_plugin(env, plugin, SCRIPT_ERRDLINVALID);
    plugin->call = (script_plugin_call_fn) get_symbol(plugin, "call");

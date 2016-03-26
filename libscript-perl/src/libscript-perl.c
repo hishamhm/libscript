@@ -29,11 +29,8 @@ script_plugin_state script_plugin_init_perl(script_env* env) {
 
    #if P_DONT_USE_MULTIPLICITY
    if(script_perl_state_exists) {
-      script_set_error_message(env, "Cannot create multiple instances of Perl. Rebuild with -Dusemultiplicity.");
+      script_set_error_message(env, "System does not support multiple instances of Perl.");
       return NULL;
-      /*TODO: A NULL return seems to trigger language error in main libscript.
-      We can hack it to check the error's message, but the error code would still be that of a language error.
-      Define the new kind of error SCRIPT_ERRMUL, and get get script_plugin_load to throw that instead.*/
    }
    #endif
 
@@ -74,13 +71,6 @@ script_plugin_state script_plugin_init_perl(script_env* env) {
 }
 
 void script_plugin_done_perl(script_perl_state state) {
-   
-   if(!state)
-      return;
-
-   /*TODO: If possible, delegate checking of state (before every plugin call) to libscript main.
-   Reduce work for the plugins, and give meaningful errors. Then maybe remove the check above.
-   */
 
    PerlInterpreter* my_perl = (PerlInterpreter*) state;
    PERL_SET_CONTEXT(my_perl);

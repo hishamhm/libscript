@@ -194,7 +194,7 @@ const char* script_error_message(script_env* env) {
    case SCRIPT_ERRAPI: return "API call error";
    case SCRIPT_ERRFILE: return "File error";
    case SCRIPT_ERRFILENOTFOUND: return "File not found";
-   case SCRIPT_ERRDL: return "Plugin error";
+   case SCRIPT_ERRDL: return (env->error_message[0] ? env->error_message : "Plugin error");
    case SCRIPT_ERRDLOPEN: return "Could not open plugin"; 
    case SCRIPT_ERRDLINVALID: return "Invalid plugin";
    case SCRIPT_ERRDLCLOSE: return "Could not close plugin";
