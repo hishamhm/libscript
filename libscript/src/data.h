@@ -8,7 +8,7 @@ struct script_data_ {
    script_type type;
    union {
       char* string_value;
-      double double_value;
+      double128 double_value;
       int bool_value;
    } u;
 };

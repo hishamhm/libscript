@@ -17,6 +17,7 @@
 #define SCRIPT_MAXARGS 128
 #endif
 
+
 /**
  * @return a string with the contents of the file, or NULL on error.
  */
@@ -42,6 +43,7 @@ static char* read_file(const char* filename) {
  * @return a handle to the environment on success, NULL on error.
  */
 script_env* script_init(const char* namespace) {
+
    script_env* env;
    int ok; 
    
