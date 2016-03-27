@@ -1,7 +1,7 @@
 
 AC_PREREQ(2.59)
 AC_INIT([libscript-lua], [1.0], [hisham@inf.puc-rio.br])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([subdir-objects])
 AC_CONFIG_SRCDIR([src/libscript-lua.c])
 AC_CONFIG_HEADER([config.h])
 

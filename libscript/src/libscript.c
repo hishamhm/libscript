@@ -17,6 +17,7 @@
 #define SCRIPT_MAXARGS 128
 #endif
 
+
 /**
  * @return a string with the contents of the file, or NULL on error.
  */
@@ -42,6 +43,7 @@ static char* read_file(const char* filename) {
  * @return a handle to the environment on success, NULL on error.
  */
 script_env* script_init(const char* namespace) {
+
    script_env* env;
    int ok; 
    
@@ -194,7 +196,7 @@ const char* script_error_message(script_env* env) {
    case SCRIPT_ERRAPI: return "API call error";
    case SCRIPT_ERRFILE: return "File error";
    case SCRIPT_ERRFILENOTFOUND: return "File not found";
-   case SCRIPT_ERRDL: return "Plugin error";
+   case SCRIPT_ERRDL: return (env->error_message[0] ? env->error_message : "Plugin error");
    case SCRIPT_ERRDLOPEN: return "Could not open plugin"; 
    case SCRIPT_ERRDLINVALID: return "Invalid plugin";
    case SCRIPT_ERRDLCLOSE: return "Could not close plugin";

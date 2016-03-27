@@ -65,7 +65,13 @@ testexc: $(TESTSDIR)/testexc.c
 testexcrun: $(TESTSDIR)/testexcrun.c
 	gcc -o $(TESTSDIR)/testexcrun $(TESTSDIR)/testexcrun.c -lscript $(LDFLAGS) $(CPPFLAGS)
 
-tests: test1 testcall testexc testexcrun
+testmul: $(TESTSDIR)/testmul.c
+	gcc -o $(TESTSDIR)/testmul $(TESTSDIR)/testmul.c -lscript $(LDFLAGS) $(CPPFLAGS)
+
+test64: $(TESTSDIR)/test64.c
+        gcc -o $(TESTSDIR)/test64 $(TESTSDIR)/test64.c -lscript $(LDFLAGS) $(CPPFLAGS)
+	
+tests: test1 testcall testexc testexcrun testmul test64
 	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test1 $(TESTSDIR)/test1.lua
 	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test1 $(TESTSDIR)/test1.py
 	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test1 $(TESTSDIR)/test1.rb
@@ -75,6 +81,8 @@ tests: test1 testcall testexc testexcrun
 	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/testexc $(TESTSDIR)/testexc.lua
 	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/testexc $(TESTSDIR)/testexc.py
 	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/testexcrun $(TESTSDIR)/testexcrun.pl
+	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/testmul $(TESTSDIR)/testmul.pl
+	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test64 $(TESTSDIR)/test64.lua
 
 clean:
 	rm -rf build
