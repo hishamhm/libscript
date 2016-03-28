@@ -58,7 +58,7 @@ INLINE static VALUE script_ruby_get_value(script_env* env, int i) {
    VALUE ret; char* s;
    switch (script_get_type(env, i)) {
    case SCRIPT_DOUBLE:
-      return rb_float_new(script_get_double(env, i)); 
+      return rb_float_new((double)script_get_double(env, i)); 
    case SCRIPT_STRING:
       s = script_get_string(env, i);
       ret = rb_str_new2(s);

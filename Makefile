@@ -69,7 +69,7 @@ testmul: $(TESTSDIR)/testmul.c
 	gcc -o $(TESTSDIR)/testmul $(TESTSDIR)/testmul.c -lscript $(LDFLAGS) $(CPPFLAGS)
 
 test64: $(TESTSDIR)/test64.c
-        gcc -o $(TESTSDIR)/test64 $(TESTSDIR)/test64.c -lscript $(LDFLAGS) $(CPPFLAGS)
+	gcc -o $(TESTSDIR)/test64 $(TESTSDIR)/test64.c -lscript $(LDFLAGS) $(CPPFLAGS)
 	
 tests: test1 testcall testexc testexcrun testmul test64
 	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test1 $(TESTSDIR)/test1.lua
@@ -83,6 +83,9 @@ tests: test1 testcall testexc testexcrun testmul test64
 	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/testexcrun $(TESTSDIR)/testexcrun.pl
 	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/testmul $(TESTSDIR)/testmul.pl
 	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test64 $(TESTSDIR)/test64.lua
+	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test64 $(TESTSDIR)/test64.py
+	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test64 $(TESTSDIR)/test64.rb
+	LD_LIBRARY_PATH=$(BUILD_LIBDIR) $(TESTSDIR)/test64 $(TESTSDIR)/test64.pl
 
 clean:
 	rm -rf build
