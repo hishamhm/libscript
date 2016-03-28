@@ -74,7 +74,7 @@ void script_put_string(script_env* env, int i, const char* value);
 void script_put_double(script_env* env, int i, double128 value);
 void script_put_int(script_env* env, int i, int64 value);
 void script_put_bool(script_env* env, int i, int value);
-char script_lua_isinteger(script_env* env, int i);
+char script_isinteger(script_env* env, int i);
 void script_reset_buffer(script_env* env);
 #define SCRIPT_CHECK_INPUTS(env) do { script_err err = script_error(env); if (err) return err; } while (0)
 

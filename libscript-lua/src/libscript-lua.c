@@ -56,7 +56,7 @@ INLINE static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
       switch (type) {
       case SCRIPT_DOUBLE:
          #if INT64_SUPPORT
-         if(script_lua_isinteger(env, i))
+         if(script_isinteger(env, i))
             lua_pushinteger(L, script_get_int(env, i));
          else
          #endif

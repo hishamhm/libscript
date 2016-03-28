@@ -125,8 +125,9 @@ void script_put_bool(script_env* env, int i, int value) {
 /*
 Determines if conversion from a double128 number to VM's integer is lossless.
 Currently only used to choose between lua_pushinteger and lua_pushnumber for Lua.
+EDIT: Also used by Python now.
 */
-INLINE char script_lua_isinteger(script_env* env, int i)
+INLINE char script_isinteger(script_env* env, int i)
 {
    double128 x = env->buffer[i].u.double_value;
    return x==(int64)x;
