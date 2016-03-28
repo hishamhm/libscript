@@ -36,7 +36,11 @@ INLINE static PyObject* script_python_get_object(script_env* env, int i) {
    PyObject* ret; char* s;
    switch (script_get_type(env, i)) {
    case SCRIPT_DOUBLE:
-      return PyFloat_FromDouble(script_get_double(env, i)); 
+      if (script_isinteger(env, i))
+         /*TODO: Add compatibility check for 2.5*/
+         return PyInt_FromSsize_t(script_get_double(env, i));
+      else
+         return PyFloat_FromDouble(script_get_double(env, i)); 
    case SCRIPT_STRING:
       s = script_get_string(env, i);
       ret = PyString_FromString(s);

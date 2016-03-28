@@ -8,7 +8,7 @@
 
 SV* script_perl_get_sv(pTHX_ script_env* env, int i) {
    switch (script_get_type(env, i)) {
-   case SCRIPT_DOUBLE: return newSVnv(script_get_double(env, i));
+   case SCRIPT_DOUBLE: return newSVnv((double)script_get_double(env, i));
    case SCRIPT_STRING: return newSVpv(script_get_string(env, i), 0);
    case SCRIPT_BOOL: return newSViv(script_get_bool(env, i));
    default: /* pacify gcc warning */ return &PL_sv_undef;

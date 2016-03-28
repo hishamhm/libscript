@@ -76,16 +76,19 @@ char* script_get_string(script_env* env, int i) {
    return result;
 }
 
-double script_get_double(script_env* env, int i) {
+double128 script_get_double(script_env* env, int i) {
    script_data* data = script_get_data(env, i, SCRIPT_DOUBLE);
    if (!data) return 0;
    return data->u.double_value;
 }
 
-int script_get_int(script_env* env, int i) {
-   script_data* data = script_get_data(env, i, SCRIPT_DOUBLE);
-   if (!data) return 0;
-   return (int) data->u.double_value;
+/*
+Why do we need this function anyway?
+We do not store information about the number subtype at all
+Same question also valid for put_int
+*/
+int64 script_get_int(script_env* env, int i) {
+   return (int64) script_get_double(env, i);
 }
 
 int script_get_bool(script_env* env, int i) {
@@ -103,20 +106,35 @@ void script_put_string(script_env* env, int i, const char* value) {
    data->u.string_value = strdup(value);
 }
 
-void script_put_double(script_env* env, int i, double value) {
+void script_put_double(script_env* env, int i, double128 value) {
    script_data* data = script_put_data(env, i, SCRIPT_DOUBLE);
    if (!data) return;
    data->u.double_value = value;
 }
 
-void script_put_int(script_env* env, int i, int value) {
-   script_data* data = script_put_data(env, i, SCRIPT_DOUBLE);
-   if (!data) return;
-   data->u.double_value = value;
+void script_put_int(script_env* env, int i, int64 value) {
+   script_put_double(env, i, value);
 }
 
 void script_put_bool(script_env* env, int i, int value) {
    script_data* data = script_put_data(env, i, SCRIPT_BOOL);
    if (!data) return;
    data->u.bool_value = value;
+}
+
+/*
+Determines if conversion from a double128 number to VM's integer is lossless.
+Currently only used to choose between lua_pushinteger and lua_pushnumber for Lua.
+EDIT: Also used by Python now.
+*/
+INLINE char script_isinteger(script_env* env, int i)
+{
+   double128 x = env->buffer[i].u.double_value;
+   return x==(int64)x;
+   /*TODO: Sometimes stuff like 13.99999 != 14 may happen.
+   Change return criteria to check if difference within certain tolerance.
+   Put the tolerance as a const or macro*/
+   /*TODO: Determine the double and int type from the env and build settings.
+   Dont assume int64 and double128.
+   When you do this, remove the check macros from libscript-lua.c*/
 }

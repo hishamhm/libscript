@@ -2,6 +2,9 @@
 #ifndef LIBSCRIPT_H
 #define LIBSCRIPT_H
 
+#define int64 long long
+#define double128 long double
+
 typedef enum {
    SCRIPT_OK = 0,
    SCRIPT_ERRAPI,
@@ -62,15 +65,16 @@ const char* script_fn_name(script_env* env);
 
 /* data.c */
 char* script_get_string(script_env* env, int i);
-double script_get_double(script_env* env, int i);
-int script_get_int(script_env* env, int i);
+double128 script_get_double(script_env* env, int i);
+int64 script_get_int(script_env* env, int i);
 int script_get_bool(script_env* env, int i);
 script_type script_get_type(script_env* env, int i);
 int script_buffer_len(script_env* env);
 void script_put_string(script_env* env, int i, const char* value);
-void script_put_double(script_env* env, int i, double value);
-void script_put_int(script_env* env, int i, int value);
+void script_put_double(script_env* env, int i, double128 value);
+void script_put_int(script_env* env, int i, int64 value);
 void script_put_bool(script_env* env, int i, int value);
+char script_isinteger(script_env* env, int i);
 void script_reset_buffer(script_env* env);
 #define SCRIPT_CHECK_INPUTS(env) do { script_err err = script_error(env); if (err) return err; } while (0)
 

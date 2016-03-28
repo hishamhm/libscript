@@ -9,6 +9,10 @@
 
 #include "libscript-lua.h"
 
+#if LUA_VERSION_NUM >= 503
+#define INT64_SUPPORT 1
+#endif
+
 INLINE static script_env* script_lua_get_env(lua_State *L) {
    script_env* env;
    lua_pushlightuserdata(L, L);
@@ -25,13 +29,24 @@ INLINE static void script_lua_stack_to_buffer(script_env* env, lua_State *L) {
    script_reset_buffer(env);
    for (i = 1; i <= nargs; i++) {
       switch(lua_type(L, i)) {
-      case LUA_TNUMBER: script_put_double(env, i-1, lua_tonumber(L, i)); break;
+      case LUA_TNUMBER: 
+      #if INT64_SUPPORT
+      if (lua_isinteger(L, i))
+         script_put_int(env, i-1, lua_tointeger(L, i));
+      else
+      #endif
+         script_put_double(env, i-1, lua_tonumber(L, i));
+      break;
+      
       case LUA_TSTRING: script_put_string(env, i-1, lua_tostring(L, i)); break; /* TODO: zero-term */
       case LUA_TBOOLEAN: script_put_bool(env, i-1, lua_toboolean(L, i)); break;
       /* TODO: other types */
       }
    }
 }
+
+
+
 
 INLINE static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
    int i; char* s;
@@ -40,7 +55,12 @@ INLINE static int script_lua_buffer_to_stack(script_env* env, lua_State *L) {
       script_type type = script_get_type(env, i);
       switch (type) {
       case SCRIPT_DOUBLE:
-         lua_pushnumber(L, script_get_double(env, i));
+         #if INT64_SUPPORT
+         if(script_isinteger(env, i))
+            lua_pushinteger(L, script_get_int(env, i));
+         else
+         #endif
+            lua_pushnumber(L, script_get_double(env, i));
          break;
       case SCRIPT_STRING:
          s = script_get_string(env, i);
